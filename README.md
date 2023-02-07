@@ -16,4 +16,5 @@ This is a bot that runs in the browser. It uses the [Telegram Bot API](https://c
 
 - [x] Build a minimal UI
 - [x] Send replies from bots
-- [ ] Process commands on the website
+- [ ] Process user-made commands on the website
+- [ ] Export file as an express telegram bot application
