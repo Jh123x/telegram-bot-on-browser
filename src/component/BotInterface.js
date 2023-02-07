@@ -23,6 +23,10 @@ export const BotInterface = () => {
   // Generate a mui form to create a command
   return (
     <Fragment>
+      <Typography variant="h3">Commands</Typography>
+      <Typography variant="body1">
+        When a user sends `Command`, the bot will reply with `Response`.
+      </Typography>
       <TableContainer>
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
@@ -58,7 +62,6 @@ export const BotInterface = () => {
         </Table>
       </TableContainer>
       <FormGroup>
-        <Typography variant="h3">Add a command</Typography>
         <Typography>Command</Typography>
         <TextField
           value={commandName}

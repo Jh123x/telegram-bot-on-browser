@@ -24,22 +24,25 @@ Object {
         <div
           class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
         >
+          <h3
+            class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+          >
+            API Token
+          </h3>
           <p
             class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
           >
             Please enter your API token to save it to local storage.
           </p>
+          <br />
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          >
+            API Token
+          </p>
           <div
             class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
           >
-            <label
-              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
-              data-shrink="false"
-              for=":r0:"
-              id=":r0:-label"
-            >
-              API Token
-            </label>
             <div
               class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
             >
@@ -55,10 +58,12 @@ Object {
                 class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
               >
                 <legend
-                  class="css-yjsfm1"
+                  class="css-ihdtdm"
                 >
-                  <span>
-                    API Token
+                  <span
+                    class="notranslate"
+                  >
+                    ​
                   </span>
                 </legend>
               </fieldset>
@@ -74,7 +79,18 @@ Object {
               class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
             />
           </button>
+          <br />
         </div>
+        <h3
+          class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+        >
+          Commands
+        </h3>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        >
+          When a user sends \`Command\`, the bot will reply with \`Response\`.
+        </p>
         <div
           class="MuiTableContainer-root css-rorn0c-MuiTableContainer-root"
         >
@@ -115,11 +131,6 @@ Object {
         <div
           class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
         >
-          <h3
-            class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
-          >
-            Add a command
-          </h3>
           <p
             class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
           >
@@ -253,22 +264,25 @@ Object {
       <div
         class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
       >
+        <h3
+          class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+        >
+          API Token
+        </h3>
         <p
           class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
         >
           Please enter your API token to save it to local storage.
         </p>
+        <br />
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        >
+          API Token
+        </p>
         <div
           class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
         >
-          <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
-            data-shrink="false"
-            for=":r0:"
-            id=":r0:-label"
-          >
-            API Token
-          </label>
           <div
             class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
           >
@@ -284,10 +298,12 @@ Object {
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-yjsfm1"
+                class="css-ihdtdm"
               >
-                <span>
-                  API Token
+                <span
+                  class="notranslate"
+                >
+                  ​
                 </span>
               </legend>
             </fieldset>
@@ -303,7 +319,18 @@ Object {
             class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
           />
         </button>
+        <br />
       </div>
+      <h3
+        class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+      >
+        Commands
+      </h3>
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      >
+        When a user sends \`Command\`, the bot will reply with \`Response\`.
+      </p>
       <div
         class="MuiTableContainer-root css-rorn0c-MuiTableContainer-root"
       >
@@ -344,11 +371,6 @@ Object {
       <div
         class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
       >
-        <h3
-          class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
-        >
-          Add a command
-        </h3>
         <p
           class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
         >

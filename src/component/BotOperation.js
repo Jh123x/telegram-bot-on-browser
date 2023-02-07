@@ -23,7 +23,9 @@ export const BotOperation = () => {
 
   return (
     <Fragment>
-      <Typography>Bot is {started ? "started" : "stopped"}</Typography>
+      <Typography variant="body1">
+        Bot is {started ? "started" : "stopped"}
+      </Typography>
       <Button
         variant="contained"
         color="success"

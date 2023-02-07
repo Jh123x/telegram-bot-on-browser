@@ -8,11 +8,13 @@ export const TokenSaver = () => {
 
   return (
     <FormGroup>
-      <Typography>
+      <Typography variant="h3">API Token</Typography>
+      <Typography variant="body1">
         Please enter your API token to save it to local storage.
       </Typography>
+      <br />
+      <Typography>API Token</Typography>
       <TextField
-        label="API Token"
         value={token}
         onChange={(e) => dispatch(setToken(e.target.value))}
       />
@@ -24,6 +26,7 @@ export const TokenSaver = () => {
       >
         Save
       </Button>
+      <br />
     </FormGroup>
   );
 };
