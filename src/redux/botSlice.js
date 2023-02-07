@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export const defaultBotState = {
+  token: "",
+  commands: [],
+};
+
 export const botSlice = createSlice({
   name: "bot",
-  initialState: {
-    token: "",
-    commands: [],
-  },
+  initialState: defaultBotState,
   reducers: {
     setToken: (state, action) => {
       state.token = action.payload;
