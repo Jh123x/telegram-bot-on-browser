@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.8",
-    "@emotion/styled": "^11.10.8",
+    "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.5",
