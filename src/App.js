@@ -6,6 +6,7 @@ import { BotInterface } from "./component/BotInterface";
 import { BotOperation } from "./component/BotOperation";
 import { setToken, setCommands } from "./redux/botSlice";
 import { useDispatch } from "react-redux";
+import { Footer } from "./component/Footer";
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ export const App = () => {
         <BotInterface />
         <BotOperation />
       </Container>
+      <Footer />
     </Fragment>
   );
 };

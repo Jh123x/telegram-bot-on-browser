@@ -1,0 +1,20 @@
+.footer {
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.text_box {
+  color: black;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  padding: 2%;
+}
+
+.url {
+  padding-right: 5px;
+}
