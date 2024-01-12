@@ -242,6 +242,26 @@ Object {
           Stop
         </button>
       </div>
+      <footer
+        class="footer MuiBox-root css-0"
+      >
+        <div
+          class="MuiContainer-root MuiContainer-maxWidthSm css-cuefkz-MuiContainer-root"
+        >
+          <p
+            class="MuiTypography-root MuiTypography-body2 text_box css-e784if-MuiTypography-root"
+          >
+            Copyright ©
+            <a
+              class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways url css-xdxgn1-MuiTypography-root-MuiLink-root"
+              href="https://jh123x.com/"
+            >
+              Jh123x
+            </a>
+            2024
+          </p>
+        </div>
+      </footer>
     </div>
   </body>,
   "container": <div>
@@ -482,6 +502,26 @@ Object {
         Stop
       </button>
     </div>
+    <footer
+      class="footer MuiBox-root css-0"
+    >
+      <div
+        class="MuiContainer-root MuiContainer-maxWidthSm css-cuefkz-MuiContainer-root"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body2 text_box css-e784if-MuiTypography-root"
+        >
+          Copyright ©
+          <a
+            class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways url css-xdxgn1-MuiTypography-root-MuiLink-root"
+            href="https://jh123x.com/"
+          >
+            Jh123x
+          </a>
+          2024
+        </p>
+      </div>
+    </footer>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
