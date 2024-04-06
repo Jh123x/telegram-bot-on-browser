@@ -101,7 +101,7 @@ Object {
               class="MuiTableHead-root css-15wwp11-MuiTableHead-root"
             >
               <tr
-                class="MuiTableRow-root MuiTableRow-head css-1q1u3t4-MuiTableRow-root"
+                class="MuiTableRow-root MuiTableRow-head css-1ig7deu-MuiTableRow-root"
               >
                 <th
                   class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
@@ -127,18 +127,24 @@ Object {
               class="MuiTableBody-root css-apqrd9-MuiTableBody-root"
             />
           </table>
+          <div
+            class="MuiBox-root css-uy5y4h"
+          />
         </div>
         <div
           class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
         >
-          <p
-            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
-          >
-            Command
-          </p>
           <div
             class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
           >
+            <label
+              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+              data-shrink="false"
+              for=":r1:"
+              id=":r1:-label"
+            >
+              Command
+            </label>
             <div
               class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
             >
@@ -154,25 +160,27 @@ Object {
                 class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
               >
                 <legend
-                  class="css-ihdtdm"
+                  class="css-yjsfm1"
                 >
-                  <span
-                    class="notranslate"
-                  >
-                    ​
+                  <span>
+                    Command
                   </span>
                 </legend>
               </fieldset>
             </div>
           </div>
-          <p
-            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
-          >
-            Response
-          </p>
+          <br />
           <div
             class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
           >
+            <label
+              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+              data-shrink="false"
+              for=":r2:"
+              id=":r2:-label"
+            >
+              Response
+            </label>
             <div
               class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root"
             >
@@ -194,17 +202,16 @@ Object {
                 class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
               >
                 <legend
-                  class="css-ihdtdm"
+                  class="css-yjsfm1"
                 >
-                  <span
-                    class="notranslate"
-                  >
-                    ​
+                  <span>
+                    Response
                   </span>
                 </legend>
               </fieldset>
             </div>
           </div>
+          <br />
           <button
             class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
@@ -361,7 +368,7 @@ Object {
             class="MuiTableHead-root css-15wwp11-MuiTableHead-root"
           >
             <tr
-              class="MuiTableRow-root MuiTableRow-head css-1q1u3t4-MuiTableRow-root"
+              class="MuiTableRow-root MuiTableRow-head css-1ig7deu-MuiTableRow-root"
             >
               <th
                 class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
@@ -387,18 +394,24 @@ Object {
             class="MuiTableBody-root css-apqrd9-MuiTableBody-root"
           />
         </table>
+        <div
+          class="MuiBox-root css-uy5y4h"
+        />
       </div>
       <div
         class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
       >
-        <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
-        >
-          Command
-        </p>
         <div
           class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
         >
+          <label
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+            data-shrink="false"
+            for=":r1:"
+            id=":r1:-label"
+          >
+            Command
+          </label>
           <div
             class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
           >
@@ -414,25 +427,27 @@ Object {
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-ihdtdm"
+                class="css-yjsfm1"
               >
-                <span
-                  class="notranslate"
-                >
-                  ​
+                <span>
+                  Command
                 </span>
               </legend>
             </fieldset>
           </div>
         </div>
-        <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
-        >
-          Response
-        </p>
+        <br />
         <div
           class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
         >
+          <label
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+            data-shrink="false"
+            for=":r2:"
+            id=":r2:-label"
+          >
+            Response
+          </label>
           <div
             class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root"
           >
@@ -454,17 +469,16 @@ Object {
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-ihdtdm"
+                class="css-yjsfm1"
               >
-                <span
-                  class="notranslate"
-                >
-                  ​
+                <span>
+                  Response
                 </span>
               </legend>
             </fieldset>
           </div>
         </div>
+        <br />
         <button
           class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
           tabindex="0"

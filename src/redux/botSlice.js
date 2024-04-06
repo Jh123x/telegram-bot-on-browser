@@ -1,5 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export class BotState {
+  constructor(token, commands) {
+    this.token = token;
+    this.commands = commands;
+  }
+}
+
 export const defaultBotState = {
   token: "",
   commands: [],
