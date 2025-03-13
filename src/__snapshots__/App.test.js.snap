@@ -6,61 +6,63 @@ Object {
   "baseElement": <body>
     <div>
       <header
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-hip9hq-MuiPaper-root-MuiAppBar-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-ptdwpq-MuiPaper-root-MuiAppBar-root"
+        style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
       >
         <div
-          class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-hyum1k-MuiToolbar-root"
+          class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
         >
           <h6
-            class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
           >
             BrowserBot
           </h6>
         </div>
       </header>
       <div
-        class="MuiContainer-root MuiContainer-maxWidthLg css-1oqqzyl-MuiContainer-root"
+        class="MuiContainer-root MuiContainer-maxWidthLg css-5c1adp-MuiContainer-root"
       >
         <div
-          class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+          class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
         >
           <h3
-            class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
           >
             API Token
           </h3>
           <p
-            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
           >
             Please enter your API token to save it to local storage.
           </p>
           <br />
           <p
-            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
           >
             API Token
           </p>
           <div
-            class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+            class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
           >
             <div
-              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
             >
               <input
                 aria-invalid="false"
-                class="MuiInputBase-input MuiOutlinedInput-input css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"
+                class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
                 id=":r0:"
                 type="text"
                 value=""
               />
               <fieldset
                 aria-hidden="true"
-                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
               >
                 <legend
-                  class="css-ihdtdm"
+                  class="css-w4cd9x"
                 >
                   <span
+                    aria-hidden="true"
                     class="notranslate"
                   >
                     ​
@@ -70,53 +72,50 @@ Object {
             </div>
           </div>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             Save
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
           </button>
           <br />
         </div>
         <h3
-          class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
         >
           Commands
         </h3>
         <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
         >
           When a user sends \`Command\`, the bot will reply with \`Response\`.
         </p>
         <div
-          class="MuiTableContainer-root css-rorn0c-MuiTableContainer-root"
+          class="MuiTableContainer-root css-70zvr5-MuiTableContainer-root"
         >
           <table
-            class="MuiTable-root css-quj9j6-MuiTable-root"
+            class="MuiTable-root css-1ks3uzw-MuiTable-root"
           >
             <thead
-              class="MuiTableHead-root css-15wwp11-MuiTableHead-root"
+              class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
             >
               <tr
-                class="MuiTableRow-root MuiTableRow-head css-1ig7deu-MuiTableRow-root"
+                class="MuiTableRow-root MuiTableRow-head css-16psxo0-MuiTableRow-root"
               >
                 <th
-                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
+                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                   scope="col"
                 >
                   Command
                 </th>
                 <th
-                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
+                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                   scope="col"
                 >
                   Response
                 </th>
                 <th
-                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
+                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                   scope="col"
                 >
                   Delete
@@ -124,7 +123,7 @@ Object {
               </tr>
             </thead>
             <tbody
-              class="MuiTableBody-root css-apqrd9-MuiTableBody-root"
+              class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
             />
           </table>
           <div
@@ -132,35 +131,35 @@ Object {
           />
         </div>
         <div
-          class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+          class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
         >
           <div
-            class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+            class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
           >
             <label
-              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
               data-shrink="false"
-              for=":r1:"
-              id=":r1:-label"
+              for=":r2:"
+              id=":r2:-label"
             >
               Command
             </label>
             <div
-              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
             >
               <input
                 aria-invalid="false"
-                class="MuiInputBase-input MuiOutlinedInput-input css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"
-                id=":r1:"
+                class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
+                id=":r2:"
                 type="text"
                 value=""
               />
               <fieldset
                 aria-hidden="true"
-                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
               >
                 <legend
-                  class="css-yjsfm1"
+                  class="css-81qg8w"
                 >
                   <span>
                     Command
@@ -171,38 +170,38 @@ Object {
           </div>
           <br />
           <div
-            class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+            class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
           >
             <label
-              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
               data-shrink="false"
-              for=":r2:"
-              id=":r2:-label"
+              for=":r3:"
+              id=":r3:-label"
             >
               Response
             </label>
             <div
-              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root"
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-xrmkj5-MuiInputBase-root-MuiOutlinedInput-root"
             >
               <textarea
                 aria-invalid="false"
-                class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
-                id=":r2:"
+                class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input"
+                id=":r3:"
                 style="height: 0px; overflow: hidden;"
               />
               <textarea
                 aria-hidden="true"
-                class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+                class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input"
                 readonly=""
                 style="visibility: hidden; position: absolute; overflow: hidden; height: 0px; top: 0px; left: 0px; transform: translateZ(0); padding-top: 0px; padding-bottom: 0px; width: 100%;"
                 tabindex="-1"
               />
               <fieldset
                 aria-hidden="true"
-                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
               >
                 <legend
-                  class="css-yjsfm1"
+                  class="css-81qg8w"
                 >
                   <span>
                     Response
@@ -213,35 +212,29 @@ Object {
           </div>
           <br />
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             Add
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
           </button>
         </div>
         <br />
         <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
         >
           Bot is 
           stopped
         </p>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-ke5b6m-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
           tabindex="0"
           type="button"
         >
           Start
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1sszw6i-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
           disabled=""
           tabindex="-1"
           type="button"
@@ -253,14 +246,14 @@ Object {
         class="footer MuiBox-root css-0"
       >
         <div
-          class="MuiContainer-root MuiContainer-maxWidthSm css-cuefkz-MuiContainer-root"
+          class="MuiContainer-root MuiContainer-maxWidthSm css-zzzaw2-MuiContainer-root"
         >
           <p
-            class="MuiTypography-root MuiTypography-body2 text_box css-e784if-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body2 text_box css-7ctihp-MuiTypography-root"
           >
             Copyright ©
             <a
-              class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways url css-xdxgn1-MuiTypography-root-MuiLink-root"
+              class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways url css-i9kmoy-MuiTypography-root-MuiLink-root"
               href="https://jh123x.com/"
             >
               Jh123x
@@ -273,61 +266,63 @@ Object {
   </body>,
   "container": <div>
     <header
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-hip9hq-MuiPaper-root-MuiAppBar-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-ptdwpq-MuiPaper-root-MuiAppBar-root"
+      style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
     >
       <div
-        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-hyum1k-MuiToolbar-root"
+        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
       >
         <h6
-          class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
         >
           BrowserBot
         </h6>
       </div>
     </header>
     <div
-      class="MuiContainer-root MuiContainer-maxWidthLg css-1oqqzyl-MuiContainer-root"
+      class="MuiContainer-root MuiContainer-maxWidthLg css-5c1adp-MuiContainer-root"
     >
       <div
-        class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+        class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
       >
         <h3
-          class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
         >
           API Token
         </h3>
         <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
         >
           Please enter your API token to save it to local storage.
         </p>
         <br />
         <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
         >
           API Token
         </p>
         <div
-          class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+          class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
         >
           <div
-            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
           >
             <input
               aria-invalid="false"
-              class="MuiInputBase-input MuiOutlinedInput-input css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"
+              class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
               id=":r0:"
               type="text"
               value=""
             />
             <fieldset
               aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-ihdtdm"
+                class="css-w4cd9x"
               >
                 <span
+                  aria-hidden="true"
                   class="notranslate"
                 >
                   ​
@@ -337,53 +332,50 @@ Object {
           </div>
         </div>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
           tabindex="0"
           type="button"
         >
           Save
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
         <br />
       </div>
       <h3
-        class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
       >
         Commands
       </h3>
       <p
-        class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
       >
         When a user sends \`Command\`, the bot will reply with \`Response\`.
       </p>
       <div
-        class="MuiTableContainer-root css-rorn0c-MuiTableContainer-root"
+        class="MuiTableContainer-root css-70zvr5-MuiTableContainer-root"
       >
         <table
-          class="MuiTable-root css-quj9j6-MuiTable-root"
+          class="MuiTable-root css-1ks3uzw-MuiTable-root"
         >
           <thead
-            class="MuiTableHead-root css-15wwp11-MuiTableHead-root"
+            class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
           >
             <tr
-              class="MuiTableRow-root MuiTableRow-head css-1ig7deu-MuiTableRow-root"
+              class="MuiTableRow-root MuiTableRow-head css-16psxo0-MuiTableRow-root"
             >
               <th
-                class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
+                class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                 scope="col"
               >
                 Command
               </th>
               <th
-                class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
+                class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                 scope="col"
               >
                 Response
               </th>
               <th
-                class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-1azl6jz-MuiTableCell-root"
+                class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                 scope="col"
               >
                 Delete
@@ -391,7 +383,7 @@ Object {
             </tr>
           </thead>
           <tbody
-            class="MuiTableBody-root css-apqrd9-MuiTableBody-root"
+            class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
           />
         </table>
         <div
@@ -399,35 +391,35 @@ Object {
         />
       </div>
       <div
-        class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+        class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
       >
         <div
-          class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+          class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
             data-shrink="false"
-            for=":r1:"
-            id=":r1:-label"
+            for=":r2:"
+            id=":r2:-label"
           >
             Command
           </label>
           <div
-            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
           >
             <input
               aria-invalid="false"
-              class="MuiInputBase-input MuiOutlinedInput-input css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"
-              id=":r1:"
+              class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
+              id=":r2:"
               type="text"
               value=""
             />
             <fieldset
               aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-yjsfm1"
+                class="css-81qg8w"
               >
                 <span>
                   Command
@@ -438,38 +430,38 @@ Object {
         </div>
         <br />
         <div
-          class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+          class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
             data-shrink="false"
-            for=":r2:"
-            id=":r2:-label"
+            for=":r3:"
+            id=":r3:-label"
           >
             Response
           </label>
           <div
-            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root"
+            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-xrmkj5-MuiInputBase-root-MuiOutlinedInput-root"
           >
             <textarea
               aria-invalid="false"
-              class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
-              id=":r2:"
+              class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input"
+              id=":r3:"
               style="height: 0px; overflow: hidden;"
             />
             <textarea
               aria-hidden="true"
-              class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+              class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input"
               readonly=""
               style="visibility: hidden; position: absolute; overflow: hidden; height: 0px; top: 0px; left: 0px; transform: translateZ(0); padding-top: 0px; padding-bottom: 0px; width: 100%;"
               tabindex="-1"
             />
             <fieldset
               aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-yjsfm1"
+                class="css-81qg8w"
               >
                 <span>
                   Response
@@ -480,35 +472,29 @@ Object {
         </div>
         <br />
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
           tabindex="0"
           type="button"
         >
           Add
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
       </div>
       <br />
       <p
-        class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
       >
         Bot is 
         stopped
       </p>
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-ke5b6m-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >
         Start
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
       </button>
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1sszw6i-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
         disabled=""
         tabindex="-1"
         type="button"
@@ -520,14 +506,14 @@ Object {
       class="footer MuiBox-root css-0"
     >
       <div
-        class="MuiContainer-root MuiContainer-maxWidthSm css-cuefkz-MuiContainer-root"
+        class="MuiContainer-root MuiContainer-maxWidthSm css-zzzaw2-MuiContainer-root"
       >
         <p
-          class="MuiTypography-root MuiTypography-body2 text_box css-e784if-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body2 text_box css-7ctihp-MuiTypography-root"
         >
           Copyright ©
           <a
-            class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways url css-xdxgn1-MuiTypography-root-MuiLink-root"
+            class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways url css-i9kmoy-MuiTypography-root-MuiLink-root"
             href="https://jh123x.com/"
           >
             Jh123x
