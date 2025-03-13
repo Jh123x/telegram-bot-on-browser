@@ -11,5 +11,5 @@ self.addEventListener("message", async (e) => {
   });
 
   const data = await resp.json();
-  console.log(data);
+  console.log(`Response: ${JSON.stringify(data)}`);
 });

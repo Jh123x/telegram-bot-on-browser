@@ -16,9 +16,7 @@ export const BotOperation = () => {
 
   useEffect(() => {
     if (bot === undefined) return;
-    for (const { command, response } of commands) {
-      bot!.addCommand(command, () => response);
-    }
+    commands.forEach(({ command, response }) => bot!.addCommand(command, () => response))
   }, [bot, commands]);
 
   return (

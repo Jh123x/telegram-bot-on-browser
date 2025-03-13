@@ -39,10 +39,12 @@ export const CommandForm = () => {
               return
             }
           }
-          
+
           const command: Command = { command: commandName, response: commandResponse };
           dispatch(addCommands(command));
-          localStorage.setItem("commands", JSON.stringify(commands));
+          localStorage.setItem("commands", JSON.stringify([...commands, command]));
+
+          // Clear inputs
           setErrMsg("")
           setCommandName("");
           setCommandResponse("");

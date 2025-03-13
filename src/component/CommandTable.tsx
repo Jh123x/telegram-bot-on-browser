@@ -48,6 +48,7 @@ export const CommandTable = () => {
                     const newCommands = [...commands];
                     newCommands.splice(index, 1);
                     dispatch(setCommands(newCommands));
+                    localStorage.setItem("commands", JSON.stringify(newCommands));
                   }}
                 >
                   Delete

@@ -13,7 +13,6 @@ export class BrowserBot {
   }
 
   addCommand(command, callback) {
-    console.log(`Adding command: ${command}`)
     this.command.set(command, callback);
   }
 
