@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { botSlice } from "./botSlice";
+import { botSlice } from "./botSlice.ts";
 
 export const store = configureStore({
   reducer: {

@@ -1,8 +1,9 @@
 import { Fragment } from "react";
 import { Typography } from "@mui/material";
 
-import { CommandTable } from "./CommandTable";
-import { CommandForm } from "./CommandForm";
+import { CommandTable } from "./CommandTable.tsx";
+import { CommandForm } from "./CommandForm.tsx";
+import React from "react";
 
 export const BotInterface = () => {
   return (

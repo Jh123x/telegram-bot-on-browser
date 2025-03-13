@@ -10,7 +10,9 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setCommands } from "../redux/botSlice";
+import { setCommands } from "../redux/botSlice.ts";
+import { Command, BotWithConfig } from "../redux/types";
+import React from "react";
 
 /**
  * CommandTable component.
@@ -20,12 +22,12 @@ import { setCommands } from "../redux/botSlice";
  */
 export const CommandTable = () => {
   const dispatch = useDispatch();
-  const commands = useSelector((state) => state.bot.commands);
+  const commands = useSelector<BotWithConfig, Command[]>((state) => state.bot.commands);
   return (
     <TableContainer>
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
-          <TableRow sx={{m: 20}}>
+          <TableRow sx={{ m: 20 }}>
             <TableCell align="right">Command</TableCell>
             <TableCell align="right">Response</TableCell>
             <TableCell align="right">Delete</TableCell>

@@ -3,15 +3,16 @@ import { render } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { botSlice, defaultBotState } from "./botSlice";
+import { BotWithConfig } from "./types";
 
-export const generateDefaultState = () => {
+export const generateDefaultState = (): BotWithConfig => {
   return {
     bot: defaultBotState,
   };
 };
 
 export const setupStore = (preloadedState) => {
-  return configureStore({
+  return configureStore<BotWithConfig>({
     reducer: {
       bot: botSlice.reducer,
     },

@@ -1,15 +1,16 @@
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextField, FormGroup, Button } from "@mui/material";
 
-import { addCommands } from "../redux/botSlice";
+import { addCommands } from "../redux/botSlice.ts";
+import { Command, BotWithConfig } from "../redux/types";
+import React, { useState } from "react";
 
 export const CommandForm = () => {
   const dispatch = useDispatch();
-  const commands = useSelector((state) => state.bot.commands);
+  const commands = useSelector<BotWithConfig, Command[]>((state) => state.bot.commands);
 
-  const [commandName, setCommandName] = useState("");
-  const [commandResponse, setCommandResponse] = useState("");
+  const [commandName, setCommandName] = useState<string>("");
+  const [commandResponse, setCommandResponse] = useState<string>("");
 
   return (
     <FormGroup>

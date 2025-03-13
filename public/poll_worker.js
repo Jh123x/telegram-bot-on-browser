@@ -4,6 +4,7 @@ self.addEventListener("message", async (e) => {
   console.log("Starting work");
   const updateURL = e.data;
   let currUpdateId = 0;
+
   while (true) {
     const response = await fetch(`${updateURL}?offset=${currUpdateId}`);
     const updateData = await response.json();
@@ -23,8 +24,10 @@ self.addEventListener("message", async (e) => {
     for (const update of updates) {
       const { message } = update;
       if (!message) continue;
+
       const { text, chat } = message;
       if (!text) continue;
+
       self.postMessage([text, chat.id]);
     }
     console.log(`Current update id: ${currUpdateId}`);
