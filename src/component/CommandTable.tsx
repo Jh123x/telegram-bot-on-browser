@@ -14,12 +14,6 @@ import { setCommands } from "../redux/botSlice.ts";
 import { Command, BotWithConfig } from "../redux/types";
 import React from "react";
 
-/**
- * CommandTable component.
- * @param {BotState} commands
- * @param {Function} setCommands
- * @returns {JSX.Element}
- */
 export const CommandTable = () => {
   const dispatch = useDispatch();
   const commands = useSelector<BotWithConfig, Command[]>((state) => state.bot.commands);
