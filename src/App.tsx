@@ -2,12 +2,13 @@ import { Fragment, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { CssBaseline, Container } from "@mui/material";
 
-import { TokenSaver } from "./component/TokenSaver";
-import { Navbar } from "./component/Navbar";
-import { BotInterface } from "./component/BotInterface";
-import { BotOperation } from "./component/BotOperation";
-import { setToken, setCommands } from "./redux/botSlice";
-import { Footer } from "./component/Footer";
+import { TokenSaver } from "./component/TokenSaver.tsx";
+import { Navbar } from "./component/Navbar.tsx";
+import { BotInterface } from "./component/BotInterface.tsx";
+import { BotOperation } from "./component/BotOperation.tsx";
+import { setToken, setCommands } from "./redux/botSlice.ts";
+import { Footer } from "./component/Footer.tsx";
+import React from "react";
 
 export const App = () => {
   const dispatch = useDispatch();

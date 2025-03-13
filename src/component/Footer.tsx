@@ -13,7 +13,7 @@ export const Footer = () => {
           {"Copyright ©"}
           <Link
             color="inherit"
-            href={"https://jh123x.com/"}
+            href="https://jh123x.com/"
             className={styles.url}
           >
             Jh123x

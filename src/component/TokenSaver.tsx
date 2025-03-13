@@ -1,10 +1,12 @@
 import { TextField, Button, FormGroup, Typography } from "@mui/material";
-import { setToken } from "../redux/botSlice";
+import { setToken } from "../redux/botSlice.ts";
 import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { BotWithConfig } from "../redux/types";
 
 export const TokenSaver = () => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.bot.token);
+  const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
 
   return (
     <FormGroup>
@@ -20,13 +22,11 @@ export const TokenSaver = () => {
       />
       <Button
         variant="contained"
-        onClick={() => {
-          localStorage.setItem("token", token);
-        }}
+        onClick={() => localStorage.setItem("token", token)}
       >
         Save
       </Button>
       <br />
-    </FormGroup>
+    </FormGroup >
   );
 };
