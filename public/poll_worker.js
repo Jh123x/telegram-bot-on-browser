@@ -10,9 +10,7 @@ self.addEventListener("message", async (e) => {
     const updateData = await response.json();
 
     if (!updateData.ok) {
-      console.log(
-        `Error: with fetching updates: ${updateData} at URL ${updateURL}`
-      );
+      console.log(`Error: with fetching updates: ${updateData} at URL`);
       return;
     }
 
@@ -30,6 +28,7 @@ self.addEventListener("message", async (e) => {
 
       self.postMessage([text, chat.id]);
     }
+
     console.log(`Current update id: ${currUpdateId}`);
     console.log("Waiting for 5 seconds");
     await new Promise((resolve) => setTimeout(resolve, 5000));

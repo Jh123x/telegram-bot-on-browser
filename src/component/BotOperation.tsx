@@ -15,7 +15,7 @@ export const BotOperation = () => {
   useEffect(() => setBot(new BrowserBot(token)), [token]);
 
   useEffect(() => {
-    if (!!bot) return;
+    if (bot === undefined) return;
     for (const { command, response } of commands) {
       bot!.addCommand(command, () => response);
     }

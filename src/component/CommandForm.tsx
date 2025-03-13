@@ -11,12 +11,14 @@ export const CommandForm = () => {
 
   const [commandName, setCommandName] = useState<string>("");
   const [commandResponse, setCommandResponse] = useState<string>("");
+  const [errorMsg, setErrMsg] = useState<string>("")
 
   return (
     <FormGroup>
       <TextField
         value={commandName}
         onChange={(e) => setCommandName(e.target.value)}
+        error={errorMsg !== ""}
         label="Command"
         style={{ padding: "auto" }}
       />
@@ -31,9 +33,17 @@ export const CommandForm = () => {
       <Button
         variant="contained"
         onClick={() => {
-          const command = { command: commandName, response: commandResponse };
+          for (const c of commands) {
+            if (commandName === c.command) {
+              setErrMsg("Command exists, it will not be added again")
+              return
+            }
+          }
+          
+          const command: Command = { command: commandName, response: commandResponse };
           dispatch(addCommands(command));
           localStorage.setItem("commands", JSON.stringify(commands));
+          setErrMsg("")
           setCommandName("");
           setCommandResponse("");
         }}

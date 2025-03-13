@@ -1,7 +1,7 @@
 export class BrowserBot {
   token: string
   url: string
-  command: Map<string, (cmd: string, data: string) => void>
+  command: Map<string, () => void>
 
   poll_worker?: Worker
   send_worker?: Worker
@@ -13,6 +13,7 @@ export class BrowserBot {
   }
 
   addCommand(command, callback) {
+    console.log(`Adding command: ${command}`)
     this.command.set(command, callback);
   }
 
@@ -23,13 +24,15 @@ export class BrowserBot {
       const [command, from] = e.data;
       console.log(`Received: ${command} from ${from}`)
 
-      if (!this.command.has(command))
+      if (!this.command.has(command)) {
+        console.log(`Command ${command} not found`)
         return
+      }
 
       console.log(`Has command ${command}`)
       const callback = this.command.get(command);
 
-      const response = callback!(command, from)
+      const response = callback!()
       console.log(`Sending ${response}`)
 
       this.send_worker!.postMessage([`${this.url}/sendMessage`, response, from,]);
