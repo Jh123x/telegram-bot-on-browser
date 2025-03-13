@@ -22,13 +22,11 @@ export const TokenSaver = () => {
       />
       <Button
         variant="contained"
-        onClick={() => {
-          localStorage.setItem("token", token);
-        }}
+        onClick={() => localStorage.setItem("token", token)}
       >
         Save
       </Button>
       <br />
-    </FormGroup>
+    </FormGroup >
   );
 };
