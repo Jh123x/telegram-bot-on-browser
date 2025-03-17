@@ -16,7 +16,7 @@ export class BrowserBot {
     this.command.set(command, callback);
   }
 
-  start() {
+  start(responseSender: (date: Date, user: string, id: number, message: string) => void) {
     this.poll_worker = new Worker("poll_worker.js");
     this.send_worker = new Worker("send_worker.js");
     this.poll_worker.onmessage = async (e) => {
@@ -34,8 +34,17 @@ export class BrowserBot {
       const response = callback!()
       console.log(`Sending ${response}`)
 
-      this.send_worker!.postMessage([`${this.url}/sendMessage`, response, from,]);
+      this.send_worker!.postMessage([`${this.url}/sendMessage`, response, from]);
     };
+
+    this.send_worker.onmessage = async (e) => {
+      const response = e.data
+      const { result } = response;
+      const { chat, text, date } = result;
+      const { username, id } = chat
+      const dateObj = new Date(date*1000)
+      responseSender(dateObj, username, id, text)
+    }
 
     const updateUrl = `${this.url}/getUpdates`;
     this.poll_worker.postMessage(updateUrl);

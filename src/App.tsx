@@ -9,6 +9,7 @@ import { BotOperation } from "./component/BotOperation.tsx";
 import { setToken, setCommands } from "./redux/botSlice.ts";
 import { Footer } from "./component/Footer.tsx";
 import React from "react";
+import { LogBox } from "./component/logs.tsx";
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ export const App = () => {
         <TokenSaver />
         <BotInterface />
         <BotOperation />
+        <LogBox />
       </Container>
       <Footer />
     </Fragment>
