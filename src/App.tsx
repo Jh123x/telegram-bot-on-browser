@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { CssBaseline, Container } from "@mui/material";
 
@@ -20,7 +20,14 @@ export const App = () => {
     if (commands !== null) dispatch(setCommands(JSON.parse(commands)));
   }, [dispatch]);
   return (
-    <Fragment>
+    <Container sx={{
+      height: '100%',
+      maxWidth: '100%',
+      width: '100%',
+      minWidth: '100%',
+      margin: 0,
+      padding: 0,
+    }} disableGutters={true}>
       <CssBaseline />
       <Navbar />
       <Container>
@@ -30,7 +37,7 @@ export const App = () => {
         <LogBox />
       </Container>
       <Footer />
-    </Fragment>
+    </Container>
   );
 };
 export default App;

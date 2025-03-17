@@ -8,7 +8,7 @@ onmessage = async (e) => {
     const updateData = await response.json();
 
     if (!updateData.ok) {
-      console.log(`Error: with fetching updates: ${updateData} at URL`);
+      console.log(`[Poll Worker] Error: with fetching updates: ${updateData} at URL`);
       return;
     }
 
@@ -21,14 +21,14 @@ onmessage = async (e) => {
       const { message } = update;
       if (!message) continue;
 
-      const { text, chat } = message;
+      const { text, chat, date } = message;
       if (!text) continue;
 
-      self.postMessage([text, chat.id]);
+      self.postMessage([date, chat.username, chat.id, text]);
     }
 
-    console.log(`Current update id: ${currUpdateId}`);
-    console.log("Waiting for 5 seconds");
+    console.log(`[Poll Worker] Current update id: ${currUpdateId}`);
+    console.log(`[Poll Worker] Waiting for 5 seconds`);
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
 };

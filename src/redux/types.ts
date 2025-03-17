@@ -13,10 +13,9 @@ export interface BotWithConfig {
     bot: IBotState;
 }
 
-
 export interface Response {
     FromUser: string
-    UserID: Number
+    UserID: number
     Message: string
-    Date: Date
+    TimeStamp: number
 }

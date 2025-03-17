@@ -11,6 +11,5 @@ onmessage = async (e) => {
   });
 
   const data = await resp.json();
-  console.log(`[Worker] Response: ${JSON.stringify(data)}`);
-  postMessage(data)
+  console.log(`[Send Worker] Response: ${JSON.stringify(data)}`);
 };

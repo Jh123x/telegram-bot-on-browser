@@ -36,7 +36,7 @@ export const BotOperation = () => {
               FromUser: user,
               UserID: id,
               Message: msg,
-              Date: date,
+              TimeStamp: date,
             }))
           });
           setStarted(true);
