@@ -1,6 +1,4 @@
-console.log("Worker started");
-
-self.addEventListener("message", async (e) => {
+onmessage = async (e) => {
   console.log("Starting work");
   const updateURL = e.data;
   let currUpdateId = 0;
@@ -33,4 +31,4 @@ self.addEventListener("message", async (e) => {
     console.log("Waiting for 5 seconds");
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
-});
+};
