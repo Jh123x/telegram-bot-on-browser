@@ -121,7 +121,7 @@ Object {
                     class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                     scope="col"
                   >
-                    Delete
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -429,7 +429,7 @@ Object {
                   class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeMedium css-to33az-MuiTableCell-root"
                   scope="col"
                 >
-                  Delete
+                  Action
                 </th>
               </tr>
             </thead>
