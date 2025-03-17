@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Fragment } from "react";
 import { Button, Typography } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import React from "react";
 import { BotWithConfig, Command } from "../redux/types";
+import { addResponse } from "../redux/botSlice.ts";
 
 export const BotOperation = () => {
+  const dispatch = useDispatch()
   const [bot, setBot] = useState<BrowserBot>();
   const [started, setStarted] = useState(false);
   const commands = useSelector<BotWithConfig, Command[]>((state) => state.bot.commands);
@@ -29,7 +31,14 @@ export const BotOperation = () => {
         color="success"
         disabled={started}
         onClick={() => {
-          bot!.start();
+          bot!.start((date, user, id, msg) => {
+            dispatch(addResponse({
+              FromUser: user,
+              UserID: id,
+              Message: msg,
+              TimeStamp: date,
+            }))
+          });
           setStarted(true);
           console.log("Bot started!")
         }}
@@ -48,6 +57,6 @@ export const BotOperation = () => {
       >
         Stop
       </Button>
-    </Fragment>
+    </Fragment >
   );
 };

@@ -16,25 +16,27 @@ export class BrowserBot {
     this.command.set(command, callback);
   }
 
-  start() {
+  start(responseSender: (date: number, user: string, id: number, message: string) => void) {
     this.poll_worker = new Worker("poll_worker.js");
     this.send_worker = new Worker("send_worker.js");
     this.poll_worker.onmessage = async (e) => {
-      const [command, from] = e.data;
-      console.log(`Received: ${command} from ${from}`)
+      const [date, username, chatID, message] = e.data;
+      console.log(`[Main] Received: ${message} from ${username}`)
+      responseSender(date * 1000, username, chatID, message)
 
-      if (!this.command.has(command)) {
-        console.log(`Command ${command} not found`)
+      if (!this.command.has(message)) {
+        console.log(`[Main] Command ${message} not found`)
         return
       }
 
-      console.log(`Has command ${command}`)
-      const callback = this.command.get(command);
+      console.log(`[Main] Has command ${message}`)
+      const callback = this.command.get(message);
 
       const response = callback!()
-      console.log(`Sending ${response}`)
+      console.log(`[Main] Sending ${response}`)
 
-      this.send_worker!.postMessage([`${this.url}/sendMessage`, response, from,]);
+
+      this.send_worker!.postMessage([`${this.url}/sendMessage`, response, chatID]);
     };
 
     const updateUrl = `${this.url}/getUpdates`;

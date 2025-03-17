@@ -24,7 +24,7 @@ export const CommandTable = () => {
           <TableRow sx={{ m: 20 }}>
             <TableCell align="right">Command</TableCell>
             <TableCell align="right">Response</TableCell>
-            <TableCell align="right">Delete</TableCell>
+            <TableCell align="right">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

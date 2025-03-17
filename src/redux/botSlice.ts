@@ -14,6 +14,7 @@ export class BotState {
 export const defaultBotState: IBotState = {
   token: "",
   commands: [],
+  response: [],
 };
 
 export const botSlice = createSlice({
@@ -29,7 +30,10 @@ export const botSlice = createSlice({
     setCommands: (state, action) => {
       state.commands = action.payload;
     },
+    addResponse: (state, action) => {
+      state.response = [...state.response, action.payload];
+    }
   },
 });
 
-export const { setToken, addCommands, setCommands } = botSlice.actions;
+export const { setToken, addCommands, setCommands, addResponse } = botSlice.actions;

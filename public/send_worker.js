@@ -1,4 +1,4 @@
-self.addEventListener("message", async (e) => {
+onmessage = async (e) => {
   console.log("Received message from main thread: " + e.data);
 
   const [baseUrl, message, toId] = e.data;
@@ -11,5 +11,5 @@ self.addEventListener("message", async (e) => {
   });
 
   const data = await resp.json();
-  console.log(`Response: ${JSON.stringify(data)}`);
-});
+  console.log(`[Send Worker] Response: ${JSON.stringify(data)}`);
+};
