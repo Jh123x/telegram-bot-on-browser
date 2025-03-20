@@ -22,6 +22,6 @@ You can visit the site [here](https://telebot.jh123x.com/ "Telegram Bot on Brows
 - [x] Build a minimal UI
 - [x] Send replies from bots
 - [x] Receive chats from users
-- [ ] Send chat to userss
+- [ ] Send chat to users
 - [ ] Process user-made commands on the website
 - [ ] Export file as an express telegram bot application
