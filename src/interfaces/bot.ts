@@ -21,19 +21,19 @@ export class BrowserBot {
     this.send_worker = new Worker("send_worker.js");
     this.poll_worker.onmessage = async (e) => {
       const [date, username, chatID, message] = e.data;
-      console.log(`[Main] Received: ${message} from ${username}`)
+      console.debug(`[Main] Received: ${message} from ${username}`)
       responseSender(date * 1000, username, chatID, message)
 
       if (!this.command.has(message)) {
-        console.log(`[Main] Command ${message} not found`)
+        console.debug(`[Main] Command ${message} not found`)
         return
       }
 
-      console.log(`[Main] Has command ${message}`)
+      console.debug(`[Main] Has command ${message}`)
       const callback = this.command.get(message);
 
       const response = callback!()
-      console.log(`[Main] Sending ${response}`)
+      console.debug(`[Main] Sending ${response}`)
 
 
       this.send_worker!.postMessage([`${this.url}/sendMessage`, response, chatID]);
@@ -41,6 +41,16 @@ export class BrowserBot {
 
     const updateUrl = `${this.url}/getUpdates`;
     this.poll_worker.postMessage(updateUrl);
+  }
+
+  sendMessage(userID: number, message: string) {
+    if (!this.send_worker) {
+      console.debug(`Init worker first before sending message`)
+      return
+    }
+
+    console.debug(`Sending to ${userID}: ${message}`)
+    this.send_worker!.postMessage([`${this.url}/sendMessage`, message, userID])
   }
 
   stop() {
@@ -54,6 +64,6 @@ export class BrowserBot {
       this.send_worker = undefined;
     }
 
-    console.log("Stopped");
+    console.debug("Stopped");
   }
 }

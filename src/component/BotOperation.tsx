@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Fragment } from "react";
 import { Button, Typography } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
 import { BotWithConfig, Command } from "../redux/types";
-import { addResponse } from "../redux/botSlice.ts";
+import { addResponse, addUser } from "../redux/botSlice.ts";
+import { CustomChat } from "./CustomMessage.tsx";
 
 export const BotOperation = () => {
   const dispatch = useDispatch()
@@ -22,7 +22,9 @@ export const BotOperation = () => {
   }, [bot, commands]);
 
   return (
-    <Fragment>
+    <>
+      <CustomChat bot={bot} />
+      <hr />
       <Typography variant="body1">
         Bot {started ? "started" : "stopped"}
       </Typography>
@@ -38,9 +40,10 @@ export const BotOperation = () => {
               Message: msg,
               TimeStamp: date,
             }))
+            dispatch(addUser({ UserID: id, Username: user }))
           });
           setStarted(true);
-          console.log("Bot started!")
+          console.debug("Bot started!")
         }}
       >
         Start
@@ -52,11 +55,11 @@ export const BotOperation = () => {
         onClick={() => {
           bot!.stop();
           setStarted(false);
-          console.log("Bot stopped!")
+          console.debug("Bot stopped!")
         }}
       >
         Stop
       </Button>
-    </Fragment >
+    </>
   );
 };

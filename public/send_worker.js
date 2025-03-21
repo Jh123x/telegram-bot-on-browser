@@ -1,8 +1,8 @@
 onmessage = async (e) => {
-  console.log("Received message from main thread: " + e.data);
+  console.debug("Received message from main thread: " + e.data);
 
   const [baseUrl, message, toId] = e.data;
-  console.log(`Sending message: ${message} to ${toId}`);
+  console.debug(`Sending message: ${message} to ${toId}`);
 
   const resp = await fetch(baseUrl, {
     method: "POST",
@@ -11,5 +11,5 @@ onmessage = async (e) => {
   });
 
   const data = await resp.json();
-  console.log(`[Send Worker] Response: ${JSON.stringify(data)}`);
+  console.debug(`[Send Worker] Response: ${JSON.stringify(data)}`);
 };

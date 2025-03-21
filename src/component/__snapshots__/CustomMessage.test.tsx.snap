@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders bot operation interface correctly 1`] = `
+exports[`renders custom chat interface correctly 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -77,28 +77,6 @@ Object {
       >
         Send
       </button>
-      <hr />
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-      >
-        Bot 
-        stopped
-      </p>
-      <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
-        tabindex="0"
-        type="button"
-      >
-        Start
-      </button>
-      <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
-        disabled=""
-        tabindex="-1"
-        type="button"
-      >
-        Stop
-      </button>
     </div>
   </body>,
   "container": <div>
@@ -173,28 +151,6 @@ Object {
       type="button"
     >
       Send
-    </button>
-    <hr />
-    <p
-      class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-    >
-      Bot 
-      stopped
-    </p>
-    <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
-      tabindex="0"
-      type="button"
-    >
-      Start
-    </button>
-    <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
-      disabled=""
-      tabindex="-1"
-      type="button"
-    >
-      Stop
     </button>
   </div>,
   "debug": [Function],
