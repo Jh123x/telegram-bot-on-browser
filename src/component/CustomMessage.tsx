@@ -26,7 +26,7 @@ export const CustomChat = ({ bot }: { bot?: BrowserBot }) => {
             }}
         >
             <MenuItem value={0} disabled={true} key="default-value">Select a value</MenuItem>
-            {users.map((user) => <MenuItem value={user.UserID} key={`${user.UserID}-${user.Username}`}>{user.Username}</MenuItem>)}
+            {users.map((user) => <MenuItem value={user.UserID} key={`${user.UserID}-${user.Username}`}>{user.Username} ({user.UserID})</MenuItem>)}
         </Select>
         <Input
             value={message}
