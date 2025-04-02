@@ -5,12 +5,15 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/material": "^6.4.7",
+    "@mui/material": "^7.0.1",
     "@reduxjs/toolkit": "^2.6.1",
-    "react": "^19.0.0",
+    "react": "^19.1.0",
     "react-redux": "^9.2.0",
     "stream": "^0.0.3",
     "web-vitals": "^4.2.4"
+  },
+  "overrides": {
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
