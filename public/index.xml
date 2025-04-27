@@ -1,0 +1,20 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+    <channel>
+        <title>Browser Telebot</title>
+        <link>https://telebot.jh123x.com/</link>
+        <description>A telegram bot that runs on the browser. Send custom messages and view chats
+            from the browser.</description>
+        <language>en-us</language>
+        <lastBuildDate>Sun, 27 Apr 2025 19:33:43 +0800</lastBuildDate>
+        <atom:link href="https://job.jh123x.com/index.xml" rel="self" type="application/rss+xml" />
+        <item>
+            <title>Browser Telebot</title>
+            <link>https://telebot.jh123x.com/</link>
+            <pubDate>Sun, 27 Apr 2025 00:00:00 +0800</pubDate>
+            <guid>https://telebot.jh123x.com/</guid>
+            <description>A telegram bot that runs on the browser. Send custom messages and view
+                chats from the browser.</description>
+        </item>
+    </channel>
+</rss>
