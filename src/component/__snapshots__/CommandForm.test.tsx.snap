@@ -31,10 +31,10 @@ Object {
             />
             <fieldset
               aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
+              class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-81qg8w"
+                class="css-1n64csd-MuiNotchedOutlined-root"
               >
                 <span>
                   Command
@@ -73,10 +73,10 @@ Object {
             />
             <fieldset
               aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
+              class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-81qg8w"
+                class="css-1n64csd-MuiNotchedOutlined-root"
               >
                 <span>
                   Response
@@ -123,10 +123,10 @@ Object {
           />
           <fieldset
             aria-hidden="true"
-            class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
+            class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
           >
             <legend
-              class="css-81qg8w"
+              class="css-1n64csd-MuiNotchedOutlined-root"
             >
               <span>
                 Command
@@ -165,10 +165,10 @@ Object {
           />
           <fieldset
             aria-hidden="true"
-            class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
+            class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
           >
             <legend
-              class="css-81qg8w"
+              class="css-1n64csd-MuiNotchedOutlined-root"
             >
               <span>
                 Response
