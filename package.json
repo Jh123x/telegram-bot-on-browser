@@ -8,6 +8,7 @@
     "@mui/material": "^7.3.2",
     "@reduxjs/toolkit": "^2.9.0",
     "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",
     "stream": "^0.0.3",
     "web-vitals": "^5.1.0"
