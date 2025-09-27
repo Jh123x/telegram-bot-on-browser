@@ -12,9 +12,6 @@
     "stream": "^0.0.3",
     "web-vitals": "^5.1.0"
   },
-  "overrides": {
-    "react-dom": "^19.1.0"
-  },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@jest/globals": "^30.1.2",
