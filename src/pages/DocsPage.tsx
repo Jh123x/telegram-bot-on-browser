@@ -1,30 +1,156 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Link,
+  Stack,
+  Chip,
+  Divider,
+} from "@mui/material";
 
-export const DocsPage = () => (
+type DocPageId = "programs" | "chat" | "settings" | "docs";
+
+interface DocsPageProps {
+  onNavigate?: (page: DocPageId) => void;
+}
+
+const codeStyle = {
+  fontFamily:
+    '"source-code-pro", Menlo, Monaco, Consolas, "Courier New", monospace',
+  backgroundColor: "#0a0a0a",
+  border: "1px solid",
+  borderColor: "divider",
+  borderRadius: 2,
+  padding: "12px",
+  overflow: "auto",
+  fontSize: 13,
+  color: "text.primary",
+} as const;
+
+export const DocsPage = ({ onNavigate }: DocsPageProps) => (
   <>
     <Typography variant="h3">Docs</Typography>
 
-    <Typography variant="h4" sx={{ mt: 3 }}>
+    <Box sx={{ mt: 1 }}>
+      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        On this page
+      </Typography>
+      <Stack component="ol" spacing={0.5} sx={{ mt: 1, pl: 3 }}>
+        {[
+          { label: "Getting Started", href: "#getting-started" },
+          { label: "How Programs Work", href: "#how-programs-work" },
+          { label: "Blocks", href: "#blocks" },
+          { label: "Samples", href: "#samples" },
+          { label: "Tips", href: "#tips" },
+          { label: "Troubleshooting", href: "#troubleshooting" },
+        ].map((item) => (
+          <li key={item.href}>
+            <Typography component="span">
+              <Link href={item.href} sx={{ color: "primary.main" }}>
+                <Typography
+                  component="span"
+                  aria-label={`On this page: ${item.label}`}
+                  sx={{ fontSize: 14 }}
+                >
+                  {item.label}
+                </Typography>
+              </Link>
+            </Typography>
+          </li>
+        ))}
+      </Stack>
+    </Box>
+
+    <Divider sx={{ my: 3 }} />
+
+    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+      Jump to a tab
+    </Typography>
+    <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: "wrap" }}>
+      <Chip
+        label="Open the Settings tab"
+        component="button"
+        clickable
+        onClick={() => onNavigate?.("settings")}
+        sx={{ color: "primary.main" }}
+      />
+      <Chip
+        label="Open the Programs tab"
+        component="button"
+        clickable
+        onClick={() => onNavigate?.("programs")}
+        sx={{ color: "primary.main" }}
+      />
+      <Chip
+        label="Open the Chat tab"
+        component="button"
+        clickable
+        onClick={() => onNavigate?.("chat")}
+        sx={{ color: "primary.main" }}
+      />
+    </Stack>
+
+    <Divider sx={{ my: 3 }} />
+
+    <Typography variant="h4" id="getting-started" sx={{ mt: 3 }}>
       Getting Started
     </Typography>
     <Box component="ol" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          Create a bot with @BotFather on Telegram and copy the token it gives
-          you.
+          Create a bot with{" "}
+          <Link
+            href="https://t.me/BotFather"
+            target="_blank"
+            rel="noreferrer"
+          >
+            @BotFather
+          </Link>{" "}
+          on Telegram and copy the token it gives you.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Open the Settings tab and paste the token — it is stored only in your
-          browser&apos;s localStorage.
+          Open the{" "}
+          <Link
+            component="button"
+            onClick={() => onNavigate?.("settings")}
+            sx={{
+              color: "primary.main",
+              background: "none",
+              border: "none",
+              padding: 0,
+              fontSize: "inherit",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            Settings tab
+          </Link>{" "}
+          and paste the token — it is stored only in your browser&apos;s
+          localStorage.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Build a program in the Programs tab — drag blocks from the palette
-          onto a program card, or click to add them.
+          Build a program in the{" "}
+          <Link
+            component="button"
+            onClick={() => onNavigate?.("programs")}
+            sx={{
+              color: "primary.main",
+              background: "none",
+              border: "none",
+              padding: 0,
+              fontSize: "inherit",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            Programs tab
+          </Link>{" "}
+          — drag blocks from the palette onto a program card, or click to add
+          them.
         </Typography>
       </li>
       <li>
@@ -34,12 +160,28 @@ export const DocsPage = () => (
       </li>
       <li>
         <Typography component="span">
-          Open the Chat tab to watch incoming messages and reply to users.
+          Open the{" "}
+          <Link
+            component="button"
+            onClick={() => onNavigate?.("chat")}
+            sx={{
+              color: "primary.main",
+              background: "none",
+              border: "none",
+              padding: 0,
+              fontSize: "inherit",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            Chat tab
+          </Link>{" "}
+          to watch incoming messages and reply to users.
         </Typography>
       </li>
     </Box>
 
-    <Typography variant="h4" sx={{ mt: 3 }}>
+    <Typography variant="h4" id="how-programs-work" sx={{ mt: 3 }}>
       How Programs Work
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
@@ -49,7 +191,14 @@ export const DocsPage = () => (
       is saved to localStorage automatically.
     </Typography>
 
-    <Typography variant="h4" sx={{ mt: 3 }}>
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      You can think of each program as a small pipeline:
+    </Typography>
+    <pre data-testid="code-sample-pipeline" style={codeStyle}>
+      {`message -> trigger -> logic -> transform -> action -> reply`}
+    </pre>
+
+    <Typography variant="h4" id="blocks" sx={{ mt: 3 }}>
       Blocks
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
@@ -84,7 +233,7 @@ export const DocsPage = () => (
       </li>
     </Box>
 
-    <Typography variant="h4" sx={{ mt: 3 }}>
+    <Typography variant="h4" id="samples" sx={{ mt: 3 }}>
       Samples
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
@@ -124,14 +273,104 @@ export const DocsPage = () => (
       </li>
     </Box>
 
-    <Typography variant="h4" sx={{ mt: 3 }}>
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      Here is what the built-in <strong>Welcome</strong> program looks like as
+      JSON:
+    </Typography>
+    <pre data-testid="code-sample-welcome" style={codeStyle}>
+      {`{
+  "name": "Welcome",
+  "trigger": {
+    "type": "equals",
+    "value": "/start"
+  },
+  "blocks": [
+    {
+      "type": "action",
+      "kind": "reply",
+      "text": "Hi! Welcome to the bot."
+    }
+  ]
+}`}
+    </pre>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      And the <strong>Shout</strong> program transforms the message to
+      uppercase before echoing it:
+    </Typography>
+    <pre data-testid="code-sample-shout" style={codeStyle}>
+      {`{
+  "name": "Shout",
+  "trigger": {
+    "type": "contains",
+    "value": "shout"
+  },
+  "blocks": [
+    {
+      "type": "transform",
+      "kind": "uppercase"
+    },
+    {
+      "type": "action",
+      "kind": "echo"
+    }
+  ]
+}`}
+    </pre>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      For the full list of block types, triggers, and fields, see the{" "}
+      <Link
+        href="https://core.telegram.org/bots/api"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Telegram Bot API docs
+      </Link>
+      . If you run into issues or want to suggest a feature, open an issue on
+      the{" "}
+      <Link
+        href="https://github.com/Jh123x/telegram-bot-on-browser"
+        target="_blank"
+        rel="noreferrer"
+      >
+        GitHub repository
+      </Link>{" "}
+      or try the{" "}
+      <Link
+        href="https://telebot.jh123x.com"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Live site
+      </Link>
+      .
+    </Typography>
+
+    <Typography variant="h4" id="tips" sx={{ mt: 3 }}>
       Tips
     </Typography>
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
           Order matters — the first matching program wins. Use the up and down
-          arrows to reorder your programs.
+          arrows to reorder your programs in the{" "}
+          <Link
+            component="button"
+            onClick={() => onNavigate?.("programs")}
+            sx={{
+              color: "primary.main",
+              background: "none",
+              border: "none",
+              padding: 0,
+              fontSize: "inherit",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            Programs tab
+          </Link>
+          .
         </Typography>
       </li>
       <li>
@@ -152,7 +391,7 @@ export const DocsPage = () => (
       </li>
     </Box>
 
-    <Typography variant="h4" sx={{ mt: 3 }}>
+    <Typography variant="h4" id="troubleshooting" sx={{ mt: 3 }}>
       Troubleshooting
     </Typography>
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
@@ -165,12 +404,36 @@ export const DocsPage = () => (
       </li>
       <li>
         <Typography component="span">
-          Messages not appearing? Check the bot has received them.
+          Messages not appearing? Check the bot has received them in the{" "}
+          <Link
+            component="button"
+            onClick={() => onNavigate?.("chat")}
+            sx={{
+              color: "primary.main",
+              background: "none",
+              border: "none",
+              padding: 0,
+              fontSize: "inherit",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            Chat tab
+          </Link>
+          .
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Token rejected? Recreate it with @BotFather.
+          Token rejected? Recreate it with{" "}
+          <Link
+            href="https://t.me/BotFather"
+            target="_blank"
+            rel="noreferrer"
+          >
+            @BotFather
+          </Link>
+          .
         </Typography>
       </li>
     </Box>

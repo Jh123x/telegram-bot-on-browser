@@ -35,7 +35,7 @@ export const App = () => {
           {page === "settings" && <SettingsPage />}
           {page === "programs" && <ProgramsPage />}
           {page === "chat" && <ChatPage bot={bot} />}
-          {page === "docs" && <DocsPage />}
+          {page === "docs" && <DocsPage onNavigate={setPage} />}
         </Container>
         <Footer />
       </Container>
