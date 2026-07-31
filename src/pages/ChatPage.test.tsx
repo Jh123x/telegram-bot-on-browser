@@ -139,3 +139,11 @@ test("composer does nothing when no bot is provided", () => {
     fireEvent.change(textbox, { target: { value: "no bot" } });
   }).not.toThrow();
 });
+
+test("chat panel fills the available page height", () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  const panel = screen.getByTestId("chat-panel");
+  expect(panel).toHaveStyle({ flexGrow: "1" });
+});

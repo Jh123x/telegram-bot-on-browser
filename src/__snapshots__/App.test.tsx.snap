@@ -6,7 +6,8 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-disableGutters css-5re47a-MuiContainer-root"
+        class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-disableGutters css-1o99m2q-MuiContainer-root"
+        data-testid="app-root"
       >
         <header
           class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-qcvv0j-MuiPaper-root-MuiAppBar-root"
@@ -100,8 +101,9 @@ Object {
             </button>
           </div>
         </header>
-        <div
-          class="MuiContainer-root MuiContainer-maxWidthLg css-5c1adp-MuiContainer-root"
+        <main
+          class="MuiBox-root css-jg3ssn"
+          data-testid="app-content"
         >
           <div>
             <h3
@@ -384,7 +386,7 @@ Object {
               No programs yet — drag a block or load a sample above.
             </p>
           </div>
-        </div>
+        </main>
         <footer
           class="footer MuiBox-root css-0"
         >
@@ -410,7 +412,8 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-disableGutters css-5re47a-MuiContainer-root"
+      class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-disableGutters css-1o99m2q-MuiContainer-root"
+      data-testid="app-root"
     >
       <header
         class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-qcvv0j-MuiPaper-root-MuiAppBar-root"
@@ -504,8 +507,9 @@ Object {
           </button>
         </div>
       </header>
-      <div
-        class="MuiContainer-root MuiContainer-maxWidthLg css-5c1adp-MuiContainer-root"
+      <main
+        class="MuiBox-root css-jg3ssn"
+        data-testid="app-content"
       >
         <div>
           <h3
@@ -788,7 +792,7 @@ Object {
             No programs yet — drag a block or load a sample above.
           </p>
         </div>
-      </div>
+      </main>
       <footer
         class="footer MuiBox-root css-0"
       >

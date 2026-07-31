@@ -54,12 +54,15 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Typography variant="h3" sx={{ mb: 2 }}>
         Chat
       </Typography>
 
-      <Paper sx={{ display: "flex", height: 520, bgcolor: "background.paper" }}>
+      <Paper
+        data-testid="chat-panel"
+        sx={{ flex: 1, minHeight: 0, display: "flex", bgcolor: "background.paper" }}
+      >
         {/* Sidebar / user picker */}
         <Box sx={{ width: 240, borderRight: 1, borderColor: "divider", overflowY: "auto", p: 1 }}>
           <Typography variant="subtitle2" color="text.secondary" sx={{ px: 1, py: 1 }}>

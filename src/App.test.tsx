@@ -142,3 +142,16 @@ test("switching tabs shows the right page", () => {
   fireEvent.click(screen.getByRole("tab", { name: "Programs" }));
   expect(screen.getByText("Blocks")).toBeTruthy();
 });
+
+test("uses the full viewport as a flex column with a scrollable content area", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  const root = screen.getByTestId("app-root");
+  expect(root).toHaveStyle({ display: "flex", flexDirection: "column" });
+  expect(root).toHaveStyle({ height: "100%" });
+
+  const content = screen.getByTestId("app-content");
+  expect(content).toHaveStyle({ flexGrow: "1" });
+  expect(content).toHaveStyle({ overflowY: "auto" });
+});

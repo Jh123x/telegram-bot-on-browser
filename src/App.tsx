@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CssBaseline, Container } from "@mui/material";
+import { Box, CssBaseline, Container } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "./theme.ts";
 import { Navbar, Page } from "./component/Navbar.tsx";
@@ -28,15 +28,32 @@ export const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container sx={{ height: "100%", maxWidth: "100%", width: "100%", minWidth: "100%", margin: 0, padding: 0 }} disableGutters={true}>
+      <Container
+        data-testid="app-root"
+        sx={{
+          height: "100%",
+          maxWidth: "100%",
+          width: "100%",
+          minWidth: "100%",
+          margin: 0,
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+        }}
+        disableGutters={true}
+      >
         <CssBaseline />
         <Navbar page={page} onPageChange={setPage} started={started} onStart={start} onStop={stop} />
-        <Container>
+        <Box
+          data-testid="app-content"
+          component="main"
+          sx={{ flex: 1, minHeight: 0, overflowY: "auto", width: "100%", px: 3, py: 2 }}
+        >
           {page === "settings" && <SettingsPage />}
           {page === "programs" && <ProgramsPage />}
           {page === "chat" && <ChatPage bot={bot} />}
           {page === "docs" && <DocsPage onNavigate={setPage} />}
-        </Container>
+        </Box>
         <Footer />
       </Container>
     </ThemeProvider>
