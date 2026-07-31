@@ -1,7 +1,12 @@
+export interface BotRule {
+  matcher: (message: string) => boolean;
+  callback: (message: string) => string | string[];
+}
+
 export class BrowserBot {
   token: string
   url: string
-  command: Map<string, () => void>
+  rules: BotRule[]
 
   poll_worker?: Worker
   send_worker?: Worker
@@ -9,34 +14,44 @@ export class BrowserBot {
   constructor(token) {
     this.token = token;
     this.url = `https://api.telegram.org/bot${token}`;
-    this.command = new Map();
+    this.rules = [];
   }
 
-  addCommand(command, callback) {
-    this.command.set(command, callback);
+  addRule(matcher: (message: string) => boolean, callback: (message: string) => string | string[]) {
+    this.rules.push({ matcher, callback });
+  }
+
+  clearRules() {
+    this.rules = [];
+  }
+
+  handleMessage(message: string): string | string[] | undefined {
+    for (const rule of this.rules) {
+      if (rule.matcher(message)) return rule.callback(message);
+    }
+    return undefined;
   }
 
   start(responseSender: (date: number, user: string, id: number, message: string) => void) {
     this.poll_worker = new Worker("poll_worker.js");
     this.send_worker = new Worker("send_worker.js");
+
     this.poll_worker.onmessage = async (e) => {
       const [date, username, chatID, message] = e.data;
-      console.debug(`[Main] Received: ${message} from ${username}`)
-      responseSender(date * 1000, username, chatID, message)
+      console.debug(`[Main] Received: ${message} from ${username}`);
+      responseSender(date * 1000, username, chatID, message);
 
-      if (!this.command.has(message)) {
-        console.debug(`[Main] Command ${message} not found`)
-        return
+      const response = this.handleMessage(message);
+      if (response === undefined) {
+        console.debug(`[Main] No matching rule for ${message}`);
+        return;
       }
 
-      console.debug(`[Main] Has command ${message}`)
-      const callback = this.command.get(message);
-
-      const response = callback!()
-      console.debug(`[Main] Sending ${response}`)
-
-
-      this.send_worker!.postMessage([`${this.url}/sendMessage`, response, chatID]);
+      const responses = Array.isArray(response) ? response : [response];
+      console.debug(`[Main] Sending ${responses}`);
+      for (const reply of responses) {
+        this.send_worker!.postMessage([`${this.url}/sendMessage`, reply, chatID]);
+      }
     };
 
     const updateUrl = `${this.url}/getUpdates`;
@@ -45,12 +60,12 @@ export class BrowserBot {
 
   sendMessage(userID: number, message: string) {
     if (!this.send_worker) {
-      console.debug(`Init worker first before sending message`)
-      return
+      console.debug(`Init worker first before sending message`);
+      return;
     }
 
-    console.debug(`Sending to ${userID}: ${message}`)
-    this.send_worker!.postMessage([`${this.url}/sendMessage`, message, userID])
+    console.debug(`Sending to ${userID}: ${message}`);
+    this.send_worker!.postMessage([`${this.url}/sendMessage`, message, userID]);
   }
 
   stop() {
