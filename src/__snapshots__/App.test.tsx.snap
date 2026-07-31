@@ -13,76 +13,96 @@ Object {
           style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
         >
           <div
-            class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
+            class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-11k1kgo-MuiToolbar-root"
           >
             <h6
-              class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h6 css-lbrw2m-MuiTypography-root"
             >
               BrowserBot
             </h6>
+            <div
+              class="MuiBox-root css-i9gxme"
+            >
+              <div
+                class="MuiTabs-root css-jhczcq-MuiTabs-root"
+              >
+                <div
+                  class="MuiTabs-scroller MuiTabs-fixed css-s2t35c-MuiTabs-scroller"
+                  style="overflow: hidden; margin-bottom: 0px;"
+                >
+                  <div
+                    class="MuiTabs-list MuiTabs-flexContainer css-hzcega-MuiTabs-list"
+                    role="tablist"
+                  >
+                    <button
+                      aria-selected="true"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                      role="tab"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Programs
+                    </button>
+                    <button
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                      role="tab"
+                      tabindex="-1"
+                      type="button"
+                    >
+                      Chat
+                    </button>
+                    <button
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                      role="tab"
+                      tabindex="-1"
+                      type="button"
+                    >
+                      Settings
+                    </button>
+                    <button
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                      role="tab"
+                      tabindex="-1"
+                      type="button"
+                    >
+                      Docs
+                    </button>
+                  </div>
+                  <span
+                    class="MuiTabs-indicator css-1qltlow-MuiTabs-indicator"
+                    style="left: 0px; width: 0px;"
+                  />
+                </div>
+              </div>
+            </div>
+            <p
+              class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+            >
+              Bot stopped
+            </p>
+            <button
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
+              type="button"
+            >
+              Start
+            </button>
+            <button
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
+              disabled=""
+              tabindex="-1"
+              type="button"
+            >
+              Stop
+            </button>
           </div>
         </header>
         <div
           class="MuiContainer-root MuiContainer-maxWidthLg css-5c1adp-MuiContainer-root"
         >
-          <div
-            class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
-          >
-            <h3
-              class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
-            >
-              API Token
-            </h3>
-            <p
-              class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-            >
-              Please enter your API token to save it to local storage.
-            </p>
-            <br />
-            <p
-              class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-            >
-              API Token
-            </p>
-            <div
-              class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
-            >
-              <div
-                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
-              >
-                <input
-                  aria-invalid="false"
-                  class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
-                  id="_r_0_"
-                  type="text"
-                  value=""
-                />
-                <fieldset
-                  aria-hidden="true"
-                  class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
-                >
-                  <legend
-                    class="css-1nf2c5d-MuiNotchedOutlined-root"
-                  >
-                    <span
-                      aria-hidden="true"
-                      class="notranslate"
-                    >
-                      ​
-                    </span>
-                  </legend>
-                </fieldset>
-              </div>
-            </div>
-            <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
-              tabindex="0"
-              type="button"
-            >
-              Save
-            </button>
-            <br />
-          </div>
           <div>
             <h3
               class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
@@ -301,145 +321,6 @@ Object {
               No programs yet — drag a block or load a sample above.
             </p>
           </div>
-          <br />
-          <h3
-            class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
-          >
-            Send a Custom message
-          </h3>
-          <p
-            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-          >
-            You can only send messages to users you have received messages from.
-          </p>
-          <div
-            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiSelect-root css-1ln7fuk-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-          >
-            <div
-              aria-expanded="false"
-              aria-haspopup="listbox"
-              class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-18jp67o-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-              role="combobox"
-              tabindex="0"
-            >
-              Select a value
-            </div>
-            <input
-              aria-hidden="true"
-              aria-invalid="false"
-              class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
-              tabindex="-1"
-              value="0"
-            />
-            <svg
-              aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1rfqz7c-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
-              data-testid="ArrowDropDownIcon"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
-            >
-              <legend
-                class="css-1nf2c5d-MuiNotchedOutlined-root"
-              >
-                <span
-                  aria-hidden="true"
-                  class="notranslate"
-                >
-                  ​
-                </span>
-              </legend>
-            </fieldset>
-          </div>
-          <div
-            class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary css-1i753ds-MuiInputBase-root-MuiInput-root"
-          >
-            <input
-              class="MuiInputBase-input MuiInput-input css-1yrc8ca-MuiInputBase-input-MuiInput-input"
-              type="text"
-              value=""
-            />
-          </div>
-          <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-17fwciq-MuiButtonBase-root-MuiButton-root"
-            tabindex="0"
-            type="button"
-          >
-            Send
-          </button>
-          <hr />
-          <p
-            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-          >
-            Bot 
-            stopped
-          </p>
-          <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
-            tabindex="0"
-            type="button"
-          >
-            Start
-          </button>
-          <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
-            disabled=""
-            tabindex="-1"
-            type="button"
-          >
-            Stop
-          </button>
-          <div
-            class="MuiTableContainer-root css-70zvr5-MuiTableContainer-root"
-            style="max-height: 100%; overflow: scroll;"
-          >
-            <table
-              class="MuiTable-root css-1xwxv7r-MuiTable-root"
-            >
-              <thead
-                class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-              >
-                <tr
-                  class="MuiTableRow-root MuiTableRow-head css-1xtozoh-MuiTableRow-root"
-                >
-                  <th
-                    class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                    scope="col"
-                  >
-                    Date
-                  </th>
-                  <th
-                    class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                    scope="col"
-                  >
-                    User
-                  </th>
-                  <th
-                    class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                    scope="col"
-                  >
-                    UserID
-                  </th>
-                  <th
-                    class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                    scope="col"
-                  >
-                    Message
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-              />
-            </table>
-          </div>
         </div>
         <footer
           class="footer MuiBox-root css-0"
@@ -473,76 +354,96 @@ Object {
         style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
       >
         <div
-          class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
+          class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-11k1kgo-MuiToolbar-root"
         >
           <h6
-            class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 css-lbrw2m-MuiTypography-root"
           >
             BrowserBot
           </h6>
+          <div
+            class="MuiBox-root css-i9gxme"
+          >
+            <div
+              class="MuiTabs-root css-jhczcq-MuiTabs-root"
+            >
+              <div
+                class="MuiTabs-scroller MuiTabs-fixed css-s2t35c-MuiTabs-scroller"
+                style="overflow: hidden; margin-bottom: 0px;"
+              >
+                <div
+                  class="MuiTabs-list MuiTabs-flexContainer css-hzcega-MuiTabs-list"
+                  role="tablist"
+                >
+                  <button
+                    aria-selected="true"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                    role="tab"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Programs
+                  </button>
+                  <button
+                    aria-selected="false"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                    role="tab"
+                    tabindex="-1"
+                    type="button"
+                  >
+                    Chat
+                  </button>
+                  <button
+                    aria-selected="false"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                    role="tab"
+                    tabindex="-1"
+                    type="button"
+                  >
+                    Settings
+                  </button>
+                  <button
+                    aria-selected="false"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1usuzwp-MuiButtonBase-root-MuiTab-root"
+                    role="tab"
+                    tabindex="-1"
+                    type="button"
+                  >
+                    Docs
+                  </button>
+                </div>
+                <span
+                  class="MuiTabs-indicator css-1qltlow-MuiTabs-indicator"
+                  style="left: 0px; width: 0px;"
+                />
+              </div>
+            </div>
+          </div>
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+          >
+            Bot stopped
+          </p>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            Start
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
+            disabled=""
+            tabindex="-1"
+            type="button"
+          >
+            Stop
+          </button>
         </div>
       </header>
       <div
         class="MuiContainer-root MuiContainer-maxWidthLg css-5c1adp-MuiContainer-root"
       >
-        <div
-          class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
-        >
-          <h3
-            class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
-          >
-            API Token
-          </h3>
-          <p
-            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-          >
-            Please enter your API token to save it to local storage.
-          </p>
-          <br />
-          <p
-            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-          >
-            API Token
-          </p>
-          <div
-            class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
-          >
-            <div
-              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
-            >
-              <input
-                aria-invalid="false"
-                class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
-                id="_r_0_"
-                type="text"
-                value=""
-              />
-              <fieldset
-                aria-hidden="true"
-                class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
-              >
-                <legend
-                  class="css-1nf2c5d-MuiNotchedOutlined-root"
-                >
-                  <span
-                    aria-hidden="true"
-                    class="notranslate"
-                  >
-                    ​
-                  </span>
-                </legend>
-              </fieldset>
-            </div>
-          </div>
-          <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
-            tabindex="0"
-            type="button"
-          >
-            Save
-          </button>
-          <br />
-        </div>
         <div>
           <h3
             class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
@@ -760,145 +661,6 @@ Object {
           >
             No programs yet — drag a block or load a sample above.
           </p>
-        </div>
-        <br />
-        <h3
-          class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
-        >
-          Send a Custom message
-        </h3>
-        <p
-          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-        >
-          You can only send messages to users you have received messages from.
-        </p>
-        <div
-          class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiSelect-root css-1ln7fuk-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-        >
-          <div
-            aria-expanded="false"
-            aria-haspopup="listbox"
-            class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-18jp67o-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-            role="combobox"
-            tabindex="0"
-          >
-            Select a value
-          </div>
-          <input
-            aria-hidden="true"
-            aria-invalid="false"
-            class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
-            tabindex="-1"
-            value="0"
-          />
-          <svg
-            aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1rfqz7c-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
-            data-testid="ArrowDropDownIcon"
-            focusable="false"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M7 10l5 5 5-5z"
-            />
-          </svg>
-          <fieldset
-            aria-hidden="true"
-            class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
-          >
-            <legend
-              class="css-1nf2c5d-MuiNotchedOutlined-root"
-            >
-              <span
-                aria-hidden="true"
-                class="notranslate"
-              >
-                ​
-              </span>
-            </legend>
-          </fieldset>
-        </div>
-        <div
-          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary css-1i753ds-MuiInputBase-root-MuiInput-root"
-        >
-          <input
-            class="MuiInputBase-input MuiInput-input css-1yrc8ca-MuiInputBase-input-MuiInput-input"
-            type="text"
-            value=""
-          />
-        </div>
-        <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-17fwciq-MuiButtonBase-root-MuiButton-root"
-          tabindex="0"
-          type="button"
-        >
-          Send
-        </button>
-        <hr />
-        <p
-          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-        >
-          Bot 
-          stopped
-        </p>
-        <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1elmdwi-MuiButtonBase-root-MuiButton-root"
-          tabindex="0"
-          type="button"
-        >
-          Start
-        </button>
-        <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-1f7qp0x-MuiButtonBase-root-MuiButton-root"
-          disabled=""
-          tabindex="-1"
-          type="button"
-        >
-          Stop
-        </button>
-        <div
-          class="MuiTableContainer-root css-70zvr5-MuiTableContainer-root"
-          style="max-height: 100%; overflow: scroll;"
-        >
-          <table
-            class="MuiTable-root css-1xwxv7r-MuiTable-root"
-          >
-            <thead
-              class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-            >
-              <tr
-                class="MuiTableRow-root MuiTableRow-head css-1xtozoh-MuiTableRow-root"
-              >
-                <th
-                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                  scope="col"
-                >
-                  Date
-                </th>
-                <th
-                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                  scope="col"
-                >
-                  User
-                </th>
-                <th
-                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                  scope="col"
-                >
-                  UserID
-                </th>
-                <th
-                  class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-1orzuox-MuiTableCell-root"
-                  scope="col"
-                >
-                  Message
-                </th>
-              </tr>
-            </thead>
-            <tbody
-              class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-            />
-          </table>
         </div>
       </div>
       <footer

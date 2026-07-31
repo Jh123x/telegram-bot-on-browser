@@ -6,6 +6,7 @@ import {
 import App from "./App.tsx";
 import { test, expect } from "@jest/globals";
 import React from "react";
+import { fireEvent, screen } from "@testing-library/react";
 
 beforeEach(() => {
   localStorage.clear();
@@ -119,4 +120,25 @@ test("hydrates saved programs under StrictMode without clobbering localStorage",
   // still sees them and the store is populated.
   expect(localStorage.getItem("programs")).toBe(saved);
   expect(store.getState().bot.programs).toEqual(savedPrograms);
+});
+
+test("switching tabs shows the right page", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  // Default page is Programs.
+  expect(screen.getByText("Blocks")).toBeTruthy();
+
+  fireEvent.click(screen.getByRole("tab", { name: "Chat" }));
+  expect(screen.getByText("Send a Custom message")).toBeTruthy();
+
+  fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
+  expect(screen.getByDisplayValue("")).toBeTruthy();
+
+  fireEvent.click(screen.getByRole("tab", { name: "Docs" }));
+  expect(screen.getByRole("heading", { name: "Docs" })).toBeTruthy();
+  expect(screen.getByText("Coming soon")).toBeTruthy();
+
+  fireEvent.click(screen.getByRole("tab", { name: "Programs" }));
+  expect(screen.getByText("Blocks")).toBeTruthy();
 });
