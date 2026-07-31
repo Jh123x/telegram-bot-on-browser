@@ -8,7 +8,7 @@
 }
 
 .text_box {
-  color: black;
+  color: #f2f2f7;
   display: flex;
   justify-content: center;
   flex-direction: row;

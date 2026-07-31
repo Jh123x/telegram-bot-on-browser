@@ -9,14 +9,14 @@ Object {
         class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-disableGutters css-5re47a-MuiContainer-root"
       >
         <header
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-8qyt43-MuiPaper-root-MuiAppBar-root"
-          style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-qcvv0j-MuiPaper-root-MuiAppBar-root"
+          style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.092), rgba(255, 255, 255, 0.092));"
         >
           <div
             class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-11k1kgo-MuiToolbar-root"
           >
             <h6
-              class="MuiTypography-root MuiTypography-h6 css-lbrw2m-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h6 css-1xhyl9q-MuiTypography-root"
             >
               BrowserBot
             </h6>
@@ -36,7 +36,7 @@ Object {
                   >
                     <button
                       aria-selected="true"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-veleun-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-3vpty3-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="0"
                       type="button"
@@ -45,7 +45,7 @@ Object {
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -54,7 +54,7 @@ Object {
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -63,7 +63,7 @@ Object {
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -72,26 +72,26 @@ Object {
                     </button>
                   </div>
                   <span
-                    class="MuiTabs-indicator css-3igp6m-MuiTabs-indicator"
+                    class="MuiTabs-indicator css-1bevw78-MuiTabs-indicator"
                     style="left: 0px; width: 0px;"
                   />
                 </div>
               </div>
             </div>
             <p
-              class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
             >
               Bot stopped
             </p>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1fx25q3-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
               tabindex="0"
               type="button"
             >
               Start
             </button>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-anx6g5-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
               disabled=""
               tabindex="-1"
               type="button"
@@ -105,44 +105,44 @@ Object {
         >
           <div>
             <h3
-              class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h3 css-xrxebb-MuiTypography-root"
             >
               Programs
             </h3>
             <p
-              class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
             >
               Drag blocks from the palette onto a program, or click to add. When a user sends a message, the first program whose trigger matches replies with its actions.
             </p>
             <div
-              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ixwgkl-MuiPaper-root"
-              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
+              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
             >
               <h6
-                class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
               >
                 Blocks
               </h6>
               <span
-                class="MuiTypography-root MuiTypography-caption css-mpaqru-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
               >
                 Drag a block onto a program below.
               </span>
               <h6
-                class="MuiTypography-root MuiTypography-subtitle2 css-1q4tb3w-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-subtitle2 css-tme4xk-MuiTypography-root"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
                 />
                 Triggers
               </h6>
               <div
                 data-testid="palette-trigger-equals"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
                 />
                 When 
                 message equals
@@ -150,10 +150,10 @@ Object {
               <div
                 data-testid="palette-trigger-contains"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
                 />
                 When 
                 message contains
@@ -161,10 +161,10 @@ Object {
               <div
                 data-testid="palette-trigger-startsWith"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
                 />
                 When 
                 message starts with
@@ -172,135 +172,135 @@ Object {
               <div
                 data-testid="palette-trigger-endsWith"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
                 />
                 When 
                 message ends with
               </div>
               <h6
-                class="MuiTypography-root MuiTypography-subtitle2 css-1m5vqf5-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
                 />
                 Logic
               </h6>
               <div
                 data-testid="palette-logic-lengthGreater"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #d9770640; border-radius: 6px; cursor: grab; background-color: rgb(254, 243, 199); color: rgb(217, 119, 6);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
                 />
                 message length is greater than
               </div>
               <div
                 data-testid="palette-logic-lengthLess"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #d9770640; border-radius: 6px; cursor: grab; background-color: rgb(254, 243, 199); color: rgb(217, 119, 6);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
                 />
                 message length is less than
               </div>
               <div
                 data-testid="palette-logic-matchesRegex"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #d9770640; border-radius: 6px; cursor: grab; background-color: rgb(254, 243, 199); color: rgb(217, 119, 6);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
                 />
                 message matches regex
               </div>
               <h6
-                class="MuiTypography-root MuiTypography-subtitle2 css-1m5vqf5-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
                 />
                 Transform
               </h6>
               <div
                 data-testid="palette-transform-uppercase"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
                 />
                 make uppercase
               </div>
               <div
                 data-testid="palette-transform-lowercase"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
                 />
                 make lowercase
               </div>
               <div
                 data-testid="palette-transform-trim"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
                 />
                 trim whitespace
               </div>
               <div
                 data-testid="palette-transform-replace"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
                 />
                 replace text
               </div>
               <h6
-                class="MuiTypography-root MuiTypography-subtitle2 css-1m5vqf5-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
                 />
                 Action
               </h6>
               <div
                 data-testid="palette-action-reply"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #05966940; border-radius: 6px; cursor: grab; background-color: rgb(209, 250, 229); color: rgb(5, 150, 105);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
                 />
                 reply with text
               </div>
               <div
                 data-testid="palette-action-random"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #05966940; border-radius: 6px; cursor: grab; background-color: rgb(209, 250, 229); color: rgb(5, 150, 105);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
                 />
                 reply random choice
               </div>
               <div
                 data-testid="palette-action-echo"
                 draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #05966940; border-radius: 6px; cursor: grab; background-color: rgb(209, 250, 229); color: rgb(5, 150, 105);"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
               >
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
                 />
                 echo the message
               </div>
@@ -309,16 +309,16 @@ Object {
               class="MuiBox-root css-1yuhvjn"
             >
               <div
-                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ixwgkl-MuiPaper-root"
-                style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
+                style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >
                 <h6
-                  class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
+                  class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
                 >
                   Samples
                 </h6>
                 <span
-                  class="MuiTypography-root MuiTypography-caption css-mpaqru-MuiTypography-root"
+                  class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
                 >
                   Click a sample to add it as a program.
                 </span>
@@ -327,42 +327,42 @@ Object {
                   data-testid="samples-buttons"
                 >
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                     tabindex="0"
                     type="button"
                   >
                     Welcome
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                     tabindex="0"
                     type="button"
                   >
                     Coin Flip
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                     tabindex="0"
                     type="button"
                   >
                     Help
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                     tabindex="0"
                     type="button"
                   >
                     Echo Clean
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                     tabindex="0"
                     type="button"
                   >
                     Shout
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                     tabindex="0"
                     type="button"
                   >
@@ -372,14 +372,14 @@ Object {
               </div>
             </div>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-bp26w6-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-keq513-MuiButtonBase-root-MuiButton-root"
               tabindex="0"
               type="button"
             >
               + New Program
             </button>
             <p
-              class="MuiTypography-root MuiTypography-body2 css-7ctihp-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
             >
               No programs yet — drag a block or load a sample above.
             </p>
@@ -392,7 +392,7 @@ Object {
             class="MuiContainer-root MuiContainer-maxWidthSm css-zzzaw2-MuiContainer-root"
           >
             <p
-              class="MuiTypography-root MuiTypography-body2 text_box css-7ctihp-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body2 text_box css-ruqefn-MuiTypography-root"
             >
               Copyright ©
               <a
@@ -413,14 +413,14 @@ Object {
       class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-disableGutters css-5re47a-MuiContainer-root"
     >
       <header
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-8qyt43-MuiPaper-root-MuiAppBar-root"
-        style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-qcvv0j-MuiPaper-root-MuiAppBar-root"
+        style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.092), rgba(255, 255, 255, 0.092));"
       >
         <div
           class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-11k1kgo-MuiToolbar-root"
         >
           <h6
-            class="MuiTypography-root MuiTypography-h6 css-lbrw2m-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 css-1xhyl9q-MuiTypography-root"
           >
             BrowserBot
           </h6>
@@ -440,7 +440,7 @@ Object {
                 >
                   <button
                     aria-selected="true"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-veleun-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-3vpty3-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="0"
                     type="button"
@@ -449,7 +449,7 @@ Object {
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -458,7 +458,7 @@ Object {
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -467,7 +467,7 @@ Object {
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -476,26 +476,26 @@ Object {
                   </button>
                 </div>
                 <span
-                  class="MuiTabs-indicator css-3igp6m-MuiTabs-indicator"
+                  class="MuiTabs-indicator css-1bevw78-MuiTabs-indicator"
                   style="left: 0px; width: 0px;"
                 />
               </div>
             </div>
           </div>
           <p
-            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
           >
             Bot stopped
           </p>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-1fx25q3-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             Start
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-anx6g5-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
             disabled=""
             tabindex="-1"
             type="button"
@@ -509,44 +509,44 @@ Object {
       >
         <div>
           <h3
-            class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h3 css-xrxebb-MuiTypography-root"
           >
             Programs
           </h3>
           <p
-            class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
           >
             Drag blocks from the palette onto a program, or click to add. When a user sends a message, the first program whose trigger matches replies with its actions.
           </p>
           <div
-            class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ixwgkl-MuiPaper-root"
-            style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+            class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
+            style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
           >
             <h6
-              class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
             >
               Blocks
             </h6>
             <span
-              class="MuiTypography-root MuiTypography-caption css-mpaqru-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
             >
               Drag a block onto a program below.
             </span>
             <h6
-              class="MuiTypography-root MuiTypography-subtitle2 css-1q4tb3w-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-subtitle2 css-tme4xk-MuiTypography-root"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
               />
               Triggers
             </h6>
             <div
               data-testid="palette-trigger-equals"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
               />
               When 
               message equals
@@ -554,10 +554,10 @@ Object {
             <div
               data-testid="palette-trigger-contains"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
               />
               When 
               message contains
@@ -565,10 +565,10 @@ Object {
             <div
               data-testid="palette-trigger-startsWith"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
               />
               When 
               message starts with
@@ -576,135 +576,135 @@ Object {
             <div
               data-testid="palette-trigger-endsWith"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #2563eb40; border-radius: 6px; cursor: grab; background-color: rgb(219, 234, 254); color: rgb(37, 99, 235);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(37, 99, 235); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
               />
               When 
               message ends with
             </div>
             <h6
-              class="MuiTypography-root MuiTypography-subtitle2 css-1m5vqf5-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
               />
               Logic
             </h6>
             <div
               data-testid="palette-logic-lengthGreater"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #d9770640; border-radius: 6px; cursor: grab; background-color: rgb(254, 243, 199); color: rgb(217, 119, 6);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
               />
               message length is greater than
             </div>
             <div
               data-testid="palette-logic-lengthLess"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #d9770640; border-radius: 6px; cursor: grab; background-color: rgb(254, 243, 199); color: rgb(217, 119, 6);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
               />
               message length is less than
             </div>
             <div
               data-testid="palette-logic-matchesRegex"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #d9770640; border-radius: 6px; cursor: grab; background-color: rgb(254, 243, 199); color: rgb(217, 119, 6);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(217, 119, 6); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
               />
               message matches regex
             </div>
             <h6
-              class="MuiTypography-root MuiTypography-subtitle2 css-1m5vqf5-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
               />
               Transform
             </h6>
             <div
               data-testid="palette-transform-uppercase"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
               />
               make uppercase
             </div>
             <div
               data-testid="palette-transform-lowercase"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
               />
               make lowercase
             </div>
             <div
               data-testid="palette-transform-trim"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
               />
               trim whitespace
             </div>
             <div
               data-testid="palette-transform-replace"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #7c3aed40; border-radius: 6px; cursor: grab; background-color: rgb(237, 233, 254); color: rgb(124, 58, 237);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(124, 58, 237); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
               />
               replace text
             </div>
             <h6
-              class="MuiTypography-root MuiTypography-subtitle2 css-1m5vqf5-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
               />
               Action
             </h6>
             <div
               data-testid="palette-action-reply"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #05966940; border-radius: 6px; cursor: grab; background-color: rgb(209, 250, 229); color: rgb(5, 150, 105);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
               />
               reply with text
             </div>
             <div
               data-testid="palette-action-random"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #05966940; border-radius: 6px; cursor: grab; background-color: rgb(209, 250, 229); color: rgb(5, 150, 105);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
               />
               reply random choice
             </div>
             <div
               data-testid="palette-action-echo"
               draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #05966940; border-radius: 6px; cursor: grab; background-color: rgb(209, 250, 229); color: rgb(5, 150, 105);"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
             >
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(5, 150, 105); margin-right: 6px;"
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
               />
               echo the message
             </div>
@@ -713,16 +713,16 @@ Object {
             class="MuiBox-root css-1yuhvjn"
           >
             <div
-              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ixwgkl-MuiPaper-root"
-              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
+              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
             >
               <h6
-                class="MuiTypography-root MuiTypography-h6 css-1miy0lu-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
               >
                 Samples
               </h6>
               <span
-                class="MuiTypography-root MuiTypography-caption css-mpaqru-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
               >
                 Click a sample to add it as a program.
               </span>
@@ -731,42 +731,42 @@ Object {
                 data-testid="samples-buttons"
               >
                 <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                   tabindex="0"
                   type="button"
                 >
                   Welcome
                 </button>
                 <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                   tabindex="0"
                   type="button"
                 >
                   Coin Flip
                 </button>
                 <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                   tabindex="0"
                   type="button"
                 >
                   Help
                 </button>
                 <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                   tabindex="0"
                   type="button"
                 >
                   Echo Clean
                 </button>
                 <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                   tabindex="0"
                   type="button"
                 >
                   Shout
                 </button>
                 <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-17jan90-MuiButtonBase-root-MuiButton-root"
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
                   tabindex="0"
                   type="button"
                 >
@@ -776,14 +776,14 @@ Object {
             </div>
           </div>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-bp26w6-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-keq513-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             + New Program
           </button>
           <p
-            class="MuiTypography-root MuiTypography-body2 css-7ctihp-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
           >
             No programs yet — drag a block or load a sample above.
           </p>
@@ -796,7 +796,7 @@ Object {
           class="MuiContainer-root MuiContainer-maxWidthSm css-zzzaw2-MuiContainer-root"
         >
           <p
-            class="MuiTypography-root MuiTypography-body2 text_box css-7ctihp-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body2 text_box css-ruqefn-MuiTypography-root"
           >
             Copyright ©
             <a
