@@ -6,7 +6,7 @@ import React from "react";
 import { BotWithConfig } from "../redux/types";
 import { Program } from "../interfaces/program.ts";
 import { addResponse, addUser } from "../redux/botSlice.ts";
-import { matchTrigger, executeActions } from "../logic/program.ts";
+import { matchTrigger, executeBlocks } from "../logic/program.ts";
 import { CustomChat } from "./CustomMessage.tsx";
 
 export const BotOperation = () => {
@@ -24,7 +24,7 @@ export const BotOperation = () => {
     programs.forEach((program) => {
       bot.addRule(
         (message) => matchTrigger(program.trigger, message),
-        (message) => executeActions(program.actions, message)
+        (message) => executeBlocks(program.blocks, message)
       );
     });
   }, [bot, programs]);

@@ -58,7 +58,16 @@ test("full flow: matching poll message causes send_worker to post the program's 
           id: "p1",
           name: "Greet",
           trigger: { type: "equals", value: "/start" },
-          actions: [{ id: "a1", type: "reply", value: "hi" }],
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "hi",
+              value2: "",
+              fallback: "",
+            },
+          ],
         },
       ],
       response: [],
@@ -95,7 +104,16 @@ test("poll message that does not match any program does not trigger send_worker"
           id: "p1",
           name: "Greet",
           trigger: { type: "equals", value: "/start" },
-          actions: [{ id: "a1", type: "reply", value: "hi" }],
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "hi",
+              value2: "",
+              fallback: "",
+            },
+          ],
         },
       ],
       response: [],
@@ -125,9 +143,23 @@ test("a program with multiple actions sends every action's response to send_work
           id: "p1",
           name: "Multi",
           trigger: { type: "equals", value: "/start" },
-          actions: [
-            { id: "a1", type: "reply", value: "hi" },
-            { id: "a2", type: "echo", value: "" },
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "hi",
+              value2: "",
+              fallback: "",
+            },
+            {
+              id: "b2",
+              category: "action",
+              kind: "echo",
+              value: "",
+              value2: "",
+              fallback: "",
+            },
           ],
         },
       ],
@@ -197,4 +229,101 @@ test("clicking Stop terminates both workers and shows 'Bot stopped'", async () =
   expect(instances[0].terminate).toHaveBeenCalledTimes(1);
   expect(instances[1].terminate).toHaveBeenCalledTimes(1);
   expect(screen.getByText(/Bot stopped/i)).toBeTruthy();
+});
+
+test("a transform + echo program sends the transformed message", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Shout",
+          trigger: { type: "contains", value: "shout" },
+          blocks: [
+            {
+              id: "b1",
+              category: "transform",
+              kind: "uppercase",
+              value: "",
+              value2: "",
+              fallback: "",
+            },
+            {
+              id: "b2",
+              category: "action",
+              kind: "echo",
+              value: "",
+              value2: "",
+              fallback: "",
+            },
+          ],
+        },
+      ],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<BotOperation />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
+
+  await waitFor(() => expect(instances.length).toBe(2));
+
+  const poll = instances[0];
+  const send = instances[1];
+
+  await poll.onmessage!({ data: [1234, "alice", 42, "shout hello"] });
+
+  expect(send.postMessage).toHaveBeenCalledTimes(1);
+  expect(send.postMessage).toHaveBeenCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "SHOUT HELLO",
+    42,
+  ]);
+});
+
+test("a failed logic block sends its fallback reply", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Short",
+          trigger: { type: "contains", value: "/start" },
+          blocks: [
+            {
+              id: "b1",
+              category: "logic",
+              kind: "lengthLess",
+              value: "5",
+              value2: "",
+              fallback: "Too long",
+            },
+          ],
+        },
+      ],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<BotOperation />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
+
+  await waitFor(() => expect(instances.length).toBe(2));
+
+  const poll = instances[0];
+  const send = instances[1];
+
+  // "/start long message" has length 18, not less than 5 -> fallback "Too long"
+  await poll.onmessage!({ data: [1234, "alice", 42, "/start long message"] });
+
+  expect(send.postMessage).toHaveBeenCalledTimes(1);
+  expect(send.postMessage).toHaveBeenCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "Too long",
+    42,
+  ]);
 });

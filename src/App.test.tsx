@@ -30,7 +30,16 @@ test("hydrates store from localStorage token and programs on mount", () => {
         id: "p1",
         name: "Greet",
         trigger: { type: "equals", value: "/start" },
-        actions: [{ id: "a1", type: "reply", value: "hi" }],
+        blocks: [
+          {
+            id: "b1",
+            category: "action",
+            kind: "reply",
+            value: "hi",
+            value2: "",
+            fallback: "",
+          },
+        ],
       },
     ])
   );
@@ -44,7 +53,16 @@ test("hydrates store from localStorage token and programs on mount", () => {
       id: "p1",
       name: "Greet",
       trigger: { type: "equals", value: "/start" },
-      actions: [{ id: "a1", type: "reply", value: "hi" }],
+      blocks: [
+        {
+          id: "b1",
+          category: "action",
+          kind: "reply",
+          value: "hi",
+          value2: "",
+          fallback: "",
+        },
+      ],
     },
   ]);
 });

@@ -17,7 +17,7 @@ test("renders all sample names", () => {
     screen.getByText("Click a sample to add it as a program.")
   ).toBeInTheDocument();
 
-  for (const name of ["Welcome", "Coin Flip", "Help", "Echo"]) {
+  for (const name of ["Welcome", "Coin Flip", "Help", "Echo Clean", "Shout", "Short Replies"]) {
     expect(screen.getByRole("button", { name })).toBeInTheDocument();
   }
 });
@@ -32,5 +32,10 @@ test("clicking Coin Flip dispatches addProgram with a fresh program", () => {
   expect(programs).toHaveLength(1);
   expect(programs[0].name).toBe("Coin Flip");
   expect(programs[0].trigger).toEqual({ type: "equals", value: "/flip" });
-  expect(programs[0].actions[0].id).not.toBe("sample-flip");
+  expect(programs[0].blocks[0].id).not.toBe("sample-flip");
+  expect(programs[0].blocks[0]).toMatchObject({
+    category: "action",
+    kind: "random",
+    value: "Heads\nTails",
+  });
 });

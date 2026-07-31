@@ -10,7 +10,7 @@ const makeProgram = (name: string, triggerValue = ""): Program => ({
   id: name.toLowerCase() + "-id",
   name,
   trigger: { type: "equals", value: triggerValue },
-  actions: [],
+  blocks: [],
 });
 
 const makeStore = (programs: Program[] = []) =>
@@ -50,7 +50,7 @@ test("clicking + New Program adds a default program", () => {
   const program = store.getState().bot.programs[0];
   expect(program.name).toBe("New Program");
   expect(program.trigger).toEqual({ type: "equals", value: "" });
-  expect(program.actions).toEqual([]);
+  expect(program.blocks).toEqual([]);
 });
 
 test("clicking Coin Flip sample adds it", () => {
@@ -79,7 +79,16 @@ test("persists programs to localStorage and persists edited user details", () =>
     id: "p-greet",
     name: "Greet",
     trigger: { type: "equals", value: "/start" },
-    actions: [{ id: "a1", type: "reply", value: "hi" }],
+    blocks: [
+      {
+        id: "b1",
+        category: "action",
+        kind: "reply",
+        value: "hi",
+        value2: "",
+        fallback: "",
+      },
+    ],
   };
   const store2 = makeStore([preloaded]);
   renderWithProviders(<ProgramEditor />, { store: store2 });
@@ -116,4 +125,29 @@ test("renders programs from store", () => {
   renderWithProviders(<ProgramEditor />, { store });
 
   expect(screen.getByTestId("program-card-Visible")).toBeTruthy();
+});
+
+test("preloaded program's block editor is visible", () => {
+  const preloaded: Program = {
+    id: "p-greet",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "action",
+        kind: "reply",
+        value: "hi",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  const store = makeStore([preloaded]);
+  renderWithProviders(<ProgramEditor />, { store });
+
+  expect(screen.getByTestId("blocks-zone-p-greet")).toBeTruthy();
+  expect(screen.getByText("Then")).toBeTruthy();
+  expect(within(screen.getByTestId("blocks-zone-p-greet")).getByText("reply with text")).toBeTruthy();
+  expect(screen.getByLabelText("Response")).toBeTruthy();
 });
