@@ -7,6 +7,7 @@ import {
 import {
   matchTrigger,
   applyTransform,
+  transformPreview,
   checkLogic,
   executeBlocks,
   executeProgram,
@@ -125,6 +126,38 @@ describe("applyTransform", () => {
       fallback: "",
     };
     expect(applyTransform(block, " unchanged ")).toBe(" unchanged ");
+  });
+});
+
+describe("transformPreview", () => {
+  test("uppercase transforms the default Hello World input to HELLO WORLD", () => {
+    const block = transformBlock("uppercase");
+    expect(transformPreview(block)).toBe("HELLO WORLD");
+  });
+
+  test("lowercase lowercases the input", () => {
+    const block = transformBlock("lowercase");
+    expect(transformPreview(block, "Say Hello")).toBe("say hello");
+  });
+
+  test("trim removes surrounding whitespace", () => {
+    const block = transformBlock("trim");
+    expect(transformPreview(block, "  Hello World  ")).toBe("Hello World");
+  });
+
+  test("replace swaps the found text for the replacement", () => {
+    const block = transformBlock("replace", "World", "There");
+    expect(transformPreview(block, "Hello World")).toBe("Hello There");
+  });
+
+  test("replace with an empty find leaves the input unchanged", () => {
+    const block = transformBlock("replace", "", "There");
+    expect(transformPreview(block, "Hello World")).toBe("Hello World");
+  });
+
+  test("non-transform block returns the input unchanged", () => {
+    const block = actionBlock("echo");
+    expect(transformPreview(block, "Hello World")).toBe("Hello World");
   });
 });
 

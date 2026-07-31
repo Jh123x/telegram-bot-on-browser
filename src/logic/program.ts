@@ -110,6 +110,18 @@ export function applyTransform(block: Block, data: string): string {
   }
 }
 
+// Pure preview of the value that would flow out of a transform node. Used by
+// the visual data-flow pipeline. Non-transform blocks (and replace with an
+// empty find) pass the input through unchanged.
+export function transformPreview(
+  block: Block,
+  input: string = "Hello World"
+): string {
+  if (block.category !== "transform") return input;
+  if (block.kind === "replace" && block.value.trim() === "") return input;
+  return applyTransform(block, input);
+}
+
 export function checkLogic(block: Block, message: string): boolean {
   switch (block.kind) {
     case "lengthGreater": {

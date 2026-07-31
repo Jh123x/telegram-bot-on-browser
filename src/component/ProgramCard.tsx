@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Button,
   Chip,
@@ -28,6 +28,7 @@ import {
   TRIGGER_LABELS,
   TRANSFORM_LABELS,
   createBlock,
+  transformPreview,
 } from "../logic/program.ts";
 import { BotWithConfig } from "../redux/types.ts";
 import { BLOCK_COLORS } from "../theme.ts";
@@ -55,17 +56,105 @@ interface ProgramCardProps {
   onMoveDown: (id: string) => void;
 }
 
+// A hint describing what value/label flows out of a node in the pipeline.
+type NodeHint =
+  | { category: "transform"; text: string }
+  | { category: "logic"; fallback: string }
+  | { category: "action"; text: string };
+
 interface BlockRowProps {
   block: Block;
   blockIndex: number;
+  hint?: NodeHint;
   onChange: (id: string, patch: Partial<Block>) => void;
   onKindChange: (id: string, kind: Block["kind"]) => void;
   onDelete: (id: string) => void;
 }
 
+// Round input/output port marker for a pipeline node.
+const Port = ({
+  testId,
+  color,
+  label,
+}: {
+  testId: string;
+  color: string;
+  label?: string;
+}) => (
+  <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>
+    <Box
+      data-testid={testId}
+      sx={{
+        width: 12,
+        height: 12,
+        borderRadius: "50%",
+        border: `2px solid ${color}`,
+        bgcolor: "background.paper",
+        flexShrink: 0,
+      }}
+    />
+    {label && (
+      <Typography
+        variant="caption"
+        sx={{ color: "text.secondary", fontSize: 10, lineHeight: 1 }}
+      >
+        {label}
+      </Typography>
+    )}
+  </Box>
+);
+
+// Vertical connector line showing the message flowing between nodes.
+const Connector = ({ color }: { color: string }) => (
+  <Box
+    sx={{
+      width: 2,
+      height: 14,
+      bgcolor: color,
+      margin: "0 auto",
+      opacity: 0.6,
+    }}
+  />
+);
+
+// Small chip showing the flowing value / gate / reply shape for a node.
+const HintChip = ({ hint }: { hint: NodeHint }) => {
+  if (hint.category === "transform") {
+    return (
+      <Chip
+        size="small"
+        label={hint.text}
+        sx={{
+          bgcolor: BLOCK_COLORS.transform.bg,
+          color: BLOCK_COLORS.transform.main,
+          fontFamily: "monospace",
+        }}
+      />
+    );
+  }
+  if (hint.category === "logic") {
+    const label = hint.fallback ? `else → ${hint.fallback}` : "else → silent";
+    return (
+      <Chip
+        size="small"
+        label={label}
+        sx={{ bgcolor: BLOCK_COLORS.logic.bg, color: BLOCK_COLORS.logic.main }}
+      />
+    );
+  }
+  return (
+    <Chip
+      size="small"
+      label={hint.text}
+      sx={{ bgcolor: BLOCK_COLORS.action.bg, color: BLOCK_COLORS.action.main }}
+    />
+  );
+};
+
 const BlockRow = ({
   block,
   blockIndex,
+  hint,
   onChange,
   onKindChange,
   onDelete,
@@ -168,30 +257,50 @@ const BlockRow = ({
   };
 
   return (
-    <Box display="flex" alignItems="center" gap={1} sx={{ mb: 1 }}>
-      <Typography variant="body2" sx={{ minWidth: 20, color: "text.secondary" }}>
-        {blockIndex}.
-      </Typography>
-      <Chip
-        size="small"
-        label={BLOCK_CATEGORY_LABELS[block.category]}
-        sx={{
-          bgcolor: BLOCK_COLORS[block.category].bg,
-          color: BLOCK_COLORS[block.category].main,
-          fontWeight: 600,
-        }}
-      />
-      <Select
-        size="small"
-        value={block.kind}
-        onChange={(e) => onKindChange(block.id, e.target.value as Block["kind"])}
-      >
-        {renderKindOptions()}
-      </Select>
-      {renderValueInputs()}
-      <IconButton aria-label="Delete block" onClick={() => onDelete(block.id)}>
-        ✕
-      </IconButton>
+    <Box sx={{ mb: 1 }}>
+      <Box display="flex" alignItems="center" gap={1}>
+        <Port
+          testId={`block-input-${block.id}`}
+          color={BLOCK_COLORS[block.category].main}
+          label="in"
+        />
+        <Typography
+          variant="body2"
+          sx={{ minWidth: 20, color: "text.secondary" }}
+        >
+          {blockIndex}.
+        </Typography>
+        <Chip
+          size="small"
+          label={BLOCK_CATEGORY_LABELS[block.category]}
+          sx={{
+            bgcolor: BLOCK_COLORS[block.category].bg,
+            color: BLOCK_COLORS[block.category].main,
+            fontWeight: 600,
+          }}
+        />
+        <Select
+          size="small"
+          value={block.kind}
+          onChange={(e) => onKindChange(block.id, e.target.value as Block["kind"])}
+        >
+          {renderKindOptions()}
+        </Select>
+        {renderValueInputs()}
+        <IconButton aria-label="Delete block" onClick={() => onDelete(block.id)}>
+          ✕
+        </IconButton>
+        <Port
+          testId={`block-output-${block.id}`}
+          color={BLOCK_COLORS[block.category].main}
+          label="out"
+        />
+      </Box>
+      {hint && (
+        <Box sx={{ ml: 6, mt: 0.5 }} data-testid={`value-hint-${block.id}`}>
+          <HintChip hint={hint} />
+        </Box>
+      )}
     </Box>
   );
 };
@@ -243,6 +352,36 @@ export const ProgramCard = ({
   const deleteBlock = (id: string) =>
     update({ blocks: current.blocks.filter((b) => b.id !== id) });
 
+  // Compute the value that flows out of each node (a live preview of the
+  // pipeline using the default "Hello World" user message).
+  const hints = new Map<string, NodeHint>();
+  let flowing = "Hello World";
+  for (const b of current.blocks) {
+    if (b.category === "transform") {
+      flowing = transformPreview(b, flowing);
+      hints.set(b.id, { category: "transform", text: flowing });
+    } else if (b.category === "logic") {
+      hints.set(b.id, { category: "logic", fallback: b.fallback });
+    } else {
+      let text: string;
+      if (b.kind === "reply") {
+        text = `reply: ${b.value || "(empty)"}`;
+      } else if (b.kind === "random") {
+        const opts = b.value
+          .split("\n")
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0);
+        text =
+          opts.length > 0
+            ? `random: ${opts.map((o) => `"${o}"`).join(", ")}`
+            : "random: (no options)";
+      } else {
+        text = `echo: ${flowing}`;
+      }
+      hints.set(b.id, { category: "action", text });
+    }
+  }
+
   return (
     <Paper
       variant="outlined"
@@ -281,34 +420,56 @@ export const ProgramCard = ({
       </Box>
 
       <Box
-        display="flex"
-        alignItems="center"
-        gap={1}
-        sx={{ mb: 2 }}
         data-testid={`trigger-zone-${current.id}`}
+        sx={{ mb: 2 }}
       >
-        <Typography>When</Typography>
-        <Select
-          value={current.trigger.type}
-          onChange={(e) =>
-            update({
-              trigger: { ...current.trigger, type: e.target.value as TriggerType },
-            })
-          }
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={1}
+          sx={{ border: 1, borderColor: BLOCK_COLORS.trigger.main, borderRadius: 1.5, p: 1 }}
         >
-          {TRIGGER_TYPES.map((t) => (
-            <MenuItem key={t} value={t}>
-              {TRIGGER_LABELS[t]}
-            </MenuItem>
-          ))}
-        </Select>
-        <TextField
-          label="Trigger value"
-          value={current.trigger.value}
-          onChange={(e) =>
-            update({ trigger: { ...current.trigger, value: e.target.value } })
-          }
-        />
+          <Port
+            testId={`trigger-input-${current.id}`}
+            color={BLOCK_COLORS.trigger.main}
+            label="user message"
+          />
+          <Chip
+            size="small"
+            label="message"
+            sx={{
+              bgcolor: BLOCK_COLORS.trigger.bg,
+              color: BLOCK_COLORS.trigger.main,
+            }}
+          />
+          <Typography>When</Typography>
+          <Select
+            value={current.trigger.type}
+            onChange={(e) =>
+              update({
+                trigger: { ...current.trigger, type: e.target.value as TriggerType },
+              })
+            }
+          >
+            {TRIGGER_TYPES.map((t) => (
+              <MenuItem key={t} value={t}>
+                {TRIGGER_LABELS[t]}
+              </MenuItem>
+            ))}
+          </Select>
+          <TextField
+            label="Trigger value"
+            value={current.trigger.value}
+            onChange={(e) =>
+              update({ trigger: { ...current.trigger, value: e.target.value } })
+            }
+          />
+          <Port
+            testId={`trigger-output-${current.id}`}
+            color={BLOCK_COLORS.trigger.main}
+            label="out"
+          />
+        </Box>
       </Box>
 
       <Box data-testid={`blocks-zone-${current.id}`}>
@@ -319,16 +480,23 @@ export const ProgramCard = ({
             click add below.
           </Typography>
         ) : (
-          current.blocks.map((block, i) => (
-            <BlockRow
-              key={block.id}
-              block={block}
-              blockIndex={i + 1}
-              onChange={changeBlockValue}
-              onKindChange={changeBlockKind}
-              onDelete={deleteBlock}
-            />
-          ))
+          <Box data-testid={`pipeline-${current.id}`} sx={{ mb: 1 }}>
+            {current.blocks.map((block, i) => (
+              <Fragment key={block.id}>
+                <Connector
+                  color={BLOCK_COLORS[block.category].main}
+                />
+                <BlockRow
+                  block={block}
+                  blockIndex={i + 1}
+                  hint={hints.get(block.id)}
+                  onChange={changeBlockValue}
+                  onKindChange={changeBlockKind}
+                  onDelete={deleteBlock}
+                />
+              </Fragment>
+            ))}
+          </Box>
         )}
         <Box display="flex" gap={1} sx={{ mt: 1 }}>
           <Button

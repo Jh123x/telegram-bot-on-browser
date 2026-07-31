@@ -375,3 +375,76 @@ test("dropping malformed JSON does not crash and state unchanged", () => {
   expect(store.getState().bot.programs[0].trigger.type).toBe("equals");
   expect(store.getState().bot.programs[0].blocks).toHaveLength(1);
 });
+
+const getTransformProgram = (): Program => ({
+  id: "p1",
+  name: "Greet",
+  trigger: { type: "equals", value: "/start" },
+  blocks: [
+    {
+      id: "b1",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+    },
+    {
+      id: "b2",
+      category: "action",
+      kind: "echo",
+      value: "",
+      value2: "",
+      fallback: "",
+    },
+  ],
+});
+
+const getLogicProgram = (): Program => ({
+  id: "p1",
+  name: "Greet",
+  trigger: { type: "equals", value: "/start" },
+  blocks: [
+    {
+      id: "b1",
+      category: "logic",
+      kind: "lengthLess",
+      value: "10",
+      value2: "",
+      fallback: "Too long",
+    },
+  ],
+});
+
+test("renders a value chip after a transform block showing the transformed preview", () => {
+  renderCard(getTransformProgram(), 0, 1);
+  expect(screen.getByTestId("value-hint-b1")).toBeTruthy();
+  expect(screen.getByText("HELLO WORLD")).toBeTruthy();
+});
+
+test("renders an input port and an output port marker per block", () => {
+  renderCard(getTransformProgram(), 0, 1);
+  expect(screen.getByTestId("block-input-b1")).toBeTruthy();
+  expect(screen.getByTestId("block-output-b1")).toBeTruthy();
+  expect(screen.getByTestId("block-input-b2")).toBeTruthy();
+  expect(screen.getByTestId("block-output-b2")).toBeTruthy();
+});
+
+test("logic node shows an else fallback hint", () => {
+  renderCard(getLogicProgram(), 0, 1);
+  expect(screen.getByTestId("value-hint-b1")).toBeTruthy();
+  expect(screen.getByText(/else → Too long/)).toBeTruthy();
+});
+
+test("logic node shows else silent when no fallback is set", () => {
+  const p = getLogicProgram();
+  p.blocks[0].fallback = "";
+  renderCard(p, 0, 1);
+  expect(screen.getByText(/else → silent/)).toBeTruthy();
+});
+
+test("trigger node shows a user message input port and label", () => {
+  renderCard(makeProgram(), 0, 1);
+  expect(screen.getByTestId("trigger-input-p1")).toBeTruthy();
+  expect(within(screen.getByTestId("trigger-zone-p1")).getByText("message")).toBeTruthy();
+});
