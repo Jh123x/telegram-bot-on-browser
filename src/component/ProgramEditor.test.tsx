@@ -151,3 +151,20 @@ test("preloaded program's block editor is visible", () => {
   expect(within(screen.getByTestId("blocks-zone-p-greet")).getByText("reply with text")).toBeTruthy();
   expect(screen.getByLabelText("Response")).toBeTruthy();
 });
+
+test("StrictMode double-mount does not clobber saved programs in localStorage", () => {
+  const saved = JSON.stringify([makeProgram("Greet", "/start")]);
+  localStorage.setItem("programs", saved);
+
+  const store = makeStore([makeProgram("Greet", "/start")]);
+  renderWithProviders(
+    <React.StrictMode>
+      <ProgramEditor />
+    </React.StrictMode>,
+    { store }
+  );
+
+  // The mount-only effect run (twice under StrictMode) must not overwrite
+  // the saved programs with an empty array before App hydrates them.
+  expect(localStorage.getItem("programs")).toBe(saved);
+});

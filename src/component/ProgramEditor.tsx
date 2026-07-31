@@ -15,15 +15,20 @@ export const ProgramEditor = () => {
     (state) => state.bot.programs
   );
 
-  // Skip writing on the very first mount so we do not clobber localStorage
-  // before App hydrates saved programs/token on startup.
-  const hasMounted = useRef(false);
+  // Persist user-entered program details to localStorage on every change.
+  // Guard: the first effect run (including StrictMode's simulated remount)
+  // establishes a baseline and never writes, so we do not clobber saved
+  // programs before App hydrates them on startup.
+  const lastWritten = useRef<string | null>(null);
   useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
+    const serialized = JSON.stringify(programs);
+    if (lastWritten.current === serialized) return;
+    if (lastWritten.current === null) {
+      lastWritten.current = serialized;
       return;
     }
-    localStorage.setItem("programs", JSON.stringify(programs));
+    lastWritten.current = serialized;
+    localStorage.setItem("programs", serialized);
   }, [programs]);
 
   const moveProgram = (id: string, direction: -1 | 1) => {

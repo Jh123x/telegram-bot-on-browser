@@ -84,3 +84,39 @@ test("hydrates token when only token is stored (no programs key)", () => {
   expect(store.getState().bot.token).toBe("only-token");
   expect(store.getState().bot.programs).toEqual([]);
 });
+
+test("hydrates saved programs under StrictMode without clobbering localStorage", () => {
+  const savedPrograms = [
+    {
+      id: "p1",
+      name: "Greet",
+      trigger: { type: "equals", value: "/start" },
+      blocks: [
+        {
+          id: "b1",
+          category: "action",
+          kind: "reply",
+          value: "hi",
+          value2: "",
+          fallback: "",
+        },
+      ],
+    },
+  ];
+  const saved = JSON.stringify(savedPrograms);
+  localStorage.setItem("programs", saved);
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    { store }
+  );
+
+  // The editor's persistence effect must not overwrite saved programs with
+  // an empty array during StrictMode's double mount, so App hydration
+  // still sees them and the store is populated.
+  expect(localStorage.getItem("programs")).toBe(saved);
+  expect(store.getState().bot.programs).toEqual(savedPrograms);
+});
