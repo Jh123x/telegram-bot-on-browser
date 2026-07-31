@@ -9,8 +9,9 @@ You can visit the site [here](https://telebot.jh123x.com/ "Telegram Bot on Brows
 
 ## Features
 
-1. Send replies based on response. (Currently only able to send fixed replies from fixed responses)
+1. Drag-and-drop programming: build bot reply logic with trigger, logic, transform and action blocks.
 2. No server required. (Runs in the browser directly)
+3. Sample programs to get started (welcome, coin flip, echo, shout, and more).
 
 ## Tech Stack:
 
@@ -23,5 +24,5 @@ You can visit the site [here](https://telebot.jh123x.com/ "Telegram Bot on Brows
 - [x] Send replies from bots
 - [x] Receive chats from users
 - [x] Send custom chat to users
-- [ ] Process user-made commands on the website
+- [x] Process user-made commands on the website
 - [ ] Export file as an express telegram bot application
