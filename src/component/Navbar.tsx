@@ -39,6 +39,7 @@ export const Navbar = ({
       <Box sx={{ flexGrow: 1 }}>
         <Tabs
           value={page}
+          textColor="inherit"
           onChange={(_e, value: Page) => onPageChange(value)}
         >
           {PAGE_TABS.map((tab) => (

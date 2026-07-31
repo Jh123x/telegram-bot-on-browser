@@ -77,6 +77,17 @@ test("when started shows Bot started and clicking Stop calls onStop", () => {
   expect(onStop).toHaveBeenCalledTimes(1);
 });
 
+test("tabs inherit the app bar text color so labels stay visible on the primary background", () => {
+  renderNavbar();
+
+  // The AppBar background is primary (blue). The default Tabs textColor is
+  // "primary", which makes the selected tab's label the same color as the
+  // background — invisible. Inheriting the AppBar's contrast text keeps
+  // every label readable on the bar.
+  const tab = screen.getByRole("tab", { name: "Programs" });
+  expect(tab.className).toContain("MuiTab-textColorInherit");
+});
+
 test("clicking a tab calls onPageChange with the right value", () => {
   const { onPageChange } = renderNavbar({ page: "programs" });
 

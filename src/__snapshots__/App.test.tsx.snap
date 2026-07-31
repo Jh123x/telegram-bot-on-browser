@@ -36,7 +36,7 @@ Object {
                   >
                     <button
                       aria-selected="true"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-q047qg-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-veleun-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="0"
                       type="button"
@@ -45,7 +45,7 @@ Object {
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-q047qg-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -54,7 +54,7 @@ Object {
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-q047qg-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -63,7 +63,7 @@ Object {
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-q047qg-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -431,7 +431,7 @@ Object {
                 >
                   <button
                     aria-selected="true"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-q047qg-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-veleun-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="0"
                     type="button"
@@ -440,7 +440,7 @@ Object {
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-q047qg-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -449,7 +449,7 @@ Object {
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-q047qg-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -458,7 +458,7 @@ Object {
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-q047qg-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-veleun-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
