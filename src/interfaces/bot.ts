@@ -32,7 +32,10 @@ export class BrowserBot {
     return undefined;
   }
 
-  start(responseSender: (date: number, user: string, id: number, message: string) => void) {
+  start(
+    responseSender: (date: number, user: string, id: number, message: string) => void,
+    replySender?: (date: number, user: string, id: number, message: string) => void
+  ) {
     this.poll_worker = new Worker("poll_worker.js");
     this.send_worker = new Worker("send_worker.js");
 
@@ -51,6 +54,9 @@ export class BrowserBot {
       console.debug(`[Main] Sending ${responses}`);
       for (const reply of responses) {
         this.send_worker!.postMessage([`${this.url}/sendMessage`, reply, chatID]);
+        if (replySender !== undefined) {
+          replySender(Date.now(), username, chatID, reply);
+        }
       }
     };
 

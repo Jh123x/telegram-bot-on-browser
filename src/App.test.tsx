@@ -130,14 +130,14 @@ test("switching tabs shows the right page", () => {
   expect(screen.getByText("Blocks")).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Chat" }));
-  expect(screen.getByText("Send a Custom message")).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Chat" })).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
   expect(screen.getByDisplayValue("")).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Docs" }));
   expect(screen.getByRole("heading", { name: "Docs" })).toBeTruthy();
-  expect(screen.getByText("Getting Started")).toBeTruthy();
+  expect(screen.getAllByText("Getting Started").length).toBeGreaterThan(0);
 
   fireEvent.click(screen.getByRole("tab", { name: "Programs" }));
   expect(screen.getByText("Blocks")).toBeTruthy();

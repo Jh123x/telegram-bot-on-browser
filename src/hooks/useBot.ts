@@ -27,10 +27,17 @@ export const useBot = () => {
 
   const start = () => {
     if (!bot || started) return;
-    bot.start((date: number, user: string, id: number, msg: string) => {
-      dispatch(addResponse({ FromUser: user, UserID: id, Message: msg, TimeStamp: date }));
-      dispatch(addUser({ UserID: id, Username: user }));
-    });
+    bot.start(
+      (date: number, user: string, id: number, msg: string) => {
+        dispatch(addResponse({ FromUser: user, UserID: id, Message: msg, TimeStamp: date }));
+        dispatch(addUser({ UserID: id, Username: user }));
+      },
+      (date: number, user: string, id: number, reply: string) => {
+        dispatch(
+          addResponse({ FromUser: "Bot", UserID: id, Message: reply, TimeStamp: date, fromBot: true })
+        );
+      }
+    );
     setStarted(true);
   };
 

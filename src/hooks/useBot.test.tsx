@@ -112,10 +112,48 @@ test("start() creates two workers, sets started=true, and dispatches responses/u
   ]);
   expect(store.getState().bot.response).toEqual([
     { FromUser: "alice", UserID: 42, Message: "/hello", TimeStamp: 1234000 },
+    expect.objectContaining({ FromUser: "Bot", UserID: 42, Message: "hi", fromBot: true }),
   ]);
   expect(store.getState().bot.users).toEqual([
     { Username: "alice", UserID: 42 },
   ]);
+});
+
+test("start() dispatches bot replies with fromBot=true and FromUser='Bot'", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [program()],
+      response: [],
+      users: [],
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  const poll = instances[0];
+
+  await act(async () => {
+    await poll.onmessage!({ data: [1234, "alice", 42, "/hello"] });
+  });
+
+  const responses = store.getState().bot.response;
+  expect(responses).toHaveLength(2);
+  expect(responses[0]).toEqual({
+    FromUser: "alice",
+    UserID: 42,
+    Message: "/hello",
+    TimeStamp: 1234000,
+  });
+  expect(responses[1]).toMatchObject({
+    FromUser: "Bot",
+    UserID: 42,
+    Message: "hi",
+    fromBot: true,
+  });
+  expect(responses[1].TimeStamp).toEqual(expect.any(Number));
 });
 
 test("start() when already started does nothing", () => {

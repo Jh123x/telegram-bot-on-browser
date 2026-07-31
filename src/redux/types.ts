@@ -21,4 +21,5 @@ export interface Response {
     UserID: number
     Message: string
     TimeStamp: number
+    fromBot?: boolean
 }

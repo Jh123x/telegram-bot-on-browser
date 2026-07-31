@@ -123,6 +123,29 @@ test("matching rule callback returning a string sends a single response to send_
   expect(bot.send_worker!.postMessage).toHaveBeenCalledWith([SEND_URL, "hi", 123]);
 });
 
+test("start() with a replySender invokes it for every reply posted to send_worker", async () => {
+  const bot = createBot();
+  bot.addRule((m) => m === "/hello", (m) => ["a", "b"]);
+  const replySender = jest.fn();
+  bot.start(() => {}, replySender);
+
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/hello"] });
+
+  expect(replySender).toHaveBeenCalledTimes(2);
+  expect(replySender).toHaveBeenNthCalledWith(1, expect.any(Number), "alice", 123, "a");
+  expect(replySender).toHaveBeenNthCalledWith(2, expect.any(Number), "alice", 123, "b");
+});
+
+test("start() with a replySender does not call it when there is no matching rule", async () => {
+  const bot = createBot();
+  const replySender = jest.fn();
+  bot.start(() => {}, replySender);
+
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/nope"] });
+
+  expect(replySender).not.toHaveBeenCalled();
+});
+
 test("no matching rule -> send_worker.postMessage not called", async () => {
   const bot = createBot();
   bot.start(() => {});
