@@ -152,6 +152,14 @@ test("preloaded program's block editor is visible", () => {
   expect(screen.getByLabelText("Response")).toBeTruthy();
 });
 
+test("spaces the + New Program button from the program cards below it", () => {
+  const store = makeStore();
+  renderWithProviders(<ProgramEditor />, { store });
+
+  const button = screen.getByRole("button", { name: "+ New Program" });
+  expect(button).toHaveStyle({ marginBottom: "16px" });
+});
+
 test("StrictMode double-mount does not clobber saved programs in localStorage", () => {
   const saved = JSON.stringify([makeProgram("Greet", "/start")]);
   localStorage.setItem("programs", saved);

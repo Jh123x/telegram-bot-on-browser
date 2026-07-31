@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { ProgramPalette } from "./ProgramPalette.tsx";
 import { ProgramSamples } from "./ProgramSamples.tsx";
 import { ProgramCard } from "./ProgramCard.tsx";
@@ -50,9 +50,12 @@ export const ProgramEditor = () => {
         with its actions.
       </Typography>
       <ProgramPalette />
-      <ProgramSamples />
+      <Box sx={{ mt: 2 }}>
+        <ProgramSamples />
+      </Box>
       <Button
         variant="contained"
+        sx={{ mt: 2, mb: 2 }}
         onClick={() => dispatch(addProgram(createProgram()))}
       >
         + New Program

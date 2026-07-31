@@ -22,6 +22,15 @@ test("renders all sample names", () => {
   }
 });
 
+test("lays out sample buttons with a gap so they do not touch each other", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<ProgramSamples />, { store });
+
+  const container = screen.getByTestId("samples-buttons");
+  expect(container).toHaveStyle({ display: "flex" });
+  expect(container).toHaveStyle({ gap: "8px" });
+});
+
 test("clicking Coin Flip dispatches addProgram with a fresh program", () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(<ProgramSamples />, { store });

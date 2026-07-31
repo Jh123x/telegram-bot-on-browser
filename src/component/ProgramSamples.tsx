@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { SAMPLE_PROGRAMS, programFromSample } from "../logic/samples.ts";
 import { addProgram } from "../redux/botSlice.ts";
@@ -13,15 +13,20 @@ export const ProgramSamples = () => {
       <Typography variant="caption">
         Click a sample to add it as a program.
       </Typography>
-      {SAMPLE_PROGRAMS.map((sample) => (
-        <Button
-          key={sample.name}
-          variant="outlined"
-          onClick={() => dispatch(addProgram(programFromSample(sample)))}
-        >
-          {sample.name}
-        </Button>
-      ))}
+      <Box
+        data-testid="samples-buttons"
+        sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}
+      >
+        {SAMPLE_PROGRAMS.map((sample) => (
+          <Button
+            key={sample.name}
+            variant="outlined"
+            onClick={() => dispatch(addProgram(programFromSample(sample)))}
+          >
+            {sample.name}
+          </Button>
+        ))}
+      </Box>
     </Paper>
   );
 };
