@@ -4,10 +4,13 @@ import { generateId } from "./program.ts";
 export interface ProgramSample {
   name: string;
   trigger: Program["trigger"];
-  actions: {
+  blocks: {
     id: string;
-    type: Program["actions"][number]["type"];
+    category: Program["blocks"][number]["category"];
+    kind: Program["blocks"][number]["kind"];
     value: string;
+    value2: string;
+    fallback: string;
   }[];
 }
 
@@ -15,22 +18,110 @@ export const SAMPLE_PROGRAMS: ProgramSample[] = [
   {
     name: "Welcome",
     trigger: { type: "equals", value: "/start" },
-    actions: [{ id: "sample-welcome", type: "reply", value: "Welcome! I'm a browser bot 🤖" }],
+    blocks: [
+      {
+        id: "sample-welcome",
+        category: "action",
+        kind: "reply",
+        value: "Welcome! I'm a browser bot 🤖",
+        value2: "",
+        fallback: "",
+      },
+    ],
   },
   {
     name: "Coin Flip",
     trigger: { type: "equals", value: "/flip" },
-    actions: [{ id: "sample-flip", type: "random", value: "Heads\nTails" }],
+    blocks: [
+      {
+        id: "sample-flip",
+        category: "action",
+        kind: "random",
+        value: "Heads\nTails",
+        value2: "",
+        fallback: "",
+      },
+    ],
   },
   {
     name: "Help",
     trigger: { type: "contains", value: "help" },
-    actions: [{ id: "sample-help", type: "reply", value: "Try /start, /flip, or say 'say hello'." }],
+    blocks: [
+      {
+        id: "sample-help",
+        category: "action",
+        kind: "reply",
+        value: "Try /start, /flip, /shout, or say 'say hello'.",
+        value2: "",
+        fallback: "",
+      },
+    ],
   },
   {
-    name: "Echo",
+    name: "Echo Clean",
     trigger: { type: "startsWith", value: "say " },
-    actions: [{ id: "sample-echo", type: "echo", value: "" }],
+    blocks: [
+      {
+        id: "sample-echo-clean",
+        category: "transform",
+        kind: "replace",
+        value: "say ",
+        value2: "",
+        fallback: "",
+      },
+      {
+        id: "sample-echo-clean-2",
+        category: "action",
+        kind: "echo",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  },
+  {
+    name: "Shout",
+    trigger: { type: "contains", value: "shout" },
+    blocks: [
+      {
+        id: "sample-shout",
+        category: "transform",
+        kind: "uppercase",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+      {
+        id: "sample-shout-2",
+        category: "action",
+        kind: "echo",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  },
+  {
+    name: "Short Replies",
+    trigger: { type: "equals", value: "/short" },
+    blocks: [
+      {
+        id: "sample-short",
+        category: "logic",
+        kind: "lengthLess",
+        value: "10",
+        value2: "",
+        fallback: "That's all you have to say?",
+      },
+      {
+        id: "sample-short-2",
+        category: "action",
+        kind: "echo",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
   },
 ];
 
@@ -39,8 +130,8 @@ export function programFromSample(sample: ProgramSample): Program {
     id: generateId(),
     name: sample.name,
     trigger: { ...sample.trigger },
-    actions: sample.actions.map((action) => ({
-      ...action,
+    blocks: sample.blocks.map((block) => ({
+      ...block,
       id: generateId(),
     })),
   };
