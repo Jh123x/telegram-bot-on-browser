@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Button,
+  Chip,
   IconButton,
   MenuItem,
   Paper,
@@ -29,6 +30,7 @@ import {
   createBlock,
 } from "../logic/program.ts";
 import { BotWithConfig } from "../redux/types.ts";
+import { BLOCK_COLORS } from "../theme.ts";
 
 const TRIGGER_TYPES: TriggerType[] = [
   "equals",
@@ -167,9 +169,18 @@ const BlockRow = ({
 
   return (
     <Box display="flex" alignItems="center" gap={1} sx={{ mb: 1 }}>
-      <Typography variant="body2" sx={{ minWidth: 70 }}>
-        {BLOCK_CATEGORY_LABELS[block.category]}
+      <Typography variant="body2" sx={{ minWidth: 20, color: "text.secondary" }}>
+        {blockIndex}.
       </Typography>
+      <Chip
+        size="small"
+        label={BLOCK_CATEGORY_LABELS[block.category]}
+        sx={{
+          bgcolor: BLOCK_COLORS[block.category].bg,
+          color: BLOCK_COLORS[block.category].main,
+          fontWeight: 600,
+        }}
+      />
       <Select
         size="small"
         value={block.kind}

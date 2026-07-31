@@ -21,6 +21,5 @@ test("renders the chat page with custom message and log box", () => {
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
   expect(screen.getByText("Send a Custom message")).toBeTruthy();
-  expect(screen.getByText("Date")).toBeTruthy();
-  expect(screen.getByText("Message")).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Messages" })).toBeTruthy();
 });

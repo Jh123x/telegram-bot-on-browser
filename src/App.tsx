@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { CssBaseline, Container } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import { theme } from "./theme.ts";
 import { Navbar, Page } from "./component/Navbar.tsx";
 import { Footer } from "./component/Footer.tsx";
 import { SettingsPage } from "./pages/SettingsPage.tsx";
@@ -25,17 +27,19 @@ export const App = () => {
   }, [dispatch]);
 
   return (
-    <Container sx={{ height: "100%", maxWidth: "100%", width: "100%", minWidth: "100%", margin: 0, padding: 0 }} disableGutters={true}>
-      <CssBaseline />
-      <Navbar page={page} onPageChange={setPage} started={started} onStart={start} onStop={stop} />
-      <Container>
-        {page === "settings" && <SettingsPage />}
-        {page === "programs" && <ProgramsPage />}
-        {page === "chat" && <ChatPage bot={bot} />}
-        {page === "docs" && <DocsPage />}
+    <ThemeProvider theme={theme}>
+      <Container sx={{ height: "100%", maxWidth: "100%", width: "100%", minWidth: "100%", margin: 0, padding: 0 }} disableGutters={true}>
+        <CssBaseline />
+        <Navbar page={page} onPageChange={setPage} started={started} onStart={start} onStop={stop} />
+        <Container>
+          {page === "settings" && <SettingsPage />}
+          {page === "programs" && <ProgramsPage />}
+          {page === "chat" && <ChatPage bot={bot} />}
+          {page === "docs" && <DocsPage />}
+        </Container>
+        <Footer />
       </Container>
-      <Footer />
-    </Container>
+    </ThemeProvider>
   );
 };
 export default App;

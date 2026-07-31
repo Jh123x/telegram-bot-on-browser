@@ -71,6 +71,16 @@ test("renders program name, trigger select, trigger value, block label and value
   expect(actionValue.value).toBe("hi");
 });
 
+test("block rows show a category chip and step number", () => {
+  renderCard(makeProgram(), 0, 1);
+
+  // Category label rendered inside the block row (chip).
+  const zone = screen.getByTestId("blocks-zone-p1");
+  expect(within(zone).getByText("Action")).toBeTruthy();
+  // Step number showing pipeline order.
+  expect(within(zone).getByText("1.")).toBeTruthy();
+});
+
 test("changing the name field dispatches updateProgram", () => {
   const { store } = renderCard(makeProgram(), 0, 1);
   fireEvent.change(screen.getByLabelText("Program name"), {

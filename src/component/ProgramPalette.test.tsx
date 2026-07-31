@@ -2,6 +2,7 @@ import { test, expect } from "@jest/globals";
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ProgramPalette } from "./ProgramPalette";
+import { BLOCK_COLORS } from "../theme.ts";
 
 const createDataTransfer = (payload: string) =>
   ({
@@ -185,4 +186,33 @@ test("action blocks drag with the correct category and type", () => {
       JSON.stringify({ kind, category, type })
     );
   }
+});
+
+test("blocks carry a color dot in their category color", () => {
+  render(<ProgramPalette />);
+
+  // style.backgroundColor is normalized by the browser to rgb(r, g, b)
+  const hexToRgb = (hex: string) => {
+    const value = hex.replace("#", "");
+    const r = parseInt(value.slice(0, 2), 16);
+    const g = parseInt(value.slice(2, 4), 16);
+    const b = parseInt(value.slice(4, 6), 16);
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
+  const triggerDot = screen
+    .getByTestId("palette-trigger-equals")
+    .querySelector("span");
+  expect(triggerDot).not.toBeNull();
+  expect(triggerDot!.style.backgroundColor).toBe(
+    hexToRgb(BLOCK_COLORS.trigger.main)
+  );
+
+  const actionDot = screen
+    .getByTestId("palette-action-reply")
+    .querySelector("span");
+  expect(actionDot).not.toBeNull();
+  expect(actionDot!.style.backgroundColor).toBe(
+    hexToRgb(BLOCK_COLORS.action.main)
+  );
 });

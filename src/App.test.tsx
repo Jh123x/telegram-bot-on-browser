@@ -137,7 +137,7 @@ test("switching tabs shows the right page", () => {
 
   fireEvent.click(screen.getByRole("tab", { name: "Docs" }));
   expect(screen.getByRole("heading", { name: "Docs" })).toBeTruthy();
-  expect(screen.getByText("Coming soon")).toBeTruthy();
+  expect(screen.getByText("Getting Started")).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Programs" }));
   expect(screen.getByText("Blocks")).toBeTruthy();
