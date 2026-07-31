@@ -103,7 +103,7 @@ export const SAMPLE_PROGRAMS: ProgramSample[] = [
   },
   {
     name: "Short Replies",
-    trigger: { type: "equals", value: "/short" },
+    trigger: { type: "startsWith", value: "/short" },
     blocks: [
       {
         id: "sample-short",
@@ -111,7 +111,15 @@ export const SAMPLE_PROGRAMS: ProgramSample[] = [
         kind: "lengthLess",
         value: "10",
         value2: "",
-        fallback: "That's all you have to say?",
+        fallback: "Too long! Keep it under 10 characters.",
+      },
+      {
+        id: "sample-short-1",
+        category: "transform",
+        kind: "replace",
+        value: "/short ",
+        value2: "",
+        fallback: "",
       },
       {
         id: "sample-short-2",

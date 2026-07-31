@@ -371,3 +371,25 @@ describe("programFromSample", () => {
     expect(program.blocks[0].id).not.toBe(sample.blocks[0].id);
   });
 });
+
+describe("Short Replies sample program", () => {
+  const shortProgram = () => {
+    const sample = SAMPLE_PROGRAMS.find((s) => s.name === "Short Replies");
+    if (!sample) throw new Error("Short Replies sample not found");
+    return programFromSample(sample);
+  };
+
+  test("echoes a short message that passes the length gate", () => {
+    expect(executeProgram(shortProgram(), "/short hi")).toEqual(["hi"]);
+  });
+
+  test("rejects a long message with the fallback text", () => {
+    expect(executeProgram(shortProgram(), "/short hello world this is long")).toEqual([
+      "Too long! Keep it under 10 characters.",
+    ]);
+  });
+
+  test("does not trigger on a plain message without the /short prefix", () => {
+    expect(executeProgram(shortProgram(), "plain message")).toEqual([]);
+  });
+});
