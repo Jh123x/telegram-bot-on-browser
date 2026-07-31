@@ -53,7 +53,7 @@ Object {
                 <input
                   aria-invalid="false"
                   class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
-                  id="«r0»"
+                  id="_r_0_"
                   type="text"
                   value=""
                 />
@@ -432,7 +432,7 @@ Object {
               <input
                 aria-invalid="false"
                 class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
-                id="«r0»"
+                id="_r_0_"
                 type="text"
                 value=""
               />
