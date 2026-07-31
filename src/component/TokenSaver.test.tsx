@@ -49,3 +49,17 @@ test("preloaded token is rendered in the token field", () => {
     const input = screen.getByRole("textbox") as HTMLInputElement;
     expect(input.value).toBe("preloaded-token");
 });
+
+test("renders the iOS-style BOT section header", () => {
+    const store = setupStore(generateDefaultState());
+    renderWithProviders(<TokenSaver />, { store });
+
+    expect(screen.getByText("BOT")).toBeTruthy();
+});
+
+test("renders the localStorage caption below the card", () => {
+    const store = setupStore(generateDefaultState());
+    renderWithProviders(<TokenSaver />, { store });
+
+    expect(screen.getByText(/stored locally in your browser/i)).toBeTruthy();
+});

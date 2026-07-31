@@ -1,13 +1,23 @@
 import { test, expect } from "@jest/globals";
 import React from "react";
 import { screen } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react";
 import { generateDefaultState, renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { SettingsPage } from "./SettingsPage.tsx";
 
-test("renders the settings page with the token input", () => {
+beforeEach(() => {
+  localStorage.clear();
+});
+
+afterEach(() => {
+  localStorage.clear();
+});
+
+test("renders the settings page title and the token input", () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(<SettingsPage />, { store });
 
+  expect(screen.getByRole("heading", { name: "Settings" })).toBeTruthy();
   expect(screen.getByRole("heading", { name: "API Token" })).toBeTruthy();
   expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
 });
@@ -19,4 +29,38 @@ test("renders the token value from the store in the input", () => {
   renderWithProviders(<SettingsPage />, { store });
 
   expect(screen.getByDisplayValue("abc:TOKEN")).toBeTruthy();
+});
+
+test("renders the iOS-style BOT section header", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<SettingsPage />, { store });
+
+  expect(screen.getByText("BOT")).toBeTruthy();
+});
+
+test("renders the token input and Save button as rows inside the grouped card", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<SettingsPage />, { store });
+
+  // The API Token input (a textbox) and the Save button are both present as rows.
+  expect(screen.getByRole("textbox")).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
+});
+
+test("renders the localStorage caption below the card", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<SettingsPage />, { store });
+
+  expect(screen.getByText(/stored locally in your browser/i)).toBeTruthy();
+});
+
+test("clicking Save writes the current token from the store to localStorage", () => {
+  const store = setupStore({
+    bot: { token: "ios:persist", programs: [], response: [], users: [] },
+  });
+  renderWithProviders(<SettingsPage />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+  expect(localStorage.getItem("token")).toBe("ios:persist");
 });

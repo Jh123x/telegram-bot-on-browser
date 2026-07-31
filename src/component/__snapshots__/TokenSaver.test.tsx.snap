@@ -6,123 +6,161 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
+        class="MuiStack-root css-jfdv4h-MuiStack-root"
       >
-        <h3
-          class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
+        <h2
+          class="MuiTypography-root MuiTypography-subtitle2 css-4280cv-MuiTypography-root"
         >
-          API Token
-        </h3>
-        <p
-          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-        >
-          Please enter your API token to save it to local storage.
-        </p>
-        <br />
-        <p
-          class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-        >
-          API Token
-        </p>
+          BOT
+        </h2>
         <div
-          class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
+          class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded css-kaokoe-MuiPaper-root"
         >
-          <div
-            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
+          <ul
+            class="MuiList-root css-54zhjy-MuiList-root"
           >
-            <input
-              aria-invalid="false"
-              class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
-              id="_r_0_"
-              type="text"
-              value=""
-            />
-            <fieldset
-              aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+            <li
+              class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-15d7aae-MuiListItem-root"
             >
-              <legend
-                class="css-1nf2c5d-MuiNotchedOutlined-root"
+              <div
+                class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
               >
-                <span
-                  aria-hidden="true"
-                  class="notranslate"
+                <h3
+                  class="MuiTypography-root MuiTypography-body1 css-1iu0xh0-MuiTypography-root"
                 >
-                  ​
-                </span>
-              </legend>
-            </fieldset>
-          </div>
+                  API Token
+                </h3>
+              </div>
+              <div
+                class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cmpglg-MuiFormControl-root-MuiTextField-root"
+              >
+                <div
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root"
+                >
+                  <input
+                    aria-invalid="false"
+                    class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1pzfmz2-MuiInputBase-input-MuiOutlinedInput-input"
+                    id="_r_0_"
+                    placeholder="Enter your API token"
+                    type="text"
+                    value=""
+                  />
+                  <fieldset
+                    aria-hidden="true"
+                    class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                  >
+                    <legend
+                      class="css-1nf2c5d-MuiNotchedOutlined-root"
+                    >
+                      <span
+                        aria-hidden="true"
+                        class="notranslate"
+                      >
+                        ​
+                      </span>
+                    </legend>
+                  </fieldset>
+                </div>
+              </div>
+            </li>
+            <li
+              class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-hq6sa7-MuiListItem-root"
+            >
+              <button
+                class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-1k9hkw1-MuiButtonBase-root-MuiButton-root"
+                tabindex="0"
+                type="button"
+              >
+                Save
+              </button>
+            </li>
+          </ul>
         </div>
-        <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
-          tabindex="0"
-          type="button"
+        <span
+          class="MuiTypography-root MuiTypography-caption css-rfru90-MuiTypography-root"
         >
-          Save
-        </button>
-        <br />
+          Your API token is stored locally in your browser.
+        </span>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="MuiFormGroup-root css-1mac7pt-MuiFormGroup-root"
+      class="MuiStack-root css-jfdv4h-MuiStack-root"
     >
-      <h3
-        class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
+      <h2
+        class="MuiTypography-root MuiTypography-subtitle2 css-4280cv-MuiTypography-root"
       >
-        API Token
-      </h3>
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-      >
-        Please enter your API token to save it to local storage.
-      </p>
-      <br />
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-      >
-        API Token
-      </p>
+        BOT
+      </h2>
       <div
-        class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"
+        class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded css-kaokoe-MuiPaper-root"
       >
-        <div
-          class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
+        <ul
+          class="MuiList-root css-54zhjy-MuiList-root"
         >
-          <input
-            aria-invalid="false"
-            class="MuiInputBase-input MuiOutlinedInput-input css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input"
-            id="_r_0_"
-            type="text"
-            value=""
-          />
-          <fieldset
-            aria-hidden="true"
-            class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+          <li
+            class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-15d7aae-MuiListItem-root"
           >
-            <legend
-              class="css-1nf2c5d-MuiNotchedOutlined-root"
+            <div
+              class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
             >
-              <span
-                aria-hidden="true"
-                class="notranslate"
+              <h3
+                class="MuiTypography-root MuiTypography-body1 css-1iu0xh0-MuiTypography-root"
               >
-                ​
-              </span>
-            </legend>
-          </fieldset>
-        </div>
+                API Token
+              </h3>
+            </div>
+            <div
+              class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cmpglg-MuiFormControl-root-MuiTextField-root"
+            >
+              <div
+                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root"
+              >
+                <input
+                  aria-invalid="false"
+                  class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1pzfmz2-MuiInputBase-input-MuiOutlinedInput-input"
+                  id="_r_0_"
+                  placeholder="Enter your API token"
+                  type="text"
+                  value=""
+                />
+                <fieldset
+                  aria-hidden="true"
+                  class="MuiOutlinedInput-notchedOutline css-18p5xg2-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                >
+                  <legend
+                    class="css-1nf2c5d-MuiNotchedOutlined-root"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="notranslate"
+                    >
+                      ​
+                    </span>
+                  </legend>
+                </fieldset>
+              </div>
+            </div>
+          </li>
+          <li
+            class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-hq6sa7-MuiListItem-root"
+          >
+            <button
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-1k9hkw1-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
+              type="button"
+            >
+              Save
+            </button>
+          </li>
+        </ul>
       </div>
-      <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
-        tabindex="0"
-        type="button"
+      <span
+        class="MuiTypography-root MuiTypography-caption css-rfru90-MuiTypography-root"
       >
-        Save
-      </button>
-      <br />
+        Your API token is stored locally in your browser.
+      </span>
     </div>
   </div>,
   "debug": [Function],
