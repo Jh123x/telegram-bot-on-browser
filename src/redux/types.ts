@@ -1,11 +1,8 @@
-export interface Command {
-    command: string;
-    response: string;
-}
+import { Program } from "../interfaces/program.ts";
 
 export interface IBotState {
     token: string;
-    commands: Command[];
+    programs: Program[];
     response: Response[];
     users: User[];
 }

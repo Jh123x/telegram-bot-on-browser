@@ -1,19 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Command, IBotState, Response, User } from "./types";
+import { IBotState, Response, User } from "./types";
+import { Program } from "../interfaces/program.ts";
 
 export class BotState {
   token: string
-  commands: string[]
+  programs: Program[]
 
-  constructor(token: string, commands: string[]) {
+  constructor(token: string, programs: Program[]) {
     this.token = token;
-    this.commands = commands;
+    this.programs = programs;
   }
 }
 
 export const defaultBotState: IBotState = {
   token: "",
-  commands: [],
+  programs: [],
   response: [],
   users: [],
 };
@@ -25,11 +26,17 @@ export const botSlice = createSlice({
     setToken: (state, action: { payload: string, type: string }) => {
       state.token = action.payload;
     },
-    addCommands: (state, action: { payload: Command, type: string }) => {
-      state.commands = [...state.commands, action.payload];
+    setPrograms: (state, action: { payload: Program[], type: string }) => {
+      state.programs = action.payload;
     },
-    setCommands: (state, action: { payload: Command[], type: string }) => {
-      state.commands = action.payload;
+    addProgram: (state, action: { payload: Program, type: string }) => {
+      state.programs = [...state.programs, action.payload];
+    },
+    updateProgram: (state, action: { payload: Program, type: string }) => {
+      state.programs = state.programs.map((program) => program.id === action.payload.id ? action.payload : program);
+    },
+    removeProgram: (state, action: { payload: string, type: string }) => {
+      state.programs = state.programs.filter((program) => program.id !== action.payload);
     },
     addResponse: (state, action: { payload: Response, type: string }) => {
       state.response = [...state.response, action.payload];
@@ -44,4 +51,4 @@ export const botSlice = createSlice({
   },
 });
 
-export const { setToken, addCommands, setCommands, addResponse, addUser } = botSlice.actions;
+export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, addResponse, addUser } = botSlice.actions;
