@@ -4,7 +4,7 @@ import {
   Program,
   Trigger,
   TriggerType,
-} from "../interfaces/program";
+} from "../interfaces/program.ts";
 
 export const TRIGGER_LABELS: Record<TriggerType, string> = {
   equals: "message equals",

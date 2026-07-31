@@ -1,5 +1,5 @@
-import { Program } from "../interfaces/program";
-import { generateId } from "./program";
+import { Program } from "../interfaces/program.ts";
+import { generateId } from "./program.ts";
 
 export interface ProgramSample {
   name: string;

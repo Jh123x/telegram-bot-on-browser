@@ -42,7 +42,7 @@ test("clicking Save writes the current token to localStorage", () => {
 
 test("preloaded token is rendered in the token field", () => {
     const store = setupStore({
-        bot: { token: "preloaded-token", commands: [], response: [], users: [] },
+        bot: { token: "preloaded-token", programs: [], response: [], users: [] },
     });
     renderWithProviders(<TokenSaver />, { store });
 
