@@ -14,7 +14,7 @@ test("renders response entries with user and message from the store", () => {
     const store = setupStore({
         bot: {
             token: "TOKEN",
-            commands: [],
+            programs: [],
             response: [
                 { FromUser: "alice", UserID: 42, Message: "hello there", TimeStamp: 1720000000000 },
                 { FromUser: "bob", UserID: 7, Message: "bonjour", TimeStamp: 1720000001000 },
@@ -46,7 +46,7 @@ test("renders the ISO timestamp of each response", () => {
     const store = setupStore({
         bot: {
             token: "TOKEN",
-            commands: [],
+            programs: [],
             response: [
                 { FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 1720000000000 },
             ],

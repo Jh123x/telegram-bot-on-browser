@@ -15,7 +15,7 @@ test("renders users from the store in the select", () => {
     const store = setupStore({
         bot: {
             token: "TOKEN",
-            commands: [],
+            programs: [],
             response: [],
             users: [{ Username: "alice", UserID: 42 }],
         },
@@ -34,7 +34,7 @@ test("selecting a user, typing a message, and clicking Send calls bot.sendMessag
     const store = setupStore({
         bot: {
             token: "TOKEN",
-            commands: [],
+            programs: [],
             response: [],
             users: [{ Username: "alice", UserID: 42 }],
         },
@@ -73,7 +73,7 @@ test("clicking Send with no bot prop does nothing", () => {
     const store = setupStore({
         bot: {
             token: "TOKEN",
-            commands: [],
+            programs: [],
             response: [],
             users: [{ Username: "alice", UserID: 42 }],
         },
