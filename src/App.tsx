@@ -6,7 +6,7 @@ import { TokenSaver } from "./component/TokenSaver.tsx";
 import { Navbar } from "./component/Navbar.tsx";
 import { BotInterface } from "./component/BotInterface.tsx";
 import { BotOperation } from "./component/BotOperation.tsx";
-import { setToken, setCommands } from "./redux/botSlice.ts";
+import { setToken, setPrograms } from "./redux/botSlice.ts";
 import { Footer } from "./component/Footer.tsx";
 import React from "react";
 import { LogBox } from "./component/logs.tsx";
@@ -16,8 +16,8 @@ export const App = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token !== null) dispatch(setToken(token));
-    const commands = localStorage.getItem("commands");
-    if (commands !== null) dispatch(setCommands(JSON.parse(commands)));
+    const programs = localStorage.getItem("programs");
+    if (programs !== null) dispatch(setPrograms(JSON.parse(programs)));
   }, [dispatch]);
   return (
     <Container sx={{

@@ -69,12 +69,12 @@ export class BrowserBot {
   }
 
   stop() {
-    if (this.poll_worker !== null) {
+    if (this.poll_worker !== undefined) {
       this.poll_worker!.terminate();
       this.poll_worker = undefined;
     }
 
-    if (this.send_worker !== null) {
+    if (this.send_worker !== undefined) {
       this.send_worker!.terminate();
       this.send_worker = undefined;
     }

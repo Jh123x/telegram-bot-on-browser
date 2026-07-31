@@ -3,23 +3,31 @@ import { Button, Typography } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
-import { BotWithConfig, Command } from "../redux/types";
+import { BotWithConfig } from "../redux/types";
+import { Program } from "../interfaces/program.ts";
 import { addResponse, addUser } from "../redux/botSlice.ts";
+import { matchTrigger, executeActions } from "../logic/program.ts";
 import { CustomChat } from "./CustomMessage.tsx";
 
 export const BotOperation = () => {
   const dispatch = useDispatch()
   const [bot, setBot] = useState<BrowserBot>();
   const [started, setStarted] = useState(false);
-  const commands = useSelector<BotWithConfig, Command[]>((state) => state.bot.commands);
+  const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
 
   useEffect(() => setBot(new BrowserBot(token)), [token]);
 
   useEffect(() => {
     if (bot === undefined) return;
-    commands.forEach(({ command, response }) => bot!.addCommand(command, () => response))
-  }, [bot, commands]);
+    bot.clearRules();
+    programs.forEach((program) => {
+      bot.addRule(
+        (message) => matchTrigger(program.trigger, message),
+        (message) => executeActions(program.actions, message)
+      );
+    });
+  }, [bot, programs]);
 
   return (
     <>

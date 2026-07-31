@@ -3,7 +3,6 @@ import React from "react";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { BotOperation } from "./BotOperation.tsx";
 import { generateDefaultState, renderWithProviders, setupStore } from "../redux/testUtils.tsx";
-import { BrowserBot } from "../interfaces/bot";
 
 class MockWorker {
   onmessage: ((e: { data: unknown }) => void) | null = null;
@@ -35,18 +34,6 @@ afterEach(() => {
   }
 });
 
-// Test shim: BrowserBot currently has no `addCommand` method, but the
-// BotOperation component registers its stored commands via `bot.addCommand(...)`.
-// This shim provides that method for these tests so the component behavior can be
-// characterized. It is implemented as an alias for the existing `addRule`.
-(BrowserBot.prototype as any).addCommand = function (
-  this: BrowserBot,
-  command: string,
-  callback: (message: string) => string | string[]
-) {
-  this.addRule((m) => m === command, callback);
-};
-
 test("renders bot operation interface correctly", () => {
   const store = setupStore(generateDefaultState());
   const component = renderWithProviders(<BotOperation />, { store: store });
@@ -62,11 +49,18 @@ test("shows 'Bot stopped' when not started and disables the Stop button", () => 
   expect((screen.getByRole("button", { name: "Start" }) as HTMLButtonElement).disabled).toBe(false);
 });
 
-test("full flow: matching poll message causes send_worker to post the command response to the chat", async () => {
+test("full flow: matching poll message causes send_worker to post the program's action reply to the chat", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      commands: [{ command: "/start", response: "hi" }],
+      programs: [
+        {
+          id: "p1",
+          name: "Greet",
+          trigger: { type: "equals", value: "/start" },
+          actions: [{ id: "a1", type: "reply", value: "hi" }],
+        },
+      ],
       response: [],
       users: [],
     },
@@ -82,7 +76,7 @@ test("full flow: matching poll message causes send_worker to post the command re
   const poll = instances[0];
   const send = instances[1];
 
-  // Simulate an incoming poll message matching the command.
+  // Simulate an incoming poll message matching the program trigger.
   await poll.onmessage!({ data: [1234, "alice", 42, "/start"] });
 
   expect(send.postMessage).toHaveBeenCalledWith([
@@ -92,11 +86,18 @@ test("full flow: matching poll message causes send_worker to post the command re
   ]);
 });
 
-test("poll message that does not match any command does not trigger send_worker", async () => {
+test("poll message that does not match any program does not trigger send_worker", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      commands: [{ command: "/start", response: "hi" }],
+      programs: [
+        {
+          id: "p1",
+          name: "Greet",
+          trigger: { type: "equals", value: "/start" },
+          actions: [{ id: "a1", type: "reply", value: "hi" }],
+        },
+      ],
       response: [],
       users: [],
     },
@@ -115,11 +116,54 @@ test("poll message that does not match any command does not trigger send_worker"
   expect(send.postMessage).not.toHaveBeenCalled();
 });
 
+test("a program with multiple actions sends every action's response to send_worker", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Multi",
+          trigger: { type: "equals", value: "/start" },
+          actions: [
+            { id: "a1", type: "reply", value: "hi" },
+            { id: "a2", type: "echo", value: "" },
+          ],
+        },
+      ],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<BotOperation />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: "Start" }));
+
+  await waitFor(() => expect(instances.length).toBe(2));
+
+  const poll = instances[0];
+  const send = instances[1];
+
+  await poll.onmessage!({ data: [1234, "alice", 42, "/start"] });
+
+  expect(send.postMessage).toHaveBeenCalledTimes(2);
+  expect(send.postMessage).toHaveBeenNthCalledWith(1, [
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "hi",
+    42,
+  ]);
+  expect(send.postMessage).toHaveBeenNthCalledWith(2, [
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "/start",
+    42,
+  ]);
+});
+
 test("incoming poll message dispatches addResponse and addUser to the store", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      commands: [],
+      programs: [],
       response: [],
       users: [],
     },
@@ -141,7 +185,7 @@ test("incoming poll message dispatches addResponse and addUser to the store", as
 
 test("clicking Stop terminates both workers and shows 'Bot stopped'", async () => {
   const store = setupStore({
-    bot: { token: "TOKEN", commands: [], response: [], users: [] },
+    bot: { token: "TOKEN", programs: [], response: [], users: [] },
   });
   renderWithProviders(<BotOperation />, { store });
 

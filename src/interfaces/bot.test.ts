@@ -147,6 +147,13 @@ test("stop() terminates both workers and clears them", () => {
   expect(bot.send_worker).toBeUndefined();
 });
 
+test("calling stop() before start() does not throw and leaves workers undefined", () => {
+  const bot = createBot();
+  expect(() => bot.stop()).not.toThrow();
+  expect(bot.poll_worker).toBeUndefined();
+  expect(bot.send_worker).toBeUndefined();
+});
+
 test("sendMessage posts [url, message, userID] to send_worker", () => {
   const bot = createBot();
   bot.start(() => {});
