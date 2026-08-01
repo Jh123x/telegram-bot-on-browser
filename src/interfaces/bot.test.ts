@@ -95,7 +95,27 @@ test("start() posts the getUpdates url to poll_worker", () => {
   expect(instances).toHaveLength(2);
   expect(bot.poll_worker).toBeInstanceOf(MockWorker);
   expect(bot.send_worker).toBeInstanceOf(MockWorker);
-  expect(bot.poll_worker!.postMessage).toHaveBeenCalledWith(POLL_URL);
+  expect(bot.poll_worker!.postMessage).toHaveBeenCalledWith({
+    url: POLL_URL,
+    pollRateMs: 5000,
+  });
+});
+
+test("start() uses the default 5s poll rate when none is provided", () => {
+  const bot = createBot();
+  bot.start(() => {});
+  expect(bot.poll_worker!.postMessage).toHaveBeenCalledWith(
+    expect.objectContaining({ pollRateMs: 5000 })
+  );
+});
+
+test("start() passes a custom poll rate in milliseconds to poll_worker", () => {
+  const bot = createBot();
+  bot.start(() => {}, undefined, 2000);
+  expect(bot.poll_worker!.postMessage).toHaveBeenCalledWith({
+    url: POLL_URL,
+    pollRateMs: 2000,
+  });
 });
 
 test("simulated poll message invokes responseSender with date, user, id, message", async () => {

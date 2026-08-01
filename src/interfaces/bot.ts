@@ -47,7 +47,8 @@ export class BrowserBot {
 
   start(
     responseSender: (date: number, user: string, id: number, message: string) => void,
-    replySender?: (date: number, user: string, id: number, message: string) => void
+    replySender?: (date: number, user: string, id: number, message: string) => void,
+    pollRateMs: number = 5000
   ) {
     this.poll_worker = new Worker("poll_worker.js");
     this.send_worker = new Worker("send_worker.js");
@@ -74,7 +75,7 @@ export class BrowserBot {
     };
 
     const updateUrl = `${this.url}/getUpdates`;
-    this.poll_worker.postMessage(updateUrl);
+    this.poll_worker.postMessage({ url: updateUrl, pollRateMs });
   }
 
   sendMessage(userID: number, message: string) {

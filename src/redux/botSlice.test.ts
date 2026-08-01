@@ -62,6 +62,21 @@ test("setAutoStart stores the flag", () => {
   expect(store.getState().bot.autoStart).toBe(false);
 });
 
+test("default state has pollRate 5 seconds", () => {
+  const store = setupStore();
+  expect(store.getState().bot.pollRate).toBe(5);
+});
+
+test("setPollRate stores the poll rate in seconds", () => {
+  const store = setupStore();
+
+  store.dispatch(botSlice.actions.setPollRate(2));
+  expect(store.getState().bot.pollRate).toBe(2);
+
+  store.dispatch(botSlice.actions.setPollRate(30));
+  expect(store.getState().bot.pollRate).toBe(30);
+});
+
 test("resetAll restores the default state", () => {
   const store = setupStore();
   store.dispatch(
@@ -70,9 +85,11 @@ test("resetAll restores the default state", () => {
   store.dispatch(botSlice.actions.setToken("abc:token"));
   store.dispatch(botSlice.actions.setAutoStart(true));
   store.dispatch(botSlice.actions.setSelectedUserId(42));
+  store.dispatch(botSlice.actions.setPollRate(2));
 
   expect(store.getState().bot.flows).toHaveLength(2);
   expect(store.getState().bot.autoStart).toBe(true);
+  expect(store.getState().bot.pollRate).toBe(2);
 
   store.dispatch(botSlice.actions.resetAll());
 

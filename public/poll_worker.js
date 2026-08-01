@@ -1,5 +1,9 @@
 onmessage = async (e) => {
-  const updateURL = e.data;
+  // Payload is either { url, pollRateMs } (new) or a plain URL string (old,
+  // defaulting to a 5s poll rate) — kept so an in-flight worker from a
+  // previous page version still works after a hot reload.
+  const { url: updateURL, pollRateMs = 5000 } =
+    typeof e.data === "string" ? { url: e.data, pollRateMs: 5000 } : e.data;
   let currUpdateId = 0;
 
   while (true) {
@@ -27,7 +31,7 @@ onmessage = async (e) => {
     }
 
     console.debug(`[Poll Worker] Current update id: ${currUpdateId}`);
-    console.debug(`[Poll Worker] Waiting for 5 seconds`);
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    console.debug(`[Poll Worker] Waiting for ${pollRateMs / 1000} seconds`);
+    await new Promise((resolve) => setTimeout(resolve, pollRateMs));
   }
 };

@@ -7,6 +7,8 @@ export interface IBotState {
     users: User[];
     selectedUserId?: number | null;
     autoStart?: boolean;
+    // How often the bot polls Telegram for new updates, in seconds.
+    pollRate?: number;
     hydrated?: boolean;
 }
 

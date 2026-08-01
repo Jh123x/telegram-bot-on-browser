@@ -9,6 +9,7 @@ export const defaultBotState: IBotState = {
   users: [],
   selectedUserId: null,
   autoStart: false,
+  pollRate: 5,
   hydrated: false,
 };
 
@@ -51,6 +52,9 @@ export const botSlice = createSlice({
     setAutoStart: (state, action: { payload: boolean, type: string }) => {
       state.autoStart = action.payload;
     },
+    setPollRate: (state, action: { payload: number, type: string }) => {
+      state.pollRate = action.payload;
+    },
     setHydrated: (state, action: { payload: boolean, type: string }) => {
       state.hydrated = action.payload;
     },
@@ -65,4 +69,4 @@ export const botSlice = createSlice({
   },
 });
 
-export const { setToken, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;
+export const { setToken, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setPollRate, setHydrated, resetAll } = botSlice.actions;
