@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   FormControl,
   InputLabel,
@@ -61,9 +61,19 @@ export const FlowInspector = ({
     ? flow.edges.find((e) => e.id === selectedEdgeId) ?? null
     : null;
 
+  // The panel lives BELOW the 500px canvas, so on small screens it can sit
+  // below the fold. When the user selects a node/edge, bring the panel into
+  // view so the edit fields are actually visible (snappy scroll, no fade).
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!selectedNodeId && !selectedEdgeId) return;
+    // Optional-call: jsdom has no scrollIntoView; browsers do.
+    panelRef.current?.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+  }, [selectedNodeId, selectedEdgeId]);
+
   if (!selectedNode && !selectedEdge) {
     return (
-      <Paper sx={{ p: 1.5 }}>
+      <Paper ref={panelRef} sx={{ p: 1.5 }}>
         <Typography variant="caption" sx={{ color: "text.secondary" }}>
           Select a node or edge to edit it.
         </Typography>
@@ -109,7 +119,7 @@ export const FlowInspector = ({
       };
 
       return (
-        <Paper sx={{ p: 1.5 }}>
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Transform Node
           </Typography>
@@ -185,7 +195,7 @@ export const FlowInspector = ({
       };
 
       return (
-        <Paper sx={{ p: 1.5 }}>
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Condition Node
           </Typography>
@@ -227,7 +237,7 @@ export const FlowInspector = ({
       };
 
       return (
-        <Paper sx={{ p: 1.5 }}>
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Send Node
           </Typography>
@@ -248,7 +258,7 @@ export const FlowInspector = ({
 
     // start node: label only.
     return (
-      <Paper sx={{ p: 1.5 }}>
+      <Paper ref={panelRef} sx={{ p: 1.5 }}>
         <Typography variant="subtitle2" sx={{ mb: 1 }}>
           Start Node
         </Typography>
@@ -266,7 +276,7 @@ export const FlowInspector = ({
       : "Connection";
 
   return (
-    <Paper sx={{ p: 1.5 }}>
+    <Paper ref={panelRef} sx={{ p: 1.5 }}>
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
         Edge
       </Typography>

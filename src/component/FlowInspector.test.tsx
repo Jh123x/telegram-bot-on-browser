@@ -279,3 +279,43 @@ test("edge panel shows the generic Connection caption for plain edges", () => {
   renderInspector(makeFlow(), null, "e_plain");
   expect(screen.getByText("Connection")).toBeTruthy();
 });
+
+// ----- Auto-scroll -----
+
+test("scrolls the panel into view when a node is selected", () => {
+  const scrollSpy = jest.fn();
+  Element.prototype.scrollIntoView = scrollSpy;
+  const { rerender } = renderInspector(makeFlow(), null, null);
+
+  expect(scrollSpy).not.toHaveBeenCalled();
+
+  rerender(
+    <FlowInspector
+      flow={makeFlow()}
+      selectedNodeId="condition1"
+      selectedEdgeId={null}
+      onUpdate={() => {}}
+    />
+  );
+
+  expect(scrollSpy).toHaveBeenCalledTimes(1);
+});
+
+test("does not scroll the panel when selection is cleared", () => {
+  const scrollSpy = jest.fn();
+  Element.prototype.scrollIntoView = scrollSpy;
+  const { rerender } = renderInspector(makeFlow(), "condition1", null);
+
+  expect(scrollSpy).toHaveBeenCalledTimes(1);
+
+  rerender(
+    <FlowInspector
+      flow={makeFlow()}
+      selectedNodeId={null}
+      selectedEdgeId={null}
+      onUpdate={() => {}}
+    />
+  );
+
+  expect(scrollSpy).toHaveBeenCalledTimes(1);
+});
