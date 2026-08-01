@@ -271,7 +271,7 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          Echo Clean — removes a leading &quot;say &quot; and echoes the rest.
+          Echo Clean — removes a leading &quot;/say &quot; and echoes the rest.
         </Typography>
       </li>
       <li>

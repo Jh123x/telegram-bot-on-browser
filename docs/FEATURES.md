@@ -23,7 +23,7 @@ The **Samples** panel loads ready-made programs with one click:
 - **Welcome** — replies to `/start`.
 - **Coin Flip** — random Heads or Tails on `/flip`.
 - **Help** — replies when the message contains "help".
-- **Echo Clean** — removes a leading "say " and echoes the rest.
+- **Echo Clean** — removes a leading "/say " and echoes the rest.
 - **Shout** — echoes your message in uppercase.
 - **Shout Back** — makes your message uppercase, then replies
   "You shouted: <message>!".

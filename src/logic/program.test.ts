@@ -738,6 +738,22 @@ describe("Short Replies sample program", () => {
   });
 });
 
+describe("Echo Clean sample program", () => {
+  const echoCleanProgram = () => {
+    const sample = SAMPLE_PROGRAMS.find((s) => s.name === "Echo Clean");
+    if (!sample) throw new Error("Echo Clean sample not found");
+    return programFromSample(sample);
+  };
+
+  test("echoes the text after the /say prefix", () => {
+    expect(executeProgram(echoCleanProgram(), "/say hello")).toEqual(["hello"]);
+  });
+
+  test("does not trigger on the plain word say", () => {
+    expect(executeProgram(echoCleanProgram(), "say hello")).toEqual([]);
+  });
+});
+
 describe("new sample programs", () => {
   const sampleProgram = (name: string) => {
     const sample = SAMPLE_PROGRAMS.find((s) => s.name === name);

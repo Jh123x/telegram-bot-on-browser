@@ -44,14 +44,14 @@ export const SAMPLE_PROGRAMS: ProgramSample[] = [
     name: "Help",
     trigger: { type: "contains", value: "help" },
     blocks: [
-      sb("action", "reply", "Try /start, /flip, /shout, or say 'say hello'."),
+      sb("action", "reply", "Try /start, /flip, /shout, or /say hello."),
     ],
   },
   {
     name: "Echo Clean",
-    trigger: { type: "startsWith", value: "say " },
+    trigger: { type: "startsWith", value: "/say " },
     blocks: [
-      sb("transform", "replace", "say "),
+      sb("transform", "replace", "/say "),
       sb("action", "echo"),
     ],
   },
