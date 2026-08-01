@@ -1,0 +1,72 @@
+import React from "react";
+import { Box, Chip, Typography } from "@mui/material";
+import { Handle, Position, type NodeProps } from "@xyflow/react";
+import type { FlowNodeData } from "../interfaces/flow.ts";
+
+// Shared card styling for the small, clean (Stripe/Apple-minimal) node cards.
+const cardSx = {
+  minWidth: 120,
+  maxWidth: 180,
+  px: 1.5,
+  py: 1,
+  border: "1px solid #3a3a3c",
+  borderRadius: 2,
+  bgcolor: "#1c1c1e",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+  "&:hover": { borderColor: "#7c3aed" },
+};
+
+const CardLabel = ({ children }: { children: React.ReactNode }) => (
+  <Typography
+    noWrap
+    sx={{
+      fontSize: 13,
+      fontWeight: 600,
+      color: "#f2f2f7",
+      lineHeight: 1.4,
+    }}
+  >
+    {children}
+  </Typography>
+);
+
+const StartHint = () => (
+  <Chip
+    label="start"
+    size="small"
+    sx={{
+      height: 18,
+      my: 0.5,
+      fontSize: 10,
+      fontWeight: 700,
+      color: "#7c3aed",
+      bgcolor: "transparent",
+      border: "1px solid #7c3aed",
+      "& .MuiChip-label": { px: 1 },
+    }}
+  />
+);
+
+export const StartNode = ({ data }: NodeProps<FlowNodeData>) => (
+  <Box data-testid="flow-node-start" sx={cardSx}>
+    <CardLabel>{data.label}</CardLabel>
+    <StartHint />
+    <Handle type="source" position={Position.Right} style={{ background: "#7c3aed" }} />
+  </Box>
+);
+
+export const StateNode = ({ data }: NodeProps<FlowNodeData>) => {
+  const replyCount = data.replies.length;
+  return (
+    <Box data-testid="flow-node-state" sx={cardSx}>
+      <CardLabel>{data.label}</CardLabel>
+      <Typography
+        sx={{ mt: 0.5, fontSize: 11, color: "#8e8e93", lineHeight: 1.3 }}
+      >
+        {replyCount} {replyCount === 1 ? "reply" : "replies"}
+      </Typography>
+      <Handle type="target" position={Position.Left} style={{ background: "#8e8e93" }} />
+      <Handle type="source" position={Position.Right} style={{ background: "#8e8e93" }} />
+    </Box>
+  );
+};

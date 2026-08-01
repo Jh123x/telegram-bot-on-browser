@@ -71,6 +71,15 @@ Object {
                     >
                       Docs
                     </button>
+                    <button
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                      role="tab"
+                      tabindex="-1"
+                      type="button"
+                    >
+                      Flows
+                    </button>
                   </div>
                   <span
                     class="MuiTabs-indicator css-1bevw78-MuiTabs-indicator"
@@ -1068,6 +1077,15 @@ Object {
                     type="button"
                   >
                     Docs
+                  </button>
+                  <button
+                    aria-selected="false"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                    role="tab"
+                    tabindex="-1"
+                    type="button"
+                  >
+                    Flows
                   </button>
                 </div>
                 <span
