@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IBotState, Response, User } from "./types";
+import { IBotState, Response, User } from "./types.ts";
 import { Program } from "../interfaces/program.ts";
+import { Flow } from "../interfaces/flow.ts";
 
 export const defaultBotState: IBotState = {
   token: "",
   programs: [],
+  flows: [],
   response: [],
   users: [],
   selectedUserId: null,
@@ -30,6 +32,18 @@ export const botSlice = createSlice({
     },
     removeProgram: (state, action: { payload: string, type: string }) => {
       state.programs = state.programs.filter((program) => program.id !== action.payload);
+    },
+    setFlows: (state, action: { payload: Flow[], type: string }) => {
+      state.flows = action.payload;
+    },
+    addFlow: (state, action: { payload: Flow, type: string }) => {
+      state.flows = [...(state.flows ?? []), action.payload];
+    },
+    updateFlow: (state, action: { payload: Flow, type: string }) => {
+      state.flows = (state.flows ?? []).map((flow) => flow.id === action.payload.id ? action.payload : flow);
+    },
+    removeFlow: (state, action: { payload: string, type: string }) => {
+      state.flows = (state.flows ?? []).filter((flow) => flow.id !== action.payload);
     },
     addResponse: (state, action: { payload: Response, type: string }) => {
       state.response = [...state.response, action.payload];
@@ -60,4 +74,4 @@ export const botSlice = createSlice({
   },
 });
 
-export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;
+export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;

@@ -2,7 +2,8 @@ import { test, expect } from "@jest/globals";
 import { configureStore } from "@reduxjs/toolkit";
 import { botSlice, defaultBotState } from "./botSlice";
 import { BotWithConfig, Response, User } from "./types";
-import { Program } from "../interfaces/program";
+import { Program } from "../interfaces/program.ts";
+import { Flow } from "../interfaces/flow.ts";
 
 function makeProgram(overrides: Partial<Program> = {}): Program {
   return {
@@ -10,6 +11,19 @@ function makeProgram(overrides: Partial<Program> = {}): Program {
     name: "Greet",
     trigger: { type: "equals", value: "/start" },
     actions: [{ id: "a1", type: "reply", value: "hi" }],
+    ...overrides,
+  };
+}
+
+function makeFlow(overrides: Partial<Flow> = {}): Flow {
+  return {
+    id: "f1",
+    name: "Order",
+    startNodeId: "n1",
+    nodes: [
+      { id: "n1", type: "start", position: { x: 0, y: 0 }, data: { label: "Start", replies: [] } },
+    ],
+    edges: [],
     ...overrides,
   };
 }
@@ -175,4 +189,64 @@ test("setUsers replaces the users array", () => {
   const users: User[] = [{ Username: "carol", UserID: 9 }];
   store.dispatch(botSlice.actions.setUsers(users));
   expect(store.getState().bot.users).toEqual(users);
+});
+
+test("default state has empty flows", () => {
+  const store = setupStore();
+  expect(store.getState().bot.flows).toEqual([]);
+});
+
+test("setFlows replaces the flows array", () => {
+  const store = setupStore();
+  const flows: Flow[] = [makeFlow(), makeFlow({ id: "f2" })];
+  store.dispatch(botSlice.actions.setFlows(flows));
+  expect(store.getState().bot.flows).toEqual(flows);
+});
+
+test("addFlow appends a flow", () => {
+  const store = setupStore();
+  store.dispatch(botSlice.actions.addFlow(makeFlow()));
+  expect(store.getState().bot.flows).toEqual([makeFlow()]);
+});
+
+test("updateFlow replaces the flow with matching id and leaves others", () => {
+  const store = setupStore();
+  store.dispatch(
+    botSlice.actions.setFlows([
+      makeFlow(),
+      makeFlow({ id: "f2", name: "Other" }),
+    ])
+  );
+  store.dispatch(
+    botSlice.actions.updateFlow(
+      makeFlow({ id: "f1", name: "Updated", startNodeId: "n9" })
+    )
+  );
+  const state = store.getState().bot.flows;
+  expect(state).toHaveLength(2);
+  expect(state[0].name).toBe("Updated");
+  expect(state[0].startNodeId).toBe("n9");
+  expect(state[1].name).toBe("Other");
+});
+
+test("updateFlow with unknown id leaves state unchanged", () => {
+  const store = setupStore();
+  const flows = [makeFlow()];
+  store.dispatch(botSlice.actions.setFlows(flows));
+  store.dispatch(botSlice.actions.updateFlow(makeFlow({ id: "unknown" })));
+  expect(store.getState().bot.flows).toEqual(flows);
+});
+
+test("removeFlow removes the flow by id", () => {
+  const store = setupStore();
+  store.dispatch(
+    botSlice.actions.setFlows([
+      makeFlow(),
+      makeFlow({ id: "f2", name: "Other" }),
+    ])
+  );
+  store.dispatch(botSlice.actions.removeFlow("f1"));
+  const state = store.getState().bot.flows;
+  expect(state).toHaveLength(1);
+  expect(state[0].id).toBe("f2");
 });
