@@ -20,6 +20,19 @@ export const useBot = () => {
   );
   const autoStartedRef = useRef(false);
 
+  const hydrated = useSelector<BotWithConfig, boolean>(
+    (state) => state.bot.hydrated ?? false
+  );
+  // Captured exactly once when hydration completes: auto-start only if the
+  // setting AND a token existed at load time. Mid-session token entry,
+  // toggling the switch, or importing settings never re-evaluate it.
+  const autoStartLoadDecision = useRef<boolean | null>(null);
+  useEffect(() => {
+    if (autoStartLoadDecision.current !== null) return;
+    if (!hydrated) return;
+    autoStartLoadDecision.current = autoStart && token !== "";
+  }, [hydrated, autoStart, token]);
+
   useEffect(() => {
     botRef.current?.stop();
     const next = new BrowserBot(token);
@@ -42,15 +55,17 @@ export const useBot = () => {
   }, [bot, programs]);
 
   // Auto-start the bot once on load when the setting is enabled and a token
-  // exists. The ref guard prevents StrictMode's double effect from creating a
-  // second set of poll/send workers. Load-only semantics: after the first
-  // auto-start, manual Stop is not overridden and toggling the setting later
-  // has no effect until the next load.
+  // existed at hydration-completion time. Uses botRef.current (the newest
+  // instance, created with the hydrated token) rather than the lagging `bot`
+  // state, which trails one render behind during hydration. The ref guard
+  // makes it StrictMode-safe (no second poll/send worker pair).
   useEffect(() => {
-    if (!bot || autoStartedRef.current) return;
-    if (!autoStart || token === "") return;
+    if (autoStartLoadDecision.current !== true) return;
+    if (autoStartedRef.current) return;
+    const current = botRef.current;
+    if (!current) return;
     autoStartedRef.current = true;
-    bot.start(
+    current.start(
       (date: number, user: string, id: number, msg: string) => {
         dispatch(addResponse({ FromUser: user, UserID: id, Message: msg, TimeStamp: date }));
         dispatch(addUser({ UserID: id, Username: user }));
@@ -62,7 +77,7 @@ export const useBot = () => {
       }
     );
     setStarted(true);
-  }, [bot, autoStart, token, dispatch]);
+  }, [bot, token, dispatch]);
 
   const start = () => {
     if (!bot || started) return;

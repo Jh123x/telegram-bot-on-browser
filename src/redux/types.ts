@@ -7,6 +7,7 @@ export interface IBotState {
     users: User[];
     selectedUserId?: number | null;
     autoStart?: boolean;
+    hydrated?: boolean;
 }
 
 export interface User {

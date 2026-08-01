@@ -33,7 +33,8 @@ const isValidProgram = (p: unknown): boolean => {
   return (
     typeof prog.id === "string" &&
     typeof prog.name === "string" &&
-    !!prog.trigger &&
+    prog.trigger !== null &&
+    typeof prog.trigger === "object" &&
     Array.isArray(prog.blocks)
   );
 };

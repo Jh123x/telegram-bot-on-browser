@@ -10,7 +10,7 @@ import { ChatPage } from "./pages/ChatPage.tsx";
 import { DocsPage } from "./pages/DocsPage.tsx";
 import { useBot } from "./hooks/useBot.ts";
 import { useDispatch } from "react-redux";
-import { setToken, setPrograms, setAutoStart } from "./redux/botSlice.ts";
+import { setToken, setPrograms, setAutoStart, setHydrated } from "./redux/botSlice.ts";
 import { useEffect } from "react";
 import React from "react";
 
@@ -26,6 +26,9 @@ export const App = () => {
     if (programs !== null) dispatch(setPrograms(JSON.parse(programs)));
     const autoStart = localStorage.getItem("autoStart");
     if (autoStart !== null) dispatch(setAutoStart(autoStart === "true"));
+    // Hydration is complete whether or not localStorage had values. Auto-start
+    // decisions are made at exactly this point (load-only semantics).
+    dispatch(setHydrated(true));
   }, [dispatch]);
 
   return (

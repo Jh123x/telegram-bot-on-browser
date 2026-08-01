@@ -26,6 +26,22 @@ test("default state has empty programs", () => {
   expect(store.getState().bot.programs).toEqual([]);
 });
 
+test("default state has hydrated false", () => {
+  const store = setupStore();
+  expect(store.getState().bot.hydrated).toBe(false);
+});
+
+test("setHydrated stores the flag", () => {
+  const store = setupStore();
+  expect(store.getState().bot.hydrated).toBe(false);
+
+  store.dispatch(botSlice.actions.setHydrated(true));
+  expect(store.getState().bot.hydrated).toBe(true);
+
+  store.dispatch(botSlice.actions.setHydrated(false));
+  expect(store.getState().bot.hydrated).toBe(false);
+});
+
 test("setPrograms replaces the programs array", () => {
   const store = setupStore();
   const programs: Program[] = [makeProgram(), makeProgram({ id: "p2" })];

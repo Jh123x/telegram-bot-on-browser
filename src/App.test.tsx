@@ -66,6 +66,8 @@ test("hydrates store from localStorage token and programs on mount", () => {
       ],
     },
   ]);
+  // Hydration completed whether or not localStorage had values.
+  expect(store.getState().bot.hydrated).toBe(true);
 });
 
 test("leaves the default state when localStorage is empty", () => {
@@ -75,6 +77,8 @@ test("leaves the default state when localStorage is empty", () => {
   expect(store.getState().bot.token).toBe("");
   expect(store.getState().bot.programs).toEqual([]);
   expect(store.getState().bot.autoStart).toBe(false);
+  // Hydration completed even with no localStorage values.
+  expect(store.getState().bot.hydrated).toBe(true);
 });
 
 test("hydrates token when only token is stored (no programs key)", () => {
