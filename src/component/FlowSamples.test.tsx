@@ -20,24 +20,39 @@ test("renders all sample flow names", () => {
 });
 
 test("clicking a sample dispatches addFlow with a fresh-id copy", () => {
+  const sample = SAMPLE_FLOWS[2]; // "Greeting Check" (a condition/if-else flow)
   const store = makeStore();
   renderWithProviders(<FlowSamples />, { store });
 
-  fireEvent.click(screen.getByText("Quiz Flow"));
+  fireEvent.click(screen.getByText(sample.name));
 
   const flows = store.getState().bot.flows;
   expect(flows).toHaveLength(1);
-  expect(flows[0].name).toBe("Quiz Flow");
+  expect(flows[0].name).toBe(sample.flow.name || sample.name);
   // Fresh ids: the stored flow/node/edge ids must differ from the sample.
-  expect(flows[0].id).not.toBe(SAMPLE_FLOWS[2].flow.id);
+  expect(flows[0].id).not.toBe(sample.flow.id);
   expect(flows[0].nodes.map((n) => n.id)).not.toEqual(
-    SAMPLE_FLOWS[2].flow.nodes.map((n) => n.id)
+    sample.flow.nodes.map((n) => n.id)
   );
   // Structure preserved: same number of nodes/edges and the startNodeId
   // points at a node that exists in the copy.
-  expect(flows[0].nodes).toHaveLength(SAMPLE_FLOWS[2].flow.nodes.length);
-  expect(flows[0].edges).toHaveLength(SAMPLE_FLOWS[2].flow.edges.length);
+  expect(flows[0].nodes).toHaveLength(sample.flow.nodes.length);
+  expect(flows[0].edges).toHaveLength(sample.flow.edges.length);
   expect(flows[0].nodes.some((n) => n.id === flows[0].startNodeId)).toBe(true);
+});
+
+test("clicking the condition sample preserves its if/else branch handles", () => {
+  const sample = SAMPLE_FLOWS.find((s) => s.name === "Greeting Check")!;
+  const store = makeStore();
+  renderWithProviders(<FlowSamples />, { store });
+
+  fireEvent.click(screen.getByText("Welcome Flow"));
+
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  // Welcome Flow is start -> send: one plain (no sourceHandle) edge.
+  expect(flows[0].edges).toHaveLength(1);
+  expect(flows[0].edges[0].sourceHandle).toBeUndefined();
 });
 
 test("onLoaded receives the added flow", () => {

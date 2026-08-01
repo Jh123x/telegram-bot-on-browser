@@ -6,6 +6,8 @@ import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { defaultBotState } from "../redux/botSlice.ts";
 import { AppSettings } from "./AppSettings.tsx";
 
+// A new-model flow: start → condition (contains "hi") → if/else sends, plus
+// a transform node — exercises all four node types and trigger-less edges.
 const validFlow = {
   id: "f1",
   name: "Order",
@@ -15,10 +17,42 @@ const validFlow = {
       id: "n1",
       type: "start",
       position: { x: 0, y: 0 },
-      data: { label: "Start", replies: [] },
+      data: { label: "Start" },
+    },
+    {
+      id: "n2",
+      type: "transform",
+      position: { x: 200, y: 0 },
+      data: {
+        label: "Clean",
+        transform: { type: "trim", find: "", replacement: "", pattern: "" },
+      },
+    },
+    {
+      id: "n3",
+      type: "condition",
+      position: { x: 400, y: 0 },
+      data: { label: "Has hi", trigger: { type: "contains", value: "hi" } },
+    },
+    {
+      id: "n4",
+      type: "send",
+      position: { x: 600, y: -120 },
+      data: { label: "Greet", replies: ["Hello! 👋"] },
+    },
+    {
+      id: "n5",
+      type: "send",
+      position: { x: 600, y: 120 },
+      data: { label: "Nudge", replies: ["Say hi!"] },
     },
   ],
-  edges: [],
+  edges: [
+    { id: "e1", source: "n1", target: "n2" },
+    { id: "e2", source: "n2", target: "n3" },
+    { id: "e3", source: "n3", target: "n4", sourceHandle: "if" },
+    { id: "e4", source: "n3", target: "n5", sourceHandle: "else" },
+  ],
 };
 
 const seedState = {
@@ -380,3 +414,139 @@ test("import rejects a flow whose node is missing data.label and changes nothing
   expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
 });
 
+
+test("import accepts a new-model flow with transform/condition/send nodes and trigger-less edges", async () => {
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [validFlow],
+        autoStart: true,
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});
+
+test("import rejects a flow containing a legacy state node and changes nothing", async () => {
+  const legacyFlow = {
+    id: "f-legacy",
+    name: "Legacy",
+    startNodeId: "n1",
+    nodes: [
+      { id: "n1", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+      {
+        id: "n2",
+        type: "state",
+        position: { x: 120, y: 0 },
+        data: { label: "Old State", replies: ["hi"] },
+      },
+    ],
+    edges: [
+      {
+        id: "e1",
+        source: "n1",
+        target: "n2",
+        data: { trigger: { type: "fallback", value: "" } },
+      },
+    ],
+  };
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [legacyFlow],
+        autoStart: false,
+      }),
+    ],
+    "bad.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.token).toBe("abc:TOKEN");
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});
+
+test("import rejects an edge carrying legacy trigger data and changes nothing", async () => {
+  const badEdgeFlow = {
+    id: "f-bad-edge",
+    name: "Bad Edge",
+    startNodeId: "n1",
+    nodes: [
+      { id: "n1", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+      { id: "n2", type: "send", position: { x: 120, y: 0 }, data: { label: "Go", replies: ["ok"] } },
+    ],
+    edges: [
+      {
+        id: "e1",
+        source: "n1",
+        target: "n2",
+        data: { trigger: { type: "contains", value: "hi" } },
+      },
+    ],
+  };
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [badEdgeFlow],
+        autoStart: false,
+      }),
+    ],
+    "bad.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});

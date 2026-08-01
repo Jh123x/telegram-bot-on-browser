@@ -51,7 +51,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
         {[
           { label: "Getting Started", href: "#getting-started" },
           { label: "How Flows Work", href: "#how-flows-work" },
-          { label: "Triggers", href: "#triggers" },
+          { label: "Condition Matchers", href: "#triggers" },
           { label: "Variables", href: "#variables" },
           { label: "Samples", href: "#samples" },
           { label: "Tips", href: "#tips" },
@@ -146,8 +146,9 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           >
             Flow tab
           </Link>{" "}
-          and build a flow: drag Start and State nodes from the palette onto
-          the canvas and connect them. The Welcome sample loads on first visit.
+          and build a flow: drag Start, Transform, Condition and Send nodes
+          from the palette onto the canvas and connect them. The Welcome
+          sample loads on first visit.
         </Typography>
       </li>
       <li>
@@ -174,36 +175,59 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
       How Flows Work
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      A flow is a state machine. It is a set of states drawn on a canvas and
-      connected by transitions. When a user is in a state, the bot follows the
-      first transition whose trigger matches and replies with the target
-      state&apos;s messages.
+      A flow is a visual graph. It is a set of nodes drawn on a canvas and
+      connected by edges. Every user message starts at the{" "}
+      <strong>Start</strong> node, flows through the graph, and ends at a{" "}
+      <strong>Send</strong> node whose replies go back to the user.
     </Typography>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      To build one, drag a <strong>Start</strong> node and <strong>State</strong>{" "}
-      nodes from the palette onto the canvas, connect them, then pick a trigger
-      for each connection. Each state has a label and a list of replies, one
-      per line:
+      Drag nodes from the palette onto the canvas and connect them by dragging
+      from one node&apos;s output to the next node&apos;s input:
     </Typography>
+    <Box component="ul" sx={{ mt: 1, pl: 3 }}>
+      <li>
+        <Typography component="span">
+          <strong>Start</strong> — the entry marker (exactly one per flow).
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Transform</strong> — rewrites the message (lowercase,
+          uppercase, trim, replace text, extract regex) before passing it on.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Condition</strong> — checks the message and follows the{" "}
+          <strong>if</strong> edge when it matches, the <strong>else</strong>{" "}
+          edge otherwise.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Send</strong> — replies with one message per line and ends
+          the flow (it has no output).
+        </Typography>
+      </li>
+    </Box>
     <pre data-testid="code-sample-replies" style={codeStyle}>
-      {`state "Welcome"
+      {`send "Welcome"
 replies:
   "Welcome! I'm a browser bot."
-  "Try /echo or answer the quiz."`}
+  "Try /echo or say hi."`}
     </pre>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      Each user&apos;s position in every flow is tracked independently, so two
-      users can be in different states at the same time.
+      The runtime is stateless: every message is evaluated from the Start
+      node, so a flow answers each message on its own.
     </Typography>
 
     <Typography variant="h4" id="triggers" sx={{ mt: 3 }}>
-      Triggers
+      Condition Matchers
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      Transitions are checked in order, and the first match wins. A trigger can
-      be:
+      A condition node&apos;s <strong>if</strong> branch is decided by one of:
     </Typography>
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
@@ -233,29 +257,28 @@ replies:
       </li>
       <li>
         <Typography component="span">
-          message does not contain a value,
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          any other message (the fallback) — matches anything.
+          message does not contain a value.
         </Typography>
       </li>
     </Box>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      The equals trigger is case-sensitive and trims whitespace.
+      The <strong>else</strong> edge catches everything the condition does not
+      match. A condition without an else edge stays silent on non-matching
+      messages. The equals matcher is case-sensitive and trims whitespace.
     </Typography>
 
     <Typography variant="h4" id="variables" sx={{ mt: 3 }}>
       Variables
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      {"{msg}"} in a reply inserts the user&apos;s raw message. Tokens that
-      match no variable stay exactly as typed.
+      {"{msg}"} in a reply inserts the current message — after any transforms,
+      so an <strong>uppercase</strong> transform followed by{" "}
+      {"{msg}"} echoes the message in caps. Tokens that match no variable stay
+      exactly as typed.
     </Typography>
     <pre data-testid="code-sample-msg" style={codeStyle}>
-      {`state "Echo"
+      {`send "Echo"
 replies:
   "You said: {msg}"`}
     </pre>
@@ -275,14 +298,16 @@ replies:
       </li>
       <li>
         <Typography component="span">
-          <strong>Echo Flow</strong> echoes back when the message starts with{" "}
-          {`/echo`}.
+          <strong>Uppercase Echo</strong> transforms the message to uppercase
+          and echoes it back.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          <strong>Quiz Flow</strong> asks a question and accepts{" "}
-          {" 4 "}as the correct answer.
+          <strong>Greeting Check</strong> replies{" "}
+          {"\"Hello! 👋\""} when the message contains{" "}
+          {"\"hi\""}, otherwise says{" "}
+          {"\"Say hi!\""}.
         </Typography>
       </li>
     </Box>
@@ -321,16 +346,16 @@ replies:
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          Order matters. Transitions are checked in order, so put the fallback
-          last in the{" "}
-          <Link
-            component="button"
-            onClick={() => onNavigate?.("flow")}
-            sx={tabLinkSx}
-          >
-            Flow tab
-          </Link>
-          .
+          Chain transforms before a condition: the condition sees the
+          transformed message, so an <strong>uppercase</strong> transform can
+          normalize input before matching.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          Use a condition&apos;s <strong>else</strong> edge as the catch-all.
+          Without one, non-matching messages stay silent and the next flow
+          gets a chance.
         </Typography>
       </li>
       <li>
@@ -363,8 +388,9 @@ replies:
       <li>
         <Typography component="span">
           Bot not replying? Check the header says &quot;Bot started&quot;. Keep
-          the page open. Make sure a transition matches from the user&apos;s
-          current state. Equals is case-sensitive and trims whitespace.
+          the page open. Make sure the message reaches a Send node: a
+          condition with no matching branch (and no else edge) stays silent.
+          Equals is case-sensitive and trims whitespace.
         </Typography>
       </li>
       <li>

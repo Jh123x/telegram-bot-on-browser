@@ -4,63 +4,72 @@ This page describes what the website does and how to use each feature.
 
 ## Flows
 
-The **Flow** tab is a visual state machine. A flow is a set of **states**
-drawn on a canvas and connected by **transitions**. When a user is in a
-state, the bot looks at the messages leaving that state, follows the first
-one whose trigger matches, and replies with the target state's messages.
+The **Flow** tab is a visual graph. A flow is a set of **nodes** drawn on a
+canvas and connected by edges. Every user message starts at the **Start**
+node, flows through the graph, and ends at a **Send** node whose replies go
+back to the user.
 
-![Flow editor with the Welcome Flow sample](screenshots/flow-editor.png)
+![Flow editor with the Greeting Check sample](screenshots/flow-editor.png)
 
 ### Building a flow
 
-Drag a **Start** node (the entry marker, exactly one per flow) and **State**
-nodes from the palette onto the canvas. Connect them by dragging from one
-node to the next, then pick a trigger for each connection. Every state has a
-label and a list of replies. Select a node or transition to edit it in the
-inspector panel.
+Drag nodes from the palette onto the canvas and connect them by dragging from
+a node's output handle to the next node's input handle. Select a node or
+edge to edit it in the inspector panel.
 
-### Transitions
+- **Start** — the entry marker (exactly one per flow). It has a single
+  output and no input.
+- **Transform** — 1 input, 1 output. Transforms the message before it
+  continues: **lowercase**, **uppercase**, **trim**, **replace text**, or
+  **extract regex**. The transformed message is what downstream nodes see
+  (both `{msg}` interpolation and condition matching).
+- **Condition** — 1 input, 2 outputs. Evaluates the message against one of
+  the matchers below and follows the **if** edge when it matches, the
+  **else** edge otherwise.
+- **Send** — 1 input, no output (terminal). Sends its reply lines and ends
+  the flow for this message.
 
-Each transition has a trigger that decides when it is followed:
+### Condition matchers
+
+A condition node's **if** branch is decided by one of:
 
 - **message equals** a value,
 - **message contains** a value,
 - **message starts with** a value,
 - **message ends with** a value,
 - **message does not equal** a value,
-- **message does not contain** a value,
-- **any other message** (the fallback) — matches anything.
+- **message does not contain** a value.
 
-Transitions are checked in order. The first one whose trigger matches wins.
-Use an **any other message** fallback at the end to catch everything a state
-does not recognize.
+The **else** edge catches everything the condition does not match. A
+condition without an else edge stays silent on non-matching messages.
 
-### State replies
+### Send replies
 
-Each state sends one message per line when it is entered. You can use
-`{msg}` in a reply to interpolate the user's raw message.
+Each send node sends one message per line. You can use `{msg}` in a reply to
+interpolate the current message — after any transforms, so an *uppercase*
+transform followed by a send that says `You said: {msg}` echoes the message
+in caps.
 
-### Per-user state
+### Stateless evaluation
 
-Each Telegram user's position in the flow is tracked independently. Two users
-can be in different states at the same time, and one user's messages never
-affect another's. A user with no stored state starts at the Start node.
+Every user message is evaluated from the Start node — the runtime keeps no
+per-user position (send nodes are terminal, so there is nowhere to "wait").
+A flow therefore answers each message on its own.
 
 ### Multiple flows
 
-Each flow runs in order. A flow that has no matching transition stays silent
+Each flow runs in order. A flow that never reaches a Send node stays silent
 and the next flow gets a chance at the message.
 
 ### Samples
 
 Open the **Flow** tab and click a sample to load it:
 
-- **Welcome Flow** — greets every user and points toward `/echo` and the quiz.
-- **Echo Flow** — prompts for a message, then echoes it back with "You said:"
-  when the message starts with `/echo ` (including the slash and the space).
-- **Quiz Flow** — asks a question, moves to *Correct* for the right answer
-  (`4`) or *Wrong* for anything else; only a wrong answer sends the user back
-  to the question so they can try again.
+- **Welcome Flow** — greets every user.
+- **Uppercase Echo** — transforms the message to uppercase, then echoes it
+  back with "You said:".
+- **Greeting Check** — replies "Hello! 👋" when the message contains "hi",
+  otherwise says "Say hi!".
 
 ### Persistence
 
@@ -99,5 +108,5 @@ browser. Paste it once, and the bot can start.
 
 ## Docs
 
-The **Docs** tab explains the concepts in the browser: states, transitions,
-triggers, variables, samples, and troubleshooting.
+The **Docs** tab explains the concepts in the browser: nodes, conditions,
+transforms, samples, and troubleshooting.

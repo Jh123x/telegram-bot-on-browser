@@ -1,4 +1,5 @@
 import {
+  applyTransform,
   createFlow,
   createFlowNode,
   dropNodeDimensionChanges,
@@ -8,8 +9,9 @@ import {
   flowFromSample,
   generateId,
   interpolate,
-  matchFlowTrigger,
   validateFlow,
+  TRIGGER_TYPES,
+  TRIGGER_LABELS,
 } from "./flow.ts";
 import { Flow } from "../interfaces/flow.ts";
 
@@ -42,700 +44,38 @@ describe("dropNodeDimensionChanges", () => {
   });
 });
 
+describe("TRIGGER_TYPES / TRIGGER_LABELS", () => {
+  test("exposes the six trigger types", () => {
+    expect(TRIGGER_TYPES).toEqual([
+      "equals",
+      "contains",
+      "startsWith",
+      "endsWith",
+      "notEquals",
+      "notContains",
+    ]);
+  });
+
+  test("labels each trigger type", () => {
+    expect(Object.keys(TRIGGER_LABELS).sort()).toEqual(
+      [...TRIGGER_TYPES].sort()
+    );
+    expect(TRIGGER_LABELS.contains).toBe("message contains");
+    expect(TRIGGER_LABELS.equals).toBe("message equals");
+  });
+});
+
 describe("flowEdgeLabel", () => {
-  test("equals trigger phrases like message equals", () => {
-    expect(flowEdgeLabel({ type: "equals", value: "/start" })).toBe(
-      'message equals "/start"'
-    );
+  test("labels an if handle as if", () => {
+    expect(flowEdgeLabel("if")).toBe("if");
   });
 
-  test("fallback always labels as any other message", () => {
-    expect(flowEdgeLabel({ type: "fallback", value: "" })).toBe(
-      "any other message"
-    );
+  test("labels an else handle as else", () => {
+    expect(flowEdgeLabel("else")).toBe("else");
   });
 
-  test("contains trigger uses the contains phrasing", () => {
-    expect(flowEdgeLabel({ type: "contains", value: "help" })).toBe(
-      'message contains "help"'
-    );
-  });
-
-  test("notEquals trigger uses the negated phrasing", () => {
-    expect(flowEdgeLabel({ type: "notEquals", value: "/start" })).toBe(
-      'message does not equal "/start"'
-    );
-  });
-});
-
-describe("matchFlowTrigger", () => {
-  test("delegates equals to matchTrigger: exact match is true", () => {
-    expect(
-      matchFlowTrigger({ type: "equals", value: "/start" }, "/start")
-    ).toBe(true);
-  });
-
-  test("equals: surrounding whitespace in the raw message is handled identically to matchTrigger", () => {
-    // matchTrigger trims equals values, so surrounding whitespace still matches.
-    expect(
-      matchFlowTrigger({ type: "equals", value: "/start" }, "  /start  ")
-    ).toBe(true);
-  });
-
-  test("equals: different message is false", () => {
-    expect(
-      matchFlowTrigger({ type: "equals", value: "/start" }, "/stop")
-    ).toBe(false);
-  });
-
-  test("delegates contains to matchTrigger using the raw message", () => {
-    expect(
-      matchFlowTrigger({ type: "contains", value: "/start" }, "say /start now")
-    ).toBe(true);
-    expect(
-      matchFlowTrigger({ type: "contains", value: "/start" }, "nothing here")
-    ).toBe(false);
-  });
-
-  test("delegates notContains to matchTrigger without trimming", () => {
-    expect(
-      matchFlowTrigger({ type: "notContains", value: "help" }, "no word here")
-    ).toBe(true);
-  });
-
-  test("delegates startsWith to matchTrigger", () => {
-    expect(
-      matchFlowTrigger({ type: "startsWith", value: "/echo " }, "/echo hi")
-    ).toBe(true);
-    expect(
-      matchFlowTrigger({ type: "startsWith", value: "/echo " }, "say /echo hi")
-    ).toBe(false);
-  });
-
-  test("delegates endsWith to matchTrigger", () => {
-    expect(
-      matchFlowTrigger({ type: "endsWith", value: "bye" }, "say bye")
-    ).toBe(true);
-    expect(
-      matchFlowTrigger({ type: "endsWith", value: "bye" }, "bye now")
-    ).toBe(false);
-  });
-
-  test("delegates notEquals to matchTrigger", () => {
-    expect(
-      matchFlowTrigger({ type: "notEquals", value: "/start" }, "/stop")
-    ).toBe(true);
-    expect(
-      matchFlowTrigger({ type: "notEquals", value: "/start" }, "/start")
-    ).toBe(false);
-  });
-
-  test("fallback always matches any message", () => {
-    expect(matchFlowTrigger({ type: "fallback", value: "" }, "anything")).toBe(
-      true
-    );
-    expect(matchFlowTrigger({ type: "fallback", value: "" }, "")).toBe(true);
-  });
-});
-
-describe("createFlowNode", () => {
-  test("start node gets a fresh id and Start label", () => {
-    const node = createFlowNode("start");
-    expect(node.id).toBeTruthy();
-    expect(node.type).toBe("start");
-    expect(node.data).toEqual({ label: "Start", replies: [] });
-    expect(node.position).toEqual({ x: 0, y: 0 });
-  });
-
-  test("state node gets a New State label", () => {
-    const node = createFlowNode("state");
-    expect(node.type).toBe("state");
-    expect(node.data).toEqual({ label: "New State", replies: [] });
-    expect(node.position).toEqual({ x: 0, y: 0 });
-  });
-
-  test("honors a provided position", () => {
-    const node = createFlowNode("state", { x: 120, y: 40 });
-    expect(node.position).toEqual({ x: 120, y: 40 });
-  });
-
-  test("each node gets a unique id", () => {
-    expect(createFlowNode("state").id).not.toBe(createFlowNode("state").id);
-  });
-});
-
-describe("createFlow", () => {
-  test("uses the default name New Flow", () => {
-    const flow = createFlow();
-    expect(flow.name).toBe("New Flow");
-    expect(flow.startNodeId).toBe("");
-    expect(flow.nodes).toEqual([]);
-    expect(flow.edges).toEqual([]);
-    expect(flow.id).toBeTruthy();
-  });
-
-  test("honors a provided name and gets a fresh id", () => {
-    const flow1 = createFlow("Welcome");
-    const flow2 = createFlow("Welcome");
-    expect(flow1.name).toBe("Welcome");
-    expect(flow2.name).toBe("Welcome");
-    expect(flow1.id).not.toBe(flow2.id);
-  });
-});
-
-describe("executeFlow", () => {
-  const startNode = {
-    id: "start",
-    type: "start" as const,
-    position: { x: 0, y: 0 },
-    data: { label: "Start", replies: [] },
-  };
-  const menuNode = {
-    id: "menu",
-    type: "state" as const,
-    position: { x: 0, y: 0 },
-    data: { label: "Menu", replies: ["Welcome!"] },
-  };
-  const echoNode = {
-    id: "echo",
-    type: "state" as const,
-    position: { x: 0, y: 0 },
-    data: { label: "Echo", replies: ["Echoing"] },
-  };
-
-  const baseFlow: Flow = {
-    id: "f1",
-    name: "Flow",
-    startNodeId: "start",
-    nodes: [startNode, menuNode, echoNode],
-    edges: [],
-  };
-
-  test("returns undefined when the current node is unknown", () => {
-    expect(executeFlow(baseFlow, "hi", "missing")).toBeUndefined();
-  });
-
-  test("returns the first matching edge in array order", () => {
-    const flow: Flow = {
-      ...baseFlow,
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "menu",
-          data: { trigger: { type: "equals", value: "/help" } },
-        },
-        {
-          id: "e2",
-          source: "start",
-          target: "echo",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-    const step = executeFlow(flow, "/help", "start");
-    expect(step).toEqual({ replies: ["Welcome!"], nextNodeId: "menu" });
-  });
-
-  test("edge priority follows array order even when a later edge also matches", () => {
-    const flow: Flow = {
-      ...baseFlow,
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "menu",
-          data: { trigger: { type: "contains", value: "a" } },
-        },
-        {
-          id: "e2",
-          source: "start",
-          target: "echo",
-          data: {
-            trigger: { type: "contains", value: "cat" },
-          },
-        },
-      ],
-    };
-    const step = executeFlow(flow, "cat", "start");
-    expect(step).toEqual({ replies: ["Welcome!"], nextNodeId: "menu" });
-  });
-
-  test("fallback acts as a last resort when no earlier edge matches", () => {
-    const flow: Flow = {
-      ...baseFlow,
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "menu",
-          data: { trigger: { type: "equals", value: "/help" } },
-        },
-        {
-          id: "e2",
-          source: "start",
-          target: "echo",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-    const step = executeFlow(flow, "anything", "start");
-    expect(step).toEqual({ replies: ["Echoing"], nextNodeId: "echo" });
-  });
-
-  test("returns undefined when no edge matches the message", () => {
-    const flow: Flow = {
-      ...baseFlow,
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "menu",
-          data: { trigger: { type: "equals", value: "/help" } },
-        },
-      ],
-    };
-    expect(executeFlow(flow, "nothing matches", "start")).toBeUndefined();
-  });
-
-  test("only considers edges whose source is the current node", () => {
-    const flow: Flow = {
-      ...baseFlow,
-      edges: [
-        {
-          id: "e1",
-          source: "menu",
-          target: "echo",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-    expect(executeFlow(flow, "hi", "start")).toBeUndefined();
-  });
-
-  test("skips an edge whose target node is missing and keeps scanning", () => {
-    const flow: Flow = {
-      ...baseFlow,
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "ghost",
-          data: { trigger: { type: "equals", value: "/x" } },
-        },
-        {
-          id: "e2",
-          source: "start",
-          target: "echo",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-    const step = executeFlow(flow, "/x", "start");
-    expect(step).toEqual({ replies: ["Echoing"], nextNodeId: "echo" });
-  });
-
-  test("returns an empty replies array when the target state has no replies", () => {
-    const quietNode = {
-      id: "quiet",
-      type: "state" as const,
-      position: { x: 0, y: 0 },
-      data: { label: "Quiet", replies: [] },
-    };
-    const flow: Flow = {
-      ...baseFlow,
-      nodes: [startNode, quietNode],
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "quiet",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-    const step = executeFlow(flow, "hi", "start");
-    expect(step).toEqual({ replies: [], nextNodeId: "quiet" });
-  });
-
-  test("returns a copy of the target replies so callers cannot mutate the flow", () => {
-    const flow: Flow = {
-      ...baseFlow,
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "echo",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-    const step = executeFlow(flow, "hi", "start");
-    step!.replies.push("mutated");
-    expect(
-      flow.nodes.find((n) => n.id === "echo")!.data.replies
-    ).toEqual(["Echoing"]);
-  });
-});
-
-describe("FlowRuntime", () => {
-  const startNode: Flow["nodes"][number] = {
-    id: "start",
-    type: "start",
-    position: { x: 0, y: 0 },
-    data: { label: "Start", replies: [] },
-  };
-  const menuNode: Flow["nodes"][number] = {
-    id: "menu",
-    type: "state",
-    position: { x: 0, y: 0 },
-    data: { label: "Menu", replies: ["Welcome!"] },
-  };
-  const quizNode: Flow["nodes"][number] = {
-    id: "quiz",
-    type: "state",
-    position: { x: 0, y: 0 },
-    data: { label: "Quiz", replies: ["What is 2 + 2?", "Pick a number."] },
-  };
-
-  function buildFlow(): Flow {
-    return {
-      id: "f1",
-      name: "Flow",
-      startNodeId: "start",
-      nodes: [startNode, menuNode, quizNode],
-      edges: [
-        {
-          id: "eStart",
-          source: "start",
-          target: "menu",
-          data: { trigger: { type: "equals", value: "/menu" } },
-        },
-        {
-          id: "eMenu",
-          source: "menu",
-          target: "quiz",
-          data: { trigger: { type: "equals", value: "/quiz" } },
-        },
-        {
-          id: "eFallback",
-          source: "start",
-          target: "quiz",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-  }
-
-  test("brand-new user starts at startNodeId", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    // Falling back on the startsFrom-start edge lands on menu.
-    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
-  });
-
-  test("interpolates {msg} in replies with the raw message", () => {
-    const built = buildFlow();
-    const echoNode = {
-      id: "echo",
-      type: "state" as const,
-      position: { x: 0, y: 0 },
-      data: { label: "Echo", replies: ["You said: {msg}"] },
-    };
-    const flow: Flow = {
-      ...built,
-      nodes: [built.nodes.find((n) => n.id === "start")!, echoNode],
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "echo",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-    const runtime = new FlowRuntime(flow);
-    expect(runtime.handleMessage(1, "hello there")).toBe("You said: hello there");
-  });
-
-  test("state persists across messages: next message is evaluated from the new node", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    // start -> menu
-    runtime.handleMessage(1, "/menu");
-    // From menu, only the quiz edge matches.
-    expect(runtime.handleMessage(1, "/quiz")).toEqual([
-      "What is 2 + 2?",
-      "Pick a number.",
-    ]);
-  });
-
-  test("returns the full array when a state has more than one reply", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    // fallback from start -> quiz (two replies)
-    expect(runtime.handleMessage(1, "anything")).toEqual([
-      "What is 2 + 2?",
-      "Pick a number.",
-    ]);
-  });
-
-  test("returns [] when a matched transition lands on a state with no replies and still advances", () => {
-    const flow = buildFlow();
-    const silentNode: Flow["nodes"][number] = {
-      id: "silent",
-      type: "state",
-      position: { x: 0, y: 0 },
-      data: { label: "Silent", replies: [] },
-    };
-    flow.nodes = [...flow.nodes, silentNode];
-    flow.edges = [
-      {
-        id: "e1",
-        source: "start",
-        target: "silent",
-        data: { trigger: { type: "fallback", value: "" } },
-      },
-    ];
-    const runtime = new FlowRuntime(flow);
-    // Matched-and-silent must be [] (chain-stopping) and the state must advance.
-    expect(runtime.handleMessage(1, "hi")).toEqual([]);
-    // The user is now in "silent", which has no edges, so the next message
-    // matches nothing -> undefined.
-    expect(runtime.handleMessage(1, "/menu")).toBeUndefined();
-  });
-
-  test("no matching transition returns undefined and does NOT advance the state", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    // From start, the /menu edge matches and advances to menu.
-    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
-    // From menu, "nothing" matches no edge -> undefined and the user stays in menu.
-    expect(runtime.handleMessage(1, "nothing")).toBeUndefined();
-    // Still in menu: the /quiz edge still works.
-    expect(runtime.handleMessage(1, "/quiz")).toEqual([
-      "What is 2 + 2?",
-      "Pick a number.",
-    ]);
-  });
-
-  test("no-match leaves the state unchanged", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    // From start, "/menu" matches; the next message from menu that matches nothing keeps menu.
-    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
-    // Nothing leaves "menu" for this message, so the user stays in menu.
-    expect(runtime.handleMessage(1, "nothing")).toBeUndefined();
-    // Still in menu -> quiz edge works.
-    expect(runtime.handleMessage(1, "/quiz")).toEqual([
-      "What is 2 + 2?",
-      "Pick a number.",
-    ]);
-  });
-
-  test("reset returns that user to startNodeId", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    runtime.handleMessage(1, "/menu"); // user 1 -> menu
-    runtime.reset(1);
-    // Back at start, "/menu" again routes to menu.
-    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
-  });
-
-  test("different users have independent states", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    runtime.handleMessage(1, "/menu"); // user 1 -> menu
-    // User 2 still evaluates from start -> its /menu message goes to menu.
-    expect(runtime.handleMessage(2, "/menu")).toBe("Welcome!");
-    // User 1 is still in menu: /menu no longer matches from menu.
-    expect(runtime.handleMessage(1, "/menu")).toBeUndefined();
-  });
-
-  test("reset only clears the requested user, not others", () => {
-    const runtime = new FlowRuntime(buildFlow());
-    runtime.handleMessage(1, "/menu"); // user 1 -> menu
-    runtime.handleMessage(2, "/menu"); // user 2 -> menu
-    runtime.reset(1);
-    // User 1 back at start.
-    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
-    // User 2 still in menu.
-    expect(runtime.handleMessage(2, "/menu")).toBeUndefined();
-  });
-
-  test("a flow with empty startNodeId crashes gracefully (returns undefined)", () => {
-    const flow = buildFlow();
-    flow.startNodeId = "";
-    const runtime = new FlowRuntime(flow);
-    expect(runtime.handleMessage(1, "hi")).toBeUndefined();
-  });
-});
-
-describe("validateFlow", () => {
-  const startNode: Flow["nodes"][number] = {
-    id: "start",
-    type: "start",
-    position: { x: 0, y: 0 },
-    data: { label: "Start", replies: [] },
-  };
-  const stateNode: Flow["nodes"][number] = {
-    id: "a",
-    type: "state",
-    position: { x: 0, y: 0 },
-    data: { label: "A", replies: ["hi"] },
-  };
-
-  function validFlow(): Flow {
-    return {
-      id: "f1",
-      name: "My Flow",
-      startNodeId: "start",
-      nodes: [startNode, stateNode],
-      edges: [
-        {
-          id: "e1",
-          source: "start",
-          target: "a",
-          data: { trigger: { type: "fallback", value: "" } },
-        },
-      ],
-    };
-  }
-
-  test("a valid flow returns no errors", () => {
-    expect(validateFlow(validFlow())).toEqual([]);
-  });
-
-  test("an empty name is required", () => {
-    const flow = validFlow();
-    flow.name = "";
-    expect(validateFlow(flow)).toContain("Flow name is required");
-  });
-
-  test("a whitespace-only name is rejected", () => {
-    const flow = validFlow();
-    flow.name = "   ";
-    expect(validateFlow(flow)).toContain("Flow name is required");
-  });
-
-  test("a flow with no start node is rejected", () => {
-    const flow = validFlow();
-    flow.nodes = [stateNode];
-    expect(validateFlow(flow)).toContain("Flow must have a start node");
-  });
-
-  test("a flow with more than one start node is rejected", () => {
-    const flow = validFlow();
-    const secondStart: Flow["nodes"][number] = {
-      id: "start2",
-      type: "start",
-      position: { x: 0, y: 0 },
-      data: { label: "Start 2", replies: [] },
-    };
-    flow.nodes = [startNode, secondStart, stateNode];
-    expect(validateFlow(flow)).toContain(
-      "Flow can only have one start node"
-    );
-  });
-
-  test("duplicate node ids each produce an error", () => {
-    const flow = validFlow();
-    flow.nodes = [startNode, startNode, stateNode];
-    const errors = validateFlow(flow);
-    expect(errors).toContain("Duplicate node id: start");
-    expect(errors.filter((e) => e === "Duplicate node id: start")).toHaveLength(
-      1
-    );
-  });
-
-  test("an edge referencing a missing target node is rejected", () => {
-    const flow = validFlow();
-    flow.edges = [
-      {
-        id: "eBad",
-        source: "start",
-        target: "ghost",
-        data: { trigger: { type: "fallback", value: "" } },
-      },
-    ];
-    expect(validateFlow(flow)).toContain(
-      "Edge eBad references a missing node"
-    );
-  });
-
-  test("an edge referencing a missing source node is rejected", () => {
-    const flow = validFlow();
-    flow.edges = [
-      {
-        id: "eBad",
-        source: "ghost",
-        target: "a",
-        data: { trigger: { type: "fallback", value: "" } },
-      },
-    ];
-    expect(validateFlow(flow)).toContain(
-      "Edge eBad references a missing node"
-    );
-  });
-
-  test("an incoming edge to the start node is rejected", () => {
-    const flow = validFlow();
-    // state -> start
-    flow.edges = [
-      {
-        id: "eBack",
-        source: "a",
-        target: "start",
-        data: { trigger: { type: "fallback", value: "" } },
-      },
-    ];
-    expect(validateFlow(flow)).toContain(
-      "Start node cannot have incoming edges"
-    );
-  });
-
-  test("multiple independent errors accumulate", () => {
-    const flow = validFlow();
-    flow.name = "";
-    flow.nodes = [stateNode]; // no start node
-    flow.edges = []; // drop edges that would reference the missing start
-    const errors = validateFlow(flow);
-    expect(errors).toContain("Flow name is required");
-    expect(errors).toContain("Flow must have a start node");
-    // The still-standing startNodeId "start" no longer exists in the node list.
-    expect(errors).toContain('Start node id "start" points to a missing node');
-    expect(errors).toHaveLength(3);
-  });
-
-  test("startNodeId pointing at a missing node is rejected", () => {
-    const flow = validFlow();
-    flow.startNodeId = "ghost";
-    expect(validateFlow(flow)).toContain(
-      'Start node id "ghost" points to a missing node'
-    );
-  });
-
-  test("startNodeId pointing at a non-start node is rejected", () => {
-    const flow = validFlow();
-    flow.startNodeId = "a"; // 'a' exists but is a state node, not the start node
-    expect(validateFlow(flow)).toContain(
-      "startNodeId must point to the start node"
-    );
-  });
-
-  test("a second fallback edge from the same source is rejected", () => {
-    const flow = validFlow();
-    flow.edges = [
-      {
-        id: "e1",
-        source: "start",
-        target: "a",
-        data: { trigger: { type: "fallback", value: "" } },
-      },
-      {
-        id: "e2",
-        source: "start",
-        target: "a",
-        data: { trigger: { type: "fallback", value: "" } },
-      },
-    ];
-    const errors = validateFlow(flow);
-    expect(errors).toContain(
-      "Node start has multiple fallback edges; only the first is reachable"
-    );
+  test("undefined handle has no label", () => {
+    expect(flowEdgeLabel(undefined)).toBeUndefined();
   });
 });
 
@@ -770,24 +110,490 @@ describe("interpolate", () => {
     expect(interpolate("Hello {unknown}!", {})).toBe("Hello {unknown}!");
   });
 
-  test("handles {prev} via the variables map", () => {
-    expect(interpolate("echo: {prev}", { prev: "HELLO" })).toBe(
-      "echo: HELLO"
-    );
-  });
-
-  test("leaves {prev} as-is when not in the variables map", () => {
-    expect(interpolate("echo: {prev}", {})).toBe("echo: {prev}");
-  });
-
   test("replaces multiple distinct tokens in one pass", () => {
-    expect(
-      interpolate("{a}-{b}-{a}", { a: "x", b: "y" })
-    ).toBe("x-y-x");
+    expect(interpolate("{a}-{b}-{a}", { a: "x", b: "y" })).toBe("x-y-x");
   });
 
   test("empty template returns empty string", () => {
     expect(interpolate("", {})).toBe("");
+  });
+});
+
+describe("applyTransform", () => {
+  test("undefined transform returns the message unchanged", () => {
+    expect(applyTransform(undefined, "  Hello  ")).toBe("  Hello  ");
+  });
+
+  test("lowercase transforms the message", () => {
+    expect(applyTransform({ type: "lowercase", find: "", replacement: "", pattern: "" }, "HeLLo")).toBe("hello");
+  });
+
+  test("uppercase transforms the message", () => {
+    expect(applyTransform({ type: "uppercase", find: "", replacement: "", pattern: "" }, "hello")).toBe("HELLO");
+  });
+
+  test("trim strips surrounding whitespace", () => {
+    expect(applyTransform({ type: "trim", find: "", replacement: "", pattern: "" }, "  hi  ")).toBe("hi");
+  });
+
+  test("replace replaces every occurrence literally", () => {
+    expect(
+      applyTransform({ type: "replace", find: "a", replacement: "o", pattern: "" }, "banana")
+    ).toBe("bonono");
+  });
+
+  test("replace with an empty find returns the message unchanged", () => {
+    expect(
+      applyTransform({ type: "replace", find: "", replacement: "x", pattern: "" }, "hello")
+    ).toBe("hello");
+  });
+
+  test("extractRegex returns the first full match", () => {
+    expect(
+      applyTransform({ type: "extractRegex", find: "", replacement: "", pattern: "\\d+" }, "abc 123 def 456")
+    ).toBe("123");
+  });
+
+  test("extractRegex returns an empty string when there is no match", () => {
+    expect(
+      applyTransform({ type: "extractRegex", find: "", replacement: "", pattern: "\\d+" }, "no digits")
+    ).toBe("");
+  });
+
+  test("extractRegex returns an empty string for an invalid regex", () => {
+    expect(
+      applyTransform({ type: "extractRegex", find: "", replacement: "", pattern: "(" }, "abc")
+    ).toBe("");
+  });
+});
+
+describe("createFlowNode", () => {
+  test("start node gets a fresh id and Start label", () => {
+    const node = createFlowNode("start");
+    expect(node.id).toBeTruthy();
+    expect(node.type).toBe("start");
+    expect(node.data).toEqual({ label: "Start" });
+    expect(node.position).toEqual({ x: 0, y: 0 });
+  });
+
+  test("transform node gets default transform data", () => {
+    const node = createFlowNode("transform");
+    expect(node.type).toBe("transform");
+    expect(node.data).toEqual({
+      label: "New Transform",
+      transform: { type: "lowercase", find: "", replacement: "", pattern: "" },
+    });
+  });
+
+  test("condition node gets a default trigger", () => {
+    const node = createFlowNode("condition");
+    expect(node.type).toBe("condition");
+    expect(node.data).toEqual({
+      label: "New Condition",
+      trigger: { type: "contains", value: "" },
+    });
+  });
+
+  test("send node gets empty replies", () => {
+    const node = createFlowNode("send");
+    expect(node.type).toBe("send");
+    expect(node.data).toEqual({ label: "New Send", replies: [] });
+  });
+
+  test("honors a provided position", () => {
+    const node = createFlowNode("send", { x: 120, y: 40 });
+    expect(node.position).toEqual({ x: 120, y: 40 });
+  });
+
+  test("each node gets a unique id", () => {
+    expect(createFlowNode("send").id).not.toBe(createFlowNode("send").id);
+  });
+});
+
+describe("createFlow", () => {
+  test("uses the default name New Flow", () => {
+    const flow = createFlow();
+    expect(flow.name).toBe("New Flow");
+    expect(flow.startNodeId).toBe("");
+    expect(flow.nodes).toEqual([]);
+    expect(flow.edges).toEqual([]);
+    expect(flow.id).toBeTruthy();
+  });
+
+  test("honors a provided name and gets a fresh id", () => {
+    const flow1 = createFlow("Welcome");
+    const flow2 = createFlow("Welcome");
+    expect(flow1.name).toBe("Welcome");
+    expect(flow2.name).toBe("Welcome");
+    expect(flow1.id).not.toBe(flow2.id);
+  });
+});
+
+describe("executeFlow (graph walk)", () => {
+  function sendNode(id: string, replies: string[]): Flow["nodes"][number] {
+    return { id, type: "send", position: { x: 0, y: 0 }, data: { label: id, replies } };
+  }
+
+  function startFlow(
+    startNodeId: string,
+    nodes: Flow["nodes"],
+    edges: Flow["edges"]
+  ): Flow {
+    return { id: "f1", name: "Flow", startNodeId, nodes, edges };
+  }
+
+  test("start -> send returns the replies", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const send = sendNode("send", ["Hello!"]);
+    const flow = startFlow("start", [start, send], [{ id: "e1", source: "start", target: "send" }]);
+    expect(executeFlow(flow, "hi")).toEqual(["Hello!"]);
+  });
+
+  test("start -> transform(uppercase) -> send feeds the transformed message to {msg}", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const transform = {
+      id: "tx",
+      type: "transform" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "Up", transform: { type: "uppercase" as const, find: "", replacement: "", pattern: "" } },
+    };
+    const send = sendNode("send", ["You said: {msg}"]);
+    const flow = startFlow(
+      "start",
+      [start, transform, send],
+      [
+        { id: "e1", source: "start", target: "tx" },
+        { id: "e2", source: "tx", target: "send" },
+      ]
+    );
+    expect(executeFlow(flow, "hi")).toEqual(["You said: HI"]);
+  });
+
+  test("condition contains 'hi' matched follows the if branch", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const cond = {
+      id: "c",
+      type: "condition" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "C", trigger: { type: "contains" as const, value: "hi" } },
+    };
+    const ifSend = sendNode("if", ["Hello! 👋"]);
+    const elseSend = sendNode("else", ["Say hi!"]);
+    const flow = startFlow(
+      "start",
+      [start, cond, ifSend, elseSend],
+      [
+        { id: "e1", source: "start", target: "c" },
+        { id: "e2", source: "c", target: "if", sourceHandle: "if" },
+        { id: "e3", source: "c", target: "else", sourceHandle: "else" },
+      ]
+    );
+    expect(executeFlow(flow, "hey, hi there")).toEqual(["Hello! 👋"]);
+  });
+
+  test("condition contains 'hi' unmatched follows the else branch", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const cond = {
+      id: "c",
+      type: "condition" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "C", trigger: { type: "contains" as const, value: "hi" } },
+    };
+    const ifSend = sendNode("if", ["Hello! 👋"]);
+    const elseSend = sendNode("else", ["Say hi!"]);
+    const flow = startFlow(
+      "start",
+      [start, cond, ifSend, elseSend],
+      [
+        { id: "e1", source: "start", target: "c" },
+        { id: "e2", source: "c", target: "if", sourceHandle: "if" },
+        { id: "e3", source: "c", target: "else", sourceHandle: "else" },
+      ]
+    );
+    expect(executeFlow(flow, "good morning")).toEqual(["Say hi!"]);
+  });
+
+  test("condition with no else edge and an unmatched message returns undefined", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const cond = {
+      id: "c",
+      type: "condition" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "C", trigger: { type: "contains" as const, value: "hi" } },
+    };
+    const ifSend = sendNode("if", ["Hello! 👋"]);
+    const flow = startFlow(
+      "start",
+      [start, cond, ifSend],
+      [
+        { id: "e1", source: "start", target: "c" },
+        { id: "e2", source: "c", target: "if", sourceHandle: "if" },
+      ]
+    );
+    expect(executeFlow(flow, "good morning")).toBeUndefined();
+  });
+
+  test("dead end (node with no outgoing edge) returns undefined", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const dead = {
+      id: "dead",
+      type: "transform" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "Dead", transform: { type: "lowercase" as const, find: "", replacement: "", pattern: "" } },
+    };
+    const flow = startFlow("start", [start, dead], [{ id: "e1", source: "start", target: "dead" }]);
+    expect(executeFlow(flow, "hi")).toBeUndefined();
+  });
+
+  test("a cycle with no send returns undefined (cycle guard)", () => {
+    const a = { id: "a", type: "transform" as const, position: { x: 0, y: 0 }, data: { label: "A", transform: { type: "lowercase" as const, find: "", replacement: "", pattern: "" } } };
+    const b = { id: "b", type: "transform" as const, position: { x: 0, y: 0 }, data: { label: "B", transform: { type: "lowercase" as const, find: "", replacement: "", pattern: "" } } };
+    const flow = startFlow("a", [a, b], [
+      { id: "e1", source: "a", target: "b" },
+      { id: "e2", source: "b", target: "a" },
+    ]);
+    expect(executeFlow(flow, "hi")).toBeUndefined();
+  });
+
+  test("send with empty replies returns []", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const send = sendNode("send", []);
+    const flow = startFlow("start", [start, send], [{ id: "e1", source: "start", target: "send" }]);
+    expect(executeFlow(flow, "hi")).toEqual([]);
+  });
+
+  test("missing start node returns undefined", () => {
+    const send = sendNode("send", ["x"]);
+    const flow = startFlow("does-not-exist", [send], []);
+    expect(executeFlow(flow, "hi")).toBeUndefined();
+  });
+
+  test("empty startNodeId returns undefined", () => {
+    const send = sendNode("send", ["x"]);
+    const flow = startFlow("", [send], []);
+    expect(executeFlow(flow, "hi")).toBeUndefined();
+  });
+});
+
+describe("FlowRuntime (stateless)", () => {
+  function welcomeFlow(): Flow {
+    return {
+      id: "f1",
+      name: "Welcome",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "send", type: "send", position: { x: 240, y: 0 }, data: { label: "Send", replies: ["Hi", "There"] } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "send" }],
+    };
+  }
+
+  test("walks from start on every message (stateless)", () => {
+    const rt = new FlowRuntime(welcomeFlow());
+    expect(rt.handleMessage(1, "a")).toEqual(["Hi", "There"]);
+    // A second message from the same user must ALSO walk from start.
+    expect(rt.handleMessage(1, "b")).toEqual(["Hi", "There"]);
+  });
+
+  test("returns a single string for one reply and string[] for multiple", () => {
+    const single: Flow = {
+      id: "f1",
+      name: "Single",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "send", type: "send", position: { x: 240, y: 0 }, data: { label: "S", replies: ["One"] } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "send" }],
+    };
+    const rt = new FlowRuntime(single);
+    expect(rt.handleMessage(1, "a")).toBe("One");
+
+    const rt2 = new FlowRuntime(welcomeFlow());
+    expect(rt2.handleMessage(1, "hi")).toEqual(["Hi", "There"]);
+  });
+
+  test("returns undefined when no send node is reached", () => {
+    const rt = new FlowRuntime({
+      id: "f1",
+      name: "NoSend",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "t", type: "transform", position: { x: 240, y: 0 }, data: { label: "T", transform: { type: "lowercase", find: "", replacement: "", pattern: "" } } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "t" }],
+    });
+    expect(rt.handleMessage(1, "a")).toBeUndefined();
+  });
+
+  test("returns [] when send has empty replies", () => {
+    const rt = new FlowRuntime({
+      id: "f1",
+      name: "Silent",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "send", type: "send", position: { x: 240, y: 0 }, data: { label: "S", replies: [] } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "send" }],
+    });
+    expect(rt.handleMessage(1, "a")).toEqual([]);
+  });
+
+  test("reset() is a no-op", () => {
+    const rt = new FlowRuntime(welcomeFlow());
+    rt.reset(1);
+    // Behavior unchanged after reset because the runtime is stateless.
+    expect(rt.handleMessage(1, "hi")).toEqual(["Hi", "There"]);
+  });
+});
+
+describe("validateFlow", () => {
+  const startNode: Flow["nodes"][number] = {
+    id: "start",
+    type: "start",
+    position: { x: 0, y: 0 },
+    data: { label: "Start" },
+  };
+  const sendNode: Flow["nodes"][number] = {
+    id: "send",
+    type: "send",
+    position: { x: 0, y: 0 },
+    data: { label: "Send", replies: ["hi"] },
+  };
+  const transformNode: Flow["nodes"][number] = {
+    id: "tx",
+    type: "transform",
+    position: { x: 0, y: 0 },
+    data: { label: "T", transform: { type: "lowercase", find: "", replacement: "", pattern: "" } },
+  };
+  const conditionNode: Flow["nodes"][number] = {
+    id: "c",
+    type: "condition",
+    position: { x: 0, y: 0 },
+    data: { label: "C", trigger: { type: "contains", value: "hi" } },
+  };
+
+  function validFlow(): Flow {
+    return {
+      id: "f1",
+      name: "My Flow",
+      startNodeId: "start",
+      nodes: [startNode, sendNode],
+      edges: [{ id: "e1", source: "start", target: "send" }],
+    };
+  }
+
+  test("a valid flow returns no errors", () => {
+    expect(validateFlow(validFlow())).toEqual([]);
+  });
+
+  test("an empty name is required", () => {
+    const flow = validFlow();
+    flow.name = "";
+    expect(validateFlow(flow)).toContain("Flow name is required");
+  });
+
+  test("a flow with no start node is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [sendNode];
+    expect(validateFlow(flow)).toContain("Flow must have a start node");
+  });
+
+  test("a flow with more than one start node is rejected", () => {
+    const flow = validFlow();
+    const secondStart: Flow["nodes"][number] = {
+      id: "start2",
+      type: "start",
+      position: { x: 0, y: 0 },
+      data: { label: "S2" },
+    };
+    flow.nodes = [startNode, secondStart, sendNode];
+    expect(validateFlow(flow)).toContain("Flow can only have one start node");
+  });
+
+  test("duplicate node ids each produce an error", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, startNode];
+    const errors = validateFlow(flow);
+    expect(errors).toContain("Duplicate node id: start");
+    expect(errors.filter((e) => e === "Duplicate node id: start")).toHaveLength(1);
+  });
+
+  test("an edge referencing a missing source node is rejected", () => {
+    const flow = validFlow();
+    flow.edges = [{ id: "eBad", source: "ghost", target: "send" }];
+    expect(validateFlow(flow)).toContain("Edge eBad references a missing node");
+  });
+
+  test("an incoming edge to the start node is rejected", () => {
+    const flow = validFlow();
+    flow.edges = [{ id: "eBack", source: "send", target: "start" }];
+    expect(validateFlow(flow)).toContain("Start node cannot have incoming edges");
+  });
+
+  test("start node with multiple outgoing edges is rejected", () => {
+    const flow = validFlow();
+    flow.edges = [
+      { id: "e1", source: "start", target: "send" },
+      { id: "e2", source: "start", target: "send" },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Node start has multiple outgoing edges; only the first is reachable"
+    );
+  });
+
+  test("transform node with multiple outgoing edges is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, transformNode, sendNode];
+    flow.edges = [
+      { id: "e1", source: "start", target: "tx" },
+      { id: "e2", source: "tx", target: "send" },
+      { id: "e3", source: "tx", target: "send" },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Node tx has multiple outgoing edges; only the first is reachable"
+    );
+  });
+
+  test("condition node with multiple if edges is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, conditionNode, sendNode];
+    flow.edges = [
+      { id: "e1", source: "start", target: "c" },
+      { id: "e2", source: "c", target: "send", sourceHandle: "if" },
+      { id: "e3", source: "c", target: "send", sourceHandle: "if" },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Node c has multiple if edges; only the first is reachable"
+    );
+  });
+
+  test("condition node with multiple else edges is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, conditionNode, sendNode];
+    flow.edges = [
+      { id: "e1", source: "start", target: "c" },
+      { id: "e2", source: "c", target: "send", sourceHandle: "else" },
+      { id: "e3", source: "c", target: "send", sourceHandle: "else" },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Node c has multiple else edges; only the first is reachable"
+    );
+  });
+
+  test("send node with an outgoing edge is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, sendNode, transformNode];
+    flow.edges = [
+      { id: "e1", source: "start", target: "send" },
+      { id: "e2", source: "send", target: "tx" },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Node send is a send node and cannot have outgoing edges"
+    );
   });
 });
 
@@ -796,88 +602,114 @@ describe("flowFromSample", () => {
     id: "node-start",
     type: "start",
     position: { x: 0, y: 0 },
-    data: { label: "Start", replies: [] },
+    data: { label: "Start" },
   };
-  const stateNode: Flow["nodes"][number] = {
-    id: "node-a",
-    type: "state",
-    position: { x: 120, y: 80 },
-    data: { label: "A", replies: ["hi", "hello"] },
+  const transformNode: Flow["nodes"][number] = {
+    id: "node-tx",
+    type: "transform",
+    position: { x: 240, y: 0 },
+    data: { label: "T", transform: { type: "lowercase", find: "a", replacement: "o", pattern: "\\d+" } },
   };
-  const edge: Flow["edges"][number] = {
-    id: "edge-1",
-    source: "node-start",
-    target: "node-a",
-    data: { trigger: { type: "equals", value: "/hi" } },
+  const conditionNode: Flow["nodes"][number] = {
+    id: "node-c",
+    type: "condition",
+    position: { x: 480, y: 0 },
+    data: { label: "C", trigger: { type: "contains", value: "hi" } },
   };
+  const ifSend: Flow["nodes"][number] = {
+    id: "node-if",
+    type: "send",
+    position: { x: 720, y: -140 },
+    data: { label: "If", replies: ["Hello! 👋"] },
+  };
+  const elseSend: Flow["nodes"][number] = {
+    id: "node-else",
+    type: "send",
+    position: { x: 720, y: 140 },
+    data: { label: "Else", replies: ["Say hi!"] },
+  };
+
   const sample = {
-    name: "Welcome Flow",
+    name: "Greeting Check",
     flow: {
       id: "flow-sample",
-      name: "Welcome Flow",
+      name: "Greeting Check",
       startNodeId: "node-start",
-      nodes: [startNode, stateNode],
-      edges: [edge],
+      nodes: [startNode, transformNode, conditionNode, ifSend, elseSend],
+      edges: [
+        { id: "edge-1", source: "node-start", target: "node-tx" },
+        { id: "edge-2", source: "node-tx", target: "node-c" },
+        { id: "edge-3", source: "node-c", target: "node-if", sourceHandle: "if" as const },
+        { id: "edge-4", source: "node-c", target: "node-else", sourceHandle: "else" as const },
+      ],
     },
   };
 
-  test("copies the name, structure, replies, and triggers", () => {
+  test("copies the name, structure, transforms, triggers, and replies", () => {
     const created = flowFromSample(sample);
-    expect(created.name).toBe("Welcome Flow");
-    expect(created.startNodeId).toBeTruthy();
-    expect(created.nodes).toHaveLength(2);
+    expect(created.name).toBe("Greeting Check");
     expect(created.nodes.map((n) => n.data)).toEqual([
-      { label: "Start", replies: [] },
-      { label: "A", replies: ["hi", "hello"] },
+      { label: "Start" },
+      { label: "T", transform: { type: "lowercase", find: "a", replacement: "o", pattern: "\\d+" } },
+      { label: "C", trigger: { type: "contains", value: "hi" } },
+      { label: "If", replies: ["Hello! 👋"] },
+      { label: "Else", replies: ["Say hi!"] },
     ]);
-    expect(created.nodes.map((n) => n.position)).toEqual([
-      { x: 0, y: 0 },
-      { x: 120, y: 80 },
-    ]);
-    expect(created.edges).toHaveLength(1);
-    expect(created.edges[0].data).toEqual({
-      trigger: { type: "equals", value: "/hi" },
-    });
-    // startNodeId points at the fresh start node.
-    const start = created.nodes.find((n) => n.type === "start")!;
-    expect(created.startNodeId).toBe(start.id);
+    expect(created.edges[2].sourceHandle).toBe("if");
+    expect(created.edges[3].sourceHandle).toBe("else");
+    // plain edges keep no sourceHandle
+    expect(created.edges[0].sourceHandle).toBeUndefined();
   });
 
-  test("generates fresh ids so loading a sample twice creates independent flows", () => {
+  test("generates fresh ids and remaps startNodeId", () => {
     const first = flowFromSample(sample);
     const second = flowFromSample(sample);
 
-    // Flow ids differ from the source and from each other.
     expect(first.id).not.toBe(sample.flow.id);
     expect(first.id).not.toBe(second.id);
-    // Node ids differ from the source.
     first.nodes.forEach((n, i) => {
       expect(n.id).not.toBe(sample.flow.nodes[i].id);
-    });
-    // Two loads produce distinct node ids.
-    first.nodes.forEach((n, i) => {
       expect(n.id).not.toBe(second.nodes[i].id);
     });
-    // Edge ids differ from the source.
     first.edges.forEach((e, i) => {
       expect(e.id).not.toBe(sample.flow.edges[i].id);
+      expect(e.id).not.toBe(second.edges[i].id);
     });
-    expect(first.edges[0].id).not.toBe(second.edges[0].id);
     // Edges reference the copied (fresh) node ids.
     first.edges.forEach((e) => {
       const ids = first.nodes.map((n) => n.id);
       expect(ids).toContain(e.source);
       expect(ids).toContain(e.target);
     });
+    // startNodeId points at the fresh start node.
+    const start = first.nodes.find((n) => n.type === "start")!;
+    expect(first.startNodeId).toBe(start.id);
   });
 
-  test("does not mutate the source sample flow", () => {
-    const copy = flowFromSample(sample);
-    expect(copy.nodes[0].id).not.toBe(sample.flow.nodes[0].id);
-    expect(sample.flow.nodes[0].data).toEqual({
-      label: "Start",
-      replies: [],
+  test("deep-copies data so mutating the copy does not affect the source", () => {
+    const created = flowFromSample(sample);
+    const createdTx = created.nodes.find((n) => n.type === "transform")!;
+    (createdTx.data.transform as NonNullable<typeof createdTx.data.transform>).find = "Z";
+    (createdTx.data.transform as NonNullable<typeof createdTx.data.transform>).pattern = "Q";
+
+    const createdCond = created.nodes.find((n) => n.type === "condition")!;
+    (createdCond.data.trigger as NonNullable<typeof createdCond.data.trigger>).value = "changed";
+
+    const createdIf = created.nodes.find((n) => n.id === created.nodes.find((nn) => nn.type === "send" && (nn.data.replies?.[0] === "Hello! 👋"))!.id)!;
+    createdIf.data.replies!.push("mutated");
+
+    // Source transform/trigger/replies unaffected.
+    expect(sample.flow.nodes[1].data.transform).toEqual({
+      type: "lowercase",
+      find: "a",
+      replacement: "o",
+      pattern: "\\d+",
     });
+    expect(sample.flow.nodes[2].data.trigger).toEqual({ type: "contains", value: "hi" });
+    const srcIf = sample.flow.nodes.find((n) => n.type === "send")!;
+    expect(srcIf.data.replies).toEqual(["Hello! 👋"]);
+    // The created flow still validates cleanly.
+    expect(validateFlow(created)).toEqual([]);
   });
 
   test("the created flow validates cleanly", () => {

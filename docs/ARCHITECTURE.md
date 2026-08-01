@@ -35,7 +35,7 @@ flowchart LR
 
 The UI is split into four pages:
 
-- **Flow** — the visual state-machine editor built on React Flow.
+- **Flow** — the visual flow editor built on React Flow.
 - **Chat** — the live conversation list and the Test User simulator.
 - **Settings** — the bot token, auto-start toggle, and data export/import.
 - **Docs** — in-app documentation.
@@ -65,13 +65,13 @@ dependencies, which makes it easy to test in isolation.
 
 Key functions:
 
-- `matchFlowTrigger` — checks a transition trigger against a message
-  (`fallback` matches anything; the other six types delegate to the
-  module-private `matchTrigger`).
-- `executeFlow` — walks the current state's outgoing transitions in order and
-  returns the first match's target replies and node id.
-- `FlowRuntime` — tracks each user's position per flow so conversation state
-  persists across messages.
+- `applyTransform` — applies a transform (lowercase, uppercase, trim,
+  replace, extractRegex) to the message.
+- `executeFlow` — walks the graph from the start node, applying transforms,
+  evaluating conditions, and returning the replies of the first send node
+  reached (or `undefined` when no send node is reached).
+- `FlowRuntime` — stateless wrapper around `executeFlow`; every message is
+  evaluated from the flow's start node (send nodes are terminal).
 - `validateFlow` — structural validation of a flow.
 - `flowFromSample` — deep-copies a built-in sample with fresh ids.
 
@@ -89,27 +89,27 @@ rule = (message, userId) => replies
 ```
 
 When a message arrives, the first rule that produces a result wins. Rules
-take an optional `userId` (passed through from the Telegram chat id) so flow
-rules can track per-user state. A matching rule that returns `undefined` (for
-example, a flow with no matching transition) lets `handleMessage` continue to
-the next rule.
+take an optional `userId` (passed through from the Telegram chat id). A
+matching rule that returns `undefined` (for example, a flow that never
+reaches a send node) lets `handleMessage` continue to the next rule.
 
 ## Data model
 
-A **flow** is a visual state machine: a graph of **states** connected by
-**transitions** labeled with triggers.
+A **flow** is a visual graph: a set of **nodes** connected by **edges**.
+Every user message starts at the **Start** node and flows through the graph
+until it reaches a **Send** node whose replies go back to the user.
 
 ```mermaid
 flowchart TD
-  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start or state, label, replies]
-  F --> FE[FlowEdge<br/>id, source, target, trigger]
+  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start, transform, condition or send, label, data]
+  F --> FE[FlowEdge<br/>id, source, target, sourceHandle]
 ```
 
-When a message arrives for a user, the engine starts at that user's current
-state (or the start node for a new user), walks that state's outgoing
-transitions in order, and follows the first whose trigger matches. The target
-state's replies are sent (with `{msg}` interpolated), and the user's position
-moves to that state.
+When a message arrives, the engine walks the graph from the start node.
+**Transform** nodes rewrite the message before passing it on; **Condition**
+nodes evaluate it and follow their **if** or **else** edge; **Send** nodes
+return their replies (with `{msg}` interpolated to the current message). The
+walk is stateless — every message starts from the start node.
 
 ## Incoming message flow
 
@@ -132,7 +132,7 @@ sequenceDiagram
   activate B
   B->>L: flow rules (FlowRuntime.handleMessage)
   activate L
-  L->>L: matchFlowTrigger / executeFlow (state transitions)
+  L->>L: executeFlow (graph walk)
   L-->>B: replies
   deactivate L
   B->>SW: sendMessage(reply)
@@ -163,7 +163,7 @@ sequenceDiagram
 
   U->>C: types a message, presses Simulate
   activate C
-  C->>L: flow rules (FlowRuntime keyed by Test User)
+  C->>L: flow rules (FlowRuntime.handleMessage)
   activate L
   alt a flow matches
     L-->>C: matched flow + replies
@@ -182,8 +182,7 @@ sequenceDiagram
 The bot keeps running while the user edits flows. Messages that arrive before
 the edit is saved are handled by the **old rules**. Once the store rebuilds
 the rules, later messages use the **new logic**. A fresh `FlowRuntime` per
-rebuild means editing a flow resets that flow's users' positions, which is
-expected.
+rebuild picks up the edited flow immediately.
 
 ```mermaid
 sequenceDiagram
@@ -227,8 +226,9 @@ sequenceDiagram
 
 ## Flows
 
-Flows are visual state machines and the app's programming model. A flow is a
-graph of **states** connected by **transitions** labeled with triggers.
+Flows are visual graphs and the app's programming model. A flow is a set of
+**nodes** connected by **edges**. Every user message starts at the **Start**
+node and flows through the graph until it reaches a **Send** node.
 
 ### Domain model
 
@@ -236,55 +236,60 @@ The flow types live in `src/interfaces/flow.ts`:
 
 ```mermaid
 flowchart TD
-  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start or state, label, replies]
-  F --> FE[FlowEdge<br/>id, source, target, trigger]
+  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start, transform, condition or send, label, data]
+  F --> FE[FlowEdge<br/>id, source, target, sourceHandle]
 ```
 
 - **Flow** — `{ id, name, startNodeId, nodes, edges }`. Exactly one `start`
   node; `startNodeId` points at it.
-- **FlowNode** — a `start` marker or a `state`. A state carries `data.label`
-  and `data.replies` (one message per line).
-- **FlowEdge** — a transition from `source` to `target` carrying
-  `data.trigger = { type, value }`. The trigger type is `FlowTriggerType`
-  (equals, contains, startsWith, endsWith, notEquals, notContains) plus
-  `"fallback"` (matches any message).
+- **FlowNode** — one of four types:
+  - `start` — the entry marker; carries `data.label`.
+  - `transform` — 1 input, 1 output; carries `data.transform` (type +
+    find/replacement/pattern params).
+  - `condition` — 1 input, 2 outputs; carries `data.trigger`
+    (`{ type, value }` where type is one of the six message matchers).
+  - `send` — 1 input, no output (terminal); carries `data.replies` (one
+    message per line).
+- **FlowEdge** — a connection from `source` to `target`. Edges carry no
+  trigger data; a condition's branch is recorded in `sourceHandle` (`"if"` /
+  `"else"`).
 
 ### Engine
 
 The pure engine lives in `src/logic/flow.ts` (no React or Redux):
 
-- `matchFlowTrigger(trigger, message)` — `fallback` matches anything;
-  otherwise it delegates to the module-private `matchTrigger` in the same
-  file.
-- `executeFlow(flow, message, currentNodeId)` — finds the first edge leaving
-  the current node (in **array order**) whose trigger matches and returns the
-  target state's replies and id. Returns `undefined` when nothing matches
-  (the caller stays in the same state and stays silent).
-- `FlowRuntime` — keeps a `Map<userId, nodeId>` per flow so each Telegram
-  user's position is tracked independently. `handleMessage` starts a
-  brand-new user at `startNodeId`, stores the transition taken, and
-  interpolates `{msg}` with the raw message in replies. A matched transition
-  into a state with no replies returns `[]` (the message was consumed, so
-  other rules must not pick it up).
+- `applyTransform(transform, message)` — applies a transform (lowercase,
+  uppercase, trim, replace, extractRegex) to the message.
+- `executeFlow(flow, message)` — walks the graph from `startNodeId` with a
+  visited-set cycle guard. Transform nodes rewrite the message; condition
+  nodes follow the `if` edge when their trigger matches and the `else` edge
+  otherwise; a send node's replies are returned (with `{msg}` interpolated to
+  the current message). Returns `undefined` when the walk cannot reach a send
+  node (dead end, cycle, missing branch).
+- `FlowRuntime` — stateless wrapper around `executeFlow`. `handleMessage`
+  evaluates every message from the start node; `userId` is accepted for API
+  stability but ignored. A send node with no replies returns `[]` (the
+  message was consumed, so other rules must not pick it up).
 - `validateFlow(flow)` — checks the name, exactly one start node, no
-  duplicate ids, no edges to missing nodes, and no incoming edges to the
-  start node.
+  duplicate ids, no edges to missing nodes, no incoming edges to the start
+  node, at most one outgoing edge per start/transform node, at most one `if`
+  and one `else` edge per condition, and no outgoing edges from send nodes.
 - `flowFromSample(sample)` — deep-copies a sample's flow with fresh ids for
   the flow, every node, and every edge so loading a sample twice yields two
   independent flows.
 
 ### Runtime integration
 
-`BrowserBot` rules take an optional `userId` (the Telegram chat id) so flow
-rules can key per-user state. In `useBot`, one rule is registered per flow,
-each backed by its own `FlowRuntime`:
+`BrowserBot` rules take an optional `userId` (the Telegram chat id). In
+`useBot`, one rule is registered per flow, each backed by its own
+`FlowRuntime`:
 
 ```
 rule = (message, userId) => runtime.handleMessage(userId ?? 0, message)
 ```
 
 Because a flow rule's matcher always returns `true`, `BrowserBot.handleMessage`
-calls every flow rule in order. A flow with no matching transition returns
+calls every flow rule in order. A flow that never reaches a send node returns
 `undefined` and `handleMessage` falls through to the next rule. The chat
 preview (Test User) drives the same `FlowRuntime` path, so what you see in the
 Chat tab matches a live flow.
@@ -300,13 +305,14 @@ export/import/reset alongside the token.
 
 The **Flow** tab uses React Flow (`@xyflow/react` v12). The `FlowsPage`
 renders `FlowEditor`, which wraps the canvas in a `<ReactFlowProvider>` with a
-palette, toolbar, and inspector. Custom MUI node components (`StartNode`,
-`StateNode`) preserve the app's design language. Nodes are added by dragging
-from the palette (HTML5 drag-and-drop using the `application/reactflow` MIME
-type) and dropped onto the canvas at the pointer position. Connecting nodes
-creates a `fallback` transition; clicking a transition opens the inspector to
-edit its trigger. Loading a sample dispatches `addFlow` with `flowFromSample`
-so ids are always fresh.
+palette, toolbar, samples, and inspector. Custom MUI node components
+(`StartNode`, `TransformNode`, `ConditionNode`, `SendNode`) preserve the
+app's design language. Nodes are added by dragging from the palette (HTML5
+drag-and-drop using the `application/reactflow` MIME type) and dropped onto
+the canvas at the pointer position. Connecting nodes creates a plain edge; a
+condition's outgoing edges record `sourceHandle` (`"if"`/`"else"`) and are
+labeled on the canvas. Loading a sample dispatches `addFlow` with
+`flowFromSample` so ids are always fresh.
 
 ## Design decisions
 

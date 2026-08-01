@@ -25,11 +25,22 @@ import { generateId } from "../logic/flow.ts";
 import { addFlow, removeFlow, updateFlow } from "../redux/botSlice.ts";
 import { BotWithConfig } from "../redux/types.ts";
 import { Flow, FlowEdge, FlowNodeType } from "../interfaces/flow.ts";
-import { StartNode, StateNode } from "./flowNodes.tsx";
+import {
+  StartNode,
+  TransformNode,
+  ConditionNode,
+  SendNode,
+} from "./flowNodes.tsx";
 
 // Canvas node renderers keyed by the FlowNodeType. Passed to <ReactFlow> so
-// each flow node renders as its dedicated MUI card.
-const nodeTypes = { start: StartNode, state: StateNode };
+// each flow node renders as its dedicated MUI card. Must be module-level (a
+// stable object identity) so React Flow does not remount nodes on re-render.
+const nodeTypes = {
+  start: StartNode,
+  transform: TransformNode,
+  condition: ConditionNode,
+  send: SendNode,
+};
 
 const EditorCanvas = ({
   flow,
@@ -51,7 +62,8 @@ const EditorCanvas = ({
   flowRef.current = flow;
 
   // Derive React Flow's node/edge shape from the selected flow. Edges carry a
-  // human-readable label (e.g. `message contains "hi"`) for the canvas.
+  // sourceHandle ("if" | "else") so condition branches render distinctly, and
+  // a human-readable label derived from that handle.
   const rfNodes = useMemo(
     () =>
       flow.nodes.map((node) => ({
@@ -68,7 +80,8 @@ const EditorCanvas = ({
         id: edge.id,
         source: edge.source,
         target: edge.target,
-        label: flowEdgeLabel(edge.data.trigger),
+        sourceHandle: edge.sourceHandle,
+        label: flowEdgeLabel(edge.sourceHandle),
       })),
     [flow]
   );
@@ -125,13 +138,13 @@ const EditorCanvas = ({
       edges: nextEdges.map((e) => {
         const original = current.edges.find((edge) => edge.id === e.id);
         // Defensive fallback for edges React Flow fabricates: keep a valid
-        // (fallback) trigger so the inspector never sees a null trigger.
+        // (triggerless) edge so the inspector never sees a missing source.
         return (
           original ?? {
             id: e.id,
             source: e.source,
             target: e.target,
-            data: { trigger: { type: "fallback", value: "" } },
+            sourceHandle: e.sourceHandle as "if" | "else" | undefined,
           }
         );
       }),
@@ -148,7 +161,10 @@ const EditorCanvas = ({
       id: generateId(),
       source: connection.source,
       target: connection.target,
-      data: { trigger: { type: "fallback", value: "" } },
+      sourceHandle:
+        connection.sourceHandle === "if" || connection.sourceHandle === "else"
+          ? connection.sourceHandle
+          : undefined,
     };
     persistFlow({ ...current, edges: [...current.edges, newEdge] });
   };
@@ -156,7 +172,7 @@ const EditorCanvas = ({
   const onDrop = (event) => {
     event.preventDefault();
     const type = event.dataTransfer.getData("application/reactflow");
-    if (type !== "start" && type !== "state") return;
+    if (type !== "start" && type !== "transform" && type !== "condition" && type !== "send") return;
     const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
     const node = createFlowNode(type, { x: position.x, y: position.y });
     // If no flow exists (the EmptyFlow placeholder is shown), create one

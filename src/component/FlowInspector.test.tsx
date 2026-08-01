@@ -14,22 +14,34 @@ const makeFlow = (overrides: Partial<Flow> = {}): Flow => ({
       id: "start",
       type: "start",
       position: { x: 0, y: 0 },
-      data: { label: "Start", replies: [] },
+      data: { label: "Start" },
     },
     {
-      id: "state1",
-      type: "state",
+      id: "transform1",
+      type: "transform",
       position: { x: 120, y: 0 },
+      data: {
+        label: "Upper",
+        transform: { type: "uppercase", find: "", replacement: "", pattern: "" },
+      },
+    },
+    {
+      id: "condition1",
+      type: "condition",
+      position: { x: 240, y: 0 },
+      data: { label: "Has hi", trigger: { type: "contains", value: "hi" } },
+    },
+    {
+      id: "send1",
+      type: "send",
+      position: { x: 360, y: 0 },
       data: { label: "Hello", replies: ["Hi there", "Welcome"] },
     },
   ],
   edges: [
-    {
-      id: "e1",
-      source: "start",
-      target: "state1",
-      data: { trigger: { type: "fallback", value: "" } },
-    },
+    { id: "e_if", source: "condition1", target: "send1", sourceHandle: "if" },
+    { id: "e_else", source: "condition1", target: "start", sourceHandle: "else" },
+    { id: "e_plain", source: "start", target: "transform1" },
   ],
   ...overrides,
 });
@@ -54,11 +66,22 @@ test("shows a hint when nothing is selected", () => {
   expect(screen.getByText("Select a node or edge to edit it.")).toBeTruthy();
 });
 
-test("editing a state node label dispatches onUpdate", () => {
-  const onUpdate = jest.fn();
-  renderInspector(makeFlow(), "state1", null, onUpdate);
+// ----- Start node -----
 
-  fireEvent.change(screen.getByLabelText("State label"), {
+test("start panel shows only the label field and no replies/edit fields", () => {
+  renderInspector(makeFlow(), "start", null);
+  expect(screen.getByText("Start Node")).toBeTruthy();
+  expect(screen.getByLabelText("Node label")).toBeTruthy();
+  expect(screen.queryByLabelText(/replies/i)).toBeNull();
+  expect(screen.queryByLabelText(/transform type/i)).toBeNull();
+  expect(screen.queryByLabelText(/trigger type/i)).toBeNull();
+});
+
+test("editing the start label dispatches onUpdate", () => {
+  const onUpdate = jest.fn();
+  renderInspector(makeFlow(), "start", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Node label"), {
     target: { value: "Renamed" },
   });
 
@@ -66,7 +89,7 @@ test("editing a state node label dispatches onUpdate", () => {
     expect.objectContaining({
       nodes: expect.arrayContaining([
         expect.objectContaining({
-          id: "state1",
+          id: "start",
           data: expect.objectContaining({ label: "Renamed" }),
         }),
       ]),
@@ -74,9 +97,152 @@ test("editing a state node label dispatches onUpdate", () => {
   );
 });
 
+// ----- Transform node -----
+
+test("transform panel shows the label and transform type select", () => {
+  renderInspector(makeFlow(), "transform1", null);
+  expect(screen.getByText("Transform Node")).toBeTruthy();
+  expect(screen.getByLabelText("Node label")).toBeTruthy();
+  // Default transform type for the fixture is uppercase, which is selected.
+  expect(screen.getByLabelText("Transform type")).toBeTruthy();
+});
+
+test("selecting a replace transform reveals Find and Replacement fields", async () => {
+  const Harness = () => {
+    const [flow, setFlow] = React.useState(makeFlow());
+    return (
+      <FlowInspector
+        flow={flow}
+        selectedNodeId="transform1"
+        selectedEdgeId={null}
+        onUpdate={setFlow}
+      />
+    );
+  };
+  renderWithProviders(<Harness />);
+
+  fireEvent.mouseDown(screen.getByRole("combobox"));
+  fireEvent.click(await screen.findByRole("option", { name: "replace text" }));
+
+  expect(screen.getByLabelText("Find")).toBeTruthy();
+  expect(screen.getByLabelText("Replacement")).toBeTruthy();
+  expect(screen.queryByLabelText("Pattern")).toBeNull();
+});
+
+test("selecting extract regex reveals the Pattern field", async () => {
+  const Harness = () => {
+    const [flow, setFlow] = React.useState(makeFlow());
+    return (
+      <FlowInspector
+        flow={flow}
+        selectedNodeId="transform1"
+        selectedEdgeId={null}
+        onUpdate={setFlow}
+      />
+    );
+  };
+  renderWithProviders(<Harness />);
+
+  fireEvent.mouseDown(screen.getByRole("combobox"));
+  fireEvent.click(await screen.findByRole("option", { name: "extract regex" }));
+
+  expect(screen.getByLabelText("Pattern")).toBeTruthy();
+  expect(screen.queryByLabelText("Find")).toBeNull();
+  expect(screen.queryByLabelText("Replacement")).toBeNull();
+});
+
+test("typing in a replace Find field dispatches onUpdate with the transform data", async () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "transform1",
+        type: "transform",
+        position: { x: 120, y: 0 },
+        data: {
+          label: "Swap",
+          transform: { type: "replace", find: "a", replacement: "b" },
+        },
+      },
+    ],
+  });
+  const onUpdate = jest.fn();
+  renderInspector(flow, "transform1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Find"), {
+    target: { value: "x" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "transform1",
+          data: expect.objectContaining({
+            transform: expect.objectContaining({
+              type: "replace",
+              find: "x",
+              replacement: "b",
+            }),
+          }),
+        }),
+      ]),
+    })
+  );
+});
+
+// ----- Condition node -----
+
+test("condition panel shows label, trigger type select, and trigger value field", () => {
+  renderInspector(makeFlow(), "condition1", null);
+  expect(screen.getByText("Condition Node")).toBeTruthy();
+  expect(screen.getByLabelText("Trigger type")).toBeTruthy();
+  expect(screen.getByLabelText("Trigger value")).toBeTruthy();
+});
+
+test("editing the condition trigger value dispatches onUpdate", () => {
+  const onUpdate = jest.fn();
+  renderInspector(makeFlow(), "condition1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Trigger value"), {
+    target: { value: "hello" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "condition1",
+          data: expect.objectContaining({
+            trigger: expect.objectContaining({ type: "contains", value: "hello" }),
+          }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("condition panel has no fallback trigger option", async () => {
+  renderInspector(makeFlow(), "condition1", null);
+
+  fireEvent.mouseDown(screen.getByRole("combobox"));
+  // The trigger select is the trigger-type select (first combobox).
+  const options = await screen.findAllByRole("option");
+  const labels = options.map((o) => o.textContent);
+  expect(labels).not.toContain("any other message");
+  expect(labels).toContain("message contains");
+});
+
+// ----- Send node -----
+
+test("send panel shows the label and replies multiline", () => {
+  renderInspector(makeFlow(), "send1", null);
+  expect(screen.getByText("Send Node")).toBeTruthy();
+  expect(screen.getByLabelText("Replies (one per line)")).toBeTruthy();
+});
+
 test("editing replies splits the textarea on newlines", () => {
   const onUpdate = jest.fn();
-  renderInspector(makeFlow(), "state1", null, onUpdate);
+  renderInspector(makeFlow(), "send1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Replies (one per line)"), {
     target: { value: "First\nSecond\nThird" },
@@ -86,7 +252,7 @@ test("editing replies splits the textarea on newlines", () => {
     expect.objectContaining({
       nodes: expect.arrayContaining([
         expect.objectContaining({
-          id: "state1",
+          id: "send1",
           data: expect.objectContaining({ replies: ["First", "Second", "Third"] }),
         }),
       ]),
@@ -94,67 +260,22 @@ test("editing replies splits the textarea on newlines", () => {
   );
 });
 
-test("the replies field is hidden for a start node", () => {
-  renderInspector(makeFlow(), "start", null);
-  expect(screen.queryByLabelText("Replies (one per line)")).toBeNull();
-  expect(screen.getByText("Start Node")).toBeTruthy();
+// ----- Edge panel (read-only) -----
+
+test("edge panel shows the read-only If branch caption", () => {
+  renderInspector(makeFlow(), null, "e_if");
+  expect(screen.getByText("Edge")).toBeTruthy();
+  expect(screen.getByText("If branch (condition true)")).toBeTruthy();
+  expect(screen.queryByLabelText(/trigger/i)).toBeNull();
+  expect(screen.queryByRole("combobox")).toBeNull();
 });
 
-test("editing an edge trigger type dispatches onUpdate", async () => {
-  const onUpdate = jest.fn();
-  renderInspector(makeFlow(), null, "e1", onUpdate);
-
-  // MUI Select: open the listbox (rendered in a portal) and pick equals.
-  fireEvent.mouseDown(screen.getByRole("combobox"));
-  fireEvent.click(await screen.findByRole("option", { name: "message equals" }));
-
-  expect(onUpdate).toHaveBeenCalledWith(
-    expect.objectContaining({
-      edges: expect.arrayContaining([
-        expect.objectContaining({
-          id: "e1",
-          data: expect.objectContaining({
-            trigger: expect.objectContaining({ type: "equals" }),
-          }),
-        }),
-      ]),
-    })
-  );
+test("edge panel shows the read-only Else branch caption", () => {
+  renderInspector(makeFlow(), null, "e_else");
+  expect(screen.getByText("Else branch (condition false)")).toBeTruthy();
 });
 
-test("editing an edge trigger value dispatches onUpdate", () => {
-  const flow = makeFlow({
-    edges: [
-      {
-        id: "e1",
-        source: "start",
-        target: "state1",
-        data: { trigger: { type: "equals", value: "/start" } },
-      },
-    ],
-  });
-  const onUpdate = jest.fn();
-  renderInspector(flow, null, "e1", onUpdate);
-
-  fireEvent.change(screen.getByLabelText("Trigger value"), {
-    target: { value: "/go" },
-  });
-
-  expect(onUpdate).toHaveBeenCalledWith(
-    expect.objectContaining({
-      edges: expect.arrayContaining([
-        expect.objectContaining({
-          data: expect.objectContaining({
-            trigger: expect.objectContaining({ type: "equals", value: "/go" }),
-          }),
-        }),
-      ]),
-    })
-  );
-});
-
-test("the trigger value input is hidden for a fallback trigger", () => {
-  renderInspector(makeFlow(), null, "e1");
-  expect(screen.queryByLabelText("Trigger value")).toBeNull();
-  expect(screen.getByText("any other message")).toBeTruthy();
+test("edge panel shows the generic Connection caption for plain edges", () => {
+  renderInspector(makeFlow(), null, "e_plain");
+  expect(screen.getByText("Connection")).toBeTruthy();
 });

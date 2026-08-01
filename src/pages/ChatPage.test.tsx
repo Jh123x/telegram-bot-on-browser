@@ -6,6 +6,7 @@ import { generateDefaultState, renderWithProviders, setupStore } from "../redux/
 import { ChatPage } from "./ChatPage.tsx";
 import { BrowserBot } from "../interfaces/bot";
 import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
+import { createFlow, createFlowNode } from "../logic/flow.ts";
 
 beforeEach(() => {
   (global as any).Worker = class {
@@ -221,7 +222,7 @@ test("selecting the Test User simulates replies as bubbles without sending to Te
   // Nothing is sent to Telegram, but the flow's replies show in the feed.
   expect(spy).not.toHaveBeenCalled();
   expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
-  expect(screen.getByText("Try /echo <something> or answer the quiz.")).toBeTruthy();
+  expect(screen.getByText("Try /echo or say hi.")).toBeTruthy();
   expect(screen.getByText(/Matched flow: Welcome Flow/)).toBeTruthy();
   expect(screen.getByText("/start")).toBeTruthy();
   expect(screen.getByText(/Test User ·/)).toBeTruthy();
@@ -244,7 +245,7 @@ const flowStore = () =>
   setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      flows: [SAMPLE_FLOWS[2].flow], // Greeting Check
       response: [],
       users: [],
     },
@@ -258,26 +259,44 @@ test("Test User preview responds to flows, sharing the production per-user path"
 
   const textbox = screen.getByRole("textbox");
 
-  // First message enters the flow: start -> question.
+  // "hi" contains "hi", so the condition takes the if branch → greeting.
   fireEvent.change(textbox, { target: { value: "hi" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-  expect(screen.getByText("What is 2 + 2?")).toBeTruthy();
+  expect(screen.getByText("Hello! 👋")).toBeTruthy();
   // One simulation → one matched-flow note.
-  expect(screen.getAllByText(/Matched flow: Quiz Flow/)).toHaveLength(1);
+  expect(screen.getAllByText(/Matched flow: Greeting Check/)).toHaveLength(1);
 
-  // Correct answer advances the Test User's flow state.
-  fireEvent.change(textbox, { target: { value: "4" } });
+  // The runtime is stateless, so a non-matching message re-runs from the
+  // start node and takes the else branch.
+  fireEvent.change(textbox, { target: { value: "hey" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-  expect(screen.getByText("Correct! 🎉")).toBeTruthy();
+  expect(screen.getByText("Say hi!")).toBeTruthy();
   // Two simulations → two matched-flow notes (one per message).
-  expect(screen.getAllByText(/Matched flow: Quiz Flow/)).toHaveLength(2);
+  expect(screen.getAllByText(/Matched flow: Greeting Check/)).toHaveLength(2);
 });
 
 test("Test User preview with no flow response shows the silent note", () => {
+  // A condition with only an if edge declines non-matching messages.
+  const strictFlow = (() => {
+    const f = createFlow("Strict");
+    const start = createFlowNode("start", { x: 0, y: 0 });
+    const check = createFlowNode("condition", { x: 120, y: 0 });
+    check.data.trigger = { type: "equals", value: "/secret" };
+    const reveal = createFlowNode("send", { x: 240, y: 0 });
+    reveal.data.label = "Reveal";
+    reveal.data.replies = ["The secret is 42"];
+    f.startNodeId = start.id;
+    f.nodes = [start, check, reveal];
+    f.edges = [
+      { id: "e1", source: start.id, target: check.id },
+      { id: "e2", source: check.id, target: reveal.id, sourceHandle: "if" },
+    ];
+    return f;
+  })();
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[1].flow], // Echo Flow
+      flows: [strictFlow],
       response: [],
       users: [],
     },
@@ -287,12 +306,7 @@ test("Test User preview with no flow response shows the silent note", () => {
   fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
 
   const textbox = screen.getByRole("textbox");
-  fireEvent.change(textbox, { target: { value: "hello" } });
-  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-  // First message: start -> menu.
-  expect(screen.getByText("Say /echo <something> to hear it back.")).toBeTruthy();
-
-  // Second unmatched message from the menu triggers no transition.
+  // "hello" does not equal "/secret" and there is no else edge → silent.
   fireEvent.change(textbox, { target: { value: "hello" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
   expect(screen.getByText(/No flow matched/)).toBeTruthy();
