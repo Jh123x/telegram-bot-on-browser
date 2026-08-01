@@ -138,8 +138,48 @@ Object {
                   <span
                     class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
                   >
-                    Drag a node onto the canvas.
+                    Pick a category, then a node to add.
                   </span>
+                  <div
+                    class="MuiBox-root css-4a9pb7"
+                  >
+                    <div
+                      aria-pressed="true"
+                      class="MuiBox-root css-kpxwbr"
+                      data-testid="palette-category-start"
+                      role="button"
+                      tabindex="0"
+                    >
+                      Start
+                    </div>
+                    <div
+                      aria-pressed="false"
+                      class="MuiBox-root css-13wc7gt"
+                      data-testid="palette-category-transform"
+                      role="button"
+                      tabindex="0"
+                    >
+                      Transform
+                    </div>
+                    <div
+                      aria-pressed="false"
+                      class="MuiBox-root css-13wc7gt"
+                      data-testid="palette-category-condition"
+                      role="button"
+                      tabindex="0"
+                    >
+                      Condition
+                    </div>
+                    <div
+                      aria-pressed="false"
+                      class="MuiBox-root css-13wc7gt"
+                      data-testid="palette-category-send"
+                      role="button"
+                      tabindex="0"
+                    >
+                      Send
+                    </div>
+                  </div>
                   <div
                     aria-label="Add Start node"
                     class="MuiBox-root css-184x01f"
@@ -152,45 +192,6 @@ Object {
                       data-testid="palette-dot-start"
                     />
                     Start
-                  </div>
-                  <div
-                    aria-label="Add Transform node"
-                    class="MuiBox-root css-cjs0tt"
-                    data-testid="palette-item-transform"
-                    draggable="true"
-                    role="button"
-                  >
-                    <div
-                      class="MuiBox-root css-1cfjmz8"
-                      data-testid="palette-dot-transform"
-                    />
-                    Transform
-                  </div>
-                  <div
-                    aria-label="Add Condition node"
-                    class="MuiBox-root css-1c7ceub"
-                    data-testid="palette-item-condition"
-                    draggable="true"
-                    role="button"
-                  >
-                    <div
-                      class="MuiBox-root css-n546hc"
-                      data-testid="palette-dot-condition"
-                    />
-                    Condition
-                  </div>
-                  <div
-                    aria-label="Add Send node"
-                    class="MuiBox-root css-q1gzt6"
-                    data-testid="palette-item-send"
-                    draggable="true"
-                    role="button"
-                  >
-                    <div
-                      class="MuiBox-root css-s0v3o9"
-                      data-testid="palette-dot-send"
-                    />
-                    Send
                   </div>
                 </div>
                 <div
@@ -441,8 +442,48 @@ Object {
                 <span
                   class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
                 >
-                  Drag a node onto the canvas.
+                  Pick a category, then a node to add.
                 </span>
+                <div
+                  class="MuiBox-root css-4a9pb7"
+                >
+                  <div
+                    aria-pressed="true"
+                    class="MuiBox-root css-kpxwbr"
+                    data-testid="palette-category-start"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Start
+                  </div>
+                  <div
+                    aria-pressed="false"
+                    class="MuiBox-root css-13wc7gt"
+                    data-testid="palette-category-transform"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Transform
+                  </div>
+                  <div
+                    aria-pressed="false"
+                    class="MuiBox-root css-13wc7gt"
+                    data-testid="palette-category-condition"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Condition
+                  </div>
+                  <div
+                    aria-pressed="false"
+                    class="MuiBox-root css-13wc7gt"
+                    data-testid="palette-category-send"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Send
+                  </div>
+                </div>
                 <div
                   aria-label="Add Start node"
                   class="MuiBox-root css-184x01f"
@@ -455,45 +496,6 @@ Object {
                     data-testid="palette-dot-start"
                   />
                   Start
-                </div>
-                <div
-                  aria-label="Add Transform node"
-                  class="MuiBox-root css-cjs0tt"
-                  data-testid="palette-item-transform"
-                  draggable="true"
-                  role="button"
-                >
-                  <div
-                    class="MuiBox-root css-1cfjmz8"
-                    data-testid="palette-dot-transform"
-                  />
-                  Transform
-                </div>
-                <div
-                  aria-label="Add Condition node"
-                  class="MuiBox-root css-1c7ceub"
-                  data-testid="palette-item-condition"
-                  draggable="true"
-                  role="button"
-                >
-                  <div
-                    class="MuiBox-root css-n546hc"
-                    data-testid="palette-dot-condition"
-                  />
-                  Condition
-                </div>
-                <div
-                  aria-label="Add Send node"
-                  class="MuiBox-root css-q1gzt6"
-                  data-testid="palette-item-send"
-                  draggable="true"
-                  role="button"
-                >
-                  <div
-                    class="MuiBox-root css-s0v3o9"
-                    data-testid="palette-dot-send"
-                  />
-                  Send
                 </div>
               </div>
               <div

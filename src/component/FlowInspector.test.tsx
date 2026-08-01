@@ -18,24 +18,33 @@ const makeFlow = (overrides: Partial<Flow> = {}): Flow => ({
     },
     {
       id: "transform1",
-      type: "transform",
+      type: "uppercase",
       position: { x: 120, y: 0 },
-      data: {
-        label: "Upper",
-        transform: { type: "uppercase", find: "", replacement: "", pattern: "" },
-      },
+      data: { label: "Upper" },
+    },
+    {
+      id: "replace1",
+      type: "replace",
+      position: { x: 160, y: 0 },
+      data: { label: "Swap", find: "a", replacement: "b" },
     },
     {
       id: "condition1",
-      type: "condition",
+      type: "contains",
       position: { x: 240, y: 0 },
-      data: { label: "Has hi", trigger: { type: "contains", value: "hi" } },
+      data: { label: "Has hi", value: "hi" },
     },
     {
       id: "send1",
       type: "send",
       position: { x: 360, y: 0 },
       data: { label: "Hello", replies: ["Hi there", "Welcome"] },
+    },
+    {
+      id: "random1",
+      type: "random",
+      position: { x: 400, y: 0 },
+      data: { label: "Flip", replies: ["Heads", "Tails"] },
     },
   ],
   edges: [
@@ -75,8 +84,8 @@ test("start panel shows only the label field and no replies/edit fields", () => 
   expect(screen.getByText("Start Node")).toBeTruthy();
   expect(screen.getByLabelText("Node label")).toBeTruthy();
   expect(screen.queryByLabelText(/replies/i)).toBeNull();
-  expect(screen.queryByLabelText(/transform type/i)).toBeNull();
-  expect(screen.queryByLabelText(/trigger type/i)).toBeNull();
+  expect(screen.queryByLabelText(/trigger/i)).toBeNull();
+  expect(screen.queryByLabelText(/find/i)).toBeNull();
 });
 
 test("editing the start label dispatches onUpdate", () => {
@@ -101,74 +110,31 @@ test("editing the start label dispatches onUpdate", () => {
 
 // ----- Transform node -----
 
-test("transform panel shows the label and transform type select", () => {
+test("transform panel shows the label and no type selector", () => {
   renderInspector(makeFlow(), "transform1", null);
   expect(screen.getByText("Transform Node")).toBeTruthy();
   expect(screen.getByLabelText("Node label")).toBeTruthy();
-  // Default transform type for the fixture is uppercase, which is selected.
-  expect(screen.getByLabelText("Transform type")).toBeTruthy();
+  // The operation is the node type itself — no per-node select anymore.
+  expect(screen.queryByRole("combobox")).toBeNull();
 });
 
-test("selecting a replace transform reveals Find and Replacement fields", async () => {
-  const Harness = () => {
-    const [flow, setFlow] = React.useState(makeFlow());
-    return (
-      <FlowInspector
-        flow={flow}
-        selectedNodeId="transform1"
-        selectedEdgeId={null}
-        onUpdate={setFlow}
-      />
-    );
-  };
-  renderWithProviders(<Harness />);
+test("a plain transform (uppercase) shows no Find/Replacement/Pattern fields", () => {
+  renderInspector(makeFlow(), "transform1", null);
+  expect(screen.queryByLabelText("Find")).toBeNull();
+  expect(screen.queryByLabelText("Replacement")).toBeNull();
+  expect(screen.queryByLabelText("Pattern")).toBeNull();
+});
 
-  fireEvent.mouseDown(screen.getByRole("combobox"));
-  fireEvent.click(await screen.findByRole("option", { name: "replace text" }));
-
+test("replace transform reveals Find and Replacement fields", () => {
+  renderInspector(makeFlow(), "replace1", null);
   expect(screen.getByLabelText("Find")).toBeTruthy();
   expect(screen.getByLabelText("Replacement")).toBeTruthy();
   expect(screen.queryByLabelText("Pattern")).toBeNull();
 });
 
-test("selecting extract regex reveals the Pattern field", async () => {
-  const Harness = () => {
-    const [flow, setFlow] = React.useState(makeFlow());
-    return (
-      <FlowInspector
-        flow={flow}
-        selectedNodeId="transform1"
-        selectedEdgeId={null}
-        onUpdate={setFlow}
-      />
-    );
-  };
-  renderWithProviders(<Harness />);
-
-  fireEvent.mouseDown(screen.getByRole("combobox"));
-  fireEvent.click(await screen.findByRole("option", { name: "extract regex" }));
-
-  expect(screen.getByLabelText("Pattern")).toBeTruthy();
-  expect(screen.queryByLabelText("Find")).toBeNull();
-  expect(screen.queryByLabelText("Replacement")).toBeNull();
-});
-
-test("typing in a replace Find field dispatches onUpdate with the transform data", async () => {
-  const flow = makeFlow({
-    nodes: [
-      {
-        id: "transform1",
-        type: "transform",
-        position: { x: 120, y: 0 },
-        data: {
-          label: "Swap",
-          transform: { type: "replace", find: "a", replacement: "b" },
-        },
-      },
-    ],
-  });
+test("editing the Find field dispatches onUpdate with the flat data", () => {
   const onUpdate = jest.fn();
-  renderInspector(flow, "transform1", null, onUpdate);
+  renderInspector(makeFlow(), "replace1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Find"), {
     target: { value: "x" },
@@ -178,27 +144,40 @@ test("typing in a replace Find field dispatches onUpdate with the transform data
     expect.objectContaining({
       nodes: expect.arrayContaining([
         expect.objectContaining({
-          id: "transform1",
-          data: expect.objectContaining({
-            transform: expect.objectContaining({
-              type: "replace",
-              find: "x",
-              replacement: "b",
-            }),
-          }),
+          id: "replace1",
+          data: expect.objectContaining({ find: "x", replacement: "b" }),
         }),
       ]),
     })
   );
 });
 
+test("extract regex transform reveals the Pattern field", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "re1",
+        type: "extractRegex",
+        position: { x: 0, y: 0 },
+        data: { label: "Grab", pattern: "\\d+" },
+      },
+    ],
+  });
+  renderInspector(flow, "re1", null);
+  expect(screen.getByLabelText("Pattern")).toBeTruthy();
+  expect(screen.queryByLabelText("Find")).toBeNull();
+  expect(screen.queryByLabelText("Replacement")).toBeNull();
+});
+
 // ----- Condition node -----
 
-test("condition panel shows label, trigger type select, and trigger value field", () => {
+test("condition panel shows label, type caption, and trigger value field", () => {
   renderInspector(makeFlow(), "condition1", null);
   expect(screen.getByText("Condition Node")).toBeTruthy();
-  expect(screen.getByLabelText("Trigger type")).toBeTruthy();
   expect(screen.getByLabelText("Trigger value")).toBeTruthy();
+  // The trigger TYPE is the node type — shown as a caption, not a select.
+  expect(screen.getByText("contains")).toBeTruthy();
+  expect(screen.queryByRole("combobox")).toBeNull();
 });
 
 test("editing the condition trigger value dispatches onUpdate", () => {
@@ -214,24 +193,11 @@ test("editing the condition trigger value dispatches onUpdate", () => {
       nodes: expect.arrayContaining([
         expect.objectContaining({
           id: "condition1",
-          data: expect.objectContaining({
-            trigger: expect.objectContaining({ type: "contains", value: "hello" }),
-          }),
+          data: expect.objectContaining({ value: "hello" }),
         }),
       ]),
     })
   );
-});
-
-test("condition panel has no fallback trigger option", async () => {
-  renderInspector(makeFlow(), "condition1", null);
-
-  fireEvent.mouseDown(screen.getByRole("combobox"));
-  // The trigger select is the trigger-type select (first combobox).
-  const options = await screen.findAllByRole("option");
-  const labels = options.map((o) => o.textContent);
-  expect(labels).not.toContain("any other message");
-  expect(labels).toContain("message contains");
 });
 
 // ----- Send node -----
@@ -256,6 +222,35 @@ test("editing replies splits the textarea on newlines", () => {
         expect.objectContaining({
           id: "send1",
           data: expect.objectContaining({ replies: ["First", "Second", "Third"] }),
+        }),
+      ]),
+    })
+  );
+});
+
+// ----- Random node -----
+
+test("random panel shows the label and options multiline with a hint", () => {
+  renderInspector(makeFlow(), "random1", null);
+  expect(screen.getByText("Random Node")).toBeTruthy();
+  expect(screen.getByLabelText("Options (one per line)")).toBeTruthy();
+  expect(screen.getByText("Sends one of these lines, chosen at random.")).toBeTruthy();
+});
+
+test("editing random options splits the textarea on newlines", () => {
+  const onUpdate = jest.fn();
+  renderInspector(makeFlow(), "random1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Options (one per line)"), {
+    target: { value: "Heads\nTails\nMaybe" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "random1",
+          data: expect.objectContaining({ replies: ["Heads", "Tails", "Maybe"] }),
         }),
       ]),
     })
@@ -320,6 +315,34 @@ test("does not scroll the panel when selection is cleared", () => {
   );
 
   expect(scrollSpy).toHaveBeenCalledTimes(1);
+});
+
+// ----- Label input keeps focus (regression for the deselect bug) -----
+
+test("typing in the node label keeps the input focused after updates", () => {
+  // The label field must stay MOUNTED across onUpdate-triggered re-renders.
+  // A nested component definition would remount it and drop focus; the module
+  // level LabelField keeps the same DOM node alive. We simulate the store
+  // round-trip: onUpdate replaces the flow and re-renders the inspector.
+  const Harness = () => {
+    const [flow, setFlow] = React.useState(makeFlow());
+    return (
+      <FlowInspector
+        flow={flow}
+        selectedNodeId="start"
+        selectedEdgeId={null}
+        onUpdate={setFlow}
+      />
+    );
+  };
+  renderWithProviders(<Harness />);
+
+  const input = screen.getByLabelText("Node label") as HTMLInputElement;
+  input.focus();
+  expect(document.activeElement).toBe(input);
+
+  fireEvent.change(input, { target: { value: "R" } });
+  expect(document.activeElement).toBe(screen.getByLabelText("Node label"));
 });
 
 // ----- Delete button -----
