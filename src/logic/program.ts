@@ -257,7 +257,9 @@ export function executeBlocks(
   for (const block of blocks) {
     const vars = { prev: data, ...variables };
     if (block.category === "logic") {
-      if (!checkLogic(block, message)) {
+      // Gates evaluate the message as it flows (after earlier transforms),
+      // matching the {prev} variable and the visual pipeline.
+      if (!checkLogic(block, data)) {
         if (block.fallback !== "") {
           replies.push(interpolate(block.fallback, vars));
         }

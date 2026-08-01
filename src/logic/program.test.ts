@@ -269,6 +269,11 @@ describe("transformPreview", () => {
     const block = transformBlock("remove", "l");
     expect(transformPreview(block, "Hello World")).toBe("Heo Word");
   });
+
+  test("remove preview with an empty find passes the input through", () => {
+    const block = transformBlock("remove", "");
+    expect(transformPreview(block, "Hello World")).toBe("Hello World");
+  });
 });
 
 describe("checkLogic", () => {
@@ -421,6 +426,16 @@ describe("executeBlocks", () => {
       actionBlock("echo"),
     ];
     expect(executeBlocks(blocks, "hi")).toEqual(["Not five characters!"]);
+  });
+
+  test("logic gates check the message as it flows after transforms", () => {
+    const blocks: Block[] = [
+      transformBlock("remove", "say "),
+      logicBlock("lengthEquals", "2", "Not two characters!"),
+      actionBlock("echo"),
+    ];
+    expect(executeBlocks(blocks, "say hi")).toEqual(["hi"]);
+    expect(executeBlocks(blocks, "say hello")).toEqual(["Not two characters!"]);
   });
 });
 
@@ -603,6 +618,44 @@ describe("Short Replies sample program", () => {
   });
 });
 
+describe("new sample programs", () => {
+  const sampleProgram = (name: string) => {
+    const sample = SAMPLE_PROGRAMS.find((s) => s.name === name);
+    if (!sample) throw new Error(`${name} sample not found`);
+    return programFromSample(sample);
+  };
+
+  test("Only Numbers echoes the number after the prefix", () => {
+    expect(executeProgram(sampleProgram("Only Numbers"), "/num 42")).toEqual([
+      "42",
+    ]);
+  });
+
+  test("Only Numbers rejects non-numbers with the fallback", () => {
+    expect(executeProgram(sampleProgram("Only Numbers"), "/num abc")).toEqual([
+      "That's not a number!",
+    ]);
+  });
+
+  test("Title Case capitalizes each word after the prefix", () => {
+    expect(
+      executeProgram(sampleProgram("Title Case"), "/title hello world")
+    ).toEqual(["Hello World"]);
+  });
+
+  test("Palindrome reverses the text after the prefix", () => {
+    expect(executeProgram(sampleProgram("Palindrome"), "/reverse hello")).toEqual(
+      ["olleh"]
+    );
+  });
+
+  test("Capitalize capitalizes the first letter after the prefix", () => {
+    expect(executeProgram(sampleProgram("Capitalize"), "/cap hello")).toEqual([
+      "Hello",
+    ]);
+  });
+});
+
 describe("interpolate", () => {
   test("replaces known keys with their variable values", () => {
     expect(interpolate("Hello {name}!", { name: "World" })).toBe(
@@ -700,6 +753,14 @@ describe("executeBlocks with variables", () => {
       actionBlock("echo"),
     ];
     expect(executeBlocks(blocks, "hi")).toEqual(["HI"]);
+  });
+
+  test("titleCase with outputVar saves the transformed value for a later reply", () => {
+    const blocks: Block[] = [
+      { ...transformBlock("titleCase"), outputVar: "titled" },
+      actionBlock("reply", "Now: {titled}"),
+    ];
+    expect(executeBlocks(blocks, "hello world")).toEqual(["Now: Hello World"]);
   });
 
   test("behaves identically when no outputVar or tokens are used", () => {
