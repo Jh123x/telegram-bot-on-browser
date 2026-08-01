@@ -5,7 +5,12 @@ export type TriggerType =
   | "endsWith"
   | "notEquals"
   | "notContains";
-export type LogicType = "lengthGreater" | "lengthLess" | "matchesRegex";
+export type LogicType =
+  | "lengthGreater"
+  | "lengthLess"
+  | "matchesRegex"
+  | "lengthEquals"
+  | "isNumber";
 export type TransformType =
   | "uppercase"
   | "lowercase"

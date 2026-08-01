@@ -22,6 +22,8 @@ export const LOGIC_LABELS: Record<LogicType, string> = {
   lengthGreater: "message length is greater than",
   lengthLess: "message length is less than",
   matchesRegex: "message matches regex",
+  lengthEquals: "message length equals",
+  isNumber: "message is a number",
 };
 
 export const TRANSFORM_LABELS: Record<TransformType, string> = {
@@ -63,6 +65,8 @@ export const BLOCK_DESCRIPTIONS: Record<
     lengthGreater: "Passes when the message is longer than the number.",
     lengthLess: "Passes when the message is shorter than the number.",
     matchesRegex: "Passes when the message matches the regular expression.",
+    lengthEquals: "Passes when the message length equals the number.",
+    isNumber: "Passes when the message is a number.",
   },
   transform: {
     uppercase: "Changes the message to UPPERCASE.",
@@ -206,6 +210,15 @@ export function checkLogic(block: Block, message: string): boolean {
       if (!Number.isFinite(n)) return false;
       return message.length < n;
     }
+    case "lengthEquals": {
+      const n = Number(block.value);
+      if (!Number.isFinite(n)) return false;
+      return message.length === n;
+    }
+    case "isNumber":
+      return (
+        message.trim() !== "" && Number.isFinite(Number(message.trim()))
+      );
     case "matchesRegex":
       try {
         return new RegExp(block.value).test(message);
@@ -303,7 +316,8 @@ export function validateProgram(program: Program): string[] {
         }
       } else if (
         block.kind === "lengthGreater" ||
-        block.kind === "lengthLess"
+        block.kind === "lengthLess" ||
+        block.kind === "lengthEquals"
       ) {
         if (!Number.isFinite(Number(block.value)))
           errors.push("Logic block needs a number");

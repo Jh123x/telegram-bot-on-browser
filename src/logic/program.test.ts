@@ -39,7 +39,12 @@ const transformBlock = (
 ): Block => ({ id: generateId(), category: "transform", kind, value, value2, fallback: "" });
 
 const logicBlock = (
-  kind: "lengthGreater" | "lengthLess" | "matchesRegex",
+  kind:
+    | "lengthGreater"
+    | "lengthLess"
+    | "matchesRegex"
+    | "lengthEquals"
+    | "isNumber",
   value = "",
   fallback = ""
 ): Block => ({ id: generateId(), category: "logic", kind, value, value2: "", fallback });
@@ -233,6 +238,36 @@ describe("checkLogic", () => {
     expect(() => checkLogic(block, "abc")).not.toThrow();
     expect(checkLogic(block, "abc")).toBe(false);
   });
+
+  test("lengthEquals: returns true when message length equals the number", () => {
+    const block = logicBlock("lengthEquals", "5");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("lengthEquals: returns false when message length differs", () => {
+    const block = logicBlock("lengthEquals", "3");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("lengthEquals: non-numeric value returns false", () => {
+    const block = logicBlock("lengthEquals", "abc");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("isNumber: returns true for numeric strings", () => {
+    const block = logicBlock("isNumber");
+    expect(checkLogic(block, "42")).toBe(true);
+    expect(checkLogic(block, "-3.5")).toBe(true);
+    expect(checkLogic(block, " 12 ")).toBe(true);
+  });
+
+  test("isNumber: returns false for non-numeric strings", () => {
+    const block = logicBlock("isNumber");
+    expect(checkLogic(block, "")).toBe(false);
+    expect(checkLogic(block, "   ")).toBe(false);
+    expect(checkLogic(block, "abc")).toBe(false);
+    expect(checkLogic(block, "12abc")).toBe(false);
+  });
 });
 
 describe("executeBlocks", () => {
@@ -294,6 +329,24 @@ describe("executeBlocks", () => {
       actionBlock("echo"),
     ];
     expect(executeBlocks(blocks, "anything")).toEqual(["anything"]);
+  });
+
+  test("isNumber failing stops the flow and emits the fallback", () => {
+    const blocks: Block[] = [
+      logicBlock("isNumber", "", "That's not a number!"),
+      actionBlock("echo"),
+    ];
+    expect(executeBlocks(blocks, "12abc")).toEqual([
+      "That's not a number!",
+    ]);
+  });
+
+  test("lengthEquals failing stops the flow and emits the fallback", () => {
+    const blocks: Block[] = [
+      logicBlock("lengthEquals", "5", "Not five characters!"),
+      actionBlock("echo"),
+    ];
+    expect(executeBlocks(blocks, "hi")).toEqual(["Not five characters!"]);
   });
 });
 
@@ -377,6 +430,18 @@ describe("validateProgram", () => {
     const program = validProgram();
     program.blocks.push(logicBlock("lengthGreater", "abc"));
     expect(validateProgram(program)).toContain("Logic block needs a number");
+  });
+
+  test("logic lengthEquals with non-numeric value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("lengthEquals", "abc"));
+    expect(validateProgram(program)).toContain("Logic block needs a number");
+  });
+
+  test("logic isNumber with a value is still accepted (value unused)", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("isNumber", "5"));
+    expect(validateProgram(program)).not.toContain("Logic block needs a number");
   });
 
   test("replace transform with empty value is an error", () => {
@@ -684,6 +749,11 @@ describe("BLOCK_DESCRIPTIONS", () => {
   test("has the new trigger labels", () => {
     expect(TRIGGER_LABELS.notEquals).toBe("message does not equal");
     expect(TRIGGER_LABELS.notContains).toBe("message does not contain");
+  });
+
+  test("has the new logic labels", () => {
+    expect(LOGIC_LABELS.lengthEquals).toBe("message length equals");
+    expect(LOGIC_LABELS.isNumber).toBe("message is a number");
   });
 
   test("has a non-empty description for every trigger type", () => {
