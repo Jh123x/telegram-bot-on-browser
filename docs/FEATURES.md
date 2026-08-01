@@ -2,12 +2,6 @@
 
 This page describes what the website does and how to use each feature.
 
-## Programs
-
-Programs are a legacy block-based rule format. Saved programs in your browser
-still run at runtime (checked before flows), but new programs are no longer
-created in the UI — build bot logic with the **Flow** editor instead (below).
-
 ## Flows
 
 The **Flow** tab is a visual state machine. A flow is a set of **states**
@@ -50,11 +44,10 @@ Each Telegram user's position in the flow is tracked independently. Two users
 can be in different states at the same time, and one user's messages never
 affect another's. A user with no stored state starts at the Start node.
 
-### How flows and programs interact
+### Multiple flows
 
-Legacy saved programs are checked first; a flow is only reached when no
-program replies. A flow that has no matching transition stays silent, and the
-rule falls through to later rules.
+Each flow runs in order. A flow that has no matching transition stays silent
+and the next flow gets a chance at the message.
 
 ### Samples
 
@@ -91,7 +84,7 @@ like any other user, but nothing is sent to Telegram.
 Type a message and press **Simulate**. The page shows:
 
 - your message as a user bubble,
-- which program or flow matched, if any,
+- which flow matched, if any,
 - the bot's reply as a normal bubble, or a note when the bot would stay
   silent.
 
@@ -104,5 +97,5 @@ browser. Paste it once, and the bot can start.
 
 ## Docs
 
-The **Docs** tab explains the concepts in the browser: how programs work,
-variables, blocks, samples, and troubleshooting.
+The **Docs** tab explains the concepts in the browser: states, transitions,
+triggers, variables, samples, and troubleshooting.
