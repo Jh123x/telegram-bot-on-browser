@@ -654,3 +654,170 @@ test("empty program card points to the add buttons instead of dragging", () => {
   expect(screen.queryByText(/drag/i)).toBeNull();
   expect(screen.getByRole("button", { name: "Add logic" })).toBeTruthy();
 });
+
+test("renders a test section with a Test message input and idle hint", () => {
+  renderCard(makeProgram(), 0, 1);
+  expect(screen.getByLabelText("Test message")).toBeTruthy();
+  expect(
+    screen.getByText("Type a message to see the bot's reply.")
+  ).toBeTruthy();
+});
+
+test("typing a matching message shows the bot reply", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "action",
+        kind: "reply",
+        value: "Welcome!",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  fireEvent.change(screen.getByLabelText("Test message"), {
+    target: { value: "/start" },
+  });
+  expect(screen.getByText("Bot: Welcome!")).toBeTruthy();
+});
+
+test("typing a non-matching message shows the no-match hint", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "action",
+        kind: "reply",
+        value: "Welcome!",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  fireEvent.change(screen.getByLabelText("Test message"), {
+    target: { value: "goodbye" },
+  });
+  expect(screen.getByText(/No trigger match/)).toBeTruthy();
+});
+
+test("a logic gate that stops the flow shows the silent note", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "logic",
+        kind: "lengthGreater",
+        value: "100",
+        value2: "",
+        fallback: "",
+      },
+      {
+        id: "b2",
+        category: "action",
+        kind: "echo",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  fireEvent.change(screen.getByLabelText("Test message"), {
+    target: { value: "/start" },
+  });
+  expect(screen.getByText(/no reply was produced/)).toBeTruthy();
+});
+
+test("variable interpolation resolves in test output", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "transform",
+        kind: "uppercase",
+        value: "",
+        value2: "",
+        fallback: "",
+        outputVar: "shouted",
+      },
+      {
+        id: "b2",
+        category: "action",
+        kind: "reply",
+        value: "You shouted: {shouted}!",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  fireEvent.change(screen.getByLabelText("Test message"), {
+    target: { value: "/start" },
+  });
+  expect(
+    screen.getByText("Bot: You shouted: /START!")
+  ).toBeTruthy();
+});
+
+test("test zone matches the raw message, exactly like the real bot", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "startsWith", value: "say " },
+    blocks: [
+      {
+        id: "b1",
+        category: "action",
+        kind: "echo",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  fireEvent.change(screen.getByLabelText("Test message"), {
+    target: { value: "  say hi" },
+  });
+  expect(screen.getByText(/No trigger match/)).toBeTruthy();
+});
+
+test("test zone feeds the raw message into the pipeline like the real bot", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "action",
+        kind: "echo",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  fireEvent.change(screen.getByLabelText("Test message"), {
+    target: { value: "  /start  " },
+  });
+  expect(
+    screen.getByText("Bot:   /start  ", { normalizer: (s) => s })
+  ).toBeTruthy();
+});

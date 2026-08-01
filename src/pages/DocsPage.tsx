@@ -437,6 +437,12 @@ action: reply "You shouted: {shouted}!"`}
           Clearing browser data resets your programs and token.
         </Typography>
       </li>
+      <li>
+        <Typography component="span">
+          Every program card has a Test box — type a message to preview the
+          bot's reply before starting the bot.
+        </Typography>
+      </li>
     </Box>
 
     <Typography variant="h4" id="troubleshooting" sx={{ mt: 3 }}>

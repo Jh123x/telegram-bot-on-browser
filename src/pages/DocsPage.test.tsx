@@ -189,3 +189,9 @@ test("getting started points to the card buttons instead of dragging", () => {
   expect(screen.getAllByText(/buttons on each program card/i).length).toBeGreaterThan(0);
   expect(screen.queryByText(/drag blocks/i)).toBeNull();
 });
+
+test("mentions the Test box in the tips", () => {
+  render(<DocsPage />);
+
+  expect(screen.getAllByText(/Test box/i).length).toBeGreaterThan(0);
+});
