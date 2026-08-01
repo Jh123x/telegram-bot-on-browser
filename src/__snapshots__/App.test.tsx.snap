@@ -150,13 +150,31 @@ Object {
                     Start
                   </div>
                   <div
-                    aria-label="Add State node"
+                    aria-label="Add Transform node"
                     class="MuiBox-root css-1lf1isb"
-                    data-testid="palette-item-state"
+                    data-testid="palette-item-transform"
                     draggable="true"
                     role="button"
                   >
-                    State
+                    Transform
+                  </div>
+                  <div
+                    aria-label="Add Condition node"
+                    class="MuiBox-root css-1lf1isb"
+                    data-testid="palette-item-condition"
+                    draggable="true"
+                    role="button"
+                  >
+                    Condition
+                  </div>
+                  <div
+                    aria-label="Add Send node"
+                    class="MuiBox-root css-1lf1isb"
+                    data-testid="palette-item-send"
+                    draggable="true"
+                    role="button"
+                  >
+                    Send
                   </div>
                 </div>
                 <div
@@ -187,19 +205,19 @@ Object {
                     </button>
                     <button
                       class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Echo Flow"
+                      data-testid="flow-sample-Uppercase Echo"
                       tabindex="0"
                       type="button"
                     >
-                      Echo Flow
+                      Uppercase Echo
                     </button>
                     <button
                       class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Quiz Flow"
+                      data-testid="flow-sample-Greeting Check"
                       tabindex="0"
                       type="button"
                     >
-                      Quiz Flow
+                      Greeting Check
                     </button>
                   </div>
                 </div>
@@ -485,13 +503,31 @@ Object {
                   Start
                 </div>
                 <div
-                  aria-label="Add State node"
+                  aria-label="Add Transform node"
                   class="MuiBox-root css-1lf1isb"
-                  data-testid="palette-item-state"
+                  data-testid="palette-item-transform"
                   draggable="true"
                   role="button"
                 >
-                  State
+                  Transform
+                </div>
+                <div
+                  aria-label="Add Condition node"
+                  class="MuiBox-root css-1lf1isb"
+                  data-testid="palette-item-condition"
+                  draggable="true"
+                  role="button"
+                >
+                  Condition
+                </div>
+                <div
+                  aria-label="Add Send node"
+                  class="MuiBox-root css-1lf1isb"
+                  data-testid="palette-item-send"
+                  draggable="true"
+                  role="button"
+                >
+                  Send
                 </div>
               </div>
               <div
@@ -522,19 +558,19 @@ Object {
                   </button>
                   <button
                     class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Echo Flow"
+                    data-testid="flow-sample-Uppercase Echo"
                     tabindex="0"
                     type="button"
                   >
-                    Echo Flow
+                    Uppercase Echo
                   </button>
                   <button
                     class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Quiz Flow"
+                    data-testid="flow-sample-Greeting Check"
                     tabindex="0"
                     type="button"
                   >
-                    Quiz Flow
+                    Greeting Check
                   </button>
                 </div>
               </div>

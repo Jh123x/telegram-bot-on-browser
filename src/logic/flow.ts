@@ -49,6 +49,12 @@ export function interpolate(
   );
 }
 
+// Interpolates a list of reply templates with the current message. Module
+// level so loop closures never capture loop-scoped variables (no-loop-func).
+function interpolateReplies(replies: string[], message: string): string[] {
+  return replies.map((reply) => interpolate(reply, { msg: message }));
+}
+
 export function matchTrigger(
   trigger: { type: FlowTriggerType; value: string },
   message: string
@@ -221,9 +227,7 @@ export function executeFlow(
         continue;
       }
       case "send": {
-        return (current.data.replies ?? []).map((reply) =>
-          interpolate(reply, { msg: currentMessage })
-        );
+        return interpolateReplies(current.data.replies ?? [], currentMessage);
       }
     }
   }

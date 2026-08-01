@@ -45,17 +45,20 @@ const wrapper = (store: ReturnType<typeof setupStore>) => {
   return Wrapper;
 };
 
-// A minimal flow: a "/hello" message transitions to a state that replies "hi".
+// A minimal flow: a "/hello" message routes through a condition to a send
+// node that replies "hi". Anything else declines (no else edge → no reply).
 const helloFlow = {
   id: "f1",
   name: "Hello",
   startNodeId: "start",
   nodes: [
-    { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start", replies: [] } },
-    { id: "reply", type: "state" as const, position: { x: 0, y: 0 }, data: { label: "Reply", replies: ["hi"] } },
+    { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } },
+    { id: "cond", type: "condition" as const, position: { x: 0, y: 0 }, data: { label: "Check", trigger: { type: "equals" as const, value: "/hello" } } },
+    { id: "reply", type: "send" as const, position: { x: 0, y: 0 }, data: { label: "Reply", replies: ["hi"] } },
   ],
   edges: [
-    { id: "e1", source: "start", target: "reply", data: { trigger: { type: "equals" as const, value: "/hello" } } },
+    { id: "e1", source: "start", target: "cond" },
+    { id: "e2", source: "cond", target: "reply", sourceHandle: "if" as const },
   ],
 };
 
@@ -219,7 +222,7 @@ test("flows from the store are registered as rules and respond via the worker", 
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      flows: [SAMPLE_FLOWS[2].flow], // Greeting Check
       response: [],
       users: [],
     },
@@ -232,41 +235,40 @@ test("flows from the store are registered as rules and respond via the worker", 
   const poll = instances[0];
   const send = instances[1];
 
-  // First message: any message transitions start -> q1, replying with the question.
+  // "hi" contains "hi", so the condition takes the if branch → greeting.
   await act(async () => {
     await poll.onmessage!({ data: [1, "alice", 42, "hi"] });
   });
   expect(send.postMessage).toHaveBeenCalledWith([
     "https://api.telegram.org/botTOKEN/sendMessage",
-    "What is 2 + 2?",
+    "Hello! 👋",
     42,
   ]);
 });
 
 test("a silent flow falls through to the next flow (multi-flow rules)", async () => {
-  // First flow only matches /help (no fallback), so other messages decline.
+  // First flow only matches /help (condition with no else edge), so other
+  // messages decline.
   const silentFlow = (() => {
     const f = createFlow("Silent");
     const start = createFlowNode("start", { x: 0, y: 0 });
-    const help = createFlowNode("state", { x: 120, y: 0 });
+    const check = createFlowNode("condition", { x: 120, y: 0 });
+    check.data.trigger = { type: "equals", value: "/help" };
+    const help = createFlowNode("send", { x: 240, y: 0 });
     help.data.label = "Help";
     help.data.replies = ["Help text"];
     f.startNodeId = start.id;
-    f.nodes = [start, help];
+    f.nodes = [start, check, help];
     f.edges = [
-      {
-        id: "e1",
-        source: start.id,
-        target: help.id,
-        data: { trigger: { type: "equals", value: "/help" } },
-      },
+      { id: "e1", source: start.id, target: check.id },
+      { id: "e2", source: check.id, target: help.id, sourceHandle: "if" },
     ];
     return f;
   })();
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [silentFlow, SAMPLE_FLOWS[2].flow], // Silent, then Quiz Flow
+      flows: [silentFlow, SAMPLE_FLOWS[2].flow], // Silent, then Greeting Check
       response: [],
       users: [],
     },
@@ -279,22 +281,22 @@ test("a silent flow falls through to the next flow (multi-flow rules)", async ()
   const poll = instances[0];
   const send = instances[1];
 
-  // Silent flow declines "hi" (no /help transition); the quiz flow answers.
+  // Silent flow declines "hi" (no /help match); the greeting flow answers.
   await act(async () => {
     await poll.onmessage!({ data: [1, "alice", 42, "hi"] });
   });
   expect(send.postMessage).toHaveBeenCalledWith([
     "https://api.telegram.org/botTOKEN/sendMessage",
-    "What is 2 + 2?",
+    "Hello! 👋",
     42,
   ]);
 });
 
-test("flows keep independent per-user state through the worker", async () => {
+test("flows are stateless: every message re-runs from the start node", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      flows: [SAMPLE_FLOWS[2].flow], // Greeting Check
       response: [],
       users: [],
     },
@@ -307,63 +309,68 @@ test("flows keep independent per-user state through the worker", async () => {
   const poll = instances[0];
   const send = instances[1];
 
-  // alice (42) starts the quiz.
+  // alice (42) sends "hi" → greeting (if branch).
   await act(async () => {
     await poll.onmessage!({ data: [1, "alice", 42, "hi"] });
   });
   expect(send.postMessage).toHaveBeenLastCalledWith([
     "https://api.telegram.org/botTOKEN/sendMessage",
-    "What is 2 + 2?",
+    "Hello! 👋",
     42,
   ]);
 
-  // bob (7) starts the quiz too — still at the start, gets the question.
+  // bob (7) sends "hey" → else branch.
   await act(async () => {
-    await poll.onmessage!({ data: [2, "bob", 7, "hi"] });
+    await poll.onmessage!({ data: [2, "bob", 7, "hey"] });
   });
   expect(send.postMessage).toHaveBeenLastCalledWith([
     "https://api.telegram.org/botTOKEN/sendMessage",
-    "What is 2 + 2?",
+    "Say hi!",
     7,
   ]);
 
-  // alice answers correctly — her state advanced to the question node.
+  // alice sends "hi" again — the runtime is stateless, so the message is
+  // re-evaluated from the start node and gets the greeting once more (no
+  // per-user position to advance).
   await act(async () => {
-    await poll.onmessage!({ data: [4, "alice", 42, "4"] });
+    await poll.onmessage!({ data: [3, "alice", 42, "hi"] });
   });
   expect(send.postMessage).toHaveBeenLastCalledWith([
     "https://api.telegram.org/botTOKEN/sendMessage",
-    "Correct! 🎉",
+    "Hello! 👋",
     42,
   ]);
 
-  // bob's state is independent: he answered wrongly from the question node,
-  // getting the wrong-answer branch instead of alice's correct one.
-  await act(async () => {
-    await poll.onmessage!({ data: [5, "bob", 7, "5"] });
-  });
-  expect(send.postMessage).toHaveBeenLastCalledWith([
-    "https://api.telegram.org/botTOKEN/sendMessage",
-    "Nope, try again!",
-    7,
-  ]);
-
-  // bob's replies never included the correct answer, while alice got it
-  // exactly once — proving the two users' flow states are independent.
   const messagesByUser = (userId: number) =>
     send.postMessage.mock.calls
       .filter((call: [string, string, number]) => call[0][2] === userId)
       .map((call: [string, string, number]) => call[0][1]);
-  expect(messagesByUser(7)).not.toContain("Correct! 🎉");
-  expect(messagesByUser(42)).toContain("Correct! 🎉");
-  expect(send.postMessage.mock.calls).toHaveLength(4);
+  expect(messagesByUser(42)).toEqual(["Hello! 👋", "Hello! 👋"]);
+  expect(messagesByUser(7)).toEqual(["Say hi!"]);
 });
 
 test("a flow with no matching transition sends no reply", async () => {
+  // A condition with only an if edge declines non-matching messages.
+  const strictFlow = (() => {
+    const f = createFlow("Strict");
+    const start = createFlowNode("start", { x: 0, y: 0 });
+    const check = createFlowNode("condition", { x: 120, y: 0 });
+    check.data.trigger = { type: "equals", value: "/secret" };
+    const reveal = createFlowNode("send", { x: 240, y: 0 });
+    reveal.data.label = "Reveal";
+    reveal.data.replies = ["The secret is 42"];
+    f.startNodeId = start.id;
+    f.nodes = [start, check, reveal];
+    f.edges = [
+      { id: "e1", source: start.id, target: check.id },
+      { id: "e2", source: check.id, target: reveal.id, sourceHandle: "if" },
+    ];
+    return f;
+  })();
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[1].flow], // Echo Flow
+      flows: [strictFlow],
       response: [],
       users: [],
     },
@@ -376,15 +383,15 @@ test("a flow with no matching transition sends no reply", async () => {
   const poll = instances[0];
   const send = instances[1];
 
-  // First message: start -> menu, replies with the prompt.
+  // "hello" does not equal "/secret" and there is no else edge → silent.
   await act(async () => {
     await poll.onmessage!({ data: [1, "alice", 42, "hello"] });
   });
-  expect(send.postMessage).toHaveBeenCalledTimes(1);
+  expect(send.postMessage).toHaveBeenCalledTimes(0);
 
-  // Second message from the menu with no matching transition: silent.
+  // A matching message does reply.
   await act(async () => {
-    await poll.onmessage!({ data: [2, "alice", 42, "hello"] });
+    await poll.onmessage!({ data: [2, "alice", 42, "/secret"] });
   });
   expect(send.postMessage).toHaveBeenCalledTimes(1);
 });
