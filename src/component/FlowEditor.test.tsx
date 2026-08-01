@@ -99,3 +99,22 @@ test("switching between flows updates which flow is edited", () => {
 
   expect(screen.getByLabelText("Flow name")).toHaveValue("Second");
 });
+
+test("persists flow changes to localStorage after the initial render", () => {
+  const flow = makeFlow("Original");
+  const store = makeStore([flow]);
+  renderWithProviders(<FlowEditor />, { store });
+
+  // The initial render must NOT write: it would clobber flows that App is
+  // about to hydrate from localStorage on startup.
+  expect(localStorage.getItem("flows")).toBeNull();
+
+  fireEvent.change(screen.getByLabelText("Flow name"), {
+    target: { value: "Renamed" },
+  });
+
+  const stored = JSON.parse(localStorage.getItem("flows")!);
+  expect(stored).toHaveLength(1);
+  expect(stored[0].id).toBe(flow.id);
+  expect(stored[0].name).toBe("Renamed");
+});

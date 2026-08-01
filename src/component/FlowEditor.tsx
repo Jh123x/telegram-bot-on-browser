@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Background,
@@ -94,7 +94,16 @@ const EditorCanvas = ({ flow }: { flow: Flow }) => {
       ...flow,
       edges: nextEdges.map((e) => {
         const original = flow.edges.find((edge) => edge.id === e.id);
-        return original ?? { id: e.id, source: e.source, target: e.target, data: null };
+        // Defensive fallback for edges React Flow fabricates: keep a valid
+        // (fallback) trigger so the inspector never sees a null trigger.
+        return (
+          original ?? {
+            id: e.id,
+            source: e.source,
+            target: e.target,
+            data: { trigger: { type: "fallback", value: "" } },
+          }
+        );
       }),
     });
   };
@@ -183,6 +192,22 @@ export const FlowEditor = () => {
   const dispatch = useDispatch();
   const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows);
   const [selectedFlowId, setSelectedFlowId] = useState<string | null>(null);
+
+  // Persist flow edits to localStorage on every change, mirroring
+  // ProgramEditor. Guard: the first effect run (including StrictMode's
+  // simulated remount) establishes a baseline and never writes, so we do not
+  // clobber saved flows before App hydrates them on startup.
+  const lastWritten = useRef<string | null>(null);
+  useEffect(() => {
+    const serialized = JSON.stringify(flows);
+    if (lastWritten.current === serialized) return;
+    if (lastWritten.current === null) {
+      lastWritten.current = serialized;
+      return;
+    }
+    lastWritten.current = serialized;
+    localStorage.setItem("flows", serialized);
+  }, [flows]);
 
   // Keep a flow selected: default to the first flow; if flows empty, none.
   useEffect(() => {
