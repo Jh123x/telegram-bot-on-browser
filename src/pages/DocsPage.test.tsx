@@ -35,11 +35,21 @@ test("renders key content strings", () => {
   expect(screen.getAllByText(/@BotFather/).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/localStorage/i).length).toBeGreaterThan(0);
   expect(
-    screen.getByText(/first program whose trigger matches/i)
+    screen.getByText(/The first program whose trigger matches runs its blocks/i)
   ).toBeTruthy();
+  expect(screen.getByText(/Later programs are skipped/i)).toBeTruthy();
   expect(screen.getAllByText(/message ends with/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/uppercase/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/Heads/).length).toBeGreaterThan(0);
+});
+
+test("keeps the copy concise and free of filler words", () => {
+  render(<DocsPage />);
+
+  const body = screen.getByText(/The first program whose trigger matches runs its blocks/i);
+  expect(body).toBeTruthy();
+  expect(screen.queryAllByText(/additionally/i)).toHaveLength(0);
+  expect(screen.queryAllByText(/please/i)).toHaveLength(0);
 });
 
 test("does not render the placeholder text", () => {

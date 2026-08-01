@@ -107,7 +107,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           >
             @BotFather
           </Link>{" "}
-          on Telegram and copy the token it gives you.
+          on Telegram. Copy the token it gives you.
         </Typography>
       </li>
       <li>
@@ -128,7 +128,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           >
             Settings tab
           </Link>{" "}
-          and paste the token — it is stored only in your browser&apos;s
+          and paste the token. It is stored only in your browser&apos;s
           localStorage.
         </Typography>
       </li>
@@ -150,13 +150,12 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           >
             Programs tab
           </Link>{" "}
-          — drag blocks from the palette onto a program card, or click to add
-          them.
+          and drag blocks from the palette onto a card. Or click to add them.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Press Start in the header bar — the bot starts polling Telegram.
+          Press Start in the header bar. The bot starts polling Telegram.
         </Typography>
       </li>
       <li>
@@ -177,7 +176,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           >
             Chat tab
           </Link>{" "}
-          to watch incoming messages and reply to users.
+          to watch incoming messages. Reply to users from there.
         </Typography>
       </li>
     </Box>
@@ -187,13 +186,13 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
       A program is one trigger plus a list of blocks. When a user sends a
-      message, the first program whose trigger matches runs its blocks in
-      order. If no program matches, the bot stays silent. Every detail you type
-      is saved to localStorage automatically.
+      message, the first program whose trigger matches runs its blocks. Later
+      programs are skipped. If no program matches, the bot stays silent. Your
+      work is saved to localStorage automatically.
     </Typography>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      You can think of each program as a small pipeline:
+      Think of each program as a small pipeline:
     </Typography>
     <pre data-testid="code-sample-pipeline" style={codeStyle}>
       {`message -> trigger -> logic -> transform -> action -> reply`}
@@ -203,17 +202,17 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
       Variables
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      Every transform node can save its output to a variable. In any reply,
-      fallback, or random option you can reference the value with{" "}
-      {"{prev}"} — the message as it flows through the pipeline — or with the
-      name you gave the transform. Give a transform a variable name like{" "}
-      {"shouted"} and then use {"{shouted}"} inside a reply to insert the
-      transformed text anywhere in the message.
+      A transform node can save its output to a variable. You can use the
+      variable in any reply, fallback, or random option. {"{prev}"} is the
+      message as it flows through the pipeline. A named variable keeps the
+      output of one transform. Give a transform the name {"shouted"} and then
+      use {"{shouted}"} in a reply. It inserts the transformed text anywhere
+      in the message.
     </Typography>
     <Typography variant="body1" sx={{ mt: 2 }}>
-      {"{prev}"} always refers to the current flowing value before the reply,
-      while a named variable remembers the output of a specific transform node.
-      Tokens that do not match a variable are left exactly as typed.
+      {"{prev}"} always means the current value before the reply. A named
+      variable keeps the output of a specific transform. Tokens that match no
+      variable stay exactly as typed.
     </Typography>
     <pre data-testid="code-sample-variables" style={codeStyle}>
       {`trigger: message contains "shout"
@@ -225,33 +224,33 @@ action: reply "You shouted: {shouted}!"`}
       Blocks
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      Blocks fall into four categories:
+      Blocks fall into four groups:
     </Typography>
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          Triggers — decide when the program runs: message equals, message
+          Triggers — decide when the program runs. Use message equals, message
           contains, message starts with, or message ends with a value.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Logic — message length is greater than, less than, or matches a
-          regex. These act as gates: if the condition fails, the program stops
-          and sends the &quot;Else reply&quot; text if it is set.
+          Logic — gates. Check message length or match a regex. If the check
+          fails, the program stops. It sends the &quot;Else reply&quot; text
+          if that is set.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Transform — make uppercase, make lowercase, trim, replace, or
-          concat (prepend/append) text. They change the message as it flows
-          through, and echo replies with the transformed message.
+          Transform — change the message as it flows. Make uppercase, make
+          lowercase, trim, replace, or concat (prepend/append) text. Echo
+          replies return the transformed message.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Action — reply with text, reply a random choice, or echo the message.
-          These produce the actual replies.
+          Action — produce the reply. Reply with text, reply a random choice,
+          or echo the message.
         </Typography>
       </li>
     </Box>
@@ -260,7 +259,7 @@ action: reply "You shouted: {shouted}!"`}
       Samples
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      A few sample programs are built in so you can get started right away:
+      A few samples are built in. You can start right away:
     </Typography>
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
@@ -275,12 +274,12 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          Help — replies whenever the message contains &quot;help&quot;.
+          Help — replies when the message contains &quot;help&quot;.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Echo Clean — strips a leading &quot;say &quot; and echoes the rest.
+          Echo Clean — removes a leading &quot;say &quot; and echoes the rest.
         </Typography>
       </li>
       <li>
@@ -290,15 +289,19 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          Short Replies — rejects messages longer than 10 characters when you
-          send /short.
+          Shout Back — makes your message uppercase, then replies
+          &quot;You shouted: &lt;message&gt;!&quot;.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          Short Replies — rejects messages over 10 characters on /short.
         </Typography>
       </li>
     </Box>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      Here is what the built-in <strong>Welcome</strong> program looks like as
-      JSON:
+      The built-in <strong>Welcome</strong> program looks like this as JSON:
     </Typography>
     <pre data-testid="code-sample-welcome" style={codeStyle}>
       {`{
@@ -318,8 +321,8 @@ action: reply "You shouted: {shouted}!"`}
     </pre>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      And the <strong>Shout</strong> program transforms the message to
-      uppercase before echoing it:
+      The <strong>Shout</strong> program makes the message uppercase, then
+      echoes it:
     </Typography>
     <pre data-testid="code-sample-shout" style={codeStyle}>
       {`{
@@ -342,7 +345,7 @@ action: reply "You shouted: {shouted}!"`}
     </pre>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      For the full list of block types, triggers, and fields, see the{" "}
+      For the full list of block types and fields, see the{" "}
       <Link
         href="https://core.telegram.org/bots/api"
         target="_blank"
@@ -350,8 +353,7 @@ action: reply "You shouted: {shouted}!"`}
       >
         Telegram Bot API docs
       </Link>
-      . If you run into issues or want to suggest a feature, open an issue on
-      the{" "}
+      . Found a bug or want a feature? Open an issue on the{" "}
       <Link
         href="https://github.com/Jh123x/telegram-bot-on-browser"
         target="_blank"
@@ -376,8 +378,8 @@ action: reply "You shouted: {shouted}!"`}
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          Order matters — the first matching program wins. Use the up and down
-          arrows to reorder your programs in the{" "}
+          Order matters. The first match wins. Use the arrow buttons to
+          reorder your programs in the{" "}
           <Link
             component="button"
             onClick={() => onNavigate?.("programs")}
@@ -398,13 +400,12 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          The bot only runs while this tab is open.
+          The bot runs only while this tab is open.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Your token never leaves your browser — API calls go directly to
-          Telegram.
+          Your token never leaves your browser. Calls go straight to Telegram.
         </Typography>
       </li>
       <li>
@@ -420,14 +421,14 @@ action: reply "You shouted: {shouted}!"`}
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          Bot not replying? Check the header says &quot;Bot started&quot;, the
-          page is open, and the trigger matches exactly — equals is
+          Bot not replying? Check the header says &quot;Bot started&quot;. Keep
+          the page open. Make sure the trigger matches exactly. Equals is
           case-sensitive and trims whitespace.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Messages not appearing? Check the bot has received them in the{" "}
+          Messages not appearing? Check the bot got them in the{" "}
           <Link
             component="button"
             onClick={() => onNavigate?.("chat")}
