@@ -12,10 +12,10 @@ Workers so the UI never blocks.
 flowchart LR
   subgraph Browser
     UI[React UI<br/>Programs / Flows / Chat / Settings / Docs]
-    Store[(Redux Store<br/>token, programs, messages)]
+    Store[(Redux Store<br/>token, programs, flows, messages)]
     Logic[Logic Engine<br/>matchTrigger, executeBlocks]
     Bot[BrowserBot<br/>rules + workers]
-    Local[(localStorage<br/>token + programs)]
+    Local[(localStorage<br/>token, programs, flows)]
 
     UI <--> Store
     UI --> Logic

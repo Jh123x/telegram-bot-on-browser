@@ -53,7 +53,7 @@ src/
   hooks/       React hooks (bot lifecycle)
   interfaces/  TypeScript types
   logic/       Pure bot logic (triggers, transforms, execution)
-  pages/       Page views (Programs, Chat, Settings, Docs)
+  pages/       Page views (Programs, Flows, Chat, Settings, Docs)
   redux/       Redux store and slices
 docs/          Feature and architecture documentation
 ```

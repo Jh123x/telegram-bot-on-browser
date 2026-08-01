@@ -109,9 +109,10 @@ Open the **Flows** tab and click a sample to load it:
 
 - **Welcome Flow** — greets every user and points toward `/echo` and the quiz.
 - **Echo Flow** — prompts for a message, then echoes it back with "You said:"
-  when the message starts with `/echo`.
+  when the message starts with `/echo ` (including the slash and the space).
 - **Quiz Flow** — asks a question, moves to *Correct* for the right answer
-  (`4`) or *Wrong* for anything else, then asks again.
+  (`4`) or *Wrong* for anything else; only a wrong answer sends the user back
+  to the question so they can try again.
 
 ### Persistence
 
