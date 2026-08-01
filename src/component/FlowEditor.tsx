@@ -25,6 +25,7 @@ import { generateId } from "../logic/flow.ts";
 import { addFlow, removeFlow, updateFlow } from "../redux/botSlice.ts";
 import { BotWithConfig } from "../redux/types.ts";
 import { Flow, FlowEdge, FlowNodeType } from "../interfaces/flow.ts";
+import { edgeColorFor } from "../theme.ts";
 import {
   StartNode,
   TransformNode,
@@ -82,6 +83,21 @@ const EditorCanvas = ({
         target: edge.target,
         sourceHandle: edge.sourceHandle,
         label: flowEdgeLabel(edge.sourceHandle),
+        style: {
+          stroke: edgeColorFor(edge.sourceHandle),
+          strokeWidth: 2,
+        },
+        labelStyle: {
+          fill: edgeColorFor(edge.sourceHandle),
+          fontSize: 11,
+          fontWeight: 600,
+        },
+        labelBgStyle: {
+          fill: "#1c1c1e",
+          stroke: edgeColorFor(edge.sourceHandle),
+          strokeWidth: 1,
+        },
+        labelBgPadding: [6, 3],
       })),
     [flow]
   );
