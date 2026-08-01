@@ -198,35 +198,60 @@ const EditorCanvas = ({
   return (
     <Box
       data-testid="flow-canvas"
-      sx={{ flex: 1, height: 500, border: "1px solid #3a3a3c", borderRadius: 2, overflow: "hidden" }}
+      sx={{
+        flex: 1,
+        minHeight: 320,
+        display: "flex",
+        gap: 1.5,
+        minWidth: 0,
+      }}
     >
-      <ReactFlow
-        nodes={rfNodes}
-        edges={rfEdges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onNodeClick={(_, node) => {
-          setSelectedNodeId(node.id);
-          setSelectedEdgeId(null);
+      <Box
+        data-testid="flow-canvas-stage"
+        sx={{
+          flex: 1,
+          minWidth: 0,
+          border: "1px solid #3a3a3c",
+          borderRadius: 2,
+          overflow: "hidden",
         }}
-        onPaneClick={() => {
-          setSelectedNodeId(null);
-          setSelectedEdgeId(null);
-        }}
-        onEdgeClick={(_, edge) => {
-          setSelectedEdgeId(edge.id);
-          setSelectedNodeId(null);
-        }}
-        fitView
       >
-        <Background />
-        <Controls />
-      </ReactFlow>
-      <Box sx={{ p: 1.5 }}>
+        <ReactFlow
+          nodes={rfNodes}
+          edges={rfEdges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onNodeClick={(_, node) => {
+            setSelectedNodeId(node.id);
+            setSelectedEdgeId(null);
+          }}
+          onPaneClick={() => {
+            setSelectedNodeId(null);
+            setSelectedEdgeId(null);
+          }}
+          onEdgeClick={(_, edge) => {
+            setSelectedEdgeId(edge.id);
+            setSelectedNodeId(null);
+          }}
+          fitView
+        >
+          <Background />
+          <Controls />
+        </ReactFlow>
+      </Box>
+      <Box
+        data-testid="flow-inspector-panel"
+        sx={{
+          width: 280,
+          flexShrink: 0,
+          overflowY: "auto",
+          minHeight: 0,
+        }}
+      >
         <FlowInspector
           flow={flow}
           selectedNodeId={selectedNodeId}
@@ -335,20 +360,31 @@ export const FlowEditor = () => {
   const errors = selectedFlow ? validateFlow(selectedFlow) : [];
 
   return (
-    <Box data-testid="flow-editor">
+    <Box
+      data-testid="flow-editor"
+      sx={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}
+    >
       <Typography variant="h3" sx={{ mb: 0.5 }}>Flows</Typography>
       <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
         Build conversational flows by dragging nodes from the palette onto the
         canvas and connecting them.
       </Typography>
 
-      <Box sx={{ display: "flex", gap: 2 }}>
+      <Box sx={{ display: "flex", gap: 2, flex: 1, minHeight: 0 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <FlowPalette onPick={handlePalettePick} />
           <FlowSamples onLoaded={(flow) => setSelectedFlowId(flow.id)} />
         </Box>
 
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
           {/* Toolbar */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5, flexWrap: "wrap" }}>
             <Button variant="contained" size="small" onClick={handleNewFlow}>

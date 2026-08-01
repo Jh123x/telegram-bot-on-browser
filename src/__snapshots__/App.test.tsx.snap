@@ -106,7 +106,7 @@ Object {
           data-testid="app-content"
         >
           <div
-            class="MuiBox-root css-0"
+            class="MuiBox-root css-1welr70"
             data-testid="flow-editor"
           >
             <h3
@@ -120,7 +120,7 @@ Object {
               Build conversational flows by dragging nodes from the palette onto the canvas and connecting them.
             </p>
             <div
-              class="MuiBox-root css-10egq61"
+              class="MuiBox-root css-b8qrnr"
             >
               <div
                 class="MuiBox-root css-yd8sa2"
@@ -223,7 +223,7 @@ Object {
                 </div>
               </div>
               <div
-                class="MuiBox-root css-1fjtzvx"
+                class="MuiBox-root css-1nk02ik"
               >
                 <div
                   class="MuiBox-root css-tjbe7t"
@@ -301,21 +301,27 @@ Object {
                   data-testid="reactflow-provider"
                 >
                   <div
-                    class="MuiBox-root css-8wqtc7"
+                    class="MuiBox-root css-ca6903"
                     data-testid="flow-canvas"
                   >
                     <div
-                      data-testid="reactflow-mock"
+                      class="MuiBox-root css-m77u3n"
+                      data-testid="flow-canvas-stage"
                     >
                       <div
-                        data-testid="reactflow-background"
-                      />
-                      <div
-                        data-testid="reactflow-controls"
-                      />
+                        data-testid="reactflow-mock"
+                      >
+                        <div
+                          data-testid="reactflow-background"
+                        />
+                        <div
+                          data-testid="reactflow-controls"
+                        />
+                      </div>
                     </div>
                     <div
-                      class="MuiBox-root css-38zrbw"
+                      class="MuiBox-root css-yl9ba7"
+                      data-testid="flow-inspector-panel"
                     >
                       <div
                         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
@@ -459,7 +465,7 @@ Object {
         data-testid="app-content"
       >
         <div
-          class="MuiBox-root css-0"
+          class="MuiBox-root css-1welr70"
           data-testid="flow-editor"
         >
           <h3
@@ -473,7 +479,7 @@ Object {
             Build conversational flows by dragging nodes from the palette onto the canvas and connecting them.
           </p>
           <div
-            class="MuiBox-root css-10egq61"
+            class="MuiBox-root css-b8qrnr"
           >
             <div
               class="MuiBox-root css-yd8sa2"
@@ -576,7 +582,7 @@ Object {
               </div>
             </div>
             <div
-              class="MuiBox-root css-1fjtzvx"
+              class="MuiBox-root css-1nk02ik"
             >
               <div
                 class="MuiBox-root css-tjbe7t"
@@ -654,21 +660,27 @@ Object {
                 data-testid="reactflow-provider"
               >
                 <div
-                  class="MuiBox-root css-8wqtc7"
+                  class="MuiBox-root css-ca6903"
                   data-testid="flow-canvas"
                 >
                   <div
-                    data-testid="reactflow-mock"
+                    class="MuiBox-root css-m77u3n"
+                    data-testid="flow-canvas-stage"
                   >
                     <div
-                      data-testid="reactflow-background"
-                    />
-                    <div
-                      data-testid="reactflow-controls"
-                    />
+                      data-testid="reactflow-mock"
+                    >
+                      <div
+                        data-testid="reactflow-background"
+                      />
+                      <div
+                        data-testid="reactflow-controls"
+                      />
+                    </div>
                   </div>
                   <div
-                    class="MuiBox-root css-38zrbw"
+                    class="MuiBox-root css-yl9ba7"
+                    data-testid="flow-inspector-panel"
                   >
                     <div
                       class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"

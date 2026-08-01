@@ -239,3 +239,20 @@ test("persists flow changes to localStorage after the initial render", () => {
   expect(stored[0].id).toBe(flow.id);
   expect(stored[0].name).toBe("Renamed");
 });
+
+test("renders the inspector as a side panel beside the graph canvas", () => {
+  const flow = makeFlow("Existing");
+  const store = makeStore([flow]);
+  const { container } = renderWithProviders(<FlowEditor />, { store });
+
+  const canvas = screen.getByTestId("flow-canvas");
+  const panel = screen.getByTestId("flow-inspector-panel");
+  const mock = container.querySelector('[data-testid="reactflow-mock"]');
+
+  expect(canvas).toBeTruthy();
+  expect(panel).toBeTruthy();
+  expect(mock).not.toBeNull();
+  // The inspector is a separate side panel, not a sibling of the canvas
+  // viewport (i.e. it sits beside the graph, not below it).
+  expect(panel.parentElement).not.toBe(mock!.parentElement);
+});
