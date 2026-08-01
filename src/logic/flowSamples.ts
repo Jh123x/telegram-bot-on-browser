@@ -3,7 +3,6 @@ import {
   FlowEdge,
   FlowEdgeData,
   FlowNode,
-  FlowNodeData,
 } from "../interfaces/flow.ts";
 import { generateId } from "./program.ts";
 import { createFlow, createFlowNode } from "./flow.ts";
@@ -17,8 +16,8 @@ export interface FlowSample {
 // sample stays self-contained and reads top-to-bottom.
 
 function startNode(position: { x: number; y: number }): FlowNode {
-  const node = createFlowNode("start", position);
-  return node; // data.autolabel is "Start" already
+  // createFlowNode sets the Start label already.
+  return createFlowNode("start", position);
 }
 
 function stateNode(
@@ -95,6 +94,3 @@ export const SAMPLE_FLOWS: FlowSample[] = [
   { name: "Echo Flow", flow: echoFlow() },
   { name: "Quiz Flow", flow: quizFlow() },
 ];
-
-// Re-exported for typing convenience in callers/tests.
-export type { FlowNodeData };
