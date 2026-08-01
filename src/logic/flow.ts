@@ -93,3 +93,46 @@ export class FlowRuntime {
     return step.replies;
   }
 }
+
+// Validates a flow's structure, returning a list of human-readable error
+// strings (empty array = valid). Duplicate node ids report one error per id.
+export function validateFlow(flow: Flow): string[] {
+  const errors: string[] = [];
+
+  if (flow.name.trim() === "") {
+    errors.push("Flow name is required");
+  }
+
+  const startNodes = flow.nodes.filter((n) => n.type === "start");
+  if (startNodes.length === 0) {
+    errors.push("Flow must have a start node");
+  } else if (startNodes.length > 1) {
+    errors.push("Flow can only have one start node");
+  }
+
+  const seen = new Set<string>();
+  for (const node of flow.nodes) {
+    if (seen.has(node.id)) {
+      errors.push(`Duplicate node id: ${node.id}`);
+    } else {
+      seen.add(node.id);
+    }
+  }
+
+  const nodeIds = new Set(flow.nodes.map((n) => n.id));
+  for (const edge of flow.edges) {
+    if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) {
+      errors.push(`Edge ${edge.id} references a missing node`);
+    }
+  }
+
+  if (startNodes.length === 1 && nodeIds.has(startNodes[0].id)) {
+    for (const edge of flow.edges) {
+      if (edge.target === startNodes[0].id) {
+        errors.push("Start node cannot have incoming edges");
+      }
+    }
+  }
+
+  return errors;
+}

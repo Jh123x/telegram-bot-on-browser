@@ -5,6 +5,7 @@ import {
   flowEdgeLabel,
   FlowRuntime,
   matchFlowTrigger,
+  validateFlow,
 } from "./flow.ts";
 import { Flow } from "../interfaces/flow.ts";
 
@@ -486,5 +487,140 @@ describe("FlowRuntime", () => {
     flow.startNodeId = "";
     const runtime = new FlowRuntime(flow);
     expect(runtime.handleMessage(1, "hi")).toBeUndefined();
+  });
+});
+
+describe("validateFlow", () => {
+  const startNode: Flow["nodes"][number] = {
+    id: "start",
+    type: "start",
+    position: { x: 0, y: 0 },
+    data: { label: "Start", replies: [] },
+  };
+  const stateNode: Flow["nodes"][number] = {
+    id: "a",
+    type: "state",
+    position: { x: 0, y: 0 },
+    data: { label: "A", replies: ["hi"] },
+  };
+
+  function validFlow(): Flow {
+    return {
+      id: "f1",
+      name: "My Flow",
+      startNodeId: "start",
+      nodes: [startNode, stateNode],
+      edges: [
+        {
+          id: "e1",
+          source: "start",
+          target: "a",
+          data: { trigger: { type: "fallback", value: "" } },
+        },
+      ],
+    };
+  }
+
+  test("a valid flow returns no errors", () => {
+    expect(validateFlow(validFlow())).toEqual([]);
+  });
+
+  test("an empty name is required", () => {
+    const flow = validFlow();
+    flow.name = "";
+    expect(validateFlow(flow)).toContain("Flow name is required");
+  });
+
+  test("a whitespace-only name is rejected", () => {
+    const flow = validFlow();
+    flow.name = "   ";
+    expect(validateFlow(flow)).toContain("Flow name is required");
+  });
+
+  test("a flow with no start node is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [stateNode];
+    expect(validateFlow(flow)).toContain("Flow must have a start node");
+  });
+
+  test("a flow with more than one start node is rejected", () => {
+    const flow = validFlow();
+    const secondStart: Flow["nodes"][number] = {
+      id: "start2",
+      type: "start",
+      position: { x: 0, y: 0 },
+      data: { label: "Start 2", replies: [] },
+    };
+    flow.nodes = [startNode, secondStart, stateNode];
+    expect(validateFlow(flow)).toContain(
+      "Flow can only have one start node"
+    );
+  });
+
+  test("duplicate node ids each produce an error", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, startNode, stateNode];
+    const errors = validateFlow(flow);
+    expect(errors).toContain("Duplicate node id: start");
+    expect(errors.filter((e) => e === "Duplicate node id: start")).toHaveLength(
+      1
+    );
+  });
+
+  test("an edge referencing a missing target node is rejected", () => {
+    const flow = validFlow();
+    flow.edges = [
+      {
+        id: "eBad",
+        source: "start",
+        target: "ghost",
+        data: { trigger: { type: "fallback", value: "" } },
+      },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Edge eBad references a missing node"
+    );
+  });
+
+  test("an edge referencing a missing source node is rejected", () => {
+    const flow = validFlow();
+    flow.edges = [
+      {
+        id: "eBad",
+        source: "ghost",
+        target: "a",
+        data: { trigger: { type: "fallback", value: "" } },
+      },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Edge eBad references a missing node"
+    );
+  });
+
+  test("an incoming edge to the start node is rejected", () => {
+    const flow = validFlow();
+    // state -> start
+    flow.edges = [
+      {
+        id: "eBack",
+        source: "a",
+        target: "start",
+        data: { trigger: { type: "fallback", value: "" } },
+      },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Start node cannot have incoming edges"
+    );
+  });
+
+  test("multiple independent errors accumulate", () => {
+    const flow = validFlow();
+    flow.name = "";
+    flow.nodes = [stateNode]; // no start node
+    flow.edges = []; // drop edges that would reference the missing start
+    const errors = validateFlow(flow);
+    expect(errors).toContain("Flow name is required");
+    expect(errors).toContain("Flow must have a start node");
+    expect(errors).toHaveLength(2);
   });
 });
