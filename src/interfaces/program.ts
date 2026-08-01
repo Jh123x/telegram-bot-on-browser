@@ -1,4 +1,10 @@
-export type TriggerType = "equals" | "contains" | "startsWith" | "endsWith";
+export type TriggerType =
+  | "equals"
+  | "contains"
+  | "startsWith"
+  | "endsWith"
+  | "notEquals"
+  | "notContains";
 export type LogicType = "lengthGreater" | "lengthLess" | "matchesRegex";
 export type TransformType =
   | "uppercase"

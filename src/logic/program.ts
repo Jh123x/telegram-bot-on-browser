@@ -14,6 +14,8 @@ export const TRIGGER_LABELS: Record<TriggerType, string> = {
   contains: "message contains",
   startsWith: "message starts with",
   endsWith: "message ends with",
+  notEquals: "message does not equal",
+  notContains: "message does not contain",
 };
 
 export const LOGIC_LABELS: Record<LogicType, string> = {
@@ -54,6 +56,8 @@ export const BLOCK_DESCRIPTIONS: Record<
     contains: "Runs when the message includes the trigger value.",
     startsWith: "Runs when the message begins with the trigger value.",
     endsWith: "Runs when the message ends with the trigger value.",
+    notEquals: "Runs when the message is not exactly the trigger value.",
+    notContains: "Runs when the message does not include the trigger value.",
   },
   logic: {
     lengthGreater: "Passes when the message is longer than the number.",
@@ -111,6 +115,10 @@ export function matchTrigger(trigger: Trigger, message: string): boolean {
       return message.startsWith(trigger.value);
     case "endsWith":
       return message.endsWith(trigger.value);
+    case "notEquals":
+      return message.trim() !== trigger.value.trim();
+    case "notContains":
+      return !message.includes(trigger.value);
     default:
       return false;
   }

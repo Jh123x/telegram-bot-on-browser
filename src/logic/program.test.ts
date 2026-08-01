@@ -89,6 +89,31 @@ describe("matchTrigger", () => {
     const trigger: Trigger = { type: "endsWith", value: "hello" };
     expect(matchTrigger(trigger, "hello world")).toBe(false);
   });
+
+  test("notEquals: different message is true", () => {
+    const trigger: Trigger = { type: "notEquals", value: "hello" };
+    expect(matchTrigger(trigger, "goodbye")).toBe(true);
+  });
+
+  test("notEquals: exact match is false", () => {
+    const trigger: Trigger = { type: "notEquals", value: "hello" };
+    expect(matchTrigger(trigger, "hello")).toBe(false);
+  });
+
+  test("notEquals: surrounding whitespace is trimmed before comparing", () => {
+    const trigger: Trigger = { type: "notEquals", value: "hello" };
+    expect(matchTrigger(trigger, "  hello ")).toBe(false);
+  });
+
+  test("notContains: message not containing the value is true", () => {
+    const trigger: Trigger = { type: "notContains", value: "help" };
+    expect(matchTrigger(trigger, "goodbye")).toBe(true);
+  });
+
+  test("notContains: message containing the value is false", () => {
+    const trigger: Trigger = { type: "notContains", value: "help" };
+    expect(matchTrigger(trigger, "please help me")).toBe(false);
+  });
 });
 
 describe("applyTransform", () => {
@@ -656,6 +681,11 @@ describe("concat transform", () => {
 });
 
 describe("BLOCK_DESCRIPTIONS", () => {
+  test("has the new trigger labels", () => {
+    expect(TRIGGER_LABELS.notEquals).toBe("message does not equal");
+    expect(TRIGGER_LABELS.notContains).toBe("message does not contain");
+  });
+
   test("has a non-empty description for every trigger type", () => {
     for (const type of Object.keys(TRIGGER_LABELS)) {
       expect(BLOCK_DESCRIPTIONS.trigger[type]).toBeTruthy();
