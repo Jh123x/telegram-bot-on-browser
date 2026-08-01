@@ -11,7 +11,7 @@ Workers so the UI never blocks.
 ```mermaid
 flowchart LR
   subgraph Browser
-    UI[React UI<br/>Programs / Flows / Chat / Settings / Docs]
+    UI[React UI<br/>Flow / Chat / Settings / Docs]
     Store[(Redux Store<br/>token, programs, flows, messages)]
     Logic[Logic Engine<br/>matchTrigger, executeBlocks]
     Bot[BrowserBot<br/>rules + workers]
@@ -33,18 +33,21 @@ flowchart LR
 
 ### UI layer (React + Material UI)
 
-The UI is split into five pages:
+The UI is split into four pages:
 
-- **Programs** — the block editor (`ProgramCard`), the block reference
-  (`ProgramPalette`), and the samples panel.
-- **Flows** — the visual state-machine editor built on React Flow.
+- **Flow** — the visual state-machine editor built on React Flow.
 - **Chat** — the live conversation list and the Test User simulator.
 - **Settings** — the bot token.
 - **Docs** — in-app documentation.
 
-Components are thin. Complex pieces are split into small files: pipeline
-primitives (`pipeline.tsx`), block value inputs (`BlockValueInputs.tsx`), and
-pure preview logic (`computeFlowPreview` in the logic layer).
+Programs are a legacy block-based format with no editor UI anymore: saved
+programs still execute at runtime (before flows), but new logic is built with
+the Flow editor.
+
+Components are thin. Complex pieces are split into small files: the flow
+editor (`FlowEditor.tsx`, `FlowPalette.tsx`, `FlowSamples.tsx`,
+`FlowInspector.tsx`, `flowNodes.tsx`) and pure logic (`flow.ts`, `program.ts`
+in the logic layer).
 
 ### State layer (Redux Toolkit)
 
@@ -70,8 +73,6 @@ Key functions:
 - `executeBlocks` — runs a program's blocks and returns the replies.
 - `executeProgram` — trigger match + block execution.
 - `findMatchingProgram` — the first program whose trigger matches.
-- `validateProgram` — checks a program for errors.
-- `computeFlowPreview` — computes the pipeline preview shown on cards.
 
 ### Transport layer (BrowserBot)
 
@@ -175,17 +176,17 @@ sequenceDiagram
   Note over C,S: Nothing is sent to Telegram.<br/>The store is not changed.
 ```
 
-## Program editing flow
+## Editing and rule rebuilds
 
-The bot keeps running while the user edits. Messages that arrive before the
-edit is saved are handled by the **old rules**. Once the store rebuilds the
-rules, later messages use the **new logic**.
+The bot keeps running while the user edits flows. Messages that arrive before
+the edit is saved are handled by the **old rules**. Once the store rebuilds
+the rules, later messages use the **new logic**.
 
 ```mermaid
 sequenceDiagram
   participant U as Bot Owner
   participant T as Telegram User
-  participant E as Program Editor
+  participant E as Flow Editor
   participant S as Redux Store
   participant LS as localStorage
   participant B as BrowserBot
@@ -198,18 +199,18 @@ sequenceDiagram
   B-->>T: old reply
   deactivate B
 
-  U->>E: edits a block
+  U->>E: edits a flow
   activate E
-  E->>S: updateProgram
+  E->>S: updateFlow
   activate S
-  S->>LS: persist programs
+  S->>LS: persist flows
   S->>B: rebuild rules
   activate B
   B-->>S: new rules active
   deactivate B
-  S-->>E: program updated
+  S-->>E: flow updated
   deactivate S
-  E-->>U: card updates
+  E-->>U: canvas updates
   deactivate E
 
   T->>B: sends the same message
@@ -223,11 +224,11 @@ sequenceDiagram
 
 ## Flows
 
-Flows are visual state machines. A flow is a graph of **states** connected by
-**transitions** labeled with triggers. The Flows engine reuses the program
-trigger semantics and is a sibling feature to programs. Programs are still
-checked first; flow rules run after them and fall through when no transition
-matches.
+Flows are visual state machines and the app's primary programming model. A
+flow is a graph of **states** connected by **transitions** labeled with
+triggers. The flow engine reuses the program trigger semantics. Legacy saved
+programs are still checked first; flow rules run after them and fall through
+when no transition matches.
 
 ### Domain model
 
@@ -295,7 +296,7 @@ export/import/reset alongside programs and the token.
 
 ### Editor
 
-The **Flows** tab uses React Flow (`@xyflow/react` v12). The `FlowsPage`
+The **Flow** tab uses React Flow (`@xyflow/react` v12). The `FlowsPage`
 renders `FlowEditor`, which wraps the canvas in a `<ReactFlowProvider>` with a
 palette, toolbar, and inspector. Custom MUI node components (`StartNode`,
 `StateNode`) preserve the app's design language. Nodes are added by dragging
