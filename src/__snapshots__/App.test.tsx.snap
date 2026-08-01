@@ -142,38 +142,54 @@ Object {
                   </span>
                   <div
                     aria-label="Add Start node"
-                    class="MuiBox-root css-1lf1isb"
+                    class="MuiBox-root css-184x01f"
                     data-testid="palette-item-start"
                     draggable="true"
                     role="button"
                   >
+                    <div
+                      class="MuiBox-root css-1kuk0im"
+                      data-testid="palette-dot-start"
+                    />
                     Start
                   </div>
                   <div
                     aria-label="Add Transform node"
-                    class="MuiBox-root css-1lf1isb"
+                    class="MuiBox-root css-cjs0tt"
                     data-testid="palette-item-transform"
                     draggable="true"
                     role="button"
                   >
+                    <div
+                      class="MuiBox-root css-1cfjmz8"
+                      data-testid="palette-dot-transform"
+                    />
                     Transform
                   </div>
                   <div
                     aria-label="Add Condition node"
-                    class="MuiBox-root css-1lf1isb"
+                    class="MuiBox-root css-1c7ceub"
                     data-testid="palette-item-condition"
                     draggable="true"
                     role="button"
                   >
+                    <div
+                      class="MuiBox-root css-n546hc"
+                      data-testid="palette-dot-condition"
+                    />
                     Condition
                   </div>
                   <div
                     aria-label="Add Send node"
-                    class="MuiBox-root css-1lf1isb"
+                    class="MuiBox-root css-q1gzt6"
                     data-testid="palette-item-send"
                     draggable="true"
                     role="button"
                   >
+                    <div
+                      class="MuiBox-root css-s0v3o9"
+                      data-testid="palette-dot-send"
+                    />
                     Send
                   </div>
                 </div>
@@ -495,38 +511,54 @@ Object {
                 </span>
                 <div
                   aria-label="Add Start node"
-                  class="MuiBox-root css-1lf1isb"
+                  class="MuiBox-root css-184x01f"
                   data-testid="palette-item-start"
                   draggable="true"
                   role="button"
                 >
+                  <div
+                    class="MuiBox-root css-1kuk0im"
+                    data-testid="palette-dot-start"
+                  />
                   Start
                 </div>
                 <div
                   aria-label="Add Transform node"
-                  class="MuiBox-root css-1lf1isb"
+                  class="MuiBox-root css-cjs0tt"
                   data-testid="palette-item-transform"
                   draggable="true"
                   role="button"
                 >
+                  <div
+                    class="MuiBox-root css-1cfjmz8"
+                    data-testid="palette-dot-transform"
+                  />
                   Transform
                 </div>
                 <div
                   aria-label="Add Condition node"
-                  class="MuiBox-root css-1lf1isb"
+                  class="MuiBox-root css-1c7ceub"
                   data-testid="palette-item-condition"
                   draggable="true"
                   role="button"
                 >
+                  <div
+                    class="MuiBox-root css-n546hc"
+                    data-testid="palette-dot-condition"
+                  />
                   Condition
                 </div>
                 <div
                   aria-label="Add Send node"
-                  class="MuiBox-root css-1lf1isb"
+                  class="MuiBox-root css-q1gzt6"
                   data-testid="palette-item-send"
                   draggable="true"
                   role="button"
                 >
+                  <div
+                    class="MuiBox-root css-s0v3o9"
+                    data-testid="palette-dot-send"
+                  />
                   Send
                 </div>
               </div>

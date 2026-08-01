@@ -89,3 +89,18 @@ test("pressing Space on a palette item invokes onPick (and prevents scroll)", ()
   expect(onPick).toHaveBeenCalledTimes(1);
   expect(onPick).toHaveBeenCalledWith("send");
 });
+
+test("palette items preview their node accent color as a dot", () => {
+  render(<FlowPalette />);
+
+  const EXPECTED: Record<string, string> = {
+    start: "rgb(124, 58, 237)",
+    transform: "rgb(56, 189, 248)",
+    condition: "rgb(251, 191, 36)",
+    send: "rgb(52, 211, 153)",
+  };
+  TYPES.forEach((type) => {
+    const dot = screen.getByTestId(`palette-dot-${type}`);
+    expect(getComputedStyle(dot).backgroundColor).toBe(EXPECTED[type]);
+  });
+});
