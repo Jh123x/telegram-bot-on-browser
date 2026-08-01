@@ -94,8 +94,9 @@ test("seeds a Welcome sample flow on first visit so the graph is never empty", (
   expect(flows[0].name).toBe("Welcome Flow");
   expect(flows[0].nodes.length).toBeGreaterThan(0);
   expect(flows[0].startNodeId).not.toBe("");
-  // The starter flow shows up in the editor's flow rail.
-  expect(screen.getByText("Welcome Flow", { selector: ".flow-name-display" })).toBeTruthy();
+  // The single flow is edited directly on the canvas — no rail, no name field.
+  expect(screen.getByTestId("flow-canvas-stage")).toBeTruthy();
+  expect(screen.queryByLabelText("Flow name")).toBeNull();
 });
 
 test("does not seed a sample when flows already exist", () => {

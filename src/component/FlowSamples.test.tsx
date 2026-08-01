@@ -19,43 +19,41 @@ test("renders all sample flow names", () => {
   });
 });
 
-test("clicking a sample dispatches addFlow with a fresh-id copy", () => {
+test("clicking a sample calls onLoaded with a fresh-id copy", () => {
   const sample = SAMPLE_FLOWS[2]; // "Greeting Check" (a condition/if-else flow)
-  const store = makeStore();
-  renderWithProviders(<FlowSamples />, { store });
+  const onLoaded = jest.fn();
+  renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store: makeStore() });
 
   fireEvent.click(screen.getByText(sample.name));
 
-  const flows = store.getState().bot.flows;
-  expect(flows).toHaveLength(1);
-  expect(flows[0].name).toBe(sample.flow.name || sample.name);
-  // Fresh ids: the stored flow/node/edge ids must differ from the sample.
-  expect(flows[0].id).not.toBe(sample.flow.id);
-  expect(flows[0].nodes.map((n) => n.id)).not.toEqual(
+  expect(onLoaded).toHaveBeenCalledTimes(1);
+  const flow = onLoaded.mock.calls[0][0];
+  expect(flow.name).toBe(sample.flow.name || sample.name);
+  // Fresh ids: the loaded flow/node/edge ids must differ from the sample.
+  expect(flow.id).not.toBe(sample.flow.id);
+  expect(flow.nodes.map((n) => n.id)).not.toEqual(
     sample.flow.nodes.map((n) => n.id)
   );
   // Structure preserved: same number of nodes/edges and the startNodeId
   // points at a node that exists in the copy.
-  expect(flows[0].nodes).toHaveLength(sample.flow.nodes.length);
-  expect(flows[0].edges).toHaveLength(sample.flow.edges.length);
-  expect(flows[0].nodes.some((n) => n.id === flows[0].startNodeId)).toBe(true);
+  expect(flow.nodes).toHaveLength(sample.flow.nodes.length);
+  expect(flow.edges).toHaveLength(sample.flow.edges.length);
+  expect(flow.nodes.some((n) => n.id === flow.startNodeId)).toBe(true);
 });
 
-test("clicking the condition sample preserves its if/else branch handles", () => {
-  const sample = SAMPLE_FLOWS.find((s) => s.name === "Greeting Check")!;
-  const store = makeStore();
-  renderWithProviders(<FlowSamples />, { store });
+test("clicking a sample preserves the branch handles in the loaded flow", () => {
+  const onLoaded = jest.fn();
+  renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store: makeStore() });
 
   fireEvent.click(screen.getByText("Welcome Flow"));
 
-  const flows = store.getState().bot.flows;
-  expect(flows).toHaveLength(1);
+  const flow = onLoaded.mock.calls[0][0];
   // Welcome Flow is start -> send: one plain (no sourceHandle) edge.
-  expect(flows[0].edges).toHaveLength(1);
-  expect(flows[0].edges[0].sourceHandle).toBeUndefined();
+  expect(flow.edges).toHaveLength(1);
+  expect(flow.edges[0].sourceHandle).toBeUndefined();
 });
 
-test("onLoaded receives the added flow", () => {
+test("onLoaded receives the prepared flow", () => {
   const onLoaded = jest.fn();
   const store = makeStore();
   renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store });

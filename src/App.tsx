@@ -76,7 +76,9 @@ export const App = () => {
       hadFlowsKeyRef.current = true;
       const parsed = parseJson(flows);
       if (Array.isArray(parsed) && parsed.every(isValidFlow)) {
-        dispatch(setFlows(parsed as Flow[]));
+        // Single-flow app: persist only the first flow so old multi-flow
+        // localStorage data collapses to one.
+        dispatch(setFlows(parsed.slice(0, 1) as Flow[]));
       }
       // Corrupt or wrong-shape flows: keep the default (empty) list.
     }

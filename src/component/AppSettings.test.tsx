@@ -199,6 +199,39 @@ test("import settings applies token, resets flows to empty and applies autoStart
   );
 });
 
+test("import settings collapses multiple flows to the first one", async () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  const second = { ...validFlow, id: "f2", name: "Second Flow" };
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [validFlow, second],
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].id).toBe(validFlow.id);
+  expect(flows[0].name).toBe("Order");
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+});
+
 test("import settings restores pollRate when present in the file", async () => {
   const store = setupStore(seedState);
   renderWithProviders(<AppSettings />, { store });

@@ -29,9 +29,6 @@ export const botSlice = createSlice({
     updateFlow: (state, action: { payload: Flow, type: string }) => {
       state.flows = (state.flows ?? []).map((flow) => flow.id === action.payload.id ? action.payload : flow);
     },
-    removeFlow: (state, action: { payload: string, type: string }) => {
-      state.flows = (state.flows ?? []).filter((flow) => flow.id !== action.payload);
-    },
     addResponse: (state, action: { payload: Response, type: string }) => {
       state.response = [...state.response, action.payload];
     },
@@ -69,4 +66,4 @@ export const botSlice = createSlice({
   },
 });
 
-export const { setToken, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setPollRate, setHydrated, resetAll } = botSlice.actions;
+export const { setToken, setFlows, addFlow, updateFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setPollRate, setHydrated, resetAll } = botSlice.actions;

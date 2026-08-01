@@ -15,8 +15,8 @@ You can visit the live site here: <https://telebot.jh123x.com/>
   **Transform**, **Condition** and **Send** nodes from the palette, connect
   them with edges, and edit each node in the inspector.
 - Load sample flows (Welcome, Uppercase Echo, Greeting Check) to see how flows
-  are built, or start from a blank flow — a new flow comes with a Start node
-  ready to connect.
+  are built — a sample replaces your current flow. The app keeps a single flow
+  (no flow list, no naming, no deleting flows).
 - Test your bot in a built-in chat before you start it.
 - Run the bot from the Chat tab and talk to real Telegram users.
 

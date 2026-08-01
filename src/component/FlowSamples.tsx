@@ -1,25 +1,22 @@
 import React from "react";
 import { Box, Button, Paper, Typography } from "@mui/material";
-import { useDispatch } from "react-redux";
 import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
 import { flowFromSample } from "../logic/flow.ts";
-import { addFlow } from "../redux/botSlice.ts";
 import { Flow } from "../interfaces/flow.ts";
 
 interface FlowSamplesProps {
   onLoaded?: (flow: Flow) => void;
 }
 
-// Buttons that load a pre-built sample flow into the store (with fresh ids so
-// loading the same sample twice yields two independent flows).
+// Buttons that prepare a pre-built sample flow (with fresh ids so the loaded
+// copy is independent of the sample) and hand it to the parent. The parent
+// decides how to store it — the app is single-flow, so the parent replaces
+// the current flow rather than appending.
 export const FlowSamples = ({ onLoaded }: FlowSamplesProps) => {
-  const dispatch = useDispatch();
-
   const load = (name: string) => {
     const sample = SAMPLE_FLOWS.find((s) => s.name === name);
     if (!sample) return;
     const flow = flowFromSample(sample);
-    dispatch(addFlow(flow));
     onLoaded?.(flow);
   };
 

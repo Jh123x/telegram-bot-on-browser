@@ -179,17 +179,3 @@ test("updateFlow with unknown id leaves state unchanged", () => {
   store.dispatch(botSlice.actions.updateFlow(makeFlow({ id: "unknown" })));
   expect(store.getState().bot.flows).toEqual(flows);
 });
-
-test("removeFlow removes the flow by id", () => {
-  const store = setupStore();
-  store.dispatch(
-    botSlice.actions.setFlows([
-      makeFlow(),
-      makeFlow({ id: "f2", name: "Other" }),
-    ])
-  );
-  store.dispatch(botSlice.actions.removeFlow("f1"));
-  const state = store.getState().bot.flows;
-  expect(state).toHaveLength(1);
-  expect(state[0].id).toBe("f2");
-});

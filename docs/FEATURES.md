@@ -56,10 +56,11 @@ Every user message is evaluated from the Start node — the runtime keeps no
 per-user position (send nodes are terminal, so there is nowhere to "wait").
 A flow therefore answers each message on its own.
 
-### Multiple flows
+### Single flow
 
-Each flow runs in order. A flow that never reaches a Send node stays silent
-and the next flow gets a chance at the message.
+The app keeps ONE flow. Loading a sample replaces the current flow — flows
+are never added, named, or deleted. A flow that never reaches a Send node
+stays silent.
 
 ### Samples
 

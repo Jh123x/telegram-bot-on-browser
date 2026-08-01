@@ -190,12 +190,13 @@ export const AppSettings = () => {
           return;
         }
         // flows is OPTIONAL for backward compatibility with old export files.
-        // When present it must be a valid array of flows; when absent (old
-        // files) we reset flows to an empty array. This documents the
-        // intentional behavior that importing an old-version file drops flows.
+        // The app is single-flow, so only the FIRST flow is imported (any
+        // extra flows in an old multi-flow file are dropped). When flows is
+        // absent (old files) we reset flows to an empty array.
         if (
           parsed.flows !== undefined &&
-          (!Array.isArray(parsed.flows) || !parsed.flows.every(isValidFlow))
+          (!Array.isArray(parsed.flows) ||
+            (parsed.flows.length > 0 && !isValidFlow(parsed.flows[0])))
         ) {
           setImportStatus({
             kind: "error",
@@ -203,7 +204,10 @@ export const AppSettings = () => {
           });
           return;
         }
-        const importedFlows = parsed.flows ?? [];
+        const importedFlows =
+          Array.isArray(parsed.flows) && parsed.flows.length > 0
+            ? [parsed.flows[0]]
+            : [];
         // pollRate is OPTIONAL for backward compatibility with old export
         // files; when absent OR not a valid positive number we reset it to
         // the default (mirrors the flows behavior above: importing an old
