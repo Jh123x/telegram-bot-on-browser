@@ -17,6 +17,7 @@ import { FlowInspector } from "./FlowInspector.tsx";
 import {
   createFlow,
   createFlowNode,
+  dropNodeDimensionChanges,
   flowEdgeLabel,
   validateFlow,
 } from "../logic/flow.ts";
@@ -81,8 +82,17 @@ const EditorCanvas = ({
     // real flow — React Flow's bookkeeping edits to it must not be persisted.
     if (flowRef.current.id === "") return;
     const current = flowRef.current;
+    // React Flow fires "dimensions" changes after measuring nodes. Dropping
+    // them here (rather than applying/persisting) keeps the measured size out
+    // of the store: persisting them would make React Flow re-adopt the nodes
+    // without measured dimensions and leave every node stuck invisible.
+    const meaningful = dropNodeDimensionChanges(changes);
+    // A dimensions-only event must not dispatch at all — even an unchanged
+    // persist would hand React Flow a fresh node array, which resets the
+    // internal measurement and re-triggers the dimensions change forever.
+    if (meaningful.length === 0) return;
     const nextNodes = applyNodeChanges(
-      changes,
+      meaningful,
       // React Flow adds measured/dragging props onto the nodes; strip them
       // back to our stored shape before persisting.
       current.nodes.map((n) => ({

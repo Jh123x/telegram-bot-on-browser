@@ -1,6 +1,7 @@
 import {
   createFlow,
   createFlowNode,
+  dropNodeDimensionChanges,
   executeFlow,
   flowEdgeLabel,
   FlowRuntime,
@@ -11,6 +12,35 @@ import {
   validateFlow,
 } from "./flow.ts";
 import { Flow } from "../interfaces/flow.ts";
+
+describe("dropNodeDimensionChanges", () => {
+  test("drops React Flow dimensions bookkeeping changes", () => {
+    expect(
+      dropNodeDimensionChanges([
+        { id: "n1", type: "dimensions", dimensions: { width: 120, height: 60 } },
+        { id: "n2", type: "dimensions", dimensions: { width: 80, height: 40 } },
+      ])
+    ).toEqual([]);
+  });
+
+  test("keeps position, select, and remove changes", () => {
+    const changes = [
+      { id: "n1", type: "position", position: { x: 10, y: 20 } },
+      { id: "n2", type: "select", selected: true },
+      { id: "n3", type: "remove" },
+    ];
+    expect(dropNodeDimensionChanges(changes)).toEqual(changes);
+  });
+
+  test("keeps non-dimension changes when mixed", () => {
+    expect(
+      dropNodeDimensionChanges([
+        { id: "n1", type: "dimensions", dimensions: { width: 120, height: 60 } },
+        { id: "n2", type: "position", position: { x: 5, y: 5 } },
+      ])
+    ).toEqual([{ id: "n2", type: "position", position: { x: 5, y: 5 } }]);
+  });
+});
 
 describe("flowEdgeLabel", () => {
   test("equals trigger phrases like message equals", () => {

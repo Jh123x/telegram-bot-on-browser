@@ -88,6 +88,17 @@ export function matchFlowTrigger(
   return matchTrigger(trigger, message);
 }
 
+// React Flow fires "dimensions" changes after measuring nodes. Applying them
+// to the app's own node state and persisting makes React Flow re-adopt the
+// nodes (without their measured size), which resets the internal measurement
+// and leaves nodes stuck at `visibility: hidden`. These bookkeeping changes
+// must be dropped before applying/persisting node changes.
+export function dropNodeDimensionChanges<T extends { type: string }>(
+  changes: T[]
+): T[] {
+  return changes.filter((change) => change.type !== "dimensions");
+}
+
 export function createFlowNode(
   type: FlowNodeType,
   position?: { x: number; y: number }
