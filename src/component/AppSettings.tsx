@@ -11,9 +11,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import React, { useRef, useState } from "react";
 import { BotWithConfig, Program } from "../redux/types.ts";
+import { Flow } from "../interfaces/flow.ts";
 import {
   resetAll,
   setAutoStart,
+  setFlows,
   setPrograms,
   setToken,
 } from "../redux/botSlice.ts";
@@ -39,6 +41,18 @@ const isValidProgram = (p: unknown): boolean => {
   );
 };
 
+const isValidFlow = (f: unknown): boolean => {
+  if (typeof f !== "object" || f === null) return false;
+  const flow = f as Record<string, unknown>;
+  return (
+    typeof flow.id === "string" &&
+    typeof flow.name === "string" &&
+    typeof flow.startNodeId === "string" &&
+    Array.isArray(flow.nodes) &&
+    Array.isArray(flow.edges)
+  );
+};
+
 /**
  * Additional iOS-style settings groups: General (auto-start toggle),
  * Data (export/import settings JSON), Danger (reset to default) and
@@ -49,6 +63,9 @@ export const AppSettings = () => {
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
   const programs = useSelector<BotWithConfig, Program[]>(
     (state) => state.bot.programs
+  );
+  const flows = useSelector<BotWithConfig, Flow[]>(
+    (state) => state.bot.flows ?? []
   );
   const autoStart = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.autoStart ?? false
@@ -65,7 +82,7 @@ export const AppSettings = () => {
   };
 
   const handleExport = () => {
-    const data = { version: 1, token, programs, autoStart };
+    const data = { version: 1, token, programs, flows, autoStart };
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
@@ -99,11 +116,28 @@ export const AppSettings = () => {
           });
           return;
         }
+        // flows is OPTIONAL for backward compatibility with old export files.
+        // When present it must be a valid array of flows; when absent (old
+        // files) we reset flows to an empty array. This documents the
+        // intentional behavior that importing an old-version file drops flows.
+        if (
+          parsed.flows !== undefined &&
+          (!Array.isArray(parsed.flows) || !parsed.flows.every(isValidFlow))
+        ) {
+          setImportStatus({
+            kind: "error",
+            text: "Could not import settings: invalid file.",
+          });
+          return;
+        }
+        const importedFlows = parsed.flows ?? [];
         dispatch(setToken(parsed.token));
         dispatch(setPrograms(parsed.programs));
+        dispatch(setFlows(importedFlows));
         dispatch(setAutoStart(parsed.autoStart === true));
         localStorage.setItem("token", parsed.token);
         localStorage.setItem("programs", JSON.stringify(parsed.programs));
+        localStorage.setItem("flows", JSON.stringify(importedFlows));
         localStorage.setItem("autoStart", String(parsed.autoStart === true));
         setImportStatus({ kind: "success", text: "Settings imported." });
       } catch {
@@ -119,7 +153,7 @@ export const AppSettings = () => {
   const handleReset = () => {
     if (
       !window.confirm(
-        "Reset all settings to default? This clears your token, programs and preferences."
+        "Reset all settings to default? This clears your token, programs, flows and preferences."
       )
     ) {
       return;
@@ -127,6 +161,7 @@ export const AppSettings = () => {
     dispatch(resetAll());
     localStorage.removeItem("token");
     localStorage.removeItem("programs");
+    localStorage.removeItem("flows");
     localStorage.removeItem("autoStart");
   };
 
@@ -250,7 +285,7 @@ export const AppSettings = () => {
         </List>
       </Paper>
       <Typography variant="caption" sx={sectionCaption}>
-        Clears your token, programs and preferences from this browser.
+        Clears your token, programs, flows and preferences from this browser.
       </Typography>
 
       {/* SUPPORT */}

@@ -22,10 +22,26 @@ const validProgram = {
   ],
 };
 
+const validFlow = {
+  id: "f1",
+  name: "Order",
+  startNodeId: "n1",
+  nodes: [
+    {
+      id: "n1",
+      type: "start",
+      position: { x: 0, y: 0 },
+      data: { label: "Start", replies: [] },
+    },
+  ],
+  edges: [],
+};
+
 const seedState = {
   bot: {
     token: "abc:TOKEN",
     programs: [validProgram],
+    flows: [validFlow],
     response: [],
     users: [],
     autoStart: false,
@@ -105,6 +121,7 @@ test("export settings downloads a JSON file with the current settings", async ()
     version: 1,
     token: "abc:TOKEN",
     programs: [validProgram],
+    flows: [validFlow],
     autoStart: false,
   });
   expect(clickSpy).toHaveBeenCalledTimes(1);
@@ -198,8 +215,11 @@ test("reset to default clears the store and localStorage after confirm", () => {
   const store = setupStore(seedState);
   localStorage.setItem("token", "abc:TOKEN");
   localStorage.setItem("programs", JSON.stringify([validProgram]));
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
   localStorage.setItem("autoStart", "false");
   renderWithProviders(<AppSettings />, { store });
+
+  expect(store.getState().bot.flows).toEqual([validFlow]);
 
   jest.spyOn(window, "confirm").mockReturnValue(true);
 
@@ -208,6 +228,7 @@ test("reset to default clears the store and localStorage after confirm", () => {
   expect(store.getState().bot).toEqual(defaultBotState);
   expect(localStorage.getItem("token")).toBeNull();
   expect(localStorage.getItem("programs")).toBeNull();
+  expect(localStorage.getItem("flows")).toBeNull();
   expect(localStorage.getItem("autoStart")).toBeNull();
 });
 
@@ -232,3 +253,110 @@ const readBlob = (blob: Blob) =>
     reader.onload = () => resolve(String(reader.result));
     reader.readAsText(blob);
   });
+
+test("import settings restores flows into the store and localStorage", async () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        programs: [validProgram],
+        flows: [validFlow],
+        autoStart: true,
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+  expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+});
+
+test("importing an old-format file without flows succeeds and resets flows to empty", async () => {
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("programs", JSON.stringify([validProgram]));
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        programs: [validProgram],
+        autoStart: false,
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(store.getState().bot).toMatchObject({
+    token: "imp-token",
+    programs: [validProgram],
+    flows: [],
+  });
+  expect(localStorage.getItem("flows")).toBe("[]");
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+});
+
+test("import with an invalid flows array shows an error and changes nothing", async () => {
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("programs", JSON.stringify([validProgram]));
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        programs: [validProgram],
+        flows: [{ id: "no-name" }],
+        autoStart: false,
+      }),
+    ],
+    "bad.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.token).toBe("abc:TOKEN");
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+  expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
+});
+
