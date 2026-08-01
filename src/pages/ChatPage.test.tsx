@@ -41,12 +41,12 @@ test("renders the chat page with an informative heading", () => {
   expect(screen.getByRole("heading", { name: "Chat" })).toBeTruthy();
 });
 
-test("shows an empty state when there are no users", () => {
+test("shows an empty state when there are no real users", () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
   expect(
-    screen.getByText("No users yet — start the bot and wait for users to message you.")
+    screen.getByText("No real users yet — start the bot to see them here, or try the Test User conversation.")
   ).toBeTruthy();
 });
 
@@ -210,26 +210,24 @@ const greetStore = () =>
     },
   });
 
-test("renders a Test toggle in the composer", () => {
-  const store = convoStore();
+test("renders a Test User conversation in the sidebar like any other user", () => {
+  const store = greetStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
-  expect(screen.getByRole("button", { name: "Test" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: /alice/ })).toBeTruthy();
+  expect(screen.getByRole("button", { name: /Test User/ })).toBeTruthy();
 });
 
-test("test mode simulates a reply as bubbles without sending to Telegram", () => {
+test("selecting the Test User simulates replies as bubbles without sending to Telegram", () => {
   const store = greetStore();
   const bot = new BrowserBot("123:TOKEN");
   const spy = jest.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
-  // Select alice.
-  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
-
-  // Turn on Test mode.
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
 
   const textbox = screen.getByRole("textbox");
+  expect(textbox).not.toBeDisabled();
   fireEvent.change(textbox, { target: { value: "/start" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
 
@@ -238,14 +236,14 @@ test("test mode simulates a reply as bubbles without sending to Telegram", () =>
   expect(screen.getByText("Welcome!")).toBeTruthy();
   expect(screen.getByText(/Matched program: Greet/)).toBeTruthy();
   expect(screen.getByText("/start")).toBeTruthy();
+  expect(screen.getByText(/Test User ·/)).toBeTruthy();
 });
 
-test("test mode with no matching program shows the silent note", () => {
+test("Test User with no matching program shows the silent note", () => {
   const store = convoStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
-  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
 
   const textbox = screen.getByRole("textbox");
   fireEvent.change(textbox, { target: { value: "nope" } });
@@ -254,14 +252,12 @@ test("test mode with no matching program shows the silent note", () => {
   expect(screen.getByText(/No program matched/)).toBeTruthy();
 });
 
-test("simulated messages do not touch the store", () => {
+test("Test User simulated messages do not touch the store", () => {
   const store = convoStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("123:TOKEN")} />, { store });
 
-  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
   const before = store.getState().bot.response.length;
-
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
 
   const textbox = screen.getByRole("textbox");
   fireEvent.change(textbox, { target: { value: "/start" } });
@@ -270,7 +266,50 @@ test("simulated messages do not touch the store", () => {
   expect(store.getState().bot.response.length).toBe(before);
 });
 
-test("switching back to live mode sends for real again", () => {
+test("Test User works with no real users and never sends to Telegram", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Greet",
+          trigger: { type: "equals", value: "/start" },
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "Welcome!",
+              value2: "",
+              fallback: "",
+            },
+          ],
+        },
+      ],
+      response: [],
+      users: [],
+    },
+  });
+  const bot = new BrowserBot("123:TOKEN");
+  const spy = jest.spyOn(bot, "sendMessage");
+  renderWithProviders(<ChatPage bot={bot} />, { store });
+
+  // The composer starts disabled until a conversation is selected.
+  expect(screen.getByRole("textbox")).toBeDisabled();
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+  expect(textbox).not.toBeDisabled();
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  expect(screen.getByText("Welcome!")).toBeTruthy();
+  expect(spy).not.toHaveBeenCalled();
+});
+
+test("selecting a real user sends for real again", () => {
   const store = convoStore();
   const bot = new BrowserBot("123:TOKEN");
   const spy = jest.spyOn(bot, "sendMessage");
@@ -278,94 +317,9 @@ test("switching back to live mode sends for real again", () => {
 
   fireEvent.click(screen.getByRole("button", { name: /alice/ }));
 
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
-
   const textbox = screen.getByRole("textbox");
   fireEvent.change(textbox, { target: { value: "hi" } });
   fireEvent.click(screen.getByRole("button", { name: "Send" }));
 
   expect(spy).toHaveBeenCalledWith(42, "hi");
-});
-
-test("test mode simulates without a real user via a Test User conversation", () => {
-  const store = setupStore({
-    bot: {
-      token: "TOKEN",
-      programs: [
-        {
-          id: "p1",
-          name: "Greet",
-          trigger: { type: "equals", value: "/start" },
-          blocks: [
-            {
-              id: "b1",
-              category: "action",
-              kind: "reply",
-              value: "Welcome!",
-              value2: "",
-              fallback: "",
-            },
-          ],
-        },
-      ],
-      response: [],
-      users: [],
-    },
-  });
-  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
-
-  // No real users yet, so the composer starts disabled in live mode.
-  expect(screen.getByRole("textbox")).toBeDisabled();
-
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
-
-  // Test mode unlocks the composer without a real user.
-  const textbox = screen.getByRole("textbox");
-  expect(textbox).not.toBeDisabled();
-  fireEvent.change(textbox, { target: { value: "/start" } });
-  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-
-  expect(screen.getByText("Welcome!")).toBeTruthy();
-  expect(screen.getByRole("button", { name: /Test User/ })).toBeTruthy();
-  expect(screen.getByText(/Test User ·/)).toBeTruthy();
-});
-
-test("switching off test mode removes the virtual Test User and disables the composer", () => {
-  const store = setupStore({
-    bot: {
-      token: "TOKEN",
-      programs: [
-        {
-          id: "p1",
-          name: "Greet",
-          trigger: { type: "equals", value: "/start" },
-          blocks: [
-            {
-              id: "b1",
-              category: "action",
-              kind: "reply",
-              value: "Welcome!",
-              value2: "",
-              fallback: "",
-            },
-          ],
-        },
-      ],
-      response: [],
-      users: [],
-    },
-  });
-  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
-
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
-  fireEvent.change(screen.getByRole("textbox"), { target: { value: "/start" } });
-  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-
-  expect(screen.getByRole("button", { name: /Test User/ })).toBeTruthy();
-
-  fireEvent.click(screen.getByRole("button", { name: "Test" }));
-
-  expect(screen.queryByRole("button", { name: /Test User/ })).toBeNull();
-  expect(screen.getByRole("textbox")).toBeDisabled();
 });

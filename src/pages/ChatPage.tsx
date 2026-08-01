@@ -13,7 +13,6 @@ import {
   Paper,
   Stack,
   TextField,
-  ToggleButton,
   Typography,
 } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
@@ -50,13 +49,14 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
   const [selectedUserID, setSelectedUserID] = useState<number | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [testMode, setTestMode] = useState<boolean>(false);
   const [simulated, setSimulated] = useState<DisplayItem[]>([]);
 
-  const userList: User[] = [
-    ...(storeUsers.length > 0 ? storeUsers : deriveUsersFromResponses(responses)),
-    ...(testMode ? [TEST_USER] : []),
-  ];
+  const realUsers: User[] =
+    storeUsers.length > 0 ? storeUsers : deriveUsersFromResponses(responses);
+
+  // Test User is a first-class conversation, just like any real user. It is
+  // always listed so the bot can be tested before anyone has messaged it.
+  const userList: User[] = [...realUsers, TEST_USER];
 
   const selectedUser = userList.find((user) => user.UserID === selectedUserID) ?? null;
 
@@ -76,9 +76,6 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     const text = message.trim();
     if (text === "") return;
 
-    // Without a real user selected, simulate against the virtual Test User.
-    const targetID = selectedUserID ?? TEST_USER.UserID;
-    const targetName = selectedUser?.Username ?? TEST_USER.Username;
     const now = Date.now();
     const newItems: DisplayItem[] = [
       {
@@ -86,8 +83,8 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         kind: "message",
         time: now,
         response: {
-          FromUser: targetName,
-          UserID: targetID,
+          FromUser: TEST_USER.Username,
+          UserID: TEST_USER.UserID,
           Message: text,
           TimeStamp: now,
           fromBot: false,
@@ -126,7 +123,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
             time: Date.now(),
             response: {
               FromUser: "Bot",
-              UserID: targetID,
+              UserID: TEST_USER.UserID,
               Message: reply,
               TimeStamp: Date.now(),
               fromBot: true,
@@ -138,12 +135,10 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
     setSimulated((prev) => [...prev, ...newItems]);
     setMessage("");
-    // Make the simulated conversation visible when nothing was selected.
-    if (selectedUserID === null) setSelectedUserID(TEST_USER.UserID);
   };
 
   const send = () => {
-    if (testMode) {
+    if (selectedUserID === TEST_USER.UserID) {
       simulate();
       return;
     }
@@ -176,13 +171,14 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         <Typography variant="subtitle2" color="text.secondary" sx={{ px: 1, py: 1 }}>
           Conversations
         </Typography>
-        {userList.length === 0 ? (
+        {realUsers.length === 0 ? (
           <Typography variant="body2" color="text.secondary" sx={{ px: 2, py: 2 }}>
-            No users yet — start the bot and wait for users to message you.
+            No real users yet — start the bot to see them here, or try the
+            Test User conversation.
           </Typography>
         ) : (
           <List dense disablePadding>
-            {userList.map((user) => (
+            {realUsers.map((user) => (
               <ListItemButton
                 key={user.UserID}
                 data-testid={`chat-user-${user.UserID}`}
@@ -205,6 +201,27 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
             ))}
           </List>
         )}
+        <List dense disablePadding>
+          <ListItemButton
+            data-testid={`chat-user-${TEST_USER.UserID}`}
+            selected={TEST_USER.UserID === selectedUserID}
+            onClick={() => {
+              setSelectedUserID(TEST_USER.UserID);
+              setMessage("");
+            }}
+          >
+            <ListItemAvatar>
+              <Avatar sx={{ width: 28, height: 28, fontSize: 14, bgcolor: "secondary.main" }}>
+                {TEST_USER.Username.charAt(0).toUpperCase()}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={TEST_USER.Username}
+              secondary="Simulated"
+              primaryTypographyProps={{ noWrap: true }}
+            />
+          </ListItemButton>
+        </List>
       </Box>
 
       {/* Main conversation area */}
@@ -285,40 +302,28 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
         <Divider />
 
-        {testMode && (
+        {selectedUserID === TEST_USER.UserID && (
           <Typography
             variant="caption"
             color="warning.main"
             sx={{ px: 2, pt: 1 }}
           >
-            Test mode — messages are simulated and nothing is sent to Telegram.
+            This is a simulated test conversation — nothing is sent to Telegram.
           </Typography>
         )}
 
         {/* Composer */}
         <Stack direction="row" spacing={1} sx={{ p: 2 }}>
-          <ToggleButton
-            value="test"
-            selected={testMode}
-            onChange={() => {
-              const next = !testMode;
-              setTestMode(next);
-              if (!next && selectedUserID === TEST_USER.UserID) {
-                setSelectedUserID(null);
-              }
-            }}
-            size="small"
-            color="primary"
-            sx={{ textTransform: "none", whiteSpace: "nowrap" }}
-          >
-            Test
-          </ToggleButton>
           <TextField
             fullWidth
             size="small"
-            placeholder={testMode ? "Type a message to simulate…" : "Type your message…"}
+            placeholder={
+              selectedUserID === TEST_USER.UserID
+                ? "Type a message to simulate…"
+                : "Type your message…"
+            }
             value={message}
-            disabled={selectedUserID === null && !testMode}
+            disabled={selectedUserID === null}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") send();
@@ -326,10 +331,10 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
           />
           <Button
             variant="contained"
-            disabled={selectedUserID === null && !testMode}
+            disabled={selectedUserID === null}
             onClick={send}
           >
-            {testMode ? "Simulate" : "Send"}
+            {selectedUserID === TEST_USER.UserID ? "Simulate" : "Send"}
           </Button>
         </Stack>
       </Stack>
