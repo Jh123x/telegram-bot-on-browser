@@ -4,7 +4,6 @@ import { Box, Button, Typography } from "@mui/material";
 import { ProgramPalette } from "./ProgramPalette.tsx";
 import { ProgramSamples } from "./ProgramSamples.tsx";
 import { ProgramCard } from "./ProgramCard.tsx";
-import { TestChat } from "./TestChat.tsx";
 import { Program } from "../interfaces/program.ts";
 import { createProgram } from "../logic/program.ts";
 import { addProgram, setPrograms } from "../redux/botSlice.ts";
@@ -77,7 +76,6 @@ export const ProgramEditor = () => {
           />
         ))
       )}
-      <TestChat />
     </div>
   );
 };

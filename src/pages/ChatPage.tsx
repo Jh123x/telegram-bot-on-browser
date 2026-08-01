@@ -12,11 +12,14 @@ import {
   ListItemText,
   Paper,
   Stack,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig, Response, User } from "../redux/types.ts";
+import { TestChat } from "../component/TestChat.tsx";
 
 // Derive a usable user list even when state.bot.users is empty by falling
 // back to the users that have sent messages.
@@ -39,6 +42,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
   const [selectedUserID, setSelectedUserID] = useState<number | null>(null);
   const [message, setMessage] = useState<string>("");
+  const [mode, setMode] = useState<"live" | "test">("live");
 
   const userList: User[] =
     storeUsers.length > 0 ? storeUsers : deriveUsersFromResponses(responses);
@@ -70,10 +74,20 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         Chat
       </Typography>
 
-      <Paper
-        data-testid="chat-panel"
-        sx={{ flex: 1, minHeight: 0, display: "flex", bgcolor: "background.paper" }}
+      <Tabs
+        value={mode}
+        onChange={(_, v) => setMode(v)}
+        sx={{ mb: 1 }}
       >
+        <Tab label="Live Chat" value="live" />
+        <Tab label="Test Chat" value="test" />
+      </Tabs>
+
+      {mode === "live" ? (
+        <Paper
+          data-testid="chat-panel"
+          sx={{ flex: 1, minHeight: 0, display: "flex", bgcolor: "background.paper" }}
+        >
         {/* Sidebar / user picker */}
         <Box sx={{ width: 240, borderRight: 1, borderColor: "divider", overflowY: "auto", p: 1 }}>
           <Typography variant="subtitle2" color="text.secondary" sx={{ px: 1, py: 1 }}>
@@ -196,6 +210,9 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
           </Stack>
         </Stack>
       </Paper>
+      ) : (
+        <TestChat />
+      )}
     </Box>
   );
 };

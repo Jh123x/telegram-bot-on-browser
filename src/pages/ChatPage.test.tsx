@@ -183,3 +183,73 @@ test("chat panel fills the available page height", () => {
   const panel = screen.getByTestId("chat-panel");
   expect(panel).toHaveStyle({ flexGrow: "1" });
 });
+
+const greetStore = () =>
+  setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Greet",
+          trigger: { type: "equals", value: "/start" },
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "Welcome!",
+              value2: "",
+              fallback: "",
+            },
+          ],
+        },
+      ],
+      response: [],
+      users: [],
+    },
+  });
+
+test("renders Live Chat and Test Chat tabs", () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  expect(screen.getByRole("tab", { name: "Live Chat" })).toBeTruthy();
+  expect(screen.getByRole("tab", { name: "Test Chat" })).toBeTruthy();
+});
+
+test("Test Chat tab shows the simulator and hides the live panel", () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("tab", { name: "Test Chat" }));
+
+  expect(screen.getByTestId("test-chat")).toBeTruthy();
+  expect(screen.queryByTestId("chat-panel")).toBeNull();
+});
+
+test("switching back to Live Chat restores the live panel", () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("tab", { name: "Test Chat" }));
+  fireEvent.click(screen.getByRole("tab", { name: "Live Chat" }));
+
+  expect(screen.getByTestId("chat-panel")).toBeTruthy();
+  expect(screen.queryByTestId("test-chat")).toBeNull();
+});
+
+test("Test Chat simulates a reply inside the Chat section", () => {
+  const store = greetStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("tab", { name: "Test Chat" }));
+
+  fireEvent.change(screen.getByLabelText("Message"), {
+    target: { value: "/start" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Send" }));
+
+  expect(screen.getByText("Matched program: Greet")).toBeTruthy();
+  expect(screen.getByText("Welcome!")).toBeTruthy();
+});

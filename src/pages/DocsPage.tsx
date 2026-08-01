@@ -439,7 +439,7 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          Use the Test Chat at the bottom of the Programs page to preview how
+          Use the Test Chat on the Chat tab to preview how
           the whole bot responds before starting it.
         </Typography>
       </li>
