@@ -9,6 +9,8 @@ drawn on a canvas and connected by **transitions**. When a user is in a
 state, the bot looks at the messages leaving that state, follows the first
 one whose trigger matches, and replies with the target state's messages.
 
+![Flow editor with the Welcome Flow sample](screenshots/flow-editor.png)
+
 ### Building a flow
 
 Drag a **Start** node (the entry marker, exactly one per flow) and **State**
