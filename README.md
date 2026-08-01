@@ -12,6 +12,8 @@ You can visit the live site here: <https://telebot.jh123x.com/>
 ## What you can do
 
 - Build bot reply logic with a drag-and-drop style block editor.
+- Build state-machine flows visually on a canvas (states + trigger-labeled
+  transitions) in the Flows tab.
 - Test your bot in a built-in chat before you start it.
 - Run the bot from the Chat tab and talk to real Telegram users.
 
@@ -23,9 +25,12 @@ You can visit the live site here: <https://telebot.jh123x.com/>
    browser's localStorage.
 3. Open the **Programs** tab and build a program, or click a sample to load
    one (Welcome, Coin Flip, Shout, Only Numbers, and more).
-4. Open the **Chat** tab and press **Start** in the header. The bot starts
+4. Open the **Flows** tab to build state-machine flows visually (drag states
+   onto the canvas and connect them with triggers), or load a sample flow
+   (Welcome, Echo, Quiz).
+5. Open the **Chat** tab and press **Start** in the header. The bot starts
    polling Telegram.
-5. Use **Test User** in the Chat tab to preview replies without sending
+6. Use **Test User** in the Chat tab to preview replies without sending
    anything to Telegram.
 
 ## Documentation

@@ -55,6 +55,68 @@ port, and a chip shows the value that would flow through it (previewed with
 the default message "Hello World"). A transform can save its output as a
 variable with `{name}`, which you can use in any later reply.
 
+## Flows
+
+The **Flows** tab is a visual state machine. A flow is a set of **states**
+drawn on a canvas and connected by **transitions**. When a user is in a
+state, the bot looks at the messages leaving that state, follows the first
+one whose trigger matches, and replies with the target state's messages.
+
+### Building a flow
+
+Drag a **Start** node (the entry marker, exactly one per flow) and **State**
+nodes from the palette onto the canvas. Connect them by dragging from one
+node to the next, then pick a trigger for each connection. Every state has a
+label and a list of replies. Select a node or transition to edit it in the
+inspector panel.
+
+### Transitions
+
+Each transition has a trigger that decides when it is followed:
+
+- **message equals** a value,
+- **message contains** a value,
+- **message starts with** a value,
+- **message ends with** a value,
+- **message does not equal** a value,
+- **message does not contain** a value,
+- **any other message** (the fallback) — matches anything.
+
+Transitions are checked in order. The first one whose trigger matches wins.
+Use an **any other message** fallback at the end to catch everything a state
+does not recognize.
+
+### State replies
+
+Each state sends one message per line when it is entered. You can use
+`{msg}` in a reply to interpolate the user's raw message.
+
+### Per-user state
+
+Each Telegram user's position in the flow is tracked independently. Two users
+can be in different states at the same time, and one user's messages never
+affect another's. A user with no stored state starts at the Start node.
+
+### How flows and programs interact
+
+Programs are checked first. A flow is only reached when no program replies. A
+flow that has no matching transition stays silent, and the rule falls through
+to later rules.
+
+### Samples
+
+Open the **Flows** tab and click a sample to load it:
+
+- **Welcome Flow** — greets every user and points toward `/echo` and the quiz.
+- **Echo Flow** — prompts for a message, then echoes it back with "You said:"
+  when the message starts with `/echo`.
+- **Quiz Flow** — asks a question, moves to *Correct* for the right answer
+  (`4`) or *Wrong* for anything else, then asks again.
+
+### Persistence
+
+Flows are saved to your browser's localStorage automatically.
+
 ## Chat
 
 The **Chat** tab is where the bot talks to users.

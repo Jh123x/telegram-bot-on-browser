@@ -53,6 +53,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           { label: "How Programs Work", href: "#how-programs-work" },
           { label: "Variables", href: "#variables" },
           { label: "Blocks", href: "#blocks" },
+          { label: "Flows", href: "#flows" },
           { label: "Samples", href: "#samples" },
           { label: "Tips", href: "#tips" },
           { label: "Troubleshooting", href: "#troubleshooting" },
@@ -249,6 +250,88 @@ action: reply "You shouted: {shouted}!"`}
         </Typography>
       </li>
     </Box>
+
+    <Typography variant="h4" id="flows" sx={{ mt: 3 }}>
+      Flows
+    </Typography>
+    <Typography variant="body1" sx={{ mt: 1 }}>
+      Flows are visual state machines. A flow is a set of states drawn on a
+      canvas and connected by transitions. When a user is in a state, the bot
+      follows the first transition whose trigger matches and replies with the
+      target state&apos;s messages.
+    </Typography>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      To build one, drag a <strong>Start</strong> node and <strong>State</strong>{" "}
+      nodes from the palette onto the canvas, connect them, then pick a trigger
+      for each connection. Each state has a label and a list of replies:
+    </Typography>
+    <pre data-testid="code-sample-flow-replies" style={codeStyle}>
+      {`state "Welcome"
+replies:
+  "Welcome! I'm a browser bot."
+  "Try /echo or answer the quiz."`}
+    </pre>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      Transitions are checked in order; the first match wins. A trigger can be:
+    </Typography>
+    <Box component="ul" sx={{ mt: 1, pl: 3 }}>
+      <li>
+        <Typography component="span">
+          message equals a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          message contains a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          message starts with a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          message ends with a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          message does not equal a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          message does not contain a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          any other message (the fallback) — matches anything.
+        </Typography>
+      </li>
+    </Box>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      Each state sends one message per line when it is entered. Use{" "}
+      {"{msg}"} in a reply to insert the user&apos;s raw message. Each
+      Telegram user&apos;s position in the flow is tracked independently, so
+      two users can be in different states at the same time.
+    </Typography>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      Programs are checked before flows. A flow that has no matching
+      transition stays silent, so later rules can still run.
+    </Typography>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      Built-in samples: <strong>Welcome Flow</strong> greets every user,{" "}
+      <strong>Echo Flow</strong> echoes back when the message starts with{" "}
+      {`/echo`}, and <strong>Quiz Flow</strong> asks a question and accepts
+      {" 4 "} as the correct answer.
+    </Typography>
 
     <Typography variant="h4" id="samples" sx={{ mt: 3 }}>
       Samples

@@ -19,6 +19,7 @@ test("renders all section headings", () => {
     "How Programs Work",
     "Variables",
     "Blocks",
+    "Flows",
     "Samples",
     "Tips",
     "Troubleshooting",
@@ -68,6 +69,7 @@ test("renders a table of contents with anchor links for every section", () => {
     { name: "How Programs Work", href: "#how-programs-work" },
     { name: "Variables", href: "#variables" },
     { name: "Blocks", href: "#blocks" },
+    { name: "Flows", href: "#flows" },
     { name: "Samples", href: "#samples" },
     { name: "Tips", href: "#tips" },
     { name: "Troubleshooting", href: "#troubleshooting" },
@@ -194,4 +196,23 @@ test("mentions Test mode in the tips", () => {
   render(<DocsPage />);
 
   expect(screen.getAllByText(/Test mode/i).length).toBeGreaterThan(0);
+});
+
+test("documents the flows section with triggers and {msg} interpolation", () => {
+  render(<DocsPage />);
+
+  expect(
+    screen.getByRole("link", { name: "On this page: Flows" })
+  ).toHaveAttribute("href", "#flows");
+  expect(screen.getByRole("heading", { name: "Flows" })).toBeTruthy();
+
+  // The fallback trigger is described.
+  expect(screen.getAllByText(/any other message/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/message does not contain/i).length).toBeGreaterThan(0);
+
+  // The {msg} interpolation note is present.
+  expect(screen.getAllByText(/\{msg\}/).length).toBeGreaterThan(0);
+
+  // Flows run after programs; a silent flow lets later rules run.
+  expect(screen.getAllByText(/Programs are checked before flows/i).length).toBeGreaterThan(0);
 });
