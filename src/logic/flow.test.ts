@@ -68,6 +68,33 @@ describe("matchFlowTrigger", () => {
     ).toBe(true);
   });
 
+  test("delegates startsWith to matchTrigger", () => {
+    expect(
+      matchFlowTrigger({ type: "startsWith", value: "/echo " }, "/echo hi")
+    ).toBe(true);
+    expect(
+      matchFlowTrigger({ type: "startsWith", value: "/echo " }, "say /echo hi")
+    ).toBe(false);
+  });
+
+  test("delegates endsWith to matchTrigger", () => {
+    expect(
+      matchFlowTrigger({ type: "endsWith", value: "bye" }, "say bye")
+    ).toBe(true);
+    expect(
+      matchFlowTrigger({ type: "endsWith", value: "bye" }, "bye now")
+    ).toBe(false);
+  });
+
+  test("delegates notEquals to matchTrigger", () => {
+    expect(
+      matchFlowTrigger({ type: "notEquals", value: "/start" }, "/stop")
+    ).toBe(true);
+    expect(
+      matchFlowTrigger({ type: "notEquals", value: "/start" }, "/start")
+    ).toBe(false);
+  });
+
   test("fallback always matches any message", () => {
     expect(matchFlowTrigger({ type: "fallback", value: "" }, "anything")).toBe(
       true
@@ -294,5 +321,24 @@ describe("executeFlow", () => {
     };
     const step = executeFlow(flow, "hi", "start");
     expect(step).toEqual({ replies: [], nextNodeId: "quiet" });
+  });
+
+  test("returns a copy of the target replies so callers cannot mutate the flow", () => {
+    const flow: Flow = {
+      ...baseFlow,
+      edges: [
+        {
+          id: "e1",
+          source: "start",
+          target: "echo",
+          data: { trigger: { type: "fallback", value: "" } },
+        },
+      ],
+    };
+    const step = executeFlow(flow, "hi", "start");
+    step!.replies.push("mutated");
+    expect(
+      flow.nodes.find((n) => n.id === "echo")!.data.replies
+    ).toEqual(["Echoing"]);
   });
 });

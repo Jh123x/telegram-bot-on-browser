@@ -58,7 +58,8 @@ export function executeFlow(
     // Defensive: skip edges whose target node is missing and keep scanning.
     const target = flow.nodes.find((n) => n.id === edge.target);
     if (!target) continue;
-    return { replies: target.data.replies, nextNodeId: edge.target };
+    // Copy so callers cannot mutate the flow's stored node data.
+    return { replies: [...target.data.replies], nextNodeId: edge.target };
   }
   return undefined;
 }
