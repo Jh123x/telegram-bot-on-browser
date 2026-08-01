@@ -9,6 +9,37 @@ import {
   TriggerType,
 } from "../interfaces/program.ts";
 
+export const TRIGGER_TYPES: TriggerType[] = [
+  "equals",
+  "contains",
+  "startsWith",
+  "endsWith",
+  "notEquals",
+  "notContains",
+];
+export const LOGIC_TYPES: LogicType[] = [
+  "lengthGreater",
+  "lengthLess",
+  "matchesRegex",
+  "lengthEquals",
+  "isNumber",
+];
+export const TRANSFORM_TYPES: TransformType[] = [
+  "uppercase",
+  "lowercase",
+  "trim",
+  "replace",
+  "concat",
+  "capitalize",
+  "titleCase",
+  "reverse",
+  "remove",
+];
+export const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
+
+// Logic kinds whose validation requires a numeric block value.
+const REQUIRES_NUMERIC = new Set<LogicType>(["lengthGreater", "lengthLess", "lengthEquals"]);
+
 export const TRIGGER_LABELS: Record<TriggerType, string> = {
   equals: "message equals",
   contains: "message contains",
@@ -53,10 +84,12 @@ export const BLOCK_CATEGORY_LABELS: Record<BlockCategory, string> = {
 // Plain, human-readable descriptions of what each block type does. Used by
 // the palette as an informational reference (blocks are added via card
 // buttons, so the palette no longer renders draggable elements).
-export const BLOCK_DESCRIPTIONS: Record<
-  BlockCategory | "trigger",
-  Record<string, string>
-> = {
+export const BLOCK_DESCRIPTIONS: {
+  trigger: Record<TriggerType, string>;
+  logic: Record<LogicType, string>;
+  transform: Record<TransformType, string>;
+  action: Record<ActionType, string>;
+} = {
   trigger: {
     equals: "Runs when the message is exactly the trigger value.",
     contains: "Runs when the message includes the trigger value.",
@@ -91,6 +124,12 @@ export const BLOCK_DESCRIPTIONS: Record<
 };
 
 export function generateId(): string {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
@@ -214,6 +253,54 @@ export function transformPreview(
   return applyTransform(block, input);
 }
 
+// A hint describing what value/label flows out of a node in the pipeline.
+export type NodeHint =
+  | { category: "transform"; text: string; outputVar?: string }
+  | { category: "logic"; fallback: string }
+  | { category: "action"; text: string };
+
+// Pure preview of the data-flow pipeline using the default "Hello World" user
+// message. Returns a hint describing what flows out of each node, plus the
+// value that flowed into each node (used for the echo preview).
+export function computeFlowPreview(
+  blocks: Block[]
+): { hints: Map<string, NodeHint>; flowingByBlock: Map<string, string> } {
+  const hints = new Map<string, NodeHint>();
+  const flowingByBlock = new Map<string, string>();
+  let flowing = "Hello World";
+  for (const b of blocks) {
+    flowingByBlock.set(b.id, flowing);
+    if (b.category === "transform") {
+      flowing = transformPreview(b, flowing);
+      hints.set(b.id, {
+        category: "transform",
+        text: flowing,
+        outputVar: b.outputVar,
+      });
+    } else if (b.category === "logic") {
+      hints.set(b.id, { category: "logic", fallback: b.fallback });
+    } else {
+      let text: string;
+      if (b.kind === "reply") {
+        text = `reply: ${b.value || "(empty)"}`;
+      } else if (b.kind === "random") {
+        const opts = b.value
+          .split("\n")
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0);
+        text =
+          opts.length > 0
+            ? `random: ${opts.map((o) => `"${o}"`).join(", ")}`
+            : "random: (no options)";
+      } else {
+        text = `echo: ${flowing}`;
+      }
+      hints.set(b.id, { category: "action", text });
+    }
+  }
+  return { hints, flowingByBlock };
+}
+
 export function checkLogic(block: Block, message: string): boolean {
   switch (block.kind) {
     case "lengthGreater": {
@@ -266,6 +353,10 @@ export function executeBlocks(
         break;
       }
     } else if (block.category === "transform") {
+      // concat interpolates its value/value2 with {variables} before applying,
+      // so users can splice message text or named outputs into the combined
+      // result. By contrast, replace/remove treat their value as literal find
+      // text (no interpolation), so this branch only special-cases concat.
       if (block.kind === "concat") {
         data = applyTransform(
           {
@@ -332,11 +423,7 @@ export function validateProgram(program: Program): string[] {
         } catch {
           errors.push("Logic block needs a valid regex");
         }
-      } else if (
-        block.kind === "lengthGreater" ||
-        block.kind === "lengthLess" ||
-        block.kind === "lengthEquals"
-      ) {
+      } else if (REQUIRES_NUMERIC.has(block.kind)) {
         if (!Number.isFinite(Number(block.value)))
           errors.push("Logic block needs a number");
       }

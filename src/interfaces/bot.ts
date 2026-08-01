@@ -11,7 +11,7 @@ export class BrowserBot {
   poll_worker?: Worker
   send_worker?: Worker
 
-  constructor(token) {
+  constructor(token: string) {
     this.token = token;
     this.url = `https://api.telegram.org/bot${token}`;
     this.rules = [];

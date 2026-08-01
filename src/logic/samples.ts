@@ -1,278 +1,121 @@
-import { Program } from "../interfaces/program.ts";
+import { Block, Program } from "../interfaces/program.ts";
 import { generateId } from "./program.ts";
 
 export interface ProgramSample {
   name: string;
   trigger: Program["trigger"];
-  blocks: {
-    id: string;
-    category: Program["blocks"][number]["category"];
-    kind: Program["blocks"][number]["kind"];
-    value: string;
-    value2: string;
-    fallback: string;
-    outputVar?: string;
-  }[];
+  blocks: Block[];
 }
+
+// Module-local builder that fills in the repeated `value2`/`fallback` defaults
+// and a fresh id (programFromSample regenerates ids anyway, but this keeps each
+// sample self-contained).
+const sb = (
+  category: Block["category"],
+  kind: Block["kind"],
+  value = "",
+  extra: Partial<Block> = {}
+): Block => ({
+  id: generateId(),
+  category,
+  kind,
+  value,
+  value2: "",
+  fallback: "",
+  ...extra,
+});
 
 export const SAMPLE_PROGRAMS: ProgramSample[] = [
   {
     name: "Welcome",
     trigger: { type: "equals", value: "/start" },
     blocks: [
-      {
-        id: "sample-welcome",
-        category: "action",
-        kind: "reply",
-        value: "Welcome! I'm a browser bot 🤖",
-        value2: "",
-        fallback: "",
-      },
+      sb("action", "reply", "Welcome! I'm a browser bot 🤖"),
     ],
   },
   {
     name: "Coin Flip",
     trigger: { type: "equals", value: "/flip" },
     blocks: [
-      {
-        id: "sample-flip",
-        category: "action",
-        kind: "random",
-        value: "Heads\nTails",
-        value2: "",
-        fallback: "",
-      },
+      sb("action", "random", "Heads\nTails"),
     ],
   },
   {
     name: "Help",
     trigger: { type: "contains", value: "help" },
     blocks: [
-      {
-        id: "sample-help",
-        category: "action",
-        kind: "reply",
-        value: "Try /start, /flip, /shout, or say 'say hello'.",
-        value2: "",
-        fallback: "",
-      },
+      sb("action", "reply", "Try /start, /flip, /shout, or say 'say hello'."),
     ],
   },
   {
     name: "Echo Clean",
     trigger: { type: "startsWith", value: "say " },
     blocks: [
-      {
-        id: "sample-echo-clean",
-        category: "transform",
-        kind: "replace",
-        value: "say ",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-echo-clean-2",
-        category: "action",
-        kind: "echo",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
+      sb("transform", "replace", "say "),
+      sb("action", "echo"),
     ],
   },
   {
     name: "Shout",
     trigger: { type: "contains", value: "shout" },
     blocks: [
-      {
-        id: "sample-shout",
-        category: "transform",
-        kind: "uppercase",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-shout-2",
-        category: "action",
-        kind: "echo",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
+      sb("transform", "uppercase"),
+      sb("action", "echo"),
     ],
   },
   {
     name: "Shout Back",
     trigger: { type: "contains", value: "shout" },
     blocks: [
-      {
-        id: "sample-shout-back",
-        category: "transform",
-        kind: "uppercase",
-        value: "",
-        value2: "",
-        fallback: "",
-        outputVar: "shouted",
-      },
-      {
-        id: "sample-shout-back-2",
-        category: "action",
-        kind: "reply",
-        value: "You shouted: {shouted}!",
-        value2: "",
-        fallback: "",
-      },
+      sb("transform", "uppercase", "", { outputVar: "shouted" }),
+      sb("action", "reply", "You shouted: {shouted}!"),
     ],
   },
   {
     name: "Short Replies",
     trigger: { type: "startsWith", value: "/short" },
     blocks: [
-      {
-        id: "sample-short",
-        category: "logic",
-        kind: "lengthLess",
-        value: "10",
-        value2: "",
+      sb("logic", "lengthLess", "10", {
         fallback: "Too long! Keep it under 10 characters.",
-      },
-      {
-        id: "sample-short-1",
-        category: "transform",
-        kind: "replace",
-        value: "/short ",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-short-2",
-        category: "action",
-        kind: "echo",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
+      }),
+      sb("transform", "replace", "/short "),
+      sb("action", "echo"),
     ],
   },
   {
     name: "Only Numbers",
     trigger: { type: "startsWith", value: "/num " },
     blocks: [
-      {
-        id: "sample-only-numbers",
-        category: "transform",
-        kind: "remove",
-        value: "/num ",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-only-numbers-2",
-        category: "logic",
-        kind: "isNumber",
-        value: "",
-        value2: "",
-        fallback: "That's not a number!",
-      },
-      {
-        id: "sample-only-numbers-3",
-        category: "action",
-        kind: "echo",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
+      sb("transform", "remove", "/num "),
+      sb("logic", "isNumber", "", { fallback: "That's not a number!" }),
+      sb("action", "echo"),
     ],
   },
   {
     name: "Title Case",
     trigger: { type: "startsWith", value: "/title " },
     blocks: [
-      {
-        id: "sample-title-case",
-        category: "transform",
-        kind: "remove",
-        value: "/title ",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-title-case-2",
-        category: "transform",
-        kind: "titleCase",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-title-case-3",
-        category: "action",
-        kind: "echo",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
+      sb("transform", "remove", "/title "),
+      sb("transform", "titleCase"),
+      sb("action", "echo"),
     ],
   },
   {
     name: "Palindrome",
     trigger: { type: "startsWith", value: "/reverse " },
     blocks: [
-      {
-        id: "sample-palindrome",
-        category: "transform",
-        kind: "remove",
-        value: "/reverse ",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-palindrome-2",
-        category: "transform",
-        kind: "reverse",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-palindrome-3",
-        category: "action",
-        kind: "echo",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
+      sb("transform", "remove", "/reverse "),
+      sb("transform", "reverse"),
+      sb("action", "echo"),
     ],
   },
   {
     name: "Capitalize",
     trigger: { type: "startsWith", value: "/cap " },
     blocks: [
-      {
-        id: "sample-capitalize",
-        category: "transform",
-        kind: "remove",
-        value: "/cap ",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-capitalize-2",
-        category: "transform",
-        kind: "capitalize",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
-      {
-        id: "sample-capitalize-3",
-        category: "action",
-        kind: "echo",
-        value: "",
-        value2: "",
-        fallback: "",
-      },
+      sb("transform", "remove", "/cap "),
+      sb("transform", "capitalize"),
+      sb("action", "echo"),
     ],
   },
 ];

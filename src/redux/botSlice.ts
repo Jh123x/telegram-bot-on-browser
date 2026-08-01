@@ -2,16 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { IBotState, Response, User } from "./types";
 import { Program } from "../interfaces/program.ts";
 
-export class BotState {
-  token: string
-  programs: Program[]
-
-  constructor(token: string, programs: Program[]) {
-    this.token = token;
-    this.programs = programs;
-  }
-}
-
 export const defaultBotState: IBotState = {
   token: "",
   programs: [],

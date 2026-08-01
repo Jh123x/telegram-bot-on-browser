@@ -8,6 +8,7 @@ import {
   matchTrigger,
   applyTransform,
   transformPreview,
+  computeFlowPreview,
   checkLogic,
   executeBlocks,
   executeProgram,
@@ -22,6 +23,10 @@ import {
   LOGIC_LABELS,
   TRANSFORM_LABELS,
   ACTION_LABELS,
+  TRIGGER_TYPES,
+  LOGIC_TYPES,
+  TRANSFORM_TYPES,
+  ACTION_TYPES,
 } from "../logic/program";
 import { SAMPLE_PROGRAMS, programFromSample } from "../logic/samples";
 import { test, expect } from "@jest/globals";
@@ -273,6 +278,52 @@ describe("transformPreview", () => {
   test("remove preview with an empty find passes the input through", () => {
     const block = transformBlock("remove", "");
     expect(transformPreview(block, "Hello World")).toBe("Hello World");
+  });
+});
+
+describe("computeFlowPreview", () => {
+  test("a transform block yields a flowing preview hint with the transformed text", () => {
+    const blocks: Block[] = [transformBlock("uppercase")];
+    const { hints, flowingByBlock } = computeFlowPreview(blocks);
+    const id = blocks[0].id;
+    expect(hints.get(id)).toEqual({ category: "transform", text: "HELLO WORLD" });
+    expect(flowingByBlock.get(id)).toBe("Hello World");
+  });
+
+  test("a remove transform preview strips matches", () => {
+    const blocks: Block[] = [transformBlock("remove", "l")];
+    const { hints } = computeFlowPreview(blocks);
+    const id = blocks[0].id;
+    expect(hints.get(id)).toEqual({ category: "transform", text: "Heo Word" });
+  });
+
+  test("a logic block yields an else hint", () => {
+    const blocks: Block[] = [logicBlock("lengthLess", "10", "Too long")];
+    const { hints, flowingByBlock } = computeFlowPreview(blocks);
+    const id = blocks[0].id;
+    expect(hints.get(id)).toEqual({ category: "logic", fallback: "Too long" });
+    // logic blocks pass the flowing value through unchanged
+    expect(flowingByBlock.get(id)).toBe("Hello World");
+  });
+
+  test("an action reply yields the correct text hint", () => {
+    const blocks: Block[] = [actionBlock("reply", "hi there")];
+    const { hints } = computeFlowPreview(blocks);
+    const id = blocks[0].id;
+    expect(hints.get(id)).toEqual({ category: "action", text: "reply: hi there" });
+  });
+
+  test("an action echo yields the correct text hint from the flowing value", () => {
+    const blocks: Block[] = [transformBlock("uppercase"), actionBlock("echo")];
+    const { hints } = computeFlowPreview(blocks);
+    const echoId = blocks[1].id;
+    expect(hints.get(echoId)).toEqual({ category: "action", text: "echo: HELLO WORLD" });
+  });
+
+  test("empty blocks produce empty maps", () => {
+    const { hints, flowingByBlock } = computeFlowPreview([]);
+    expect(hints.size).toBe(0);
+    expect(flowingByBlock.size).toBe(0);
   });
 });
 
@@ -580,6 +631,61 @@ describe("generateId", () => {
     expect(id1.length).toBeGreaterThan(0);
     expect(id2.length).toBeGreaterThan(0);
     expect(id1).not.toBe(id2);
+  });
+
+  test("returns a UUID when crypto.randomUUID is available", () => {
+    const hasCryptoUuid =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function";
+    if (!hasCryptoUuid) return; // fallback path is covered by the test above
+    const id = generateId();
+    expect(id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    );
+  });
+});
+
+describe("block type arrays", () => {
+  test("TRIGGER_TYPES contains the full expected trigger set", () => {
+    expect(TRIGGER_TYPES).toEqual([
+      "equals",
+      "contains",
+      "startsWith",
+      "endsWith",
+      "notEquals",
+      "notContains",
+    ]);
+    expect(new Set(TRIGGER_TYPES).size).toBe(TRIGGER_TYPES.length);
+  });
+
+  test("LOGIC_TYPES contains the full expected logic set", () => {
+    expect(LOGIC_TYPES).toEqual([
+      "lengthGreater",
+      "lengthLess",
+      "matchesRegex",
+      "lengthEquals",
+      "isNumber",
+    ]);
+    expect(new Set(LOGIC_TYPES).size).toBe(LOGIC_TYPES.length);
+  });
+
+  test("TRANSFORM_TYPES contains the full expected transform set", () => {
+    expect(TRANSFORM_TYPES).toEqual([
+      "uppercase",
+      "lowercase",
+      "trim",
+      "replace",
+      "concat",
+      "capitalize",
+      "titleCase",
+      "reverse",
+      "remove",
+    ]);
+    expect(new Set(TRANSFORM_TYPES).size).toBe(TRANSFORM_TYPES.length);
+  });
+
+  test("ACTION_TYPES contains the full expected action set", () => {
+    expect(ACTION_TYPES).toEqual(["reply", "random", "echo"]);
+    expect(new Set(ACTION_TYPES).size).toBe(ACTION_TYPES.length);
   });
 });
 
