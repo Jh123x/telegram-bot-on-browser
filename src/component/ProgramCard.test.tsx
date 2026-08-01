@@ -74,7 +74,7 @@ const renderCard = (program: Program, index: number, total: number) => {
   const store = makeStore([program]);
   const onMoveUp = jest.fn();
   const onMoveDown = jest.fn();
-  renderWithProviders(
+  const result = renderWithProviders(
     <ProgramCard
       program={program}
       index={index}
@@ -84,7 +84,7 @@ const renderCard = (program: Program, index: number, total: number) => {
     />,
     { store }
   );
-  return { store, onMoveUp, onMoveDown };
+  return { store, onMoveUp, onMoveDown, unmount: result.unmount };
 };
 
 test("renders program name, trigger select, trigger value, block label and value", () => {
@@ -250,6 +250,38 @@ test("typing into logic Number field updates value", () => {
     target: { value: "7" },
   });
   expect(store.getState().bot.programs[0].blocks[0].value).toBe("7");
+});
+
+test("content-matching logic kinds render a Value field that updates value", () => {
+  for (const kind of [
+    "equals",
+    "contains",
+    "startsWith",
+    "endsWith",
+    "notEquals",
+    "notContains",
+  ] as const) {
+    const p: Program = {
+      id: "p1",
+      name: "Greet",
+      trigger: { type: "equals", value: "/start" },
+      blocks: [
+        {
+          id: "b1",
+          category: "logic",
+          kind,
+          value: "",
+          value2: "",
+          fallback: "",
+        },
+      ],
+    };
+    const { store, unmount } = renderCard(p, 0, 1);
+    const valueField = screen.getByLabelText("Value");
+    fireEvent.change(valueField, { target: { value: "hello" } });
+    expect(store.getState().bot.programs[0].blocks[0].value).toBe("hello");
+    unmount();
+  }
 });
 
 test("Else reply fallback field updates fallback", () => {

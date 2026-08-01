@@ -8,6 +8,16 @@ interface BlockValueInputsProps {
   echoPreview?: string;
 }
 
+// Logic kinds that compare the message against a text value.
+const CONTENT_MATCH_KINDS = new Set([
+  "equals",
+  "contains",
+  "startsWith",
+  "endsWith",
+  "notEquals",
+  "notContains",
+]);
+
 export const BlockValueInputs = ({
   block,
   onChange,
@@ -33,6 +43,15 @@ export const BlockValueInputs = ({
         <TextField
           size="small"
           label="Regex"
+          value={block.value}
+          onChange={(e) => onChange(block.id, { value: e.target.value })}
+        />
+      );
+    } else if (CONTENT_MATCH_KINDS.has(block.kind)) {
+      valueInput = (
+        <TextField
+          size="small"
+          label="Value"
           value={block.value}
           onChange={(e) => onChange(block.id, { value: e.target.value })}
         />
