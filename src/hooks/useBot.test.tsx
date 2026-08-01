@@ -6,6 +6,7 @@ import { useBot } from "./useBot.ts";
 import { setupStore } from "../redux/testUtils.tsx";
 import { setAutoStart, setHydrated, setPrograms, setToken } from "../redux/botSlice.ts";
 import { Program } from "../interfaces/program.ts";
+import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
 
 class MockWorker {
   onmessage: ((e: { data: unknown }) => void) | null = null;
@@ -257,6 +258,167 @@ test("rules are rebuilt when programs change so new programs take effect", async
     await poll.onmessage!({ data: [3, "alice", 42, "/b"] });
   });
   expect(send.postMessage).toHaveBeenCalledTimes(2);
+});
+
+test("flows from the store are registered as rules and respond via the worker", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      response: [],
+      users: [],
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  const poll = instances[0];
+  const send = instances[1];
+
+  // First message: any message transitions start -> q1, replying with the question.
+  await act(async () => {
+    await poll.onmessage!({ data: [1, "alice", 42, "hi"] });
+  });
+  expect(send.postMessage).toHaveBeenCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "What is 2 + 2?",
+    42,
+  ]);
+});
+
+test("flows keep independent per-user state through the worker", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      response: [],
+      users: [],
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  const poll = instances[0];
+  const send = instances[1];
+
+  // alice (42) starts the quiz.
+  await act(async () => {
+    await poll.onmessage!({ data: [1, "alice", 42, "hi"] });
+  });
+  expect(send.postMessage).toHaveBeenLastCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "What is 2 + 2?",
+    42,
+  ]);
+
+  // bob (7) starts the quiz too — still at the start, gets the question.
+  await act(async () => {
+    await poll.onmessage!({ data: [2, "bob", 7, "hi"] });
+  });
+  expect(send.postMessage).toHaveBeenLastCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "What is 2 + 2?",
+    7,
+  ]);
+
+  // alice answers correctly — her state advanced to the question node.
+  await act(async () => {
+    await poll.onmessage!({ data: [4, "alice", 42, "4"] });
+  });
+  expect(send.postMessage).toHaveBeenLastCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "Correct! 🎉",
+    42,
+  ]);
+
+  // bob's state is independent: he answered wrongly from the question node,
+  // getting the wrong-answer branch instead of alice's correct one.
+  await act(async () => {
+    await poll.onmessage!({ data: [5, "bob", 7, "5"] });
+  });
+  expect(send.postMessage).toHaveBeenLastCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "Nope, try again!",
+    7,
+  ]);
+
+  // bob's replies never included the correct answer, while alice got it
+  // exactly once — proving the two users' flow states are independent.
+  const messagesByUser = (userId: number) =>
+    send.postMessage.mock.calls
+      .filter((call: [string, string, number]) => call[0][2] === userId)
+      .map((call: [string, string, number]) => call[0][1]);
+  expect(messagesByUser(7)).not.toContain("Correct! 🎉");
+  expect(messagesByUser(42)).toContain("Correct! 🎉");
+  expect(send.postMessage.mock.calls).toHaveLength(4);
+});
+
+test("a flow with no matching transition sends no reply", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      flows: [SAMPLE_FLOWS[1].flow], // Echo Flow
+      response: [],
+      users: [],
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  const poll = instances[0];
+  const send = instances[1];
+
+  // First message: start -> menu, replies with the prompt.
+  await act(async () => {
+    await poll.onmessage!({ data: [1, "alice", 42, "hello"] });
+  });
+  expect(send.postMessage).toHaveBeenCalledTimes(1);
+
+  // Second message from the menu with no matching transition: silent.
+  await act(async () => {
+    await poll.onmessage!({ data: [2, "alice", 42, "hello"] });
+  });
+  expect(send.postMessage).toHaveBeenCalledTimes(1);
+});
+
+test("a matched program still wins over a matching flow", async () => {
+  const greet = program({ trigger: { type: "equals", value: "/start" } });
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [greet],
+      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      response: [],
+      users: [],
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  const poll = instances[0];
+  const send = instances[1];
+
+  // The program rule is registered before flow rules, so /start hits the
+  // program and never advances the flow.
+  await act(async () => {
+    await poll.onmessage!({ data: [1, "alice", 42, "/start"] });
+  });
+  expect(send.postMessage).toHaveBeenLastCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "hi",
+    42,
+  ]);
 });
 
 test("auto-starts once when autoStart and token are set at load", () => {

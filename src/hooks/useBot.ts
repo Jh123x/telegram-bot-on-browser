@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig, Program } from "../redux/types.ts";
 import { matchTrigger, executeBlocks } from "../logic/program.ts";
+import { FlowRuntime } from "../logic/flow.ts";
+import { Flow } from "../interfaces/flow.ts";
 import { addResponse, addUser } from "../redux/botSlice.ts";
 
 export const useBot = () => {
@@ -15,6 +17,7 @@ export const useBot = () => {
   const botRef = useRef<BrowserBot>();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
   const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
+  const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows ?? []);
   const autoStart = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.autoStart ?? false
   );
@@ -52,7 +55,18 @@ export const useBot = () => {
         (message: string) => executeBlocks(program.blocks, message)
       );
     });
-  }, [bot, programs]);
+    // One rule per flow, each backed by its own FlowRuntime. Rules run after
+    // programs; a flow with no matching transition returns undefined and the
+    // next rule runs. A fresh FlowRuntime per rebuild means editing a flow
+    // resets that flow's users' states, which is expected.
+    flows.forEach((flow) => {
+      const runtime = new FlowRuntime(flow);
+      bot.addRule(
+        (message: string, userId?: number) => true,
+        (message: string, userId?: number) => runtime.handleMessage(userId ?? 0, message)
+      );
+    });
+  }, [bot, programs, flows]);
 
   // Auto-start the bot once on load when the setting is enabled and a token
   // existed at hydration-completion time. Uses botRef.current (the newest
