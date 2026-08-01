@@ -1,219 +1,87 @@
 import { test, expect } from "@jest/globals";
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { ProgramPalette } from "./ProgramPalette";
-import { BLOCK_COLORS } from "../theme.ts";
 
-const createDataTransfer = (payload: string) =>
-  ({
-    setData: jest.fn(),
-    getData: jest.fn(() => payload),
-    dropEffect: "move",
-    effectAllowed: "move",
-  } as unknown as DataTransfer);
-
-test("renders the palette header, caption, and 15 blocks", () => {
+test("renders the Blocks heading and reference caption", () => {
   render(<ProgramPalette />);
 
   expect(screen.getByText("Blocks")).toBeInTheDocument();
   expect(
-    screen.getByText("Drag a block onto a program below.")
+    screen.getByText("What each block does. Add blocks with the buttons on each program card.")
   ).toBeInTheDocument();
+});
+
+test("renders category headers", () => {
+  render(<ProgramPalette />);
+
   expect(screen.getByText("Triggers")).toBeInTheDocument();
   expect(screen.getByText("Logic")).toBeInTheDocument();
   expect(screen.getByText("Transform")).toBeInTheDocument();
   expect(screen.getByText("Action")).toBeInTheDocument();
+});
+
+test("renders a label and description for each block type", () => {
+  render(<ProgramPalette />);
 
   const expectedLabels = [
     "When message equals",
+    "Runs when the message is exactly the trigger value.",
     "When message contains",
+    "Runs when the message includes the trigger value.",
     "When message starts with",
+    "Runs when the message begins with the trigger value.",
     "When message ends with",
+    "Runs when the message ends with the trigger value.",
     "message length is greater than",
+    "Passes when the message is longer than the number.",
     "message length is less than",
+    "Passes when the message is shorter than the number.",
     "message matches regex",
+    "Passes when the message matches the regular expression.",
     "make uppercase",
+    "Changes the message to UPPERCASE.",
     "make lowercase",
+    "Changes the message to lowercase.",
     "trim whitespace",
+    "Removes spaces at the start and end.",
     "replace text",
+    "Replaces matching text with new text.",
     "concat text",
+    "Adds text before or after the message.",
     "reply with text",
+    "Sends a fixed reply.",
     "reply random choice",
+    "Picks one reply from a list.",
     "echo the current message",
+    "Sends the message as it is now.",
   ];
-  for (const label of expectedLabels) {
-    expect(screen.getByText(label)).toBeInTheDocument();
-  }
-
-  expect(screen.getAllByText(/When message/)).toHaveLength(4);
-  expect(screen.getAllByTestId(/^palette-trigger-/)).toHaveLength(4);
-  expect(screen.getAllByTestId(/^palette-logic-/)).toHaveLength(3);
-  expect(screen.getAllByTestId(/^palette-transform-/)).toHaveLength(5);
-  expect(screen.getAllByTestId(/^palette-action-/)).toHaveLength(3);
-  expect(
-    document.querySelectorAll(
-      '[data-testid^="palette-trigger-"], [data-testid^="palette-logic-"], [data-testid^="palette-transform-"], [data-testid^="palette-action-"]'
-    )
-  ).toHaveLength(15);
-});
-
-test("trigger blocks drag with the correct kind and type", () => {
-  render(<ProgramPalette />);
-
-  const blocks = [
-    { testid: "palette-trigger-equals", kind: "trigger", type: "equals" },
-    { testid: "palette-trigger-contains", kind: "trigger", type: "contains" },
-    { testid: "palette-trigger-startsWith", kind: "trigger", type: "startsWith" },
-    { testid: "palette-trigger-endsWith", kind: "trigger", type: "endsWith" },
-  ];
-
-  for (const { testid, kind, type } of blocks) {
-    const block = screen.getByTestId(testid);
-    const dataTransfer = createDataTransfer("");
-    fireEvent.dragStart(block, { dataTransfer });
-    expect(dataTransfer.setData).toHaveBeenCalledWith(
-      "text/plain",
-      JSON.stringify({ kind, type })
-    );
+  for (const text of expectedLabels) {
+    expect(screen.getByText(text)).toBeInTheDocument();
   }
 });
 
-test("logic blocks drag with the correct category and type", () => {
+test("descriptions use the palette-description testids per category and type", () => {
   render(<ProgramPalette />);
 
-  const blocks = [
-    {
-      testid: "palette-logic-lengthGreater",
-      kind: "block",
-      category: "logic",
-      type: "lengthGreater",
-    },
-    {
-      testid: "palette-logic-lengthLess",
-      kind: "block",
-      category: "logic",
-      type: "lengthLess",
-    },
-    {
-      testid: "palette-logic-matchesRegex",
-      kind: "block",
-      category: "logic",
-      type: "matchesRegex",
-    },
-  ];
-
-  for (const { testid, kind, category, type } of blocks) {
-    const block = screen.getByTestId(testid);
-    const dataTransfer = createDataTransfer("");
-    fireEvent.dragStart(block, { dataTransfer });
-    expect(dataTransfer.setData).toHaveBeenCalledWith(
-      "text/plain",
-      JSON.stringify({ kind, category, type })
-    );
-  }
+  expect(screen.getByTestId("palette-description-trigger-equals")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-trigger-contains")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-trigger-startsWith")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-trigger-endsWith")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-lengthGreater")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-lengthLess")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-matchesRegex")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-uppercase")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-lowercase")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-trim")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-replace")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-concat")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-action-reply")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-action-random")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-action-echo")).toBeTruthy();
 });
 
-test("transform blocks drag with the correct category and type", () => {
+test("renders no draggable elements", () => {
   render(<ProgramPalette />);
-
-  const blocks = [
-    {
-      testid: "palette-transform-uppercase",
-      kind: "block",
-      category: "transform",
-      type: "uppercase",
-    },
-    {
-      testid: "palette-transform-lowercase",
-      kind: "block",
-      category: "transform",
-      type: "lowercase",
-    },
-    {
-      testid: "palette-transform-trim",
-      kind: "block",
-      category: "transform",
-      type: "trim",
-    },
-    {
-      testid: "palette-transform-replace",
-      kind: "block",
-      category: "transform",
-      type: "replace",
-    },
-  ];
-
-  for (const { testid, kind, category, type } of blocks) {
-    const block = screen.getByTestId(testid);
-    const dataTransfer = createDataTransfer("");
-    fireEvent.dragStart(block, { dataTransfer });
-    expect(dataTransfer.setData).toHaveBeenCalledWith(
-      "text/plain",
-      JSON.stringify({ kind, category, type })
-    );
-  }
-});
-
-test("action blocks drag with the correct category and type", () => {
-  render(<ProgramPalette />);
-
-  const blocks = [
-    {
-      testid: "palette-action-reply",
-      kind: "block",
-      category: "action",
-      type: "reply",
-    },
-    {
-      testid: "palette-action-random",
-      kind: "block",
-      category: "action",
-      type: "random",
-    },
-    {
-      testid: "palette-action-echo",
-      kind: "block",
-      category: "action",
-      type: "echo",
-    },
-  ];
-
-  for (const { testid, kind, category, type } of blocks) {
-    const block = screen.getByTestId(testid);
-    const dataTransfer = createDataTransfer("");
-    fireEvent.dragStart(block, { dataTransfer });
-    expect(dataTransfer.setData).toHaveBeenCalledWith(
-      "text/plain",
-      JSON.stringify({ kind, category, type })
-    );
-  }
-});
-
-test("blocks carry a color dot in their category color", () => {
-  render(<ProgramPalette />);
-
-  // style.backgroundColor is normalized by the browser to rgb(r, g, b)
-  const hexToRgb = (hex: string) => {
-    const value = hex.replace("#", "");
-    const r = parseInt(value.slice(0, 2), 16);
-    const g = parseInt(value.slice(2, 4), 16);
-    const b = parseInt(value.slice(4, 6), 16);
-    return `rgb(${r}, ${g}, ${b})`;
-  };
-
-  const triggerDot = screen
-    .getByTestId("palette-trigger-equals")
-    .querySelector("span");
-  expect(triggerDot).not.toBeNull();
-  expect(triggerDot!.style.backgroundColor).toBe(
-    hexToRgb(BLOCK_COLORS.trigger.main)
-  );
-
-  const actionDot = screen
-    .getByTestId("palette-action-reply")
-    .querySelector("span");
-  expect(actionDot).not.toBeNull();
-  expect(actionDot!.style.backgroundColor).toBe(
-    hexToRgb(BLOCK_COLORS.action.main)
-  );
+  expect(document.querySelectorAll('[draggable="true"]')).toHaveLength(0);
 });

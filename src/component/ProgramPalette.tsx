@@ -1,5 +1,5 @@
 import React from "react";
-import { Paper, Typography } from "@mui/material";
+import { Paper, Typography, Box } from "@mui/material";
 import {
   ActionType,
   BlockCategory,
@@ -10,6 +10,7 @@ import {
 import {
   ACTION_LABELS,
   BLOCK_CATEGORY_LABELS,
+  BLOCK_DESCRIPTIONS,
   LOGIC_LABELS,
   TRIGGER_LABELS,
   TRANSFORM_LABELS,
@@ -31,19 +32,6 @@ const TRANSFORM_TYPES: TransformType[] = [
   "concat",
 ];
 const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
-
-const blockStyle = (category: BlockCategory) => {
-  const colors = BLOCK_COLORS[category];
-  return {
-    padding: "8px",
-    margin: "4px 0",
-    border: `1px solid ${colors.main}40`,
-    borderRadius: "6px",
-    cursor: "grab",
-    backgroundColor: colors.bg,
-    color: colors.main,
-  };
-};
 
 const Dot = ({ color }: { color: string }) => (
   <span
@@ -76,47 +64,48 @@ const SectionHeader = ({
   </Typography>
 );
 
-const handleTriggerDragStart = (
-  e: React.DragEvent<HTMLDivElement>,
-  type: TriggerType
-) => {
-  e.dataTransfer.setData(
-    "text/plain",
-    JSON.stringify({ kind: "trigger", type })
-  );
-};
-
-const handleBlockDragStart = (
-  e: React.DragEvent<HTMLDivElement>,
-  category: BlockCategory,
-  type: LogicType | TransformType | ActionType
-) => {
-  e.dataTransfer.setData(
-    "text/plain",
-    JSON.stringify({ kind: "block", category, type })
-  );
-};
+// A single block reference entry: the existing label plus a short plain
+// description of what the block does.
+const BlockReference = ({
+  category,
+  type,
+  label,
+  testId,
+}: {
+  category: BlockCategory | "trigger";
+  type: string;
+  label: string;
+  testId: string;
+}) => (
+  <Box sx={{ mt: 0.5 }}>
+    <Typography variant="body2">{label}</Typography>
+    <Typography
+      variant="caption"
+      sx={{ color: "text.secondary" }}
+      data-testid={testId}
+    >
+      {BLOCK_DESCRIPTIONS[category][type]}
+    </Typography>
+  </Box>
+);
 
 export const ProgramPalette = () => {
   return (
     <Paper sx={{ p: 2 }}>
       <Typography variant="h6">Blocks</Typography>
       <Typography variant="caption">
-        Drag a block onto a program below.
+        What each block does. Add blocks with the buttons on each program card.
       </Typography>
 
       <SectionHeader label="Triggers" color={BLOCK_COLORS.trigger.main} first />
       {TRIGGER_TYPES.map((type) => (
-        <div
+        <BlockReference
           key={type}
-          draggable
-          data-testid={`palette-trigger-${type}`}
-          onDragStart={(e) => handleTriggerDragStart(e, type)}
-          style={blockStyle("trigger")}
-        >
-          <Dot color={BLOCK_COLORS.trigger.main} />
-          When {TRIGGER_LABELS[type]}
-        </div>
+          category="trigger"
+          type={type}
+          label={`When ${TRIGGER_LABELS[type]}`}
+          testId={`palette-description-trigger-${type}`}
+        />
       ))}
 
       <SectionHeader
@@ -124,16 +113,13 @@ export const ProgramPalette = () => {
         color={BLOCK_COLORS.logic.main}
       />
       {LOGIC_TYPES.map((type) => (
-        <div
+        <BlockReference
           key={type}
-          draggable
-          data-testid={`palette-logic-${type}`}
-          onDragStart={(e) => handleBlockDragStart(e, "logic", type)}
-          style={blockStyle("logic")}
-        >
-          <Dot color={BLOCK_COLORS.logic.main} />
-          {LOGIC_LABELS[type]}
-        </div>
+          category="logic"
+          type={type}
+          label={LOGIC_LABELS[type]}
+          testId={`palette-description-logic-${type}`}
+        />
       ))}
 
       <SectionHeader
@@ -141,16 +127,13 @@ export const ProgramPalette = () => {
         color={BLOCK_COLORS.transform.main}
       />
       {TRANSFORM_TYPES.map((type) => (
-        <div
+        <BlockReference
           key={type}
-          draggable
-          data-testid={`palette-transform-${type}`}
-          onDragStart={(e) => handleBlockDragStart(e, "transform", type)}
-          style={blockStyle("transform")}
-        >
-          <Dot color={BLOCK_COLORS.transform.main} />
-          {TRANSFORM_LABELS[type]}
-        </div>
+          category="transform"
+          type={type}
+          label={TRANSFORM_LABELS[type]}
+          testId={`palette-description-transform-${type}`}
+        />
       ))}
 
       <SectionHeader
@@ -158,16 +141,13 @@ export const ProgramPalette = () => {
         color={BLOCK_COLORS.action.main}
       />
       {ACTION_TYPES.map((type) => (
-        <div
+        <BlockReference
           key={type}
-          draggable
-          data-testid={`palette-action-${type}`}
-          onDragStart={(e) => handleBlockDragStart(e, "action", type)}
-          style={blockStyle("action")}
-        >
-          <Dot color={BLOCK_COLORS.action.main} />
-          {ACTION_LABELS[type]}
-        </div>
+          category="action"
+          type={type}
+          label={ACTION_LABELS[type]}
+          testId={`palette-description-action-${type}`}
+        />
       ))}
     </Paper>
   );

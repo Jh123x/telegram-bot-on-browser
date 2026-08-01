@@ -45,7 +45,7 @@ export const ProgramEditor = () => {
     <div>
       <Typography variant="h3">Programs</Typography>
       <Typography variant="body1">
-        Drag blocks from the palette onto a program, or click to add. When a
+        Add blocks with the buttons on each program card. When a
         user sends a message, the first program whose trigger matches replies
         with its actions.
       </Typography>
@@ -62,7 +62,7 @@ export const ProgramEditor = () => {
       </Button>
       {programs.length === 0 ? (
         <Typography variant="body2">
-          No programs yet — drag a block or load a sample above.
+          No programs yet — add a new program and use its buttons, or load a sample above.
         </Typography>
       ) : (
         programs.map((program, index) => (

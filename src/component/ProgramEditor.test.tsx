@@ -35,7 +35,7 @@ test("renders Programs header, Blocks palette, Samples, and empty-state text whe
   expect(screen.getByText("Samples")).toBeTruthy();
   expect(
     screen.getByText(
-      "No programs yet — drag a block or load a sample above."
+      "No programs yet — add a new program and use its buttons, or load a sample above."
     )
   ).toBeTruthy();
 });

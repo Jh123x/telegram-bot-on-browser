@@ -6,14 +6,6 @@ import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { BotWithConfig } from "../redux/types.ts";
 import { Program } from "../interfaces/program.ts";
 
-const createDataTransfer = (payload: string) =>
-  ({
-    setData: jest.fn(),
-    getData: jest.fn(() => payload),
-    dropEffect: "move",
-    effectAllowed: "move",
-  } as unknown as DataTransfer);
-
 const makeProgram = (): Program => ({
   id: "p1",
   name: "Greet",
@@ -301,79 +293,6 @@ test("move up/down buttons call callbacks and disabled states are correct", () =
   expect((downBtn2 as HTMLButtonElement).disabled).toBe(true);
   fireEvent.click(upBtn2);
   expect(onMoveUp2).toHaveBeenCalledWith("p2");
-});
-
-test("dropping a trigger block updates trigger type keeping value", () => {
-  const { store } = renderCard(makeProgram(), 0, 1);
-  const paper = screen.getByTestId("program-card-Greet");
-  fireEvent.drop(paper, {
-    dataTransfer: createDataTransfer(
-      JSON.stringify({ kind: "trigger", type: "contains" })
-    ),
-  });
-  const trigger = store.getState().bot.programs[0].trigger;
-  expect(trigger.type).toBe("contains");
-  expect(trigger.value).toBe("/start");
-});
-
-test("dropping a trigger endsWith block updates trigger type", () => {
-  const { store } = renderCard(makeProgram(), 0, 1);
-  const paper = screen.getByTestId("program-card-Greet");
-  fireEvent.drop(paper, {
-    dataTransfer: createDataTransfer(
-      JSON.stringify({ kind: "trigger", type: "endsWith" })
-    ),
-  });
-  expect(store.getState().bot.programs[0].trigger.type).toBe("endsWith");
-});
-
-test("dropping a block payload appends a block with correct category and kind", () => {
-  const { store } = renderCard(makeProgram(), 0, 1);
-  const paper = screen.getByTestId("program-card-Greet");
-  fireEvent.drop(paper, {
-    dataTransfer: createDataTransfer(
-      JSON.stringify({ kind: "block", category: "logic", type: "lengthGreater" })
-    ),
-  });
-  const blocks = store.getState().bot.programs[0].blocks;
-  expect(blocks).toHaveLength(2);
-  expect(blocks[1].category).toBe("logic");
-  expect(blocks[1].kind).toBe("lengthGreater");
-
-  fireEvent.drop(paper, {
-    dataTransfer: createDataTransfer(
-      JSON.stringify({ kind: "block", category: "transform", type: "replace" })
-    ),
-  });
-  const blocks2 = store.getState().bot.programs[0].blocks;
-  expect(blocks2).toHaveLength(3);
-  expect(blocks2[2].category).toBe("transform");
-  expect(blocks2[2].kind).toBe("replace");
-});
-
-test("dropping an action block payload appends an action block", () => {
-  const { store } = renderCard(makeProgram(), 0, 1);
-  const paper = screen.getByTestId("program-card-Greet");
-  fireEvent.drop(paper, {
-    dataTransfer: createDataTransfer(
-      JSON.stringify({ kind: "block", category: "action", type: "random" })
-    ),
-  });
-  const blocks = store.getState().bot.programs[0].blocks;
-  expect(blocks).toHaveLength(2);
-  expect(blocks[1].category).toBe("action");
-  expect(blocks[1].kind).toBe("random");
-  expect(blocks[1].value).toBe("");
-});
-
-test("dropping malformed JSON does not crash and state unchanged", () => {
-  const { store } = renderCard(makeProgram(), 0, 1);
-  const paper = screen.getByTestId("program-card-Greet");
-  expect(() =>
-    fireEvent.drop(paper, { dataTransfer: createDataTransfer("not-json") })
-  ).not.toThrow();
-  expect(store.getState().bot.programs[0].trigger.type).toBe("equals");
-  expect(store.getState().bot.programs[0].blocks).toHaveLength(1);
 });
 
 const getTransformProgram = (): Program => ({

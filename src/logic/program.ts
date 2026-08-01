@@ -42,6 +42,38 @@ export const BLOCK_CATEGORY_LABELS: Record<BlockCategory, string> = {
   action: "Action",
 };
 
+// Plain, human-readable descriptions of what each block type does. Used by
+// the palette as an informational reference (blocks are added via card
+// buttons, so the palette no longer renders draggable elements).
+export const BLOCK_DESCRIPTIONS: Record<
+  BlockCategory | "trigger",
+  Record<string, string>
+> = {
+  trigger: {
+    equals: "Runs when the message is exactly the trigger value.",
+    contains: "Runs when the message includes the trigger value.",
+    startsWith: "Runs when the message begins with the trigger value.",
+    endsWith: "Runs when the message ends with the trigger value.",
+  },
+  logic: {
+    lengthGreater: "Passes when the message is longer than the number.",
+    lengthLess: "Passes when the message is shorter than the number.",
+    matchesRegex: "Passes when the message matches the regular expression.",
+  },
+  transform: {
+    uppercase: "Changes the message to UPPERCASE.",
+    lowercase: "Changes the message to lowercase.",
+    trim: "Removes spaces at the start and end.",
+    replace: "Replaces matching text with new text.",
+    concat: "Adds text before or after the message.",
+  },
+  action: {
+    reply: "Sends a fixed reply.",
+    random: "Picks one reply from a list.",
+    echo: "Sends the message as it is now.",
+  },
+};
+
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }

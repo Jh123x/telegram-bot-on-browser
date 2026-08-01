@@ -114,7 +114,7 @@ Object {
             <p
               class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
             >
-              Drag blocks from the palette onto a program, or click to add. When a user sends a message, the first program whose trigger matches replies with its actions.
+              Add blocks with the buttons on each program card. When a user sends a message, the first program whose trigger matches replies with its actions.
             </p>
             <div
               class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
@@ -128,7 +128,7 @@ Object {
               <span
                 class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
               >
-                Drag a block onto a program below.
+                What each block does. Add blocks with the buttons on each program card.
               </span>
               <h6
                 class="MuiTypography-root MuiTypography-subtitle2 css-tme4xk-MuiTypography-root"
@@ -139,48 +139,64 @@ Object {
                 Triggers
               </h6>
               <div
-                data-testid="palette-trigger-equals"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  When message equals
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-                />
-                When 
-                message equals
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-trigger-equals"
+                >
+                  Runs when the message is exactly the trigger value.
+                </span>
               </div>
               <div
-                data-testid="palette-trigger-contains"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  When message contains
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-                />
-                When 
-                message contains
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-trigger-contains"
+                >
+                  Runs when the message includes the trigger value.
+                </span>
               </div>
               <div
-                data-testid="palette-trigger-startsWith"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  When message starts with
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-                />
-                When 
-                message starts with
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-trigger-startsWith"
+                >
+                  Runs when the message begins with the trigger value.
+                </span>
               </div>
               <div
-                data-testid="palette-trigger-endsWith"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  When message ends with
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-                />
-                When 
-                message ends with
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-trigger-endsWith"
+                >
+                  Runs when the message ends with the trigger value.
+                </span>
               </div>
               <h6
                 class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
@@ -191,34 +207,49 @@ Object {
                 Logic
               </h6>
               <div
-                data-testid="palette-logic-lengthGreater"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  message length is greater than
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-                />
-                message length is greater than
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-logic-lengthGreater"
+                >
+                  Passes when the message is longer than the number.
+                </span>
               </div>
               <div
-                data-testid="palette-logic-lengthLess"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  message length is less than
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-                />
-                message length is less than
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-logic-lengthLess"
+                >
+                  Passes when the message is shorter than the number.
+                </span>
               </div>
               <div
-                data-testid="palette-logic-matchesRegex"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  message matches regex
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-                />
-                message matches regex
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-logic-matchesRegex"
+                >
+                  Passes when the message matches the regular expression.
+                </span>
               </div>
               <h6
                 class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
@@ -229,54 +260,79 @@ Object {
                 Transform
               </h6>
               <div
-                data-testid="palette-transform-uppercase"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  make uppercase
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-                />
-                make uppercase
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-uppercase"
+                >
+                  Changes the message to UPPERCASE.
+                </span>
               </div>
               <div
-                data-testid="palette-transform-lowercase"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  make lowercase
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-                />
-                make lowercase
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-lowercase"
+                >
+                  Changes the message to lowercase.
+                </span>
               </div>
               <div
-                data-testid="palette-transform-trim"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  trim whitespace
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-                />
-                trim whitespace
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-trim"
+                >
+                  Removes spaces at the start and end.
+                </span>
               </div>
               <div
-                data-testid="palette-transform-replace"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  replace text
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-                />
-                replace text
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-replace"
+                >
+                  Replaces matching text with new text.
+                </span>
               </div>
               <div
-                data-testid="palette-transform-concat"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  concat text
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-                />
-                concat text
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-concat"
+                >
+                  Adds text before or after the message.
+                </span>
               </div>
               <h6
                 class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
@@ -287,34 +343,49 @@ Object {
                 Action
               </h6>
               <div
-                data-testid="palette-action-reply"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  reply with text
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-                />
-                reply with text
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-action-reply"
+                >
+                  Sends a fixed reply.
+                </span>
               </div>
               <div
-                data-testid="palette-action-random"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  reply random choice
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-                />
-                reply random choice
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-action-random"
+                >
+                  Picks one reply from a list.
+                </span>
               </div>
               <div
-                data-testid="palette-action-echo"
-                draggable="true"
-                style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
+                class="MuiBox-root css-1fhgjcy"
               >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  echo the current message
+                </p>
                 <span
-                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-                />
-                echo the current message
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-action-echo"
+                >
+                  Sends the message as it is now.
+                </span>
               </div>
             </div>
             <div
@@ -400,7 +471,7 @@ Object {
             <p
               class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
             >
-              No programs yet — drag a block or load a sample above.
+              No programs yet — add a new program and use its buttons, or load a sample above.
             </p>
           </div>
         </main>
@@ -537,7 +608,7 @@ Object {
           <p
             class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
           >
-            Drag blocks from the palette onto a program, or click to add. When a user sends a message, the first program whose trigger matches replies with its actions.
+            Add blocks with the buttons on each program card. When a user sends a message, the first program whose trigger matches replies with its actions.
           </p>
           <div
             class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
@@ -551,7 +622,7 @@ Object {
             <span
               class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
             >
-              Drag a block onto a program below.
+              What each block does. Add blocks with the buttons on each program card.
             </span>
             <h6
               class="MuiTypography-root MuiTypography-subtitle2 css-tme4xk-MuiTypography-root"
@@ -562,48 +633,64 @@ Object {
               Triggers
             </h6>
             <div
-              data-testid="palette-trigger-equals"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                When message equals
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-              />
-              When 
-              message equals
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-trigger-equals"
+              >
+                Runs when the message is exactly the trigger value.
+              </span>
             </div>
             <div
-              data-testid="palette-trigger-contains"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                When message contains
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-              />
-              When 
-              message contains
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-trigger-contains"
+              >
+                Runs when the message includes the trigger value.
+              </span>
             </div>
             <div
-              data-testid="palette-trigger-startsWith"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                When message starts with
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-              />
-              When 
-              message starts with
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-trigger-startsWith"
+              >
+                Runs when the message begins with the trigger value.
+              </span>
             </div>
             <div
-              data-testid="palette-trigger-endsWith"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #60a5fa40; border-radius: 6px; cursor: grab; background-color: rgb(23, 37, 84); color: rgb(96, 165, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                When message ends with
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-              />
-              When 
-              message ends with
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-trigger-endsWith"
+              >
+                Runs when the message ends with the trigger value.
+              </span>
             </div>
             <h6
               class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
@@ -614,34 +701,49 @@ Object {
               Logic
             </h6>
             <div
-              data-testid="palette-logic-lengthGreater"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                message length is greater than
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-              />
-              message length is greater than
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-logic-lengthGreater"
+              >
+                Passes when the message is longer than the number.
+              </span>
             </div>
             <div
-              data-testid="palette-logic-lengthLess"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                message length is less than
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-              />
-              message length is less than
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-logic-lengthLess"
+              >
+                Passes when the message is shorter than the number.
+              </span>
             </div>
             <div
-              data-testid="palette-logic-matchesRegex"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #fbbf2440; border-radius: 6px; cursor: grab; background-color: rgb(69, 26, 3); color: rgb(251, 191, 36);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                message matches regex
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-              />
-              message matches regex
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-logic-matchesRegex"
+              >
+                Passes when the message matches the regular expression.
+              </span>
             </div>
             <h6
               class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
@@ -652,54 +754,79 @@ Object {
               Transform
             </h6>
             <div
-              data-testid="palette-transform-uppercase"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                make uppercase
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-              />
-              make uppercase
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-uppercase"
+              >
+                Changes the message to UPPERCASE.
+              </span>
             </div>
             <div
-              data-testid="palette-transform-lowercase"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                make lowercase
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-              />
-              make lowercase
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-lowercase"
+              >
+                Changes the message to lowercase.
+              </span>
             </div>
             <div
-              data-testid="palette-transform-trim"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                trim whitespace
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-              />
-              trim whitespace
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-trim"
+              >
+                Removes spaces at the start and end.
+              </span>
             </div>
             <div
-              data-testid="palette-transform-replace"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                replace text
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-              />
-              replace text
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-replace"
+              >
+                Replaces matching text with new text.
+              </span>
             </div>
             <div
-              data-testid="palette-transform-concat"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                concat text
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-              />
-              concat text
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-concat"
+              >
+                Adds text before or after the message.
+              </span>
             </div>
             <h6
               class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
@@ -710,34 +837,49 @@ Object {
               Action
             </h6>
             <div
-              data-testid="palette-action-reply"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                reply with text
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-              />
-              reply with text
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-action-reply"
+              >
+                Sends a fixed reply.
+              </span>
             </div>
             <div
-              data-testid="palette-action-random"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                reply random choice
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-              />
-              reply random choice
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-action-random"
+              >
+                Picks one reply from a list.
+              </span>
             </div>
             <div
-              data-testid="palette-action-echo"
-              draggable="true"
-              style="padding: 8px; margin: 4px 0px; border: 1px solid #34d39940; border-radius: 6px; cursor: grab; background-color: rgb(6, 78, 59); color: rgb(52, 211, 153);"
+              class="MuiBox-root css-1fhgjcy"
             >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                echo the current message
+              </p>
               <span
-                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-              />
-              echo the current message
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-action-echo"
+              >
+                Sends the message as it is now.
+              </span>
             </div>
           </div>
           <div
@@ -823,7 +965,7 @@ Object {
           <p
             class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
           >
-            No programs yet — drag a block or load a sample above.
+            No programs yet — add a new program and use its buttons, or load a sample above.
           </p>
         </div>
       </main>

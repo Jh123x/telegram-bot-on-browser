@@ -15,7 +15,6 @@ import { updateProgram, removeProgram } from "../redux/botSlice.ts";
 import {
   ActionType,
   Block,
-  BlockCategory,
   LogicType,
   Program,
   TransformType,
@@ -364,25 +363,6 @@ export const ProgramCard = ({
   const update = (patch: Partial<Program>) =>
     dispatch(updateProgram({ ...current, ...patch }));
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    let payload: { kind: string; type: string; category?: string };
-    try {
-      payload = JSON.parse(e.dataTransfer.getData("text/plain"));
-    } catch {
-      return;
-    }
-    if (payload.kind === "trigger") {
-      update({
-        trigger: { ...current.trigger, type: payload.type as TriggerType },
-      });
-    } else if (payload.kind === "block") {
-      const category = payload.category as BlockCategory;
-      const type = payload.type as LogicType | TransformType | ActionType;
-      update({ blocks: [...current.blocks, createBlock(category, type)] });
-    }
-  };
-
   const changeBlockValue = (id: string, patch: Partial<Block>) =>
     update({
       blocks: current.blocks.map((b) => (b.id === id ? { ...b, ...patch } : b)),
@@ -437,8 +417,6 @@ export const ProgramCard = ({
       variant="outlined"
       sx={{ p: 2, mb: 2 }}
       data-testid={`program-card-${current.name}`}
-      onDragOver={(e) => e.preventDefault()}
-      onDrop={handleDrop}
     >
       <Box display="flex" alignItems="center" gap={1} sx={{ mb: 2 }}>
         <TextField

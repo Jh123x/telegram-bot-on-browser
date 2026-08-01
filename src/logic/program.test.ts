@@ -17,6 +17,11 @@ import {
   createBlock,
   generateId,
   interpolate,
+  BLOCK_DESCRIPTIONS,
+  TRIGGER_LABELS,
+  LOGIC_LABELS,
+  TRANSFORM_LABELS,
+  ACTION_LABELS,
 } from "../logic/program";
 import { SAMPLE_PROGRAMS, programFromSample } from "../logic/samples";
 import { test, expect } from "@jest/globals";
@@ -647,5 +652,35 @@ describe("concat transform", () => {
     expect(validateProgram(program)).toContain(
       "Concat block needs text to append or prepend"
     );
+  });
+});
+
+describe("BLOCK_DESCRIPTIONS", () => {
+  test("has a non-empty description for every trigger type", () => {
+    for (const type of Object.keys(TRIGGER_LABELS)) {
+      expect(BLOCK_DESCRIPTIONS.trigger[type]).toBeTruthy();
+      expect(BLOCK_DESCRIPTIONS.trigger[type].length).toBeGreaterThan(0);
+    }
+  });
+
+  test("has a non-empty description for every logic type", () => {
+    for (const type of Object.keys(LOGIC_LABELS)) {
+      expect(BLOCK_DESCRIPTIONS.logic[type]).toBeTruthy();
+      expect(BLOCK_DESCRIPTIONS.logic[type].length).toBeGreaterThan(0);
+    }
+  });
+
+  test("has a non-empty description for every transform type", () => {
+    for (const type of Object.keys(TRANSFORM_LABELS)) {
+      expect(BLOCK_DESCRIPTIONS.transform[type]).toBeTruthy();
+      expect(BLOCK_DESCRIPTIONS.transform[type].length).toBeGreaterThan(0);
+    }
+  });
+
+  test("has a non-empty description for every action type", () => {
+    for (const type of Object.keys(ACTION_LABELS)) {
+      expect(BLOCK_DESCRIPTIONS.action[type]).toBeTruthy();
+      expect(BLOCK_DESCRIPTIONS.action[type].length).toBeGreaterThan(0);
+    }
   });
 });
