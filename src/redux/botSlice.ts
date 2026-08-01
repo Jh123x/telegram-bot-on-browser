@@ -41,6 +41,12 @@ export const botSlice = createSlice({
       }
       state.users = [...state.users, action.payload]
     },
+    setUsers: (state, action: { payload: User[], type: string }) => {
+      state.users = action.payload;
+    },
+    setResponse: (state, action: { payload: Response[], type: string }) => {
+      state.response = action.payload;
+    },
     setSelectedUserId: (state, action: { payload: number | null, type: string }) => {
       state.selectedUserId = action.payload;
     },
@@ -54,4 +60,4 @@ export const botSlice = createSlice({
   },
 });
 
-export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, addResponse, addUser, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;
+export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;

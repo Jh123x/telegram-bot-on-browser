@@ -1,7 +1,7 @@
 import { test, expect } from "@jest/globals";
 import { configureStore } from "@reduxjs/toolkit";
 import { botSlice, defaultBotState } from "./botSlice";
-import { BotWithConfig } from "./types";
+import { BotWithConfig, Response, User } from "./types";
 import { Program } from "../interfaces/program";
 
 function makeProgram(overrides: Partial<Program> = {}): Program {
@@ -137,4 +137,42 @@ test("resetAll restores the default state", () => {
   store.dispatch(botSlice.actions.resetAll());
 
   expect(store.getState().bot).toEqual(defaultBotState);
+});
+
+test("setResponse replaces the response array", () => {
+  const store = setupStore();
+  store.dispatch(
+    botSlice.actions.addResponse({
+      FromUser: "alice",
+      UserID: 42,
+      Message: "hi",
+      TimeStamp: 1000,
+    })
+  );
+  expect(store.getState().bot.response).toHaveLength(1);
+
+  const responses: Response[] = [
+    { FromUser: "carol", UserID: 9, Message: "hey", TimeStamp: 2000 },
+    {
+      FromUser: "Bot",
+      UserID: 9,
+      Message: "hello!",
+      TimeStamp: 3000,
+      fromBot: true,
+    },
+  ];
+  store.dispatch(botSlice.actions.setResponse(responses));
+  expect(store.getState().bot.response).toEqual(responses);
+});
+
+test("setUsers replaces the users array", () => {
+  const store = setupStore();
+  store.dispatch(
+    botSlice.actions.addUser({ Username: "alice", UserID: 42 })
+  );
+  expect(store.getState().bot.users).toHaveLength(1);
+
+  const users: User[] = [{ Username: "carol", UserID: 9 }];
+  store.dispatch(botSlice.actions.setUsers(users));
+  expect(store.getState().bot.users).toEqual(users);
 });

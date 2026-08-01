@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addResponse, setSelectedUserId } from "../redux/botSlice.ts";
+import {
+  addResponse,
+  setResponse,
+  setSelectedUserId,
+  setUsers,
+} from "../redux/botSlice.ts";
 import {
   Avatar,
   Box,
@@ -52,6 +57,11 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
   const [message, setMessage] = useState<string>("");
   const [simulated, setSimulated] = useState<DisplayItem[]>([]);
+  const [chatStatus, setChatStatus] = useState<{
+    kind: "success" | "error";
+    text: string;
+  } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const realUsers: User[] =
     storeUsers.length > 0 ? storeUsers : deriveUsersFromResponses(responses);
@@ -163,11 +173,114 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     setMessage("");
   };
 
+  const isValidUser = (u: unknown): boolean => {
+    if (typeof u !== "object" || u === null) return false;
+    const x = u as Record<string, unknown>;
+    return typeof x.Username === "string" && typeof x.UserID === "number";
+  };
+
+  const isValidResponse = (r: unknown): boolean => {
+    if (typeof r !== "object" || r === null) return false;
+    const x = r as Record<string, unknown>;
+    return (
+      typeof x.FromUser === "string" &&
+      typeof x.UserID === "number" &&
+      typeof x.Message === "string" &&
+      typeof x.TimeStamp === "number" &&
+      (x.fromBot === undefined || typeof x.fromBot === "boolean")
+    );
+  };
+
+  const handleExportChat = () => {
+    const payload = { version: 1, users: storeUsers, response: responses };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "browserbot-chat.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportChat = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result));
+        if (
+          !Array.isArray(parsed.users) ||
+          !parsed.users.every(isValidUser) ||
+          !Array.isArray(parsed.response) ||
+          !parsed.response.every(isValidResponse)
+        ) {
+          setChatStatus({
+            kind: "error",
+            text: "Could not import chat: invalid file.",
+          });
+          return;
+        }
+        dispatch(setUsers(parsed.users));
+        dispatch(setResponse(parsed.response));
+        setChatStatus({ kind: "success", text: "Chat imported." });
+      } catch {
+        setChatStatus({
+          kind: "error",
+          text: "Could not import chat: invalid file.",
+        });
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Typography variant="h3" sx={{ mb: 2 }}>
         Chat
       </Typography>
+
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }} alignItems="center">
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={handleExportChat}
+          sx={{ textTransform: "none" }}
+        >
+          Export chat
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => fileInputRef.current?.click()}
+          sx={{ textTransform: "none" }}
+        >
+          Import chat
+        </Button>
+        <input
+          type="file"
+          accept="application/json,.json"
+          data-testid="import-chat-input"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleImportChat}
+        />
+        {chatStatus && (
+          <Typography
+            variant="caption"
+            data-testid="chat-import-status"
+            sx={{ color: chatStatus.kind === "error" ? "error.main" : "success.main" }}
+          >
+            {chatStatus.text}
+          </Typography>
+        )}
+      </Stack>
 
       <Paper
         data-testid="chat-panel"

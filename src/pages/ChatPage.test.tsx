@@ -1,6 +1,7 @@
 import { test, expect } from "@jest/globals";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
+import { act } from "@testing-library/react";
 import { generateDefaultState, renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { ChatPage } from "./ChatPage.tsx";
 import { BrowserBot } from "../interfaces/bot";
@@ -14,6 +15,9 @@ beforeEach(() => {
 
 afterEach(() => {
   delete (global as any).Worker;
+  (URL as any).createObjectURL = undefined;
+  (URL as any).revokeObjectURL = undefined;
+  jest.restoreAllMocks();
 });
 
 const convoStore = () =>
@@ -383,4 +387,159 @@ test("falls back to the Test User when the remembered user no longer exists", ()
       testUserButton.getAttribute("aria-selected") === "true"
   ).toBe(true);
   expect(screen.getByRole("button", { name: "Simulate" })).not.toBeDisabled();
+});
+
+const readBlob = (blob: Blob) =>
+  new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.readAsText(blob);
+  });
+
+test("renders Export chat and Import chat buttons", () => {
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, {
+    store: convoStore(),
+  });
+
+  expect(screen.getByRole("button", { name: "Export chat" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Import chat" })).toBeTruthy();
+  expect(screen.getByTestId("import-chat-input")).toBeTruthy();
+  expect(screen.queryByTestId("chat-import-status")).toBeNull();
+});
+
+test("export chat downloads a JSON file with users and responses", async () => {
+  (URL as any).createObjectURL = jest.fn(() => "blob:mock");
+  (URL as any).revokeObjectURL = jest.fn();
+  const clickSpy = jest
+    .spyOn(HTMLAnchorElement.prototype, "click")
+    .mockImplementation(() => {});
+  let createdAnchor: HTMLAnchorElement | null = null;
+  const originalCreateElement = document.createElement.bind(document);
+  jest.spyOn(document, "createElement").mockImplementation((tag: string) => {
+    const el = originalCreateElement(tag);
+    if (tag === "a") createdAnchor = el as HTMLAnchorElement;
+    return el;
+  });
+
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, {
+    store: convoStore(),
+  });
+
+  fireEvent.click(screen.getByRole("button", { name: "Export chat" }));
+
+  expect((URL as any).createObjectURL).toHaveBeenCalledTimes(1);
+  const blob: Blob = (URL as any).createObjectURL.mock.calls[0][0];
+  const parsed = JSON.parse(await readBlob(blob));
+
+  expect(parsed).toEqual({
+    version: 1,
+    users: [
+      { Username: "alice", UserID: 42 },
+      { Username: "bob", UserID: 7 },
+    ],
+    response: [
+      { FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 2000 },
+      {
+        FromUser: "Bot",
+        UserID: 42,
+        Message: "hello there!",
+        TimeStamp: 3000,
+        fromBot: true,
+      },
+      { FromUser: "alice", UserID: 42, Message: "again", TimeStamp: 1000 },
+      { FromUser: "bob", UserID: 7, Message: "yo", TimeStamp: 1500 },
+    ],
+  });
+  expect(clickSpy).toHaveBeenCalledTimes(1);
+  expect((URL as any).revokeObjectURL).toHaveBeenCalledWith("blob:mock");
+  expect(createdAnchor?.download).toBe("browserbot-chat.json");
+});
+
+test("import chat replaces the store's users and responses", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        users: [{ Username: "carol", UserID: 9 }],
+        response: [
+          { FromUser: "carol", UserID: 9, Message: "hey", TimeStamp: 1000 },
+        ],
+      }),
+    ],
+    "chat.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-chat-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(store.getState().bot.users).toEqual([
+    { Username: "carol", UserID: 9 },
+  ]);
+  expect(store.getState().bot.response).toEqual([
+    { FromUser: "carol", UserID: 9, Message: "hey", TimeStamp: 1000 },
+  ]);
+  expect(screen.getByTestId("chat-import-status").textContent).toContain(
+    "Chat imported."
+  );
+});
+
+test("import chat with a non-JSON file shows an error and changes nothing", async () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+  const usersBefore = store.getState().bot.users;
+  const responseBefore = store.getState().bot.response;
+
+  const file = new File(["not json"], "bad.json", {
+    type: "application/json",
+  });
+  fireEvent.change(screen.getByTestId("import-chat-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(screen.getByTestId("chat-import-status").textContent).toContain(
+    "Could not import chat: invalid file."
+  );
+  expect(store.getState().bot.users).toEqual(usersBefore);
+  expect(store.getState().bot.response).toEqual(responseBefore);
+});
+
+test("import chat with a wrong-shape file shows an error and changes nothing", async () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+  const usersBefore = store.getState().bot.users;
+  const responseBefore = store.getState().bot.response;
+
+  const file = new File([JSON.stringify({ users: "nope" })], "bad.json", {
+    type: "application/json",
+  });
+  fireEvent.change(screen.getByTestId("import-chat-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(screen.getByTestId("chat-import-status").textContent).toContain(
+    "Could not import chat: invalid file."
+  );
+  expect(store.getState().bot.users).toEqual(usersBefore);
+  expect(store.getState().bot.response).toEqual(responseBefore);
 });
