@@ -4,7 +4,9 @@ import type { FlowNodeType } from "../interfaces/flow.ts";
 
 const ITEMS: { type: FlowNodeType; label: string }[] = [
   { type: "start", label: "Start" },
-  { type: "state", label: "State" },
+  { type: "transform", label: "Transform" },
+  { type: "condition", label: "Condition" },
+  { type: "send", label: "Send" },
 ];
 
 interface FlowPaletteProps {
