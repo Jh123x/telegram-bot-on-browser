@@ -5,6 +5,7 @@ export interface IBotState {
     programs: Program[];
     response: Response[];
     users: User[];
+    selectedUserId?: number | null;
 }
 
 export interface User {

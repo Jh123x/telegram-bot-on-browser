@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addResponse } from "../redux/botSlice.ts";
+import { addResponse, setSelectedUserId } from "../redux/botSlice.ts";
 import {
   Avatar,
   Box,
@@ -46,8 +46,10 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const storeUsers = useSelector<BotWithConfig, User[]>((state) => state.bot.users);
   const responses = useSelector<BotWithConfig, Response[]>((state) => state.bot.response);
   const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
+  const selectedUserId = useSelector<BotWithConfig, number | null>(
+    (state) => state.bot.selectedUserId ?? null
+  );
 
-  const [selectedUserID, setSelectedUserID] = useState<number | null>(null);
   const [message, setMessage] = useState<string>("");
   const [simulated, setSimulated] = useState<DisplayItem[]>([]);
 
@@ -58,11 +60,13 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   // always listed so the bot can be tested before anyone has messaged it.
   const userList: User[] = [...realUsers, TEST_USER];
 
-  const selectedUser = userList.find((user) => user.UserID === selectedUserID) ?? null;
+  // Effective selection: a stored selection that still exists, otherwise the
+  // Test User. TEST_USER is always in userList, so selectedUser is never null.
+  const selectedUser = userList.find((user) => user.UserID === selectedUserId) ?? TEST_USER;
 
   const displayItems: DisplayItem[] = [
     ...responses
-      .filter((response) => response.UserID === selectedUserID)
+      .filter((response) => response.UserID === selectedUser.UserID)
       .map((response) => ({
         id: `r-${response.TimeStamp}-${response.Message}`,
         kind: "message" as const,
@@ -141,16 +145,16 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   };
 
   const send = () => {
-    if (selectedUserID === TEST_USER.UserID) {
+    if (selectedUser.UserID === TEST_USER.UserID) {
       simulate();
       return;
     }
-    if (selectedUserID === null || !bot || message.trim() === "") return;
-    bot.sendMessage(selectedUserID, message);
+    if (!bot || message.trim() === "") return;
+    bot.sendMessage(selectedUser.UserID, message);
     dispatch(
       addResponse({
         FromUser: "Bot",
-        UserID: selectedUserID,
+        UserID: selectedUser.UserID,
         Message: message,
         TimeStamp: Date.now(),
         fromBot: true,
@@ -185,9 +189,9 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
               <ListItemButton
                 key={user.UserID}
                 data-testid={`chat-user-${user.UserID}`}
-                selected={user.UserID === selectedUserID}
+                selected={user.UserID === selectedUser.UserID}
                 onClick={() => {
-                  setSelectedUserID(user.UserID);
+                  dispatch(setSelectedUserId(user.UserID));
                   setMessage("");
                   setSimulated([]);
                 }}
@@ -207,9 +211,9 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         <List dense disablePadding>
           <ListItemButton
             data-testid={`chat-user-${TEST_USER.UserID}`}
-            selected={TEST_USER.UserID === selectedUserID}
+            selected={TEST_USER.UserID === selectedUser.UserID}
             onClick={() => {
-              setSelectedUserID(TEST_USER.UserID);
+              dispatch(setSelectedUserId(TEST_USER.UserID));
               setMessage("");
             }}
           >
@@ -230,15 +234,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
       {/* Main conversation area */}
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Box sx={{ flex: 1, overflowY: "auto", p: 2, display: "flex", flexDirection: "column" }}>
-          {selectedUser === null ? (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ alignSelf: "center", my: "auto" }}
-            >
-              Select a user to view their conversation.
-            </Typography>
-          ) : displayItems.length === 0 ? (
+          {displayItems.length === 0 ? (
             <Typography
               variant="body2"
               color="text.secondary"
@@ -305,7 +301,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
         <Divider />
 
-        {selectedUserID === TEST_USER.UserID && (
+        {selectedUser.UserID === TEST_USER.UserID && (
           <Typography
             variant="caption"
             color="warning.main"
@@ -321,23 +317,18 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
             fullWidth
             size="small"
             placeholder={
-              selectedUserID === TEST_USER.UserID
+              selectedUser.UserID === TEST_USER.UserID
                 ? "Type a message to simulate…"
                 : "Type your message…"
             }
             value={message}
-            disabled={selectedUserID === null}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") send();
             }}
           />
-          <Button
-            variant="contained"
-            disabled={selectedUserID === null}
-            onClick={send}
-          >
-            {selectedUserID === TEST_USER.UserID ? "Simulate" : "Send"}
+          <Button variant="contained" onClick={send}>
+            {selectedUser.UserID === TEST_USER.UserID ? "Simulate" : "Send"}
           </Button>
         </Stack>
       </Stack>

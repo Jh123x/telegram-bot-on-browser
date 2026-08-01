@@ -111,13 +111,14 @@ test("shows a no-messages state when the selected user has no messages", () => {
   expect(screen.getByText("No messages yet.")).toBeTruthy();
 });
 
-test("composer is disabled until a user is selected, then sends to the selected user and clears the input", () => {
+test("composer starts enabled with the Test User simulated, then sends to a selected real user and clears the input", () => {
   const bot = new BrowserBot("123:TOKEN");
   const spy = jest.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store: convoStore() });
 
-  // No user selected yet -> Send disabled.
-  expect(screen.getByRole("button", { name: "Send" })).toBeDisabled();
+  // Nothing selected yet -> Test User is auto-selected, so the composer is
+  // enabled with a Simulate button (nothing is sent to Telegram).
+  expect(screen.getByRole("button", { name: "Simulate" })).not.toBeDisabled();
 
   fireEvent.click(screen.getByRole("button", { name: /alice/ }));
 
@@ -295,8 +296,10 @@ test("Test User works with no real users and never sends to Telegram", () => {
   const spy = jest.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
-  // The composer starts disabled until a conversation is selected.
-  expect(screen.getByRole("textbox")).toBeDisabled();
+  // With no real users, the Test User is auto-selected so the composer starts
+  // enabled (nothing is ever sent to Telegram).
+  expect(screen.getByRole("textbox")).not.toBeDisabled();
+  expect(screen.getByRole("button", { name: "Simulate" })).not.toBeDisabled();
 
   fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
 
@@ -322,4 +325,62 @@ test("selecting a real user sends for real again", () => {
   fireEvent.click(screen.getByRole("button", { name: "Send" }));
 
   expect(spy).toHaveBeenCalledWith(42, "hi");
+});
+
+test("selects the Test User by default when nothing is selected", () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  // No selectedUserId in state -> Test User conversation is auto-selected.
+  expect(store.getState().bot.selectedUserId).toBeUndefined();
+  const testUserButton = screen.getByRole("button", { name: /Test User/ });
+  expect(
+    testUserButton.classList.contains("Mui-selected") ||
+      testUserButton.getAttribute("aria-selected") === "true"
+  ).toBe(true);
+
+  // Composer is enabled and shows the Simulate action for the Test User.
+  expect(screen.getByRole("textbox")).not.toBeDisabled();
+  expect(screen.getByRole("button", { name: "Simulate" })).not.toBeDisabled();
+});
+
+test("remembers the selected user when navigating back to Chat", () => {
+  const store = convoStore();
+  const { unmount } = renderWithProviders(
+    <ChatPage bot={new BrowserBot("TOKEN")} />,
+    { store }
+  );
+
+  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+  expect(screen.getByText("again")).toBeTruthy();
+
+  // Simulate a tab switch: ChatPage unmounts entirely.
+  unmount();
+
+  // Remount with the SAME store — the selection should be restored.
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  expect(screen.getByRole("textbox")).not.toBeDisabled();
+  expect(screen.getByRole("button", { name: "Send" })).not.toBeDisabled();
+  expect(screen.getByText("again")).toBeTruthy();
+});
+
+test("falls back to the Test User when the remembered user no longer exists", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      response: [],
+      users: [{ Username: "alice", UserID: 42 }],
+      selectedUserId: 999,
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  const testUserButton = screen.getByRole("button", { name: /Test User/ });
+  expect(
+    testUserButton.classList.contains("Mui-selected") ||
+      testUserButton.getAttribute("aria-selected") === "true"
+  ).toBe(true);
+  expect(screen.getByRole("button", { name: "Simulate" })).not.toBeDisabled();
 });

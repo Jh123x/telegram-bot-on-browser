@@ -80,3 +80,14 @@ test("removeProgram removes the program by id", () => {
   expect(state).toHaveLength(1);
   expect(state[0].id).toBe("p2");
 });
+
+test("setSelectedUserId stores the selected user id", () => {
+  const store = setupStore();
+  expect(store.getState().bot.selectedUserId).toBeNull();
+
+  store.dispatch(botSlice.actions.setSelectedUserId(42));
+  expect(store.getState().bot.selectedUserId).toBe(42);
+
+  store.dispatch(botSlice.actions.setSelectedUserId(null));
+  expect(store.getState().bot.selectedUserId).toBeNull();
+});
