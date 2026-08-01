@@ -1,4 +1,9 @@
-import { flowEdgeLabel, matchFlowTrigger } from "./flow.ts";
+import {
+  createFlow,
+  createFlowNode,
+  flowEdgeLabel,
+  matchFlowTrigger,
+} from "./flow.ts";
 
 describe("flowEdgeLabel", () => {
   test("equals trigger phrases like message equals", () => {
@@ -66,5 +71,50 @@ describe("matchFlowTrigger", () => {
       true
     );
     expect(matchFlowTrigger({ type: "fallback", value: "" }, "")).toBe(true);
+  });
+});
+
+describe("createFlowNode", () => {
+  test("start node gets a fresh id and Start label", () => {
+    const node = createFlowNode("start");
+    expect(node.id).toBeTruthy();
+    expect(node.type).toBe("start");
+    expect(node.data).toEqual({ label: "Start", replies: [] });
+    expect(node.position).toEqual({ x: 0, y: 0 });
+  });
+
+  test("state node gets a New State label", () => {
+    const node = createFlowNode("state");
+    expect(node.type).toBe("state");
+    expect(node.data).toEqual({ label: "New State", replies: [] });
+    expect(node.position).toEqual({ x: 0, y: 0 });
+  });
+
+  test("honors a provided position", () => {
+    const node = createFlowNode("state", { x: 120, y: 40 });
+    expect(node.position).toEqual({ x: 120, y: 40 });
+  });
+
+  test("each node gets a unique id", () => {
+    expect(createFlowNode("state").id).not.toBe(createFlowNode("state").id);
+  });
+});
+
+describe("createFlow", () => {
+  test("uses the default name New Flow", () => {
+    const flow = createFlow();
+    expect(flow.name).toBe("New Flow");
+    expect(flow.startNodeId).toBe("");
+    expect(flow.nodes).toEqual([]);
+    expect(flow.edges).toEqual([]);
+    expect(flow.id).toBeTruthy();
+  });
+
+  test("honors a provided name and gets a fresh id", () => {
+    const flow1 = createFlow("Welcome");
+    const flow2 = createFlow("Welcome");
+    expect(flow1.name).toBe("Welcome");
+    expect(flow2.name).toBe("Welcome");
+    expect(flow1.id).not.toBe(flow2.id);
   });
 });
