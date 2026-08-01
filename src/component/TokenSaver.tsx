@@ -7,10 +7,11 @@ import {
   Typography,
   Stack,
   Paper,
+  InputAdornment,
 } from "@mui/material";
 import { setToken } from "../redux/botSlice.ts";
 import { useDispatch, useSelector } from "react-redux";
-import React from "react";
+import React, { useState } from "react";
 import { BotWithConfig } from "../redux/types";
 
 /**
@@ -20,6 +21,7 @@ import { BotWithConfig } from "../redux/types";
 export const TokenSaver = () => {
   const dispatch = useDispatch();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
+  const [showToken, setShowToken] = useState(false);
 
   return (
     <Stack spacing={1}>
@@ -67,9 +69,24 @@ export const TokenSaver = () => {
             <TextField
               fullWidth
               size="small"
+              type={showToken ? "text" : "password"}
               value={token}
               onChange={(e) => dispatch(setToken(e.target.value))}
               placeholder="Enter your API token"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => setShowToken((prev) => !prev)}
+                      sx={{ textTransform: "none", fontWeight: 600 }}
+                    >
+                      {showToken ? "Hide" : "Show"}
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
             />
           </ListItem>
           <ListItem sx={{ p: 1.5, borderBottom: 1, borderColor: "divider" }}>

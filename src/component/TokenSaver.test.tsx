@@ -4,6 +4,9 @@ import { fireEvent, screen } from "@testing-library/react";
 import { TokenSaver } from "./TokenSaver";
 import { generateDefaultState, renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 
+const tokenInput = () =>
+    screen.getByPlaceholderText("Enter your API token") as HTMLInputElement;
+
 beforeEach(() => {
     localStorage.clear();
 });
@@ -22,8 +25,7 @@ test("typing into the token field dispatches setToken to the store", () => {
     const store = setupStore(generateDefaultState());
     renderWithProviders(<TokenSaver />, { store });
 
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "123:MY-TOKEN" } });
+    fireEvent.change(tokenInput(), { target: { value: "123:MY-TOKEN" } });
 
     expect(store.getState().bot.token).toBe("123:MY-TOKEN");
 });
@@ -32,8 +34,7 @@ test("clicking Save writes the current token to localStorage", () => {
     const store = setupStore(generateDefaultState());
     renderWithProviders(<TokenSaver />, { store });
 
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "abc:persist-me" } });
+    fireEvent.change(tokenInput(), { target: { value: "abc:persist-me" } });
 
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
@@ -46,8 +47,7 @@ test("preloaded token is rendered in the token field", () => {
     });
     renderWithProviders(<TokenSaver />, { store });
 
-    const input = screen.getByRole("textbox") as HTMLInputElement;
-    expect(input.value).toBe("preloaded-token");
+    expect(tokenInput().value).toBe("preloaded-token");
 });
 
 test("renders the iOS-style BOT section header", () => {
@@ -62,4 +62,33 @@ test("renders the localStorage caption below the card", () => {
     renderWithProviders(<TokenSaver />, { store });
 
     expect(screen.getByText(/stored locally in your browser/i)).toBeTruthy();
+});
+
+test("token input is masked with type password by default", () => {
+    const store = setupStore(generateDefaultState());
+    renderWithProviders(<TokenSaver />, { store });
+
+    expect(tokenInput().type).toBe("password");
+    expect(screen.getByRole("button", { name: "Show" })).toBeTruthy();
+});
+
+test("clicking Show reveals the token as text", () => {
+    const store = setupStore(generateDefaultState());
+    renderWithProviders(<TokenSaver />, { store });
+
+    fireEvent.click(screen.getByRole("button", { name: "Show" }));
+
+    expect(tokenInput().type).toBe("text");
+    expect(screen.getByRole("button", { name: "Hide" })).toBeTruthy();
+});
+
+test("clicking Hide masks the token again", () => {
+    const store = setupStore(generateDefaultState());
+    renderWithProviders(<TokenSaver />, { store });
+
+    fireEvent.click(screen.getByRole("button", { name: "Show" }));
+    expect(tokenInput().type).toBe("text");
+
+    fireEvent.click(screen.getByRole("button", { name: "Hide" }));
+    expect(tokenInput().type).toBe("password");
 });

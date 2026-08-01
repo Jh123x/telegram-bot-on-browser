@@ -42,8 +42,8 @@ test("renders the token input and Save button as rows inside the grouped card", 
   const store = setupStore(generateDefaultState());
   renderWithProviders(<SettingsPage />, { store });
 
-  // The API Token input (a textbox) and the Save button are both present as rows.
-  expect(screen.getByRole("textbox")).toBeTruthy();
+  // The API Token input (a password field) and the Save button are both present as rows.
+  expect(screen.getByPlaceholderText("Enter your API token")).toBeTruthy();
   expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
 });
 
