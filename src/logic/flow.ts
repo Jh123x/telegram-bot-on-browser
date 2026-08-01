@@ -63,3 +63,33 @@ export function executeFlow(
   }
   return undefined;
 }
+
+// Tracks the current node per chat user so conversation state persists across
+// messages. User id maps to the node id they are currently in.
+export class FlowRuntime {
+  private currentNodes = new Map<number, string>();
+
+  constructor(private flow: Flow) {}
+
+  // Clears the stored state for a single user, sending them back to the start.
+  reset(userId: number): void {
+    this.currentNodes.delete(userId);
+  }
+
+  // Evaluates a message from the user's current node (or the start node for a
+  // brand-new user). On a transition stores the user's new node and returns the
+  // target state's replies as a single string / array / undefined. On no match
+  // the user's state is unchanged and undefined is returned.
+  handleMessage(
+    userId: number,
+    message: string
+  ): string | string[] | undefined {
+    const current = this.currentNodes.get(userId) ?? this.flow.startNodeId;
+    const step = executeFlow(this.flow, message, current);
+    if (!step) return undefined;
+    this.currentNodes.set(userId, step.nextNodeId);
+    if (step.replies.length === 0) return undefined;
+    if (step.replies.length === 1) return step.replies[0];
+    return step.replies;
+  }
+}

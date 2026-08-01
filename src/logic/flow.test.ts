@@ -3,6 +3,7 @@ import {
   createFlowNode,
   executeFlow,
   flowEdgeLabel,
+  FlowRuntime,
   matchFlowTrigger,
 } from "./flow.ts";
 import { Flow } from "../interfaces/flow.ts";
@@ -340,5 +341,150 @@ describe("executeFlow", () => {
     expect(
       flow.nodes.find((n) => n.id === "echo")!.data.replies
     ).toEqual(["Echoing"]);
+  });
+});
+
+describe("FlowRuntime", () => {
+  const startNode: Flow["nodes"][number] = {
+    id: "start",
+    type: "start",
+    position: { x: 0, y: 0 },
+    data: { label: "Start", replies: [] },
+  };
+  const menuNode: Flow["nodes"][number] = {
+    id: "menu",
+    type: "state",
+    position: { x: 0, y: 0 },
+    data: { label: "Menu", replies: ["Welcome!"] },
+  };
+  const quizNode: Flow["nodes"][number] = {
+    id: "quiz",
+    type: "state",
+    position: { x: 0, y: 0 },
+    data: { label: "Quiz", replies: ["What is 2 + 2?", "Pick a number."] },
+  };
+
+  function buildFlow(): Flow {
+    return {
+      id: "f1",
+      name: "Flow",
+      startNodeId: "start",
+      nodes: [startNode, menuNode, quizNode],
+      edges: [
+        {
+          id: "eStart",
+          source: "start",
+          target: "menu",
+          data: { trigger: { type: "equals", value: "/menu" } },
+        },
+        {
+          id: "eMenu",
+          source: "menu",
+          target: "quiz",
+          data: { trigger: { type: "equals", value: "/quiz" } },
+        },
+        {
+          id: "eFallback",
+          source: "start",
+          target: "quiz",
+          data: { trigger: { type: "fallback", value: "" } },
+        },
+      ],
+    };
+  }
+
+  test("brand-new user starts at startNodeId", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    // Falling back on the startsFrom-start edge lands on menu.
+    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
+  });
+
+  test("state persists across messages: next message is evaluated from the new node", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    // start -> menu
+    runtime.handleMessage(1, "/menu");
+    // From menu, only the quiz edge matches.
+    expect(runtime.handleMessage(1, "/quiz")).toEqual([
+      "What is 2 + 2?",
+      "Pick a number.",
+    ]);
+  });
+
+  test("returns the full array when a state has more than one reply", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    // fallback from start -> quiz (two replies)
+    expect(runtime.handleMessage(1, "anything")).toEqual([
+      "What is 2 + 2?",
+      "Pick a number.",
+    ]);
+  });
+
+  test("returns undefined when a state has no replies", () => {
+    const flow = buildFlow();
+    const silentNode: Flow["nodes"][number] = {
+      id: "silent",
+      type: "state",
+      position: { x: 0, y: 0 },
+      data: { label: "Silent", replies: [] },
+    };
+    flow.nodes = [...flow.nodes, silentNode];
+    flow.edges = [
+      {
+        id: "e1",
+        source: "start",
+        target: "silent",
+        data: { trigger: { type: "fallback", value: "" } },
+      },
+    ];
+    const runtime = new FlowRuntime(flow);
+    expect(runtime.handleMessage(1, "hi")).toBeUndefined();
+  });
+
+  test("no-match leaves the state unchanged", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    // From start, "/menu" matches; the next message from menu that matches nothing keeps menu.
+    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
+    // Nothing leaves "menu" for this message, so the user stays in menu.
+    expect(runtime.handleMessage(1, "nothing")).toBeUndefined();
+    // Still in menu -> quiz edge works.
+    expect(runtime.handleMessage(1, "/quiz")).toEqual([
+      "What is 2 + 2?",
+      "Pick a number.",
+    ]);
+  });
+
+  test("reset returns that user to startNodeId", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    runtime.handleMessage(1, "/menu"); // user 1 -> menu
+    runtime.reset(1);
+    // Back at start, "/menu" again routes to menu.
+    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
+  });
+
+  test("different users have independent states", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    runtime.handleMessage(1, "/menu"); // user 1 -> menu
+    // User 2 still evaluates from start -> its /menu message goes to menu.
+    expect(runtime.handleMessage(2, "/menu")).toBe("Welcome!");
+    // User 1 is still in menu: /menu no longer matches from menu.
+    expect(runtime.handleMessage(1, "/menu")).toBeUndefined();
+  });
+
+  test("reset only clears the requested user, not others", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    runtime.handleMessage(1, "/menu"); // user 1 -> menu
+    runtime.handleMessage(2, "/menu"); // user 2 -> menu
+    runtime.reset(1);
+    // User 1 back at start.
+    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
+    // User 2 still in menu.
+    expect(runtime.handleMessage(2, "/menu")).toBeUndefined();
+  });
+
+  test("a flow with empty startNodeId crashes gracefully (returns undefined)", () => {
+    const flow = buildFlow();
+    flow.startNodeId = "";
+    const runtime = new FlowRuntime(flow);
+    expect(runtime.handleMessage(1, "hi")).toBeUndefined();
   });
 });
