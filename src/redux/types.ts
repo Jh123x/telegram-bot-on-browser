@@ -6,6 +6,7 @@ export interface IBotState {
     response: Response[];
     users: User[];
     selectedUserId?: number | null;
+    autoStart?: boolean;
 }
 
 export interface User {

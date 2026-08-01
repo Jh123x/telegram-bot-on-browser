@@ -10,7 +10,7 @@ import { ChatPage } from "./pages/ChatPage.tsx";
 import { DocsPage } from "./pages/DocsPage.tsx";
 import { useBot } from "./hooks/useBot.ts";
 import { useDispatch } from "react-redux";
-import { setToken, setPrograms } from "./redux/botSlice.ts";
+import { setToken, setPrograms, setAutoStart } from "./redux/botSlice.ts";
 import { useEffect } from "react";
 import React from "react";
 
@@ -24,6 +24,8 @@ export const App = () => {
     if (token !== null) dispatch(setToken(token));
     const programs = localStorage.getItem("programs");
     if (programs !== null) dispatch(setPrograms(JSON.parse(programs)));
+    const autoStart = localStorage.getItem("autoStart");
+    if (autoStart !== null) dispatch(setAutoStart(autoStart === "true"));
   }, [dispatch]);
 
   return (

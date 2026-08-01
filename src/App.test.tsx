@@ -74,6 +74,7 @@ test("leaves the default state when localStorage is empty", () => {
 
   expect(store.getState().bot.token).toBe("");
   expect(store.getState().bot.programs).toEqual([]);
+  expect(store.getState().bot.autoStart).toBe(false);
 });
 
 test("hydrates token when only token is stored (no programs key)", () => {
@@ -133,7 +134,7 @@ test("switching tabs shows the right page", () => {
   expect(screen.getByRole("heading", { name: "Chat" })).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
-  expect(screen.getByDisplayValue("")).toBeTruthy();
+  expect(screen.getByPlaceholderText("Enter your API token")).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Docs" }));
   expect(screen.getByRole("heading", { name: "Docs" })).toBeTruthy();
@@ -154,4 +155,13 @@ test("uses the full viewport as a flex column with a scrollable content area", (
   const content = screen.getByTestId("app-content");
   expect(content).toHaveStyle({ flexGrow: "1" });
   expect(content).toHaveStyle({ overflowY: "auto" });
+});
+
+test("hydrates autoStart from localStorage on mount", () => {
+  localStorage.setItem("autoStart", "true");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  expect(store.getState().bot.autoStart).toBe(true);
 });

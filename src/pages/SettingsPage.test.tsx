@@ -64,3 +64,14 @@ test("clicking Save writes the current token from the store to localStorage", ()
 
   expect(localStorage.getItem("token")).toBe("ios:persist");
 });
+
+test("renders the new settings controls", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<SettingsPage />, { store });
+
+  expect(screen.getByText("Auto start bot on load")).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Export settings" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Import settings" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Reset to default" })).toBeTruthy();
+  expect(screen.getByRole("link", { name: /☕ Buy me a coffee/i })).toBeTruthy();
+});

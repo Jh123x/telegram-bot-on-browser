@@ -91,3 +91,34 @@ test("setSelectedUserId stores the selected user id", () => {
   store.dispatch(botSlice.actions.setSelectedUserId(null));
   expect(store.getState().bot.selectedUserId).toBeNull();
 });
+
+test("setAutoStart stores the flag", () => {
+  const store = setupStore();
+  expect(store.getState().bot.autoStart).toBe(false);
+
+  store.dispatch(botSlice.actions.setAutoStart(true));
+  expect(store.getState().bot.autoStart).toBe(true);
+
+  store.dispatch(botSlice.actions.setAutoStart(false));
+  expect(store.getState().bot.autoStart).toBe(false);
+});
+
+test("resetAll restores the default state", () => {
+  const store = setupStore();
+  store.dispatch(
+    botSlice.actions.setPrograms([
+      makeProgram(),
+      makeProgram({ id: "p2", name: "Other" }),
+    ])
+  );
+  store.dispatch(botSlice.actions.setToken("abc:token"));
+  store.dispatch(botSlice.actions.setAutoStart(true));
+  store.dispatch(botSlice.actions.setSelectedUserId(42));
+
+  expect(store.getState().bot.programs).toHaveLength(2);
+  expect(store.getState().bot.autoStart).toBe(true);
+
+  store.dispatch(botSlice.actions.resetAll());
+
+  expect(store.getState().bot).toEqual(defaultBotState);
+});

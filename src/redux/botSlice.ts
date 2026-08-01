@@ -8,6 +8,7 @@ export const defaultBotState: IBotState = {
   response: [],
   users: [],
   selectedUserId: null,
+  autoStart: false,
 };
 
 export const botSlice = createSlice({
@@ -42,7 +43,11 @@ export const botSlice = createSlice({
     setSelectedUserId: (state, action: { payload: number | null, type: string }) => {
       state.selectedUserId = action.payload;
     },
+    setAutoStart: (state, action: { payload: boolean, type: string }) => {
+      state.autoStart = action.payload;
+    },
+    resetAll: () => ({ ...defaultBotState }),
   },
 });
 
-export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, addResponse, addUser, setSelectedUserId } = botSlice.actions;
+export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, addResponse, addUser, setSelectedUserId, setAutoStart, resetAll } = botSlice.actions;

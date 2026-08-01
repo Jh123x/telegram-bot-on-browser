@@ -258,3 +258,33 @@ test("rules are rebuilt when programs change so new programs take effect", async
   });
   expect(send.postMessage).toHaveBeenCalledTimes(2);
 });
+
+test("auto-starts when autoStart is true and a token is set", () => {
+  const store = setupStore({
+    bot: { token: "TOKEN", programs: [], response: [], users: [], autoStart: true },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  expect(result.current.started).toBe(true);
+  expect(instances.length).toBe(2);
+});
+
+test("does not auto-start when the token is empty", () => {
+  const store = setupStore({
+    bot: { token: "", programs: [], response: [], users: [], autoStart: true },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  expect(result.current.started).toBe(false);
+  expect(instances.length).toBe(0);
+});
+
+test("does not auto-start when autoStart is false", () => {
+  const store = setupStore({
+    bot: { token: "TOKEN", programs: [], response: [], users: [], autoStart: false },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  expect(result.current.started).toBe(false);
+  expect(instances.length).toBe(0);
+});

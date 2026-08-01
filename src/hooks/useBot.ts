@@ -15,6 +15,10 @@ export const useBot = () => {
   const botRef = useRef<BrowserBot>();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
   const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
+  const autoStart = useSelector<BotWithConfig, boolean>(
+    (state) => state.bot.autoStart ?? false
+  );
+  const autoStartedRef = useRef(false);
 
   useEffect(() => {
     botRef.current?.stop();
@@ -36,6 +40,29 @@ export const useBot = () => {
       );
     });
   }, [bot, programs]);
+
+  // Auto-start the bot once on load when the setting is enabled and a token
+  // exists. The ref guard prevents StrictMode's double effect from creating a
+  // second set of poll/send workers. Load-only semantics: after the first
+  // auto-start, manual Stop is not overridden and toggling the setting later
+  // has no effect until the next load.
+  useEffect(() => {
+    if (!bot || autoStartedRef.current) return;
+    if (!autoStart || token === "") return;
+    autoStartedRef.current = true;
+    bot.start(
+      (date: number, user: string, id: number, msg: string) => {
+        dispatch(addResponse({ FromUser: user, UserID: id, Message: msg, TimeStamp: date }));
+        dispatch(addUser({ UserID: id, Username: user }));
+      },
+      (date: number, user: string, id: number, reply: string) => {
+        dispatch(
+          addResponse({ FromUser: "Bot", UserID: id, Message: reply, TimeStamp: date, fromBot: true })
+        );
+      }
+    );
+    setStarted(true);
+  }, [bot, autoStart, token, dispatch]);
 
   const start = () => {
     if (!bot || started) return;
