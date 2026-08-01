@@ -18,10 +18,6 @@ import { SAMPLE_FLOWS } from "./logic/flowSamples.ts";
 import { Flow } from "./interfaces/flow.ts";
 import { BotWithConfig } from "./redux/types.ts";
 
-// Stable empty array so the flows selector never returns a fresh reference
-// (a new [] each render would warn and cause unnecessary rerenders).
-const EMPTY_FLOWS: Flow[] = [];
-
 // Safely parses localStorage JSON into a value WITHOUT throwing on corrupt
 // input. Returns null when the raw value is null or the JSON is unparseable.
 const parseJson = (raw: string | null): unknown => {
@@ -56,7 +52,7 @@ export const App = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState<Page>("flow");
   const { bot, started, start, stop } = useBot();
-  const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows ?? EMPTY_FLOWS);
+  const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows);
   const hydrated = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.hydrated ?? false
   );

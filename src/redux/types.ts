@@ -2,7 +2,7 @@ import { Flow } from "../interfaces/flow.ts";
 
 export interface IBotState {
     token: string;
-    flows?: Flow[];
+    flows: Flow[];
     response: Response[];
     users: User[];
     selectedUserId?: number | null;

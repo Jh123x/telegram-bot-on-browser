@@ -46,17 +46,11 @@ const timeLabel = (timestamp: number) => new Date(timestamp).toLocaleTimeString(
 // Virtual conversation used by test mode when there are no real users yet.
 const TEST_USER: User = { Username: "Test User", UserID: -1 };
 
-// Stable empty array so the flows selector never returns a fresh reference
-// (a new [] each render would warn and cause unnecessary rerenders).
-const EMPTY_FLOWS: Flow[] = [];
-
 export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const dispatch = useDispatch();
   const storeUsers = useSelector<BotWithConfig, User[]>((state) => state.bot.users);
   const responses = useSelector<BotWithConfig, Response[]>((state) => state.bot.response);
-  const flows = useSelector<BotWithConfig, Flow[]>(
-    (state) => state.bot.flows ?? EMPTY_FLOWS
-  );
+  const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows);
   const selectedUserId = useSelector<BotWithConfig, number | null>(
     (state) => state.bot.selectedUserId ?? null
   );

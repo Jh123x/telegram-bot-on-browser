@@ -24,10 +24,10 @@ export const botSlice = createSlice({
       state.flows = action.payload;
     },
     addFlow: (state, action: { payload: Flow, type: string }) => {
-      state.flows = [...(state.flows ?? []), action.payload];
+      state.flows = [...state.flows, action.payload];
     },
     updateFlow: (state, action: { payload: Flow, type: string }) => {
-      state.flows = (state.flows ?? []).map((flow) => flow.id === action.payload.id ? action.payload : flow);
+      state.flows = state.flows.map((flow) => flow.id === action.payload.id ? action.payload : flow);
     },
     addResponse: (state, action: { payload: Response, type: string }) => {
       state.response = [...state.response, action.payload];

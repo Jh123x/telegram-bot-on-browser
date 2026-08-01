@@ -443,13 +443,6 @@ describe("FlowRuntime (stateless)", () => {
     });
     expect(rt.handleMessage(1, "a")).toEqual([]);
   });
-
-  test("reset() is a no-op", () => {
-    const rt = new FlowRuntime(welcomeFlow());
-    rt.reset(1);
-    // Behavior unchanged after reset because the runtime is stateless.
-    expect(rt.handleMessage(1, "hi")).toEqual(["Hi", "There"]);
-  });
 });
 
 describe("validateFlow", () => {

@@ -106,10 +106,6 @@ const isValidFlow = (f: unknown): boolean => {
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null;
 
-// Stable empty array so the flows selector never returns a fresh reference
-// (a new [] each render would warn and cause unnecessary rerenders).
-const EMPTY_FLOWS: Flow[] = [];
-
 /**
  * Additional iOS-style settings groups: General (auto-start toggle),
  * Data (export/import settings JSON), Danger (reset to default) and
@@ -118,9 +114,7 @@ const EMPTY_FLOWS: Flow[] = [];
 export const AppSettings = () => {
   const dispatch = useDispatch();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
-  const flows = useSelector<BotWithConfig, Flow[]>(
-    (state) => state.bot.flows ?? EMPTY_FLOWS
-  );
+  const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows);
   const autoStart = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.autoStart ?? false
   );
@@ -189,14 +183,11 @@ export const AppSettings = () => {
           });
           return;
         }
-        // flows is OPTIONAL for backward compatibility with old export files.
-        // The app is single-flow, so only the FIRST flow is imported (any
-        // extra flows in an old multi-flow file are dropped). When flows is
-        // absent (old files) we reset flows to an empty array.
+        // flows is REQUIRED. The app is single-flow, so only the FIRST flow
+        // is imported (any extra flows in a multi-flow file are dropped).
         if (
-          parsed.flows !== undefined &&
-          (!Array.isArray(parsed.flows) ||
-            (parsed.flows.length > 0 && !isValidFlow(parsed.flows[0])))
+          !Array.isArray(parsed.flows) ||
+          (parsed.flows.length > 0 && !isValidFlow(parsed.flows[0]))
         ) {
           setImportStatus({
             kind: "error",
@@ -205,9 +196,7 @@ export const AppSettings = () => {
           return;
         }
         const importedFlows =
-          Array.isArray(parsed.flows) && parsed.flows.length > 0
-            ? [parsed.flows[0]]
-            : [];
+          parsed.flows.length > 0 ? [parsed.flows[0]] : [];
         // pollRate is OPTIONAL for backward compatibility with old export
         // files; when absent OR not a valid positive number we reset it to
         // the default (mirrors the flows behavior above: importing an old

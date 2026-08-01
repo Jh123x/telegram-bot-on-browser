@@ -260,9 +260,6 @@ export function executeFlow(
 export class FlowRuntime {
   constructor(private flow: Flow) {}
 
-  // No-op: execution is stateless, so there is no per-user state to clear.
-  reset(_userId: number): void {}
-
   // Evaluates the message from the start node every time.
   //   - undefined  -> no send node reached (caller falls through to next rule)
   //   - []         -> a send node was reached but has empty replies (consumed)
