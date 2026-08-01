@@ -37,7 +37,7 @@ test("renders the editor: canvas wrapper, toolbar, palette, samples, and empty s
   ).toBeTruthy();
 });
 
-test("New Flow dispatches addFlow and selects the new flow", () => {
+test("New Flow dispatches addFlow with a pre-placed start node and selects the new flow", () => {
   const store = makeStore();
   renderWithProviders(<FlowEditor />, { store });
 
@@ -46,11 +46,56 @@ test("New Flow dispatches addFlow and selects the new flow", () => {
   const flows = store.getState().bot.flows;
   expect(flows).toHaveLength(1);
   expect(flows[0].name).toBe("New Flow");
-  expect(flows[0].nodes).toEqual([]);
+  // A new flow starts with a Start node so the canvas is never blank and the
+  // "must have a start node" validation passes immediately.
+  expect(flows[0].nodes).toHaveLength(1);
+  expect(flows[0].nodes[0].type).toBe("start");
+  expect(flows[0].startNodeId).toBe(flows[0].nodes[0].id);
   // The new flow is now being edited (its name shows in the editor's own Name field).
   expect(
     screen.getByText("New Flow", { selector: ".flow-name-display" })
   ).toBeTruthy();
+});
+
+// jsdom 16 has no DataTransfer; a lightweight stub is enough for the drop
+// handlers, which only read the "application/reactflow" payload. (Note:
+// passing a stub object to fireEvent.drop works because testing-library
+// assigns it onto the event when window.DataTransfer is undefined.)
+const createDataTransfer = (type: string) => ({
+  setData: jest.fn(),
+  getData: () => type,
+  dropEffect: "move",
+  effectAllowed: "move",
+} as unknown as DataTransfer);
+
+test("dropping a node when no flow exists creates a flow containing it", () => {
+  const store = makeStore();
+  const { container } = renderWithProviders(<FlowEditor />, { store });
+
+  const canvas = container.querySelector('[data-testid="reactflow-mock"]');
+  expect(canvas).not.toBeNull();
+  fireEvent.drop(canvas!, { dataTransfer: createDataTransfer("start"), clientX: 100, clientY: 100 });
+
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].nodes).toHaveLength(1);
+  expect(flows[0].nodes[0].type).toBe("start");
+  expect(flows[0].startNodeId).toBe(flows[0].nodes[0].id);
+});
+
+test("dropping a node onto an existing flow adds it to that flow", () => {
+  const flow = makeFlow("Existing");
+  const store = makeStore([flow]);
+  const { container } = renderWithProviders(<FlowEditor />, { store });
+
+  const canvas = container.querySelector('[data-testid="reactflow-mock"]');
+  expect(canvas).not.toBeNull();
+  fireEvent.drop(canvas!, { dataTransfer: createDataTransfer("state"), clientX: 50, clientY: 50 });
+
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].nodes).toHaveLength(1);
+  expect(flows[0].nodes[0].type).toBe("state");
 });
 
 test("typing the flow name dispatches updateFlow", () => {

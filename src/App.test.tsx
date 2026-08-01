@@ -10,10 +10,21 @@ import { fireEvent, screen } from "@testing-library/react";
 
 beforeEach(() => {
   localStorage.clear();
+  // Deterministic ids for the App snapshot: generateId falls back to
+  // `${Date.now()}-${Math.random()}` in jsdom 16 (no crypto.randomUUID), so
+  // pin both to a fixed seed + monotonic sequence. This keeps the seeded
+  // flow's data-testid (flow-item-<id>) stable across runs.
+  jest.spyOn(Date, "now").mockReturnValue(1700000000000);
+  let seq = 0;
+  jest.spyOn(Math, "random").mockImplementation(() => {
+    seq += 1;
+    return (seq * 0.123456789) % 1;
+  });
 });
 
 afterEach(() => {
   localStorage.clear();
+  jest.restoreAllMocks();
 });
 
 test("renders app correctly", () => {
@@ -131,8 +142,9 @@ test("switching tabs shows the right page", () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(<App />, { store });
 
-  // Default page is Programs.
-  expect(screen.getByText("Blocks")).toBeTruthy();
+  // The Flow editor replaced the old block-based Programs page and is the
+  // default landing page.
+  expect(screen.getByTestId("flow-editor")).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Chat" }));
   expect(screen.getByRole("heading", { name: "Chat" })).toBeTruthy();
@@ -144,8 +156,49 @@ test("switching tabs shows the right page", () => {
   expect(screen.getByRole("heading", { name: "Docs" })).toBeTruthy();
   expect(screen.getAllByText("Getting Started").length).toBeGreaterThan(0);
 
-  fireEvent.click(screen.getByRole("tab", { name: "Programs" }));
-  expect(screen.getByText("Blocks")).toBeTruthy();
+  fireEvent.click(screen.getByRole("tab", { name: "Flow" }));
+  expect(screen.getByTestId("flow-editor")).toBeTruthy();
+});
+
+test("seeds a Welcome sample flow on first visit so the graph is never empty", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].name).toBe("Welcome Flow");
+  expect(flows[0].nodes.length).toBeGreaterThan(0);
+  expect(flows[0].startNodeId).not.toBe("");
+  // The starter flow shows up in the editor's flow rail.
+  expect(screen.getByText("Welcome Flow", { selector: ".flow-name-display" })).toBeTruthy();
+});
+
+test("does not seed a sample when flows already exist", () => {
+  localStorage.setItem(
+    "flows",
+    JSON.stringify([
+      { id: "existing", name: "Existing Flow", startNodeId: "", nodes: [], edges: [] },
+    ])
+  );
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].name).toBe("Existing Flow");
+});
+
+test("seeds exactly one sample under StrictMode double-mount", () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    { store }
+  );
+
+  expect(store.getState().bot.flows).toHaveLength(1);
 });
 
 test("uses the full viewport as a flex column with a scrollable content area", () => {

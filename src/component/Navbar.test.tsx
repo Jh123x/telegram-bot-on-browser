@@ -12,7 +12,7 @@ const renderNavbar = (
     onStop: () => void;
   }> = {}
 ) => {
-  const page = props.page ?? "programs";
+  const page = props.page ?? "flow";
   const onPageChange = props.onPageChange ?? jest.fn();
   const started = props.started ?? false;
   const onStart = props.onStart ?? jest.fn();
@@ -37,7 +37,7 @@ test("renders brand, four tabs, and Bot stopped with Start enabled and Stop disa
   renderNavbar();
 
   expect(screen.getByText("BrowserBot")).toBeInTheDocument();
-  expect(screen.getByRole("tab", { name: "Programs" })).toBeInTheDocument();
+  expect(screen.getByRole("tab", { name: "Flow" })).toBeInTheDocument();
   expect(screen.getByRole("tab", { name: "Chat" })).toBeInTheDocument();
   expect(screen.getByRole("tab", { name: "Settings" })).toBeInTheDocument();
   expect(screen.getByRole("tab", { name: "Docs" })).toBeInTheDocument();
@@ -84,12 +84,12 @@ test("tabs inherit the app bar text color so labels stay visible on the primary 
   // "primary", which makes the selected tab's label the same color as the
   // background — invisible. Inheriting the AppBar's contrast text keeps
   // every label readable on the bar.
-  const tab = screen.getByRole("tab", { name: "Programs" });
+  const tab = screen.getByRole("tab", { name: "Flow" });
   expect(tab.className).toContain("MuiTab-textColorInherit");
 });
 
 test("clicking a tab calls onPageChange with the right value", () => {
-  const { onPageChange } = renderNavbar({ page: "programs" });
+  const { onPageChange } = renderNavbar({ page: "flow" });
 
   fireEvent.click(screen.getByRole("tab", { name: "Docs" }));
   expect(onPageChange).toHaveBeenCalledWith("docs");

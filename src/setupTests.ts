@@ -49,8 +49,11 @@ jest.mock("@xyflow/react", () => {
   };
 
   return {
-    ReactFlow: ({ children }) =>
-      ce("div", { "data-testid": "reactflow-mock" }, children),
+    // Handlers (onDrop/onDragOver/onConnect/...) are forwarded onto the mock
+    // div so tests can exercise the editor's drop/connect logic; data props
+    // (nodes/edges/nodeTypes/...) are stripped because they are not DOM props.
+    ReactFlow: ({ children, nodes, edges, nodeTypes, edgeTypes, fitView, fitViewOptions, ...handlers }) =>
+      ce("div", { "data-testid": "reactflow-mock", ...handlers }, children),
     ReactFlowProvider: ({ children }) =>
       ce("div", { "data-testid": "reactflow-provider" }, children),
     Background: () => ce("div", { "data-testid": "reactflow-background" }),

@@ -120,8 +120,8 @@ test("calls onNavigate when clicking an in-app tab link", () => {
   fireEvent.click(screen.getByRole("button", { name: "Open the Settings tab" }));
   expect(onNavigate).toHaveBeenCalledWith("settings");
 
-  fireEvent.click(screen.getByRole("button", { name: "Open the Programs tab" }));
-  expect(onNavigate).toHaveBeenCalledWith("programs");
+  fireEvent.click(screen.getByRole("button", { name: "Open the Flow tab" }));
+  expect(onNavigate).toHaveBeenCalledWith("flow");
 
   fireEvent.click(screen.getByRole("button", { name: "Open the Chat tab" }));
   expect(onNavigate).toHaveBeenCalledWith("chat");
