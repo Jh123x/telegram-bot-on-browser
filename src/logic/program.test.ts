@@ -447,6 +447,12 @@ describe("executeBlocks", () => {
     ]);
   });
 
+  test("logic fallback reply preserves newlines", () => {
+    expect(
+      executeBlocks([logicBlock("lengthLess", "5", "no\nway")], "this message is long")
+    ).toEqual(["no\nway"]);
+  });
+
   test("random with injected random 0 picks first", () => {
     const blocks: Block[] = [actionBlock("random", "first\nsecond\nthird")];
     expect(executeBlocks(blocks, "msg", () => 0)).toEqual(["first"]);
