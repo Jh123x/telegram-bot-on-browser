@@ -1,6 +1,6 @@
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// jest-dom adds custom matchers for asserting on DOM nodes.
 // learn more: https://github.com/testing-library/jest-dom
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 
 // Makes @xyflow/react testable in jsdom. React Flow's real components need
 // ResizeObserver, DOMMatrix, real layout math and a canvas — none of which
@@ -8,8 +8,8 @@ import "@testing-library/jest-dom";
 // logic (which nodes/edges derive from a flow, how drags/drops/connects update
 // the store), so we substitute simple render stubs for the canvas primitives
 // and realistic pure helpers for the change-application functions.
-jest.mock("@xyflow/react", () => {
-  const React = require("react");
+vi.mock("@xyflow/react", async () => {
+  const React = (await import("react")).default;
   const ce = React.createElement;
 
   const applyNodeChanges = (changes, nodes) => {

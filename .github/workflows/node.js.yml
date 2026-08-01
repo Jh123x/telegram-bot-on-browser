@@ -18,14 +18,15 @@ jobs:
 
     strategy:
       matrix:
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/s
+        # Vite 8 requires Node ^20.19.0 || >=22.12.0 (see engines in node_modules/vite)
         node-version: 
-          - 18.x
+          - 20.x
+          - 22.x
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
