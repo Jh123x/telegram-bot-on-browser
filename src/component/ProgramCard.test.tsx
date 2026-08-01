@@ -23,6 +23,41 @@ const makeProgram = (): Program => ({
   ],
 });
 
+const makeThreeBlockProgram = (): Program => ({
+  id: "p1",
+  name: "Greet",
+  trigger: { type: "equals", value: "/start" },
+  blocks: [
+    {
+      id: "b1",
+      category: "action",
+      kind: "reply",
+      value: "hi",
+      value2: "",
+      fallback: "",
+    },
+    {
+      id: "b2",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+    },
+    {
+      id: "b3",
+      category: "action",
+      kind: "echo",
+      value: "",
+      value2: "",
+      fallback: "",
+    },
+  ],
+});
+
+const blockIds = (program: Program): string[] =>
+  program.blocks.map((b) => b.id);
+
 const makeStore = (programs: Program[]) =>
   setupStore<BotWithConfig>({
     bot: { token: "", programs, response: [], users: [] },
@@ -674,4 +709,58 @@ test("empty program card points to the add buttons instead of dragging", () => {
   ).toBeTruthy();
   expect(screen.queryByText(/drag/i)).toBeNull();
   expect(screen.getByRole("button", { name: "Add logic" })).toBeTruthy();
+});
+
+test("renders move up/down buttons on every block row", () => {
+  renderCard(makeThreeBlockProgram(), 0, 1);
+  expect(screen.getAllByRole("button", { name: "Move block up" })).toHaveLength(3);
+  expect(screen.getAllByRole("button", { name: "Move block down" })).toHaveLength(3);
+});
+
+test("first block up and last block down buttons are disabled", () => {
+  renderCard(makeThreeBlockProgram(), 0, 1);
+  const firstRow = screen.getByTestId("block-row-b1");
+  const lastRow = screen.getByTestId("block-row-b3");
+  const midRow = screen.getByTestId("block-row-b2");
+  const firstUp = within(firstRow).getByRole("button", { name: "Move block up" });
+  const firstDown = within(firstRow).getByRole("button", { name: "Move block down" });
+  const midUp = within(midRow).getByRole("button", { name: "Move block up" });
+  const midDown = within(midRow).getByRole("button", { name: "Move block down" });
+  const lastUp = within(lastRow).getByRole("button", { name: "Move block up" });
+  const lastDown = within(lastRow).getByRole("button", { name: "Move block down" });
+  expect((firstUp as HTMLButtonElement).disabled).toBe(true);
+  expect((firstDown as HTMLButtonElement).disabled).toBe(false);
+  expect((midUp as HTMLButtonElement).disabled).toBe(false);
+  expect((midDown as HTMLButtonElement).disabled).toBe(false);
+  expect((lastUp as HTMLButtonElement).disabled).toBe(false);
+  expect((lastDown as HTMLButtonElement).disabled).toBe(true);
+});
+
+test("single-block program disables both move up and move down buttons", () => {
+  renderCard(makeProgram(), 0, 1);
+  const row = screen.getByTestId("block-row-b1");
+  const up = within(row).getByRole("button", { name: "Move block up" });
+  const down = within(row).getByRole("button", { name: "Move block down" });
+  expect((up as HTMLButtonElement).disabled).toBe(true);
+  expect((down as HTMLButtonElement).disabled).toBe(true);
+});
+
+test("clicking move up on the second block reorders blocks", () => {
+  const { store } = renderCard(makeThreeBlockProgram(), 0, 1);
+  const secondRow = screen.getByTestId("block-row-b2");
+  fireEvent.click(
+    within(secondRow).getByRole("button", { name: "Move block up" })
+  );
+  const program = store.getState().bot.programs[0];
+  expect(blockIds(program)).toEqual(["b2", "b1", "b3"]);
+});
+
+test("clicking move down on the first block reorders blocks", () => {
+  const { store } = renderCard(makeThreeBlockProgram(), 0, 1);
+  const firstRow = screen.getByTestId("block-row-b1");
+  fireEvent.click(
+    within(firstRow).getByRole("button", { name: "Move block down" })
+  );
+  const program = store.getState().bot.programs[0];
+  expect(blockIds(program)).toEqual(["b2", "b1", "b3"]);
 });

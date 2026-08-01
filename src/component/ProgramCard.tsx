@@ -30,6 +30,7 @@ import {
   createBlock,
   computeFlowPreview,
   NodeHint,
+  moveBlock,
 } from "../logic/program.ts";
 import { BLOCK_COLORS } from "../theme.ts";
 import { Port, Connector, HintChip } from "./pipeline.tsx";
@@ -48,9 +49,13 @@ interface BlockRowProps {
   blockIndex: number;
   hint?: NodeHint;
   echoPreview?: string;
+  isFirst: boolean;
+  isLast: boolean;
   onChange: (id: string, patch: Partial<Block>) => void;
   onKindChange: (id: string, kind: Block["kind"]) => void;
   onDelete: (id: string) => void;
+  onMoveUp: (id: string) => void;
+  onMoveDown: (id: string) => void;
 }
 
 const BlockRow = ({
@@ -58,9 +63,13 @@ const BlockRow = ({
   blockIndex,
   hint,
   echoPreview,
+  isFirst,
+  isLast,
   onChange,
   onKindChange,
   onDelete,
+  onMoveUp,
+  onMoveDown,
 }: BlockRowProps) => {
   const renderKindOptions = () => {
     switch (block.category) {
@@ -86,7 +95,7 @@ const BlockRow = ({
   };
 
   return (
-    <Box sx={{ mb: 1 }}>
+    <Box sx={{ mb: 1 }} data-testid={`block-row-${block.id}`}>
       <Box display="flex" alignItems="center" gap={1}>
         <Port
           testId={`block-input-${block.id}`}
@@ -120,6 +129,20 @@ const BlockRow = ({
           onChange={onChange}
           echoPreview={echoPreview}
         />
+        <IconButton
+          aria-label="Move block up"
+          disabled={isFirst}
+          onClick={() => onMoveUp(block.id)}
+        >
+          ↑
+        </IconButton>
+        <IconButton
+          aria-label="Move block down"
+          disabled={isLast}
+          onClick={() => onMoveDown(block.id)}
+        >
+          ↓
+        </IconButton>
         <IconButton aria-label="Delete block" onClick={() => onDelete(block.id)}>
           ✕
         </IconButton>
@@ -162,6 +185,10 @@ export const ProgramCard = ({
     });
   const deleteBlock = (id: string) =>
     update({ blocks: current.blocks.filter((b) => b.id !== id) });
+  const moveBlockUp = (id: string) =>
+    update({ blocks: moveBlock(current.blocks, id, -1) });
+  const moveBlockDown = (id: string) =>
+    update({ blocks: moveBlock(current.blocks, id, 1) });
 
   // Live preview of the value that flows out of each node, computed from the
   // default "Hello World" user message.
@@ -272,11 +299,15 @@ export const ProgramCard = ({
                 <BlockRow
                   block={block}
                   blockIndex={i + 1}
+                  isFirst={i === 0}
+                  isLast={i === current.blocks.length - 1}
                   hint={hints.get(block.id)}
                   echoPreview={flowingByBlock.get(block.id)}
                   onChange={changeBlockValue}
                   onKindChange={changeBlockKind}
                   onDelete={deleteBlock}
+                  onMoveUp={moveBlockUp}
+                  onMoveDown={moveBlockDown}
                 />
               </Fragment>
             ))}
