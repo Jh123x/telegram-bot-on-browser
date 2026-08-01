@@ -145,6 +145,69 @@ test("switching between flows updates which flow is edited", () => {
   expect(screen.getByLabelText("Flow name")).toHaveValue("Second");
 });
 
+test("flow items are keyboard-accessible: pressing Enter selects a flow", () => {
+  const f1 = makeFlow("First", "f1");
+  const f2 = makeFlow("Second", "f2");
+  const store = makeStore([f1, f2]);
+  renderWithProviders(<FlowEditor />, { store });
+
+  // Initially the first flow is selected.
+  expect(screen.getByLabelText("Flow name")).toHaveValue("First");
+
+  // Focus the second flow item and press Enter — it becomes selected.
+  fireEvent.keyDown(screen.getByTestId("flow-item-f2"), { key: "Enter" });
+
+  expect(screen.getByLabelText("Flow name")).toHaveValue("Second");
+  // aria-pressed reflects the selection for assistive tech.
+  expect(screen.getByTestId("flow-item-f2")).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByTestId("flow-item-f1")).toHaveAttribute("aria-pressed", "false");
+});
+
+test("clicking a palette item adds a node to the selected flow", () => {
+  const flow = makeFlow("Existing", "existing");
+  const store = makeStore([flow]);
+  renderWithProviders(<FlowEditor />, { store });
+
+  expect(store.getState().bot.flows[0].nodes).toHaveLength(0);
+
+  fireEvent.click(screen.getByTestId("palette-item-state"));
+
+  const nodes = store.getState().bot.flows[0].nodes;
+  expect(nodes).toHaveLength(1);
+  expect(nodes[0].type).toBe("state");
+  expect(nodes[0].position).toEqual({ x: 120, y: 80 });
+});
+
+test("clicking a palette item with no flow creates a flow containing the node", () => {
+  const store = makeStore();
+  renderWithProviders(<FlowEditor />, { store });
+
+  expect(store.getState().bot.flows).toHaveLength(0);
+
+  fireEvent.click(screen.getByTestId("palette-item-state"));
+
+  const storeFlows = store.getState().bot.flows;
+  expect(storeFlows).toHaveLength(1);
+  expect(storeFlows[0].nodes).toHaveLength(1);
+  expect(storeFlows[0].nodes[0].type).toBe("state");
+  expect(storeFlows[0].startNodeId).toBe("");
+  expect(storeFlows[0].nodes[0].position).toEqual({ x: 120, y: 80 });
+  // The newly created flow becomes selected and is being edited.
+  expect(screen.getByLabelText("Flow name")).toHaveValue("New Flow");
+});
+
+test("clicking a palette start item with no flow sets the start node", () => {
+  const store = makeStore();
+  renderWithProviders(<FlowEditor />, { store });
+
+  fireEvent.click(screen.getByTestId("palette-item-start"));
+
+  const storeFlows = store.getState().bot.flows;
+  expect(storeFlows).toHaveLength(1);
+  expect(storeFlows[0].nodes[0].type).toBe("start");
+  expect(storeFlows[0].startNodeId).toBe(storeFlows[0].nodes[0].id);
+});
+
 test("persists flow changes to localStorage after the initial render", () => {
   const flow = makeFlow("Original");
   const store = makeStore([flow]);

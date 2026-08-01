@@ -50,6 +50,11 @@ export const useBot = () => {
     // A new token invalidates any running connection: drop the started flag
     // so the user can restart with the new token.
     setStarted(false);
+    // Stop the bot created here when this effect is torn down (e.g. on unmount
+    // or StrictMode's simulated remount) so its workers never leak.
+    return () => {
+      botRef.current?.stop();
+    };
   }, [token]);
 
   useEffect(() => {

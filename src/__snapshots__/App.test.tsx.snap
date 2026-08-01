@@ -138,16 +138,20 @@ Object {
                   Drag a node onto the canvas.
                 </span>
                 <div
+                  aria-label="Add Start node"
                   class="MuiBox-root css-1lf1isb"
                   data-testid="palette-item-start"
                   draggable="true"
+                  role="button"
                 >
                   Start
                 </div>
                 <div
+                  aria-label="Add State node"
                   class="MuiBox-root css-1lf1isb"
                   data-testid="palette-item-state"
                   draggable="true"
+                  role="button"
                 >
                   State
                 </div>
@@ -250,8 +254,11 @@ Object {
                   class="MuiBox-root css-610yxv"
                 >
                   <div
+                    aria-pressed="true"
                     class="MuiBox-root css-13y8p9h"
                     data-testid="flow-item-1700000000000-m7zzznrt"
+                    role="button"
+                    tabindex="0"
                   >
                     Welcome Flow
                   </div>
@@ -456,16 +463,20 @@ Object {
                 Drag a node onto the canvas.
               </span>
               <div
+                aria-label="Add Start node"
                 class="MuiBox-root css-1lf1isb"
                 data-testid="palette-item-start"
                 draggable="true"
+                role="button"
               >
                 Start
               </div>
               <div
+                aria-label="Add State node"
                 class="MuiBox-root css-1lf1isb"
                 data-testid="palette-item-state"
                 draggable="true"
+                role="button"
               >
                 State
               </div>
@@ -568,8 +579,11 @@ Object {
                 class="MuiBox-root css-610yxv"
               >
                 <div
+                  aria-pressed="true"
                   class="MuiBox-root css-13y8p9h"
                   data-testid="flow-item-1700000000000-m7zzznrt"
+                  role="button"
+                  tabindex="0"
                 >
                   Welcome Flow
                 </div>

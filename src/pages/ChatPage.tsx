@@ -96,8 +96,11 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const displayItems: DisplayItem[] = [
     ...responses
       .filter((response) => response.UserID === selectedUser.UserID)
-      .map((response) => ({
-        id: `r-${response.TimeStamp}-${response.Message}`,
+      .map((response, index) => ({
+        // index-based id keeps live messages unique even when the same user
+        // sends identical text within the same second (TimeStamp has 1s
+        // resolution, so it would otherwise collide).
+        id: `r-${index}`,
         kind: "message" as const,
         time: response.TimeStamp,
         response,
@@ -500,6 +503,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
           <TextField
             fullWidth
             size="small"
+            aria-label="Message to send"
             placeholder={
               selectedUser.UserID === TEST_USER.UserID
                 ? "Type a message to simulate…"

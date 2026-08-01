@@ -3,6 +3,12 @@ export interface BotRule {
   callback: (message: string, userId?: number) => string | string[];
 }
 
+// Debug logging is gated to non-production builds so verbose call tracing is
+// never emitted in deployed bundles.
+const debug = (...args: unknown[]) => {
+  if (process.env.NODE_ENV !== "production") console.debug(...args);
+};
+
 export class BrowserBot {
   token: string
   url: string
@@ -48,17 +54,17 @@ export class BrowserBot {
 
     this.poll_worker.onmessage = async (e) => {
       const [date, username, chatID, message] = e.data;
-      console.debug(`[Main] Received: ${message} from ${username}`);
+      debug(`[Main] Received: ${message} from ${username}`);
       responseSender(date * 1000, username, chatID, message);
 
       const response = this.handleMessage(message, chatID);
       if (response === undefined) {
-        console.debug(`[Main] No matching rule for ${message}`);
+        debug(`[Main] No matching rule for ${message}`);
         return;
       }
 
       const responses = Array.isArray(response) ? response : [response];
-      console.debug(`[Main] Sending ${responses}`);
+      debug(`[Main] Sending ${responses}`);
       for (const reply of responses) {
         this.send_worker!.postMessage([`${this.url}/sendMessage`, reply, chatID]);
         if (replySender !== undefined) {
@@ -73,11 +79,11 @@ export class BrowserBot {
 
   sendMessage(userID: number, message: string) {
     if (!this.send_worker) {
-      console.debug(`Init worker first before sending message`);
+      debug(`Init worker first before sending message`);
       return;
     }
 
-    console.debug(`Sending to ${userID}: ${message}`);
+    debug(`Sending to ${userID}: ${message}`);
     this.send_worker!.postMessage([`${this.url}/sendMessage`, message, userID]);
   }
 
@@ -92,6 +98,6 @@ export class BrowserBot {
       this.send_worker = undefined;
     }
 
-    console.debug("Stopped");
+    debug("Stopped");
   }
 }

@@ -360,3 +360,56 @@ test("import with an invalid flows array shows an error and changes nothing", as
   expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
 });
 
+test("import rejects a flow whose node is missing data.label and changes nothing", async () => {
+  // The flow passes the old top-level check but has a malformed node (no
+  // data.label). Deep validation must reject it before it can crash the
+  // FlowInspector / canvas.
+  const badFlow = {
+    id: "f-bad",
+    name: "Bad",
+    startNodeId: "n1",
+    nodes: [
+      {
+        id: "n1",
+        type: "start",
+        position: { x: 0, y: 0 },
+        data: { replies: [] }, // missing label
+      },
+    ],
+    edges: [],
+  };
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("programs", JSON.stringify([validProgram]));
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        programs: [validProgram],
+        flows: [badFlow],
+        autoStart: false,
+      }),
+    ],
+    "bad.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.token).toBe("abc:TOKEN");
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+  expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
+});
+

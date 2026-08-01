@@ -52,3 +52,23 @@ test("dragstart on State sets the reactflow payload to state", () => {
   expect(dataTransfer.setData).toHaveBeenCalledWith("application/reactflow", "state");
   expect(dataTransfer.effectAllowed).toBe("move");
 });
+
+test("clicking a palette item invokes onPick with its node type", () => {
+  const onPick = jest.fn();
+  render(<FlowPalette onPick={onPick} />);
+
+  fireEvent.click(screen.getByTestId("palette-item-state"));
+
+  expect(onPick).toHaveBeenCalledTimes(1);
+  expect(onPick).toHaveBeenCalledWith("state");
+});
+
+test("pressing Enter on a palette item invokes onPick with its node type", () => {
+  const onPick = jest.fn();
+  render(<FlowPalette onPick={onPick} />);
+
+  fireEvent.keyDown(screen.getByTestId("palette-item-start"), { key: "Enter" });
+
+  expect(onPick).toHaveBeenCalledTimes(1);
+  expect(onPick).toHaveBeenCalledWith("start");
+});

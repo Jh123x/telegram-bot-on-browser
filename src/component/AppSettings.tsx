@@ -29,29 +29,74 @@ const sectionHeader = {
 
 const sectionCaption = { color: "text.secondary", pl: 2 } as const;
 
+const VALID_BLOCK_CATEGORIES = ["logic", "transform", "action"] as const;
+
+const isValidBlock = (b: unknown): boolean => {
+  if (!b || typeof b !== "object") return false;
+  const block = b as Record<string, unknown>;
+  return (
+    typeof block.id === "string" &&
+    typeof block.kind === "string" &&
+    typeof block.value === "string" &&
+    typeof block.category === "string" &&
+    (VALID_BLOCK_CATEGORIES as readonly string[]).includes(block.category)
+  );
+};
+
 const isValidProgram = (p: unknown): boolean => {
-  if (typeof p !== "object" || p === null) return false;
+  if (!isRecord(p)) return false;
   const prog = p as Record<string, unknown>;
   return (
     typeof prog.id === "string" &&
     typeof prog.name === "string" &&
-    prog.trigger !== null &&
-    typeof prog.trigger === "object" &&
-    Array.isArray(prog.blocks)
+    isRecord(prog.trigger) &&
+    typeof (prog.trigger as Record<string, unknown>).type === "string" &&
+    Array.isArray(prog.blocks) &&
+    prog.blocks.every(isValidBlock)
+  );
+};
+
+const isValidFlowNode = (n: unknown): boolean => {
+  if (!isRecord(n)) return false;
+  return (
+    typeof n.id === "string" &&
+    (n.type === "start" || n.type === "state") &&
+    isRecord(n.data) &&
+    typeof (n.data as Record<string, unknown>).label === "string" &&
+    Array.isArray((n.data as Record<string, unknown>).replies)
+  );
+};
+
+const isValidFlowEdge = (e: unknown): boolean => {
+  if (!isRecord(e)) return false;
+  const edge = e as Record<string, unknown>;
+  return (
+    typeof edge.id === "string" &&
+    typeof edge.source === "string" &&
+    typeof edge.target === "string" &&
+    isRecord(edge.data) &&
+    isRecord((edge.data as Record<string, unknown>).trigger) &&
+    typeof ((edge.data as Record<string, unknown>).trigger as Record<string, unknown>)
+      .type === "string"
   );
 };
 
 const isValidFlow = (f: unknown): boolean => {
-  if (typeof f !== "object" || f === null) return false;
+  if (!isRecord(f)) return false;
   const flow = f as Record<string, unknown>;
   return (
     typeof flow.id === "string" &&
     typeof flow.name === "string" &&
     typeof flow.startNodeId === "string" &&
     Array.isArray(flow.nodes) &&
-    Array.isArray(flow.edges)
+    flow.nodes.every(isValidFlowNode) &&
+    Array.isArray(flow.edges) &&
+    flow.edges.every(isValidFlowEdge)
   );
 };
+
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null;
 
 // Stable empty array so the flows selector never returns a fresh reference
 // (a new [] each render would warn and cause unnecessary rerenders).

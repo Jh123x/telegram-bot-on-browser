@@ -16,11 +16,54 @@ import React from "react";
 import { flowFromSample } from "./logic/flow.ts";
 import { SAMPLE_FLOWS } from "./logic/flowSamples.ts";
 import { Flow } from "./interfaces/flow.ts";
+import { Program } from "./interfaces/program.ts";
 import { BotWithConfig } from "./redux/types.ts";
 
 // Stable empty array so the flows selector never returns a fresh reference
 // (a new [] each render would warn and cause unnecessary rerenders).
 const EMPTY_FLOWS: Flow[] = [];
+
+// Safely parses localStorage JSON into a value WITHOUT throwing on corrupt
+// input. Returns null when the raw value is null or the JSON is unparseable.
+const parseJson = (raw: string | null): unknown => {
+  if (raw === null) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+// Shape checks for hydrated data. Corrupt JSON *or* valid JSON that does not
+// match the expected shape is treated as absent so a bad localStorage value
+// can never crash the app at startup (blank page) — we simply keep the default
+// state.
+const isValidProgram = (p: unknown): boolean => {
+  const prog = p as Record<string, unknown>;
+  return (
+    isRecord(p) &&
+    typeof prog.id === "string" &&
+    typeof prog.name === "string" &&
+    isRecord(prog.trigger) &&
+    typeof prog.trigger.type === "string" &&
+    Array.isArray(prog.blocks)
+  );
+};
+
+const isValidFlow = (f: unknown): boolean => {
+  const flow = f as Record<string, unknown>;
+  return (
+    isRecord(f) &&
+    typeof flow.id === "string" &&
+    typeof flow.name === "string" &&
+    typeof flow.startNodeId === "string" &&
+    Array.isArray(flow.nodes) &&
+    Array.isArray(flow.edges)
+  );
+};
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -40,11 +83,24 @@ export const App = () => {
     const token = localStorage.getItem("token");
     if (token !== null) dispatch(setToken(token));
     const programs = localStorage.getItem("programs");
-    if (programs !== null) dispatch(setPrograms(JSON.parse(programs)));
+    if (programs !== null) {
+      const parsed = parseJson(programs);
+      if (Array.isArray(parsed) && parsed.every(isValidProgram)) {
+        dispatch(setPrograms(parsed as Program[]));
+      }
+      // Corrupt or wrong-shape programs: keep the default (empty) list so a
+      // bad value cannot crash the app.
+    }
     const flows = localStorage.getItem("flows");
     if (flows !== null) {
+      // Set the flag whenever the key exists — even if its content is corrupt
+      // or malformed — so a truly-empty flow list is never re-seeded.
       hadFlowsKeyRef.current = true;
-      dispatch(setFlows(JSON.parse(flows)));
+      const parsed = parseJson(flows);
+      if (Array.isArray(parsed) && parsed.every(isValidFlow)) {
+        dispatch(setFlows(parsed as Flow[]));
+      }
+      // Corrupt or wrong-shape flows: keep the default (empty) list.
     }
     const autoStart = localStorage.getItem("autoStart");
     if (autoStart !== null) dispatch(setAutoStart(autoStart === "true"));

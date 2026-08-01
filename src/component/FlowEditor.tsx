@@ -23,7 +23,7 @@ import {
 import { generateId } from "../logic/program.ts";
 import { addFlow, removeFlow, updateFlow } from "../redux/botSlice.ts";
 import { BotWithConfig } from "../redux/types.ts";
-import { Flow, FlowEdge } from "../interfaces/flow.ts";
+import { Flow, FlowEdge, FlowNodeType } from "../interfaces/flow.ts";
 import { StartNode, StateNode } from "./flowNodes.tsx";
 
 // Canvas node renderers keyed by the FlowNodeType. Passed to <ReactFlow> so
@@ -41,6 +41,13 @@ const EditorCanvas = ({
   const { screenToFlowPosition } = useReactFlow();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+
+  // Mirrors the latest `flow` prop so the change/connect handlers never read a
+  // stale closure. React Flow can deliver several change events before the
+  // Redux round-trip lands (so `flow` prop is still the old object); reading
+  // the ref keeps every edit based on the most recent flow.
+  const flowRef = useRef(flow);
+  flowRef.current = flow;
 
   // Derive React Flow's node/edge shape from the selected flow. Edges carry a
   // human-readable label (e.g. `message contains "hi"`) for the canvas.
@@ -70,11 +77,15 @@ const EditorCanvas = ({
   };
 
   const onNodesChange = (changes) => {
+    // The EmptyFlow placeholder (id === "") is a virtual render target, not a
+    // real flow — React Flow's bookkeeping edits to it must not be persisted.
+    if (flowRef.current.id === "") return;
+    const current = flowRef.current;
     const nextNodes = applyNodeChanges(
       changes,
       // React Flow adds measured/dragging props onto the nodes; strip them
       // back to our stored shape before persisting.
-      rfNodes.map((n) => ({
+      current.nodes.map((n) => ({
         id: n.id,
         type: n.type,
         position: n.position,
@@ -86,20 +97,23 @@ const EditorCanvas = ({
       .filter((c) => c.type === "remove")
       .map((c) => c.id);
     const startNodeRemoved =
-      flow.startNodeId !== "" && removed.includes(flow.startNodeId);
+      current.startNodeId !== "" && removed.includes(current.startNodeId);
     persistFlow({
-      ...flow,
+      ...current,
       nodes: nextNodes,
-      startNodeId: startNodeRemoved ? "" : flow.startNodeId,
+      startNodeId: startNodeRemoved ? "" : current.startNodeId,
     });
   };
 
   const onEdgesChange = (changes) => {
+    // Ignore edits to the EmptyFlow placeholder (see onNodesChange).
+    if (flowRef.current.id === "") return;
+    const current = flowRef.current;
     const nextEdges = applyEdgeChanges(changes, rfEdges);
     persistFlow({
-      ...flow,
+      ...current,
       edges: nextEdges.map((e) => {
-        const original = flow.edges.find((edge) => edge.id === e.id);
+        const original = current.edges.find((edge) => edge.id === e.id);
         // Defensive fallback for edges React Flow fabricates: keep a valid
         // (fallback) trigger so the inspector never sees a null trigger.
         return (
@@ -115,6 +129,10 @@ const EditorCanvas = ({
   };
 
   const onConnect = (connection) => {
+    // Ignore connects while the EmptyFlow placeholder is shown — there is no
+    // flow to connect into yet (onDrop handles flow creation instead).
+    if (flowRef.current.id === "") return;
+    const current = flowRef.current;
     if (!connection.source || !connection.target) return;
     const newEdge: FlowEdge = {
       id: generateId(),
@@ -122,7 +140,7 @@ const EditorCanvas = ({
       target: connection.target,
       data: { trigger: { type: "fallback", value: "" } },
     };
-    persistFlow({ ...flow, edges: [...flow.edges, newEdge] });
+    persistFlow({ ...current, edges: [...current.edges, newEdge] });
   };
 
   const onDrop = (event) => {
@@ -257,6 +275,37 @@ export const FlowEditor = () => {
     dispatch(updateFlow({ ...selectedFlow, name }));
   };
 
+  const handlePalettePick = (type: FlowNodeType) => {
+    const node = createFlowNode(type, { x: 120, y: 80 });
+    // No flow selected yet: create one containing the picked node, mirroring
+    // the onDrop empty-case (createFlow + addFlow + select the new flow).
+    if (selectedFlow === null) {
+      const created = createFlow();
+      dispatch(
+        addFlow({
+          ...created,
+          nodes: [node],
+          startNodeId: type === "start" ? node.id : "",
+        })
+      );
+      setSelectedFlowId(created.id);
+      return;
+    }
+    // Add the node to the selected flow, offset for each new node so they do
+    // not stack exactly on top of one another.
+    const offset = (selectedFlow.nodes.length % 5) * 40;
+    dispatch(
+      updateFlow({
+        ...selectedFlow,
+        nodes: [
+          ...selectedFlow.nodes,
+          { ...node, position: { x: 120 + offset, y: 80 + offset } },
+        ],
+        startNodeId: type === "start" ? node.id : selectedFlow.startNodeId,
+      })
+    );
+  };
+
   const errors = selectedFlow ? validateFlow(selectedFlow) : [];
 
   return (
@@ -268,7 +317,7 @@ export const FlowEditor = () => {
       </Typography>
 
       <Box sx={{ display: "flex", gap: 2 }}>
-        <FlowPalette />
+        <FlowPalette onPick={handlePalettePick} />
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
           {/* Toolbar */}
@@ -314,7 +363,16 @@ export const FlowEditor = () => {
                 <Box
                   key={flow.id}
                   data-testid={`flow-item-${flow.id}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={flow.id === selectedFlowId}
                   onClick={() => setSelectedFlowId(flow.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedFlowId(flow.id);
+                    }
+                  }}
                   sx={{
                     px: 1.25,
                     py: 0.5,

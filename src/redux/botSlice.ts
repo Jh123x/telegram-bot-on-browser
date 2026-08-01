@@ -41,9 +41,7 @@ export const botSlice = createSlice({
     },
     addUser: (state, action: { payload: User, type: string }) => {
       const newUser = action.payload
-      for (const user of state.users) {
-        if (user.UserID === newUser.UserID && user.Username === newUser.Username) return
-      }
+      if (state.users.some((u) => u.UserID === newUser.UserID && u.Username === newUser.Username)) return
       state.users = [...state.users, action.payload]
     },
     setUsers: (state, action: { payload: User[], type: string }) => {
@@ -61,7 +59,15 @@ export const botSlice = createSlice({
     setHydrated: (state, action: { payload: boolean, type: string }) => {
       state.hydrated = action.payload;
     },
-    resetAll: () => ({ ...defaultBotState }),
+    resetAll: () => ({
+      ...defaultBotState,
+      // Fresh arrays so anything holding a reference to the previous state's
+      // lists (e.g. a component-cached default) cannot alias stale data.
+      programs: [],
+      flows: [],
+      response: [],
+      users: [],
+    }),
   },
 });
 

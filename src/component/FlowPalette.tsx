@@ -7,7 +7,11 @@ const ITEMS: { type: FlowNodeType; label: string }[] = [
   { type: "state", label: "State" },
 ];
 
-export const FlowPalette = () => (
+interface FlowPaletteProps {
+  onPick?: (type: FlowNodeType) => void;
+}
+
+export const FlowPalette = ({ onPick }: FlowPaletteProps) => (
   <Paper
     data-testid="flow-palette"
     sx={{ p: 2, width: 160, flexShrink: 0, height: "100%" }}
@@ -20,10 +24,19 @@ export const FlowPalette = () => (
       <Box
         key={item.type}
         data-testid={`palette-item-${item.type}`}
+        role="button"
+        aria-label={`Add ${item.label} node`}
         draggable
         onDragStart={(e) => {
           e.dataTransfer.setData("application/reactflow", item.type);
           e.dataTransfer.effectAllowed = "move";
+        }}
+        onClick={() => onPick?.(item.type)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onPick?.(item.type);
+          }
         }}
         sx={{
           mt: 1.5,

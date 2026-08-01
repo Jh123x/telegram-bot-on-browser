@@ -233,3 +233,47 @@ test("hydrates autoStart from localStorage on mount", () => {
 
   expect(store.getState().bot.autoStart).toBe(true);
 });
+
+test("does not crash and keeps flows empty when flows JSON is corrupt", () => {
+  localStorage.setItem("flows", "{bad json");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  // The app renders (no startup crash) and flows stay at the default empty.
+  expect(screen.getByTestId("app-root")).toBeTruthy();
+  expect(store.getState().bot.flows).toEqual([]);
+});
+
+test("does not crash and keeps programs empty when programs JSON is corrupt", () => {
+  localStorage.setItem("programs", "{bad json");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  expect(screen.getByTestId("app-root")).toBeTruthy();
+  expect(store.getState().bot.programs).toEqual([]);
+});
+
+test("does not crash and does not seed when flows JSON is valid but the wrong shape", () => {
+  // Valid JSON, but not an array of flows (e.g. a plain object).
+  localStorage.setItem("flows", "{}");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  // No crash; flows stay empty.
+  expect(screen.getByTestId("app-root")).toBeTruthy();
+  expect(store.getState().bot.flows).toEqual([]);
+});
+
+test("does not seed a sample when flows key exists with invalid shape", () => {
+  // The key exists (so the user is not a true first-time visitor) but holds
+  // invalid content: the app must not crash AND must not re-seed a sample.
+  localStorage.setItem("flows", "{bad json");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  expect(store.getState().bot.flows).toEqual([]);
+});
