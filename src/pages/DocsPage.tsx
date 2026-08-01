@@ -439,8 +439,8 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          Every program card has a Test box — type a message to preview the
-          bot's reply before starting the bot.
+          Use the Test Chat at the bottom of the Programs page to preview how
+          the whole bot responds before starting it.
         </Typography>
       </li>
     </Box>

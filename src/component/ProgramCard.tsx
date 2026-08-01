@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment } from "react";
 import {
   Button,
   Chip,
@@ -28,8 +28,6 @@ import {
   TRIGGER_LABELS,
   TRANSFORM_LABELS,
   createBlock,
-  executeProgram,
-  matchTrigger,
   transformPreview,
 } from "../logic/program.ts";
 import { BotWithConfig } from "../redux/types.ts";
@@ -424,27 +422,6 @@ export const ProgramCard = ({
   const update = (patch: Partial<Program>) =>
     dispatch(updateProgram({ ...current, ...patch }));
 
-  // Live per-card test zone: the user types a message and sees what the bot
-  // would reply, based on the current trigger and block pipeline.
-  const [testMessage, setTestMessage] = useState("");
-  const outcome = useMemo<
-    | { kind: "no-match" }
-    | { kind: "silent" }
-    | { kind: "replies"; replies: string[] }
-    | null
-  >(() => {
-    const trimmed = testMessage.trim();
-    if (trimmed === "") return null;
-    // Match and execute on the raw message, exactly like the real bot does
-    // (useBot feeds the raw message into executeBlocks). Only the
-    // empty-input check trims.
-    const matched = matchTrigger(current.trigger, testMessage);
-    if (!matched) return { kind: "no-match" };
-    const replies = executeProgram(current, testMessage);
-    if (replies.length === 0) return { kind: "silent" };
-    return { kind: "replies", replies };
-  }, [current, testMessage]);
-
   const changeBlockValue = (id: string, patch: Partial<Block>) =>
     update({
       blocks: current.blocks.map((b) => (b.id === id ? { ...b, ...patch } : b)),
@@ -651,48 +628,6 @@ export const ProgramCard = ({
             Add echo
           </Button>
         </Box>
-      </Box>
-
-      <Box data-testid={`test-zone-${current.id}`} sx={{ mt: 2 }}>
-        <Typography sx={{ mb: 1 }}>Test</Typography>
-        <TextField
-          size="small"
-          label="Test message"
-          fullWidth
-          value={testMessage}
-          onChange={(e) => setTestMessage(e.target.value)}
-          placeholder="e.g. hello"
-        />
-        {outcome === null ? (
-          <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-            Type a message to see the bot's reply.
-          </Typography>
-        ) : outcome.kind === "no-match" ? (
-          <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-            No trigger match — the bot would stay silent.
-          </Typography>
-        ) : outcome.kind === "silent" ? (
-          <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-            Trigger matched, but no reply was produced (a logic gate may have
-            stopped the flow).
-          </Typography>
-        ) : (
-          <Box sx={{ mt: 1 }}>
-            {outcome.replies.map((reply, i) => (
-              <Chip
-                key={i}
-                size="small"
-                label={`Bot: ${reply}`}
-                sx={{
-                  mb: 0.5,
-                  mr: 0.5,
-                  bgcolor: BLOCK_COLORS.action.bg,
-                  color: BLOCK_COLORS.action.main,
-                }}
-              />
-            ))}
-          </Box>
-        )}
       </Box>
     </Paper>
   );
