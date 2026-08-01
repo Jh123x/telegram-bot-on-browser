@@ -123,37 +123,85 @@ Object {
               class="MuiBox-root css-10egq61"
             >
               <div
-                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1jnj1i4-MuiPaper-root"
-                data-testid="flow-palette"
-                style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
+                class="MuiBox-root css-yd8sa2"
               >
-                <h6
-                  class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
-                >
-                  Palette
-                </h6>
-                <span
-                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
-                >
-                  Drag a node onto the canvas.
-                </span>
                 <div
-                  aria-label="Add Start node"
-                  class="MuiBox-root css-1lf1isb"
-                  data-testid="palette-item-start"
-                  draggable="true"
-                  role="button"
+                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1jnj1i4-MuiPaper-root"
+                  data-testid="flow-palette"
+                  style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                 >
-                  Start
+                  <h6
+                    class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
+                  >
+                    Palette
+                  </h6>
+                  <span
+                    class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  >
+                    Drag a node onto the canvas.
+                  </span>
+                  <div
+                    aria-label="Add Start node"
+                    class="MuiBox-root css-1lf1isb"
+                    data-testid="palette-item-start"
+                    draggable="true"
+                    role="button"
+                  >
+                    Start
+                  </div>
+                  <div
+                    aria-label="Add State node"
+                    class="MuiBox-root css-1lf1isb"
+                    data-testid="palette-item-state"
+                    draggable="true"
+                    role="button"
+                  >
+                    State
+                  </div>
                 </div>
                 <div
-                  aria-label="Add State node"
-                  class="MuiBox-root css-1lf1isb"
-                  data-testid="palette-item-state"
-                  draggable="true"
-                  role="button"
+                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ugxiov-MuiPaper-root"
+                  data-testid="flow-samples"
+                  style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                 >
-                  State
+                  <h6
+                    class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
+                  >
+                    Samples
+                  </h6>
+                  <span
+                    class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  >
+                    Load a pre-built flow.
+                  </span>
+                  <div
+                    class="MuiBox-root css-cba58j"
+                  >
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Welcome Flow"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Welcome Flow
+                    </button>
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Echo Flow"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Echo Flow
+                    </button>
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Quiz Flow"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Quiz Flow
+                    </button>
+                  </div>
                 </div>
               </div>
               <div
@@ -209,44 +257,6 @@ Object {
                           </span>
                         </legend>
                       </fieldset>
-                    </div>
-                  </div>
-                  <div
-                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
-                    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
-                  >
-                    <h6
-                      class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
-                    >
-                      Samples
-                    </h6>
-                    <div
-                      class="MuiBox-root css-zryp6"
-                    >
-                      <button
-                        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
-                        data-testid="flow-sample-Welcome Flow"
-                        tabindex="0"
-                        type="button"
-                      >
-                        Welcome Flow
-                      </button>
-                      <button
-                        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
-                        data-testid="flow-sample-Echo Flow"
-                        tabindex="0"
-                        type="button"
-                      >
-                        Echo Flow
-                      </button>
-                      <button
-                        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
-                        data-testid="flow-sample-Quiz Flow"
-                        tabindex="0"
-                        type="button"
-                      >
-                        Quiz Flow
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -448,37 +458,85 @@ Object {
             class="MuiBox-root css-10egq61"
           >
             <div
-              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1jnj1i4-MuiPaper-root"
-              data-testid="flow-palette"
-              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
+              class="MuiBox-root css-yd8sa2"
             >
-              <h6
-                class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
-              >
-                Palette
-              </h6>
-              <span
-                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
-              >
-                Drag a node onto the canvas.
-              </span>
               <div
-                aria-label="Add Start node"
-                class="MuiBox-root css-1lf1isb"
-                data-testid="palette-item-start"
-                draggable="true"
-                role="button"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1jnj1i4-MuiPaper-root"
+                data-testid="flow-palette"
+                style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >
-                Start
+                <h6
+                  class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
+                >
+                  Palette
+                </h6>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                >
+                  Drag a node onto the canvas.
+                </span>
+                <div
+                  aria-label="Add Start node"
+                  class="MuiBox-root css-1lf1isb"
+                  data-testid="palette-item-start"
+                  draggable="true"
+                  role="button"
+                >
+                  Start
+                </div>
+                <div
+                  aria-label="Add State node"
+                  class="MuiBox-root css-1lf1isb"
+                  data-testid="palette-item-state"
+                  draggable="true"
+                  role="button"
+                >
+                  State
+                </div>
               </div>
               <div
-                aria-label="Add State node"
-                class="MuiBox-root css-1lf1isb"
-                data-testid="palette-item-state"
-                draggable="true"
-                role="button"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ugxiov-MuiPaper-root"
+                data-testid="flow-samples"
+                style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >
-                State
+                <h6
+                  class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
+                >
+                  Samples
+                </h6>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                >
+                  Load a pre-built flow.
+                </span>
+                <div
+                  class="MuiBox-root css-cba58j"
+                >
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    data-testid="flow-sample-Welcome Flow"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Welcome Flow
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    data-testid="flow-sample-Echo Flow"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Echo Flow
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    data-testid="flow-sample-Quiz Flow"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Quiz Flow
+                  </button>
+                </div>
               </div>
             </div>
             <div
@@ -534,44 +592,6 @@ Object {
                         </span>
                       </legend>
                     </fieldset>
-                  </div>
-                </div>
-                <div
-                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
-                  style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
-                >
-                  <h6
-                    class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
-                  >
-                    Samples
-                  </h6>
-                  <div
-                    class="MuiBox-root css-zryp6"
-                  >
-                    <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Welcome Flow"
-                      tabindex="0"
-                      type="button"
-                    >
-                      Welcome Flow
-                    </button>
-                    <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Echo Flow"
-                      tabindex="0"
-                      type="button"
-                    >
-                      Echo Flow
-                    </button>
-                    <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Quiz Flow"
-                      tabindex="0"
-                      type="button"
-                    >
-                      Quiz Flow
-                    </button>
                   </div>
                 </div>
               </div>

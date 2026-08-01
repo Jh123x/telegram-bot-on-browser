@@ -24,16 +24,21 @@ export const FlowSamples = ({ onLoaded }: FlowSamplesProps) => {
   };
 
   return (
-    <Paper sx={{ p: 1.5 }}>
+    <Paper data-testid="flow-samples" sx={{ p: 2, width: 160, flexShrink: 0 }}>
       <Typography variant="subtitle2">Samples</Typography>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+      <Typography variant="caption" sx={{ color: "text.secondary" }}>
+        Load a pre-built flow.
+      </Typography>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1.5 }}>
         {SAMPLE_FLOWS.map((sample) => (
           <Button
             key={sample.name}
             variant="outlined"
             size="small"
+            fullWidth
             data-testid={`flow-sample-${sample.name}`}
             onClick={() => load(sample.name)}
+            sx={{ textTransform: "none", justifyContent: "flex-start" }}
           >
             {sample.name}
           </Button>

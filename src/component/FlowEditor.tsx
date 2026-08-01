@@ -327,7 +327,10 @@ export const FlowEditor = () => {
       </Typography>
 
       <Box sx={{ display: "flex", gap: 2 }}>
-        <FlowPalette onPick={handlePalettePick} />
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <FlowPalette onPick={handlePalettePick} />
+          <FlowSamples onLoaded={(flow) => setSelectedFlowId(flow.id)} />
+        </Box>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
           {/* Toolbar */}
@@ -354,9 +357,6 @@ export const FlowEditor = () => {
                 sx={{ flex: 1, maxWidth: 320 }}
               />
             )}
-            <FlowSamples
-              onLoaded={(flow) => setSelectedFlowId(flow.id)}
-            />
           </Box>
 
           {/* Flow rail (list) */}
