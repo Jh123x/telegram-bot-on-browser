@@ -190,8 +190,8 @@ test("getting started points to the card buttons instead of dragging", () => {
   expect(screen.queryByText(/drag blocks/i)).toBeNull();
 });
 
-test("mentions the Test Chat in the tips", () => {
+test("mentions Test mode in the tips", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/Test Chat/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Test mode/i).length).toBeGreaterThan(0);
 });

@@ -205,51 +205,85 @@ const greetStore = () =>
           ],
         },
       ],
-      response: [],
-      users: [],
+      response: [{ FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 1000 }],
+      users: [{ Username: "alice", UserID: 42 }],
     },
   });
 
-test("renders Live Chat and Test Chat tabs", () => {
+test("renders a Test toggle in the composer", () => {
   const store = convoStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
-  expect(screen.getByRole("tab", { name: "Live Chat" })).toBeTruthy();
-  expect(screen.getByRole("tab", { name: "Test Chat" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Test" })).toBeTruthy();
 });
 
-test("Test Chat tab shows the simulator and hides the live panel", () => {
-  const store = convoStore();
-  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
-
-  fireEvent.click(screen.getByRole("tab", { name: "Test Chat" }));
-
-  expect(screen.getByTestId("test-chat")).toBeTruthy();
-  expect(screen.queryByTestId("chat-panel")).toBeNull();
-});
-
-test("switching back to Live Chat restores the live panel", () => {
-  const store = convoStore();
-  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
-
-  fireEvent.click(screen.getByRole("tab", { name: "Test Chat" }));
-  fireEvent.click(screen.getByRole("tab", { name: "Live Chat" }));
-
-  expect(screen.getByTestId("chat-panel")).toBeTruthy();
-  expect(screen.queryByTestId("test-chat")).toBeNull();
-});
-
-test("Test Chat simulates a reply inside the Chat section", () => {
+test("test mode simulates a reply as bubbles without sending to Telegram", () => {
   const store = greetStore();
+  const bot = new BrowserBot("123:TOKEN");
+  const spy = jest.spyOn(bot, "sendMessage");
+  renderWithProviders(<ChatPage bot={bot} />, { store });
+
+  // Select alice.
+  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+
+  // Turn on Test mode.
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  // Nothing is sent to Telegram, but the reply shows in the feed.
+  expect(spy).not.toHaveBeenCalled();
+  expect(screen.getByText("Welcome!")).toBeTruthy();
+  expect(screen.getByText(/Matched program: Greet/)).toBeTruthy();
+  expect(screen.getByText("/start")).toBeTruthy();
+});
+
+test("test mode with no matching program shows the silent note", () => {
+  const store = convoStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
-  fireEvent.click(screen.getByRole("tab", { name: "Test Chat" }));
+  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
 
-  fireEvent.change(screen.getByLabelText("Message"), {
-    target: { value: "/start" },
-  });
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "nope" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  expect(screen.getByText(/No program matched/)).toBeTruthy();
+});
+
+test("simulated messages do not touch the store", () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("123:TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+  const before = store.getState().bot.response.length;
+
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  expect(store.getState().bot.response.length).toBe(before);
+});
+
+test("switching back to live mode sends for real again", () => {
+  const store = convoStore();
+  const bot = new BrowserBot("123:TOKEN");
+  const spy = jest.spyOn(bot, "sendMessage");
+  renderWithProviders(<ChatPage bot={bot} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "hi" } });
   fireEvent.click(screen.getByRole("button", { name: "Send" }));
 
-  expect(screen.getByText("Matched program: Greet")).toBeTruthy();
-  expect(screen.getByText("Welcome!")).toBeTruthy();
+  expect(spy).toHaveBeenCalledWith(42, "hi");
 });
