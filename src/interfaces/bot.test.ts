@@ -1,10 +1,10 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import { BrowserBot } from "./bot.ts";
 
 class MockWorker {
   onmessage: ((e: { data: unknown }) => void) | null = null;
-  postMessage = jest.fn();
-  terminate = jest.fn();
+  postMessage = vi.fn();
+  terminate = vi.fn();
 }
 
 const instances: MockWorker[] = [];
@@ -120,7 +120,7 @@ test("start() passes a custom poll rate in milliseconds to poll_worker", () => {
 
 test("simulated poll message invokes responseSender with date, user, id, message", async () => {
   const bot = createBot();
-  const responseSender = jest.fn();
+  const responseSender = vi.fn();
   bot.start(responseSender);
 
   await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/hello"] });
@@ -154,7 +154,7 @@ test("matching rule callback returning a string sends a single response to send_
 test("start() with a replySender invokes it for every reply posted to send_worker", async () => {
   const bot = createBot();
   bot.addRule((m) => m === "/hello", (m) => ["a", "b"]);
-  const replySender = jest.fn();
+  const replySender = vi.fn();
   bot.start(() => {}, replySender);
 
   await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/hello"] });
@@ -166,7 +166,7 @@ test("start() with a replySender invokes it for every reply posted to send_worke
 
 test("start() with a replySender does not call it when there is no matching rule", async () => {
   const bot = createBot();
-  const replySender = jest.fn();
+  const replySender = vi.fn();
   bot.start(() => {}, replySender);
 
   await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/nope"] });
@@ -222,8 +222,8 @@ test("sendMessage does nothing when send_worker is undefined", () => {
 
 test("handleMessage passes userId to both matcher and callback when provided", () => {
   const bot = createBot();
-  const matcher = jest.fn(() => true);
-  const callback = jest.fn((m: string, u?: number) => `echo:${m}:${u}`);
+  const matcher = vi.fn(() => true);
+  const callback = vi.fn((m: string, u?: number) => `echo:${m}:${u}`);
   bot.addRule(matcher, callback);
 
   const result = bot.handleMessage("/hi", 42);
@@ -235,8 +235,8 @@ test("handleMessage passes userId to both matcher and callback when provided", (
 
 test("handleMessage passes undefined as userId when omitted", () => {
   const bot = createBot();
-  const matcher = jest.fn(() => true);
-  const callback = jest.fn();
+  const matcher = vi.fn(() => true);
+  const callback = vi.fn();
   bot.addRule(matcher, callback);
 
   const result = bot.handleMessage("/hi");
@@ -266,8 +266,8 @@ test("start() passes chatID from the worker payload to the matching rule's callb
 test("full onmessage flow: responseSender, send_worker post, and replySender all fire", async () => {
   const bot = createBot();
   bot.addRule((m) => m === "/hello", (m) => ["a", "b"]);
-  const responseSender = jest.fn();
-  const replySender = jest.fn();
+  const responseSender = vi.fn();
+  const replySender = vi.fn();
   bot.start(responseSender, replySender);
 
   await bot.poll_worker!.onmessage!({

@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { FlowSamples } from "./FlowSamples.tsx";
@@ -21,7 +21,7 @@ test("renders all sample flow names", () => {
 
 test("clicking a sample calls onLoaded with a fresh-id copy", () => {
   const sample = SAMPLE_FLOWS[2]; // "Greeting Check" (a condition/if-else flow)
-  const onLoaded = jest.fn();
+  const onLoaded = vi.fn();
   renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store: makeStore() });
 
   fireEvent.click(screen.getByText(sample.name));
@@ -42,7 +42,7 @@ test("clicking a sample calls onLoaded with a fresh-id copy", () => {
 });
 
 test("clicking a sample preserves the branch handles in the loaded flow", () => {
-  const onLoaded = jest.fn();
+  const onLoaded = vi.fn();
   renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store: makeStore() });
 
   fireEvent.click(screen.getByText("Welcome Flow"));
@@ -54,7 +54,7 @@ test("clicking a sample preserves the branch handles in the loaded flow", () => 
 });
 
 test("onLoaded receives the prepared flow", () => {
-  const onLoaded = jest.fn();
+  const onLoaded = vi.fn();
   const store = makeStore();
   renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store });
 

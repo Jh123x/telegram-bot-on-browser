@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect } from "vitest";
 import { configureStore } from "@reduxjs/toolkit";
 import { botSlice, defaultBotState } from "./botSlice";
 import { BotWithConfig, Response, User } from "./types";

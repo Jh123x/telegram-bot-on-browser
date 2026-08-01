@@ -20,6 +20,7 @@ import {
   TRIGGER_LABELS,
 } from "./flow.ts";
 import { Flow } from "../interfaces/flow.ts";
+import { vi } from "vitest";
 
 describe("dropNodeDimensionChanges", () => {
   test("drops React Flow dimensions bookkeeping changes", () => {
@@ -490,21 +491,21 @@ describe("executeFlow (random node)", () => {
   }
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test("returns exactly ONE of the replies (first when random is 0)", () => {
-    jest.spyOn(Math, "random").mockReturnValue(0);
+    vi.spyOn(Math, "random").mockReturnValue(0);
     expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["A"]);
   });
 
   test("returns the last reply when random is near 1", () => {
-    jest.spyOn(Math, "random").mockReturnValue(0.999);
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
     expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["C"]);
   });
 
   test("interpolates {msg} in the picked reply", () => {
-    jest.spyOn(Math, "random").mockReturnValue(0.4);
+    vi.spyOn(Math, "random").mockReturnValue(0.4);
     expect(executeFlow(randomFlow(["{msg}", "fixed"]), "hello")).toEqual(["hello"]);
   });
 
@@ -933,14 +934,22 @@ describe("removeFlowNode / removeFlowEdge", () => {
 
 describe("generateId (crypto.randomUUID branch)", () => {
   test("returns the uuid produced by crypto.randomUUID when available", () => {
-    const original = globalThis.crypto;
-    (globalThis as any).crypto = {
-      randomUUID: () => "fixed-uuid",
-    };
+    // jsdom 30 exposes crypto as a getter-only global, so restore via
+    // defineProperty (plain assignment throws).
+    const original = Object.getOwnPropertyDescriptor(globalThis, "crypto");
+    Object.defineProperty(globalThis, "crypto", {
+      value: { randomUUID: () => "fixed-uuid" },
+      configurable: true,
+      writable: true,
+    });
     try {
       expect(generateId()).toBe("fixed-uuid");
     } finally {
-      (globalThis as any).crypto = original;
+      if (original) {
+        Object.defineProperty(globalThis, "crypto", original);
+      } else {
+        delete (globalThis as any).crypto;
+      }
     }
   });
 });

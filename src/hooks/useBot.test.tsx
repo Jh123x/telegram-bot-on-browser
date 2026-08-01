@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
@@ -10,8 +10,8 @@ import { createFlow, createFlowNode } from "../logic/flow.ts";
 
 class MockWorker {
   onmessage: ((e: { data: unknown }) => void) | null = null;
-  postMessage = jest.fn();
-  terminate = jest.fn();
+  postMessage = vi.fn();
+  terminate = vi.fn();
 }
 
 const instances: MockWorker[] = [];

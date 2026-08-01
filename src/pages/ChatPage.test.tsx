@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { act } from "@testing-library/react";
@@ -19,7 +19,7 @@ afterEach(() => {
   delete (global as any).Worker;
   (URL as any).createObjectURL = undefined;
   (URL as any).revokeObjectURL = undefined;
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 const convoStore = () =>
@@ -116,7 +116,7 @@ test("shows a no-messages state when the selected user has no messages", () => {
 
 test("composer starts enabled with the Test User simulated, then sends to a selected real user and clears the input", () => {
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store: convoStore() });
 
   // Nothing selected yet -> Test User is auto-selected, so the composer is
@@ -209,7 +209,7 @@ test("renders a Test User conversation in the sidebar like any other user", () =
 test("selecting the Test User simulates replies as bubbles without sending to Telegram", () => {
   const store = welcomeFlowStore();
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
   fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
@@ -336,7 +336,7 @@ test("Test User works with no real users and never sends to Telegram", () => {
     },
   });
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
   // With no real users, the Test User is auto-selected so the composer starts
@@ -358,7 +358,7 @@ test("Test User works with no real users and never sends to Telegram", () => {
 test("selecting a real user sends for real again", () => {
   const store = convoStore();
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
   fireEvent.click(screen.getByRole("button", { name: /alice/ }));
@@ -447,14 +447,14 @@ test("renders Export chat and Import chat buttons", () => {
 });
 
 test("export chat downloads a JSON file with users and responses", async () => {
-  (URL as any).createObjectURL = jest.fn(() => "blob:mock");
-  (URL as any).revokeObjectURL = jest.fn();
-  const clickSpy = jest
+  (URL as any).createObjectURL = vi.fn(() => "blob:mock");
+  (URL as any).revokeObjectURL = vi.fn();
+  const clickSpy = vi
     .spyOn(HTMLAnchorElement.prototype, "click")
     .mockImplementation(() => {});
   let createdAnchor: HTMLAnchorElement | null = null;
   const originalCreateElement = document.createElement.bind(document);
-  jest.spyOn(document, "createElement").mockImplementation((tag: string) => {
+  vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
     const el = originalCreateElement(tag);
     if (tag === "a") createdAnchor = el as HTMLAnchorElement;
     return el;
@@ -583,7 +583,7 @@ test("import chat with a wrong-shape file shows an error and changes nothing", a
 });
 
 test("Import chat button opens the hidden file input", () => {
-  const clickSpy = jest
+  const clickSpy = vi
     .spyOn(HTMLInputElement.prototype, "click")
     .mockImplementation(() => {});
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, {

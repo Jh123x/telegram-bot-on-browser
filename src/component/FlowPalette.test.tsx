@@ -1,4 +1,4 @@
-import { test, expect, afterEach } from "@jest/globals";
+import { test, expect, afterEach, vi } from "vitest";
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { FlowPalette } from "./FlowPalette.tsx";
@@ -6,8 +6,8 @@ import { FlowPalette } from "./FlowPalette.tsx";
 // jest-dom's DOM nodes need no real DataTransfer; a lightweight stub is enough
 // to verify the palette puts the node type on the "application/reactflow" key.
 const createDataTransfer = () => ({
-  setData: jest.fn(),
-  getData: jest.fn(),
+  setData: vi.fn(),
+  getData: vi.fn(),
   dropEffect: "move",
   effectAllowed: "move",
 } as unknown as DataTransfer);
@@ -106,7 +106,7 @@ test("dragstart on each visible palette item sets the reactflow payload to its t
 });
 
 test("clicking a palette item invokes onPick with its node type", () => {
-  const onPick = jest.fn();
+  const onPick = vi.fn();
   render(<FlowPalette onPick={onPick} />);
 
   fireEvent.click(screen.getByTestId("palette-item-start"));
@@ -119,7 +119,7 @@ test("clicking a palette item invokes onPick with its node type", () => {
 });
 
 test("pressing Enter on a palette item invokes onPick with its node type", () => {
-  const onPick = jest.fn();
+  const onPick = vi.fn();
   render(<FlowPalette onPick={onPick} />);
 
   fireEvent.keyDown(screen.getByTestId("palette-item-start"), {
@@ -135,7 +135,7 @@ test("pressing Enter on a palette item invokes onPick with its node type", () =>
 });
 
 test("pressing Space on a palette item invokes onPick (and prevents scroll)", () => {
-  const onPick = jest.fn();
+  const onPick = vi.fn();
   render(<FlowPalette onPick={onPick} />);
 
   fireEvent.click(screen.getByTestId("palette-category-send"));

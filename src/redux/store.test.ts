@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect } from "vitest";
 import { store } from "./store.ts";
 import { botSlice } from "./botSlice.ts";
 

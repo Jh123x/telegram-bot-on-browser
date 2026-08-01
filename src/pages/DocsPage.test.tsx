@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { DocsPage } from "./DocsPage.tsx";
@@ -110,7 +110,7 @@ test("renders external resource links with correct URLs", () => {
 });
 
 test("calls onNavigate when clicking an in-app tab link", () => {
-  const onNavigate = jest.fn();
+  const onNavigate = vi.fn();
   render(<DocsPage onNavigate={onNavigate} />);
 
   fireEvent.click(screen.getByRole("button", { name: "Open the Settings tab" }));
@@ -193,7 +193,7 @@ test("no longer documents the old block editor", () => {
 });
 
 test("in-body tab links call onNavigate", () => {
-  const onNavigate = jest.fn();
+  const onNavigate = vi.fn();
   render(<DocsPage onNavigate={onNavigate} />);
 
   // Getting Started section links.

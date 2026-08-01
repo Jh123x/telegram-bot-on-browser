@@ -1,4 +1,4 @@
-import { test, expect, afterEach } from "@jest/globals";
+import { test, expect, afterEach, vi } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { FlowEditor } from "./FlowEditor.tsx";
@@ -81,7 +81,7 @@ test("does not render flow management controls (single-flow app)", () => {
 });
 
 const createDataTransfer = (type: string) => ({
-  setData: jest.fn(),
+  setData: vi.fn(),
   getData: () => type,
   dropEffect: "move",
   effectAllowed: "move",
@@ -260,7 +260,7 @@ test("dragOver sets the drop effect to move on the canvas", () => {
   const canvas = container.querySelector('[data-testid="reactflow-mock"]');
   expect(canvas).not.toBeNull();
 
-  const dataTransfer = { dropEffect: "", setData: jest.fn() };
+  const dataTransfer = { dropEffect: "", setData: vi.fn() };
   fireEvent.dragOver(canvas!, { dataTransfer });
   expect(dataTransfer.dropEffect).toBe("move");
 });

@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { FlowInspector } from "./FlowInspector.tsx";
@@ -89,7 +89,7 @@ test("start panel shows only the label field and no replies/edit fields", () => 
 });
 
 test("editing the start label dispatches onUpdate", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "start", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Node label"), {
@@ -133,7 +133,7 @@ test("replace transform reveals Find and Replacement fields", () => {
 });
 
 test("editing the Find field dispatches onUpdate with the flat data", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "replace1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Find"), {
@@ -172,7 +172,7 @@ test("a replace node without find/provided values shows empty Find/Replacement f
 });
 
 test("editing the Replacement field dispatches onUpdate", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "replace1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Replacement"), {
@@ -219,7 +219,7 @@ test("editing the Pattern field dispatches onUpdate", () => {
       },
     ],
   });
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(flow, "re1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Pattern"), {
@@ -250,7 +250,7 @@ test("condition panel shows label, type caption, and trigger value field", () =>
 });
 
 test("editing the condition trigger value dispatches onUpdate", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "condition1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Trigger value"), {
@@ -270,7 +270,7 @@ test("editing the condition trigger value dispatches onUpdate", () => {
 });
 
 test("editing the condition node label dispatches onUpdate", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "condition1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Node label"), {
@@ -298,7 +298,7 @@ test("send panel shows the label and replies multiline", () => {
 });
 
 test("editing replies splits the textarea on newlines", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "send1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Replies (one per line)"), {
@@ -318,7 +318,7 @@ test("editing replies splits the textarea on newlines", () => {
 });
 
 test("editing the send node label dispatches onUpdate", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "send1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Node label"), {
@@ -347,7 +347,7 @@ test("random panel shows the label and options multiline with a hint", () => {
 });
 
 test("editing random options splits the textarea on newlines", () => {
-  const onUpdate = jest.fn();
+  const onUpdate = vi.fn();
   renderInspector(makeFlow(), "random1", null, onUpdate);
 
   fireEvent.change(screen.getByLabelText("Options (one per line)"), {
@@ -389,7 +389,7 @@ test("edge panel shows the generic Connection caption for plain edges", () => {
 // ----- Auto-scroll -----
 
 test("scrolls the panel into view when a node is selected", () => {
-  const scrollSpy = jest.fn();
+  const scrollSpy = vi.fn();
   Element.prototype.scrollIntoView = scrollSpy;
   const { rerender } = renderInspector(makeFlow(), null, null);
 
@@ -408,7 +408,7 @@ test("scrolls the panel into view when a node is selected", () => {
 });
 
 test("does not scroll the panel when selection is cleared", () => {
-  const scrollSpy = jest.fn();
+  const scrollSpy = vi.fn();
   Element.prototype.scrollIntoView = scrollSpy;
   const { rerender } = renderInspector(makeFlow(), "condition1", null);
 
@@ -462,7 +462,7 @@ test("does not render a delete button when nothing is selected", () => {
 });
 
 test("renders a delete button for a selected node and invokes onDelete", () => {
-  const onDelete = jest.fn();
+  const onDelete = vi.fn();
   renderInspector(makeFlow(), "condition1", null, () => {}, onDelete);
 
   const button = screen.getByTestId("flow-inspector-delete");
@@ -472,7 +472,7 @@ test("renders a delete button for a selected node and invokes onDelete", () => {
 });
 
 test("renders a delete button for a selected edge and invokes onDelete", () => {
-  const onDelete = jest.fn();
+  const onDelete = vi.fn();
   renderInspector(makeFlow(), null, "e_if", () => {}, onDelete);
 
   const button = screen.getByTestId("flow-inspector-delete");

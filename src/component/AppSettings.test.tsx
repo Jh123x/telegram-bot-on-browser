@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { act } from "@testing-library/react";
@@ -73,7 +73,7 @@ afterEach(() => {
   localStorage.clear();
   (URL as any).createObjectURL = originalCreateObjectURL;
   (URL as any).revokeObjectURL = originalRevokeObjectURL;
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test("renders the auto-start switch, export, import, reset and coffee controls", () => {
@@ -135,9 +135,9 @@ test("coffee link points to buymeacoffee.com/jh123x and opens in a new tab", () 
 });
 
 test("export settings downloads a JSON file with the current settings", async () => {
-  (URL as any).createObjectURL = jest.fn(() => "blob:mock");
-  (URL as any).revokeObjectURL = jest.fn();
-  const clickSpy = jest
+  (URL as any).createObjectURL = vi.fn(() => "blob:mock");
+  (URL as any).revokeObjectURL = vi.fn();
+  const clickSpy = vi
     .spyOn(HTMLAnchorElement.prototype, "click")
     .mockImplementation(() => {});
 
@@ -381,7 +381,7 @@ test("reset to default clears the store and localStorage after confirm", () => {
   expect(store.getState().bot.flows).toEqual([validFlow]);
   expect(store.getState().bot.pollRate).toBe(3);
 
-  jest.spyOn(window, "confirm").mockReturnValue(true);
+  vi.spyOn(window, "confirm").mockReturnValue(true);
 
   fireEvent.click(screen.getByRole("button", { name: "Reset to default" }));
 
@@ -397,7 +397,7 @@ test("reset to default does nothing when confirm is declined", () => {
   localStorage.setItem("token", "abc:TOKEN");
   renderWithProviders(<AppSettings />, { store });
 
-  jest.spyOn(window, "confirm").mockReturnValue(false);
+  vi.spyOn(window, "confirm").mockReturnValue(false);
 
   fireEvent.click(screen.getByRole("button", { name: "Reset to default" }));
 
@@ -701,7 +701,7 @@ test("import rejects an edge carrying legacy trigger data and changes nothing", 
 });
 
 test("Import settings button opens the hidden file input", () => {
-  const clickSpy = jest
+  const clickSpy = vi
     .spyOn(HTMLInputElement.prototype, "click")
     .mockImplementation(() => {});
   const store = setupStore(seedState);
