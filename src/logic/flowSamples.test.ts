@@ -1,5 +1,4 @@
 import { FlowRuntime, validateFlow } from "./flow.ts";
-import { interpolate } from "./program.ts";
 import { FlowSample, SAMPLE_FLOWS } from "./flowSamples.ts";
 
 // SAMPLE_FLOWS is guaranteed to be in this exact order (see the
@@ -55,15 +54,9 @@ describe("Echo Flow execution", () => {
     expect(rt.handleMessage(1, "hello")).toBe(
       "Say /echo <something> to hear it back."
     );
-    // "/echo ..." transitions to the echo state whose reply is a {msg} template.
-    const raw = rt.handleMessage(1, rawMessage);
-    expect(raw).toBe("You said: {msg}");
-    // The message content is injected into the template via the interpolate
-    // helper (message minus the trigger prefix).
-    const reply = interpolate(String(raw), {
-      msg: rawMessage.replace("/echo ", ""),
-    });
-    expect(reply).toContain("You said: hi there");
+    // "/echo ..." transitions to the echo state whose reply interpolates
+    // {msg} with the raw message.
+    expect(rt.handleMessage(1, rawMessage)).toBe("You said: /echo hi there");
     // Echo state has no outgoing edges, so it goes quiet but the user stays
     // at echo.
     expect(rt.handleMessage(1, "anything")).toBeUndefined();

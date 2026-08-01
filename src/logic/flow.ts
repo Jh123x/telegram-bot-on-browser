@@ -1,4 +1,4 @@
-import { TRIGGER_LABELS, generateId, matchTrigger } from "./program.ts";
+import { TRIGGER_LABELS, generateId, interpolate, matchTrigger } from "./program.ts";
 import {
   Flow,
   FlowEdgeTriggerType,
@@ -88,9 +88,11 @@ export class FlowRuntime {
     const step = executeFlow(this.flow, message, current);
     if (!step) return undefined;
     this.currentNodes.set(userId, step.nextNodeId);
-    if (step.replies.length === 0) return undefined;
-    if (step.replies.length === 1) return step.replies[0];
-    return step.replies;
+    // Replies may reference the raw message via {msg}.
+    const replies = step.replies.map((reply) => interpolate(reply, { msg: message }));
+    if (replies.length === 0) return undefined;
+    if (replies.length === 1) return replies[0];
+    return replies;
   }
 }
 

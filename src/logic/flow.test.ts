@@ -400,6 +400,30 @@ describe("FlowRuntime", () => {
     expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
   });
 
+  test("interpolates {msg} in replies with the raw message", () => {
+    const built = buildFlow();
+    const echoNode = {
+      id: "echo",
+      type: "state" as const,
+      position: { x: 0, y: 0 },
+      data: { label: "Echo", replies: ["You said: {msg}"] },
+    };
+    const flow: Flow = {
+      ...built,
+      nodes: [built.nodes.find((n) => n.id === "start")!, echoNode],
+      edges: [
+        {
+          id: "e1",
+          source: "start",
+          target: "echo",
+          data: { trigger: { type: "fallback", value: "" } },
+        },
+      ],
+    };
+    const runtime = new FlowRuntime(flow);
+    expect(runtime.handleMessage(1, "hello there")).toBe("You said: hello there");
+  });
+
   test("state persists across messages: next message is evaluated from the new node", () => {
     const runtime = new FlowRuntime(buildFlow());
     // start -> menu
