@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig, Program } from "../redux/types.ts";
@@ -9,16 +9,21 @@ export const useBot = () => {
   const dispatch = useDispatch();
   const [bot, setBot] = useState<BrowserBot>();
   const [started, setStarted] = useState(false);
+  // Mirrors the live instance so the token effect can stop/replace it without
+  // depending on the `bot` state (which would recreate it on every change —
+  // an infinite loop). `setBot` still drives the re-render consumers need.
+  const botRef = useRef<BrowserBot>();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
   const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
 
   useEffect(() => {
-    // `bot` is intentionally not in the deps: including it would recreate the
-    // instance on every bot change (infinite loop). We only want a fresh bot
-    // when the token changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    bot?.stop();
-    setBot(new BrowserBot(token));
+    botRef.current?.stop();
+    const next = new BrowserBot(token);
+    botRef.current = next;
+    setBot(next);
+    // A new token invalidates any running connection: drop the started flag
+    // so the user can restart with the new token.
+    setStarted(false);
   }, [token]);
 
   useEffect(() => {

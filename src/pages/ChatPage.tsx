@@ -119,15 +119,16 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         });
       } else {
         replies.forEach((reply) => {
+          const t = nextTime();
           newItems.push({
             id: `sim-${now}-${i++}`,
             kind: "message",
-            time: nextTime(),
+            time: t,
             response: {
               FromUser: "Bot",
               UserID: TEST_USER.UserID,
               Message: reply,
-              TimeStamp: nextTime(),
+              TimeStamp: t,
               fromBot: true,
             },
           });

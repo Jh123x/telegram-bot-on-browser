@@ -4,7 +4,7 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { useBot } from "./useBot.ts";
 import { setupStore } from "../redux/testUtils.tsx";
-import { setPrograms } from "../redux/botSlice.ts";
+import { setPrograms, setToken } from "../redux/botSlice.ts";
 import { Program } from "../interfaces/program.ts";
 
 class MockWorker {
@@ -190,6 +190,31 @@ test("stop() terminates workers and sets started=false", () => {
   expect(result.current.started).toBe(false);
   expect(instances[0].terminate).toHaveBeenCalledTimes(1);
   expect(instances[1].terminate).toHaveBeenCalledTimes(1);
+});
+
+test("changing the token while running stops the old bot and resets started", () => {
+  const store = setupStore({
+    bot: { token: "TOKEN", programs: [], response: [], users: [] },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  expect(result.current.started).toBe(true);
+  expect(result.current.bot?.token).toBe("TOKEN");
+  expect(instances.length).toBe(2);
+
+  act(() => {
+    store.dispatch(setToken("NEW_TOKEN"));
+  });
+
+  // The old bot's workers are terminated and the flag is reset so the user
+  // can restart with the new token.
+  expect(instances[0].terminate).toHaveBeenCalledTimes(1);
+  expect(instances[1].terminate).toHaveBeenCalledTimes(1);
+  expect(result.current.started).toBe(false);
+  expect(result.current.bot?.token).toBe("NEW_TOKEN");
 });
 
 test("rules are rebuilt when programs change so new programs take effect", async () => {

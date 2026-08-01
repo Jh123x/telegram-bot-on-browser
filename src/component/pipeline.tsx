@@ -3,8 +3,6 @@ import { Chip, Tooltip, Typography, Box } from "@mui/material";
 import { NodeHint } from "../logic/program.ts";
 import { BLOCK_COLORS } from "../theme.ts";
 
-export type { NodeHint };
-
 // Round input/output port marker for a pipeline node.
 export const Port = ({
   testId,
