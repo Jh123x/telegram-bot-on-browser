@@ -16,7 +16,11 @@ export const setupStore = (preloadedState) => {
     reducer: {
       bot: botSlice.reducer,
     },
-    preloadedState,
+    preloadedState: {
+      // Merge partial fixtures over the defaults so a fixture that omits a
+      // now-required field (e.g. `flows`) still gets a valid store state.
+      bot: { ...defaultBotState, ...(preloadedState?.bot ?? {}) },
+    },
   });
 };
 
@@ -25,10 +29,7 @@ export function renderWithProviders(
   {
     preloadedState = {},
     // Automatically create a store instance if no store was passed in
-    store = configureStore({
-      reducer: { bot: botSlice.reducer },
-      preloadedState: preloadedState,
-    }),
+    store = setupStore(preloadedState),
     ...renderOptions
   } = {}
 ) {

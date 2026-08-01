@@ -374,8 +374,9 @@ test("selects the Test User by default when nothing is selected", () => {
   const store = convoStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
-  // No selectedUserId in state -> Test User conversation is auto-selected.
-  expect(store.getState().bot.selectedUserId).toBeUndefined();
+  // No selectedUserId in state (defaults to null) -> Test User conversation
+  // is auto-selected.
+  expect(store.getState().bot.selectedUserId).toBeNull();
   const testUserButton = screen.getByRole("button", { name: /Test User/ });
   expect(
     testUserButton.classList.contains("Mui-selected") ||

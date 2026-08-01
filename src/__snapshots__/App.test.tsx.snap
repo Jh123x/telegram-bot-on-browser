@@ -106,21 +106,21 @@ Object {
           data-testid="app-content"
         >
           <div
-            class="MuiBox-root css-0"
+            class="MuiBox-root css-1welr70"
             data-testid="flow-editor"
           >
             <h3
               class="MuiTypography-root MuiTypography-h3 css-ite520-MuiTypography-root"
             >
-              Flows
+              Flow
             </h3>
             <p
               class="MuiTypography-root MuiTypography-body2 css-84gl1-MuiTypography-root"
             >
-              Build conversational flows by dragging nodes from the palette onto the canvas and connecting them.
+              Build a conversational flow by dragging nodes from the palette onto the canvas and connecting them.
             </p>
             <div
-              class="MuiBox-root css-10egq61"
+              class="MuiBox-root css-b8qrnr"
             >
               <div
                 class="MuiBox-root css-yd8sa2"
@@ -239,99 +239,33 @@ Object {
                 </div>
               </div>
               <div
-                class="MuiBox-root css-1fjtzvx"
+                class="MuiBox-root css-1nk02ik"
               >
-                <div
-                  class="MuiBox-root css-tjbe7t"
-                >
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary css-tk53q5-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    + New Flow
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError css-1ikr06c-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Delete Flow
-                  </button>
-                  <div
-                    class="MuiFormControl-root MuiTextField-root css-2dt1v9-MuiFormControl-root-MuiTextField-root"
-                  >
-                    <label
-                      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-yqloyo-MuiFormLabel-root-MuiInputLabel-root"
-                      data-shrink="true"
-                      for="_r_8_"
-                      id="_r_8_-label"
-                    >
-                      Flow name
-                    </label>
-                    <div
-                      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-sizeSmall css-17o3msk-MuiInputBase-root-MuiOutlinedInput-root"
-                    >
-                      <input
-                        aria-invalid="false"
-                        class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
-                        id="_r_8_"
-                        type="text"
-                        value="Welcome Flow"
-                      />
-                      <fieldset
-                        aria-hidden="true"
-                        class="MuiOutlinedInput-notchedOutline css-vy4cj6-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
-                      >
-                        <legend
-                          class="css-ex8a5f-MuiNotchedOutlined-root"
-                        >
-                          <span>
-                            Flow name
-                          </span>
-                        </legend>
-                      </fieldset>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="MuiBox-root css-610yxv"
-                >
-                  <div
-                    aria-pressed="true"
-                    class="MuiBox-root css-13y8p9h"
-                    data-testid="flow-item-1700000000000-m7zzznrt"
-                    role="button"
-                    tabindex="0"
-                  >
-                    Welcome Flow
-                  </div>
-                </div>
-                <h6
-                  class="MuiTypography-root MuiTypography-subtitle1 flow-name-display css-a6cskh-MuiTypography-root"
-                  data-testid="flow-name-display"
-                >
-                  Welcome Flow
-                </h6>
                 <div
                   data-testid="reactflow-provider"
                 >
                   <div
-                    class="MuiBox-root css-8wqtc7"
+                    class="MuiBox-root css-ca6903"
                     data-testid="flow-canvas"
                   >
                     <div
-                      data-testid="reactflow-mock"
+                      class="MuiBox-root css-m77u3n"
+                      data-testid="flow-canvas-stage"
                     >
                       <div
-                        data-testid="reactflow-background"
-                      />
-                      <div
-                        data-testid="reactflow-controls"
-                      />
+                        data-testid="reactflow-mock"
+                      >
+                        <div
+                          data-testid="reactflow-background"
+                        />
+                        <div
+                          data-testid="reactflow-controls"
+                        />
+                      </div>
                     </div>
                     <div
-                      class="MuiBox-root css-38zrbw"
+                      class="MuiBox-root css-yl9ba7"
+                      data-testid="flow-inspector-panel"
                     >
                       <div
                         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
@@ -475,21 +409,21 @@ Object {
         data-testid="app-content"
       >
         <div
-          class="MuiBox-root css-0"
+          class="MuiBox-root css-1welr70"
           data-testid="flow-editor"
         >
           <h3
             class="MuiTypography-root MuiTypography-h3 css-ite520-MuiTypography-root"
           >
-            Flows
+            Flow
           </h3>
           <p
             class="MuiTypography-root MuiTypography-body2 css-84gl1-MuiTypography-root"
           >
-            Build conversational flows by dragging nodes from the palette onto the canvas and connecting them.
+            Build a conversational flow by dragging nodes from the palette onto the canvas and connecting them.
           </p>
           <div
-            class="MuiBox-root css-10egq61"
+            class="MuiBox-root css-b8qrnr"
           >
             <div
               class="MuiBox-root css-yd8sa2"
@@ -608,99 +542,33 @@ Object {
               </div>
             </div>
             <div
-              class="MuiBox-root css-1fjtzvx"
+              class="MuiBox-root css-1nk02ik"
             >
-              <div
-                class="MuiBox-root css-tjbe7t"
-              >
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary css-tk53q5-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  + New Flow
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError css-1ikr06c-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Delete Flow
-                </button>
-                <div
-                  class="MuiFormControl-root MuiTextField-root css-2dt1v9-MuiFormControl-root-MuiTextField-root"
-                >
-                  <label
-                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-yqloyo-MuiFormLabel-root-MuiInputLabel-root"
-                    data-shrink="true"
-                    for="_r_8_"
-                    id="_r_8_-label"
-                  >
-                    Flow name
-                  </label>
-                  <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-sizeSmall css-17o3msk-MuiInputBase-root-MuiOutlinedInput-root"
-                  >
-                    <input
-                      aria-invalid="false"
-                      class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
-                      id="_r_8_"
-                      type="text"
-                      value="Welcome Flow"
-                    />
-                    <fieldset
-                      aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-vy4cj6-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
-                    >
-                      <legend
-                        class="css-ex8a5f-MuiNotchedOutlined-root"
-                      >
-                        <span>
-                          Flow name
-                        </span>
-                      </legend>
-                    </fieldset>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="MuiBox-root css-610yxv"
-              >
-                <div
-                  aria-pressed="true"
-                  class="MuiBox-root css-13y8p9h"
-                  data-testid="flow-item-1700000000000-m7zzznrt"
-                  role="button"
-                  tabindex="0"
-                >
-                  Welcome Flow
-                </div>
-              </div>
-              <h6
-                class="MuiTypography-root MuiTypography-subtitle1 flow-name-display css-a6cskh-MuiTypography-root"
-                data-testid="flow-name-display"
-              >
-                Welcome Flow
-              </h6>
               <div
                 data-testid="reactflow-provider"
               >
                 <div
-                  class="MuiBox-root css-8wqtc7"
+                  class="MuiBox-root css-ca6903"
                   data-testid="flow-canvas"
                 >
                   <div
-                    data-testid="reactflow-mock"
+                    class="MuiBox-root css-m77u3n"
+                    data-testid="flow-canvas-stage"
                   >
                     <div
-                      data-testid="reactflow-background"
-                    />
-                    <div
-                      data-testid="reactflow-controls"
-                    />
+                      data-testid="reactflow-mock"
+                    >
+                      <div
+                        data-testid="reactflow-background"
+                      />
+                      <div
+                        data-testid="reactflow-controls"
+                      />
+                    </div>
                   </div>
                   <div
-                    class="MuiBox-root css-38zrbw"
+                    class="MuiBox-root css-yl9ba7"
+                    data-testid="flow-inspector-panel"
                   >
                     <div
                       class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"

@@ -35,26 +35,21 @@ test("renders the editor: canvas wrapper, toolbar, palette, samples, and empty s
   expect(screen.getByTestId("flow-palette")).toBeTruthy();
   expect(
     screen.getByText(
-      "No flows yet — create a new flow and drag nodes from the palette, or load a sample."
+      "No flow yet — add a node from the palette or load a sample."
     )
   ).toBeTruthy();
 });
 
-test("New Flow dispatches addFlow with a pre-placed start node and selects the new flow", () => {
-  const store = makeStore();
+test("does not render flow management controls (single-flow app)", () => {
+  const store = makeStore([makeFlow("Existing")]);
   renderWithProviders(<FlowEditor />, { store });
 
-  fireEvent.click(screen.getByRole("button", { name: "+ New Flow" }));
-
-  const flows = store.getState().bot.flows;
-  expect(flows).toHaveLength(1);
-  expect(flows[0].name).toBe("New Flow");
-  expect(flows[0].nodes).toHaveLength(1);
-  expect(flows[0].nodes[0].type).toBe("start");
-  expect(flows[0].startNodeId).toBe(flows[0].nodes[0].id);
-  expect(
-    screen.getByText("New Flow", { selector: ".flow-name-display" })
-  ).toBeTruthy();
+  // No "+ New Flow", no "Delete Flow", no rename field, no flow rail.
+  expect(screen.queryByRole("button", { name: "+ New Flow" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Delete Flow" })).toBeNull();
+  expect(screen.queryByLabelText("Flow name")).toBeNull();
+  expect(screen.queryByTestId("flow-name-display")).toBeNull();
+  expect(screen.queryByTestId(/flow-item-/)).toBeNull();
 });
 
 const createDataTransfer = (type: string) => ({
@@ -109,30 +104,6 @@ test("dropping a node onto an existing flow adds it to that flow", () => {
   expect(flows[0].nodes[0].type).toBe("send");
 });
 
-test("typing the flow name dispatches updateFlow", () => {
-  const flow = makeFlow("Original");
-  const store = makeStore([flow]);
-  renderWithProviders(<FlowEditor />, { store });
-
-  fireEvent.change(screen.getByLabelText("Flow name"), {
-    target: { value: "Renamed" },
-  });
-
-  expect(store.getState().bot.flows[0].name).toBe("Renamed");
-});
-
-test("Delete Flow removes the flow and selects a remaining one", () => {
-  const f1 = makeFlow("First", "f1");
-  const f2 = makeFlow("Second", "f2");
-  const store = makeStore([f1, f2]);
-  renderWithProviders(<FlowEditor />, { store });
-
-  fireEvent.click(screen.getByTestId("flow-item-f1"));
-  fireEvent.click(screen.getByRole("button", { name: "Delete Flow" }));
-
-  expect(store.getState().bot.flows.map((f) => f.id)).toEqual(["f2"]);
-});
-
 test("renders validation errors for an invalid flow", () => {
   const empty = makeFlow("Empty Flow", "empty");
   const store = makeStore([empty]);
@@ -141,32 +112,29 @@ test("renders validation errors for an invalid flow", () => {
   expect(screen.getByText(/Flow must have a start node/)).toBeTruthy();
 });
 
-test("switching between flows updates which flow is edited", () => {
-  const f1 = makeFlow("First", "f1");
-  const f2 = makeFlow("Second", "f2");
-  const store = makeStore([f1, f2]);
+test("loading a sample replaces the current flow (never appends)", () => {
+  const flow = makeFlow("Existing", "existing");
+  const store = makeStore([flow]);
   renderWithProviders(<FlowEditor />, { store });
 
-  expect(screen.getByLabelText("Flow name")).toHaveValue("First");
+  fireEvent.click(screen.getByTestId("flow-sample-Welcome Flow"));
 
-  fireEvent.click(screen.getByTestId("flow-item-f2"));
-
-  expect(screen.getByLabelText("Flow name")).toHaveValue("Second");
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].name).toBe("Welcome Flow");
+  expect(flows[0].id).not.toBe("existing");
+  expect(flows[0].nodes.length).toBeGreaterThan(0);
 });
 
-test("flow items are keyboard-accessible: pressing Enter selects a flow", () => {
-  const f1 = makeFlow("First", "f1");
-  const f2 = makeFlow("Second", "f2");
-  const store = makeStore([f1, f2]);
+test("loading a sample when no flow exists creates the single flow", () => {
+  const store = makeStore();
   renderWithProviders(<FlowEditor />, { store });
 
-  expect(screen.getByLabelText("Flow name")).toHaveValue("First");
+  fireEvent.click(screen.getByTestId("flow-sample-Welcome Flow"));
 
-  fireEvent.keyDown(screen.getByTestId("flow-item-f2"), { key: "Enter" });
-
-  expect(screen.getByLabelText("Flow name")).toHaveValue("Second");
-  expect(screen.getByTestId("flow-item-f2")).toHaveAttribute("aria-pressed", "true");
-  expect(screen.getByTestId("flow-item-f1")).toHaveAttribute("aria-pressed", "false");
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].name).toBe("Welcome Flow");
 });
 
 test("clicking each palette item adds the right node type to the selected flow", () => {
@@ -199,7 +167,6 @@ test("clicking a palette item with no flow creates a flow containing the node", 
   expect(storeFlows[0].nodes[0].type).toBe("send");
   expect(storeFlows[0].startNodeId).toBe("");
   expect(storeFlows[0].nodes[0].position).toEqual({ x: 120, y: 80 });
-  expect(screen.getByLabelText("Flow name")).toHaveValue("New Flow");
 });
 
 test("clicking a palette start item with no flow sets the start node", () => {
@@ -230,12 +197,28 @@ test("persists flow changes to localStorage after the initial render", () => {
 
   expect(localStorage.getItem("flows")).toBeNull();
 
-  fireEvent.change(screen.getByLabelText("Flow name"), {
-    target: { value: "Renamed" },
-  });
+  fireEvent.click(screen.getByTestId("palette-item-transform"));
 
   const stored = JSON.parse(localStorage.getItem("flows")!);
   expect(stored).toHaveLength(1);
   expect(stored[0].id).toBe(flow.id);
-  expect(stored[0].name).toBe("Renamed");
+  expect(stored[0].nodes).toHaveLength(1);
+  expect(stored[0].nodes[0].type).toBe("transform");
+});
+
+test("renders the inspector as a side panel beside the graph canvas", () => {
+  const flow = makeFlow("Existing");
+  const store = makeStore([flow]);
+  const { container } = renderWithProviders(<FlowEditor />, { store });
+
+  const canvas = screen.getByTestId("flow-canvas");
+  const panel = screen.getByTestId("flow-inspector-panel");
+  const mock = container.querySelector('[data-testid="reactflow-mock"]');
+
+  expect(canvas).toBeTruthy();
+  expect(panel).toBeTruthy();
+  expect(mock).not.toBeNull();
+  // The inspector is a separate side panel, not a sibling of the canvas
+  // viewport (i.e. it sits beside the graph, not below it).
+  expect(panel.parentElement).not.toBe(mock!.parentElement);
 });

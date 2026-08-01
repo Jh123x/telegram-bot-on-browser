@@ -10,7 +10,7 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { FlowPalette } from "./FlowPalette.tsx";
 import { FlowSamples } from "./FlowSamples.tsx";
 import { FlowInspector } from "./FlowInspector.tsx";
@@ -19,10 +19,12 @@ import {
   createFlowNode,
   dropNodeDimensionChanges,
   flowEdgeLabel,
+  removeFlowEdge,
+  removeFlowNode,
   validateFlow,
 } from "../logic/flow.ts";
 import { generateId } from "../logic/flow.ts";
-import { addFlow, removeFlow, updateFlow } from "../redux/botSlice.ts";
+import { addFlow, setFlows, updateFlow } from "../redux/botSlice.ts";
 import { BotWithConfig } from "../redux/types.ts";
 import { Flow, FlowEdge, FlowNodeType } from "../interfaces/flow.ts";
 import { edgeColorFor } from "../theme.ts";
@@ -43,13 +45,7 @@ const nodeTypes = {
   send: SendNode,
 };
 
-const EditorCanvas = ({
-  flow,
-  onFlowCreated,
-}: {
-  flow: Flow;
-  onFlowCreated?: (id: string) => void;
-}) => {
+const EditorCanvas = ({ flow }: { flow: Flow }) => {
   const dispatch = useDispatch();
   const { screenToFlowPosition } = useReactFlow();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -196,7 +192,6 @@ const EditorCanvas = ({
     if (flow.id === "") {
       const created = createFlow();
       dispatch(addFlow({ ...created, nodes: [node], startNodeId: type === "start" ? node.id : "" }));
-      onFlowCreated?.(created.id);
       return;
     }
     persistFlow({
@@ -211,43 +206,86 @@ const EditorCanvas = ({
     event.dataTransfer.dropEffect = "move";
   };
 
+  // Deletes the currently selected node (and its connected edges) or edge.
+  // Mirrors the canvas Delete-key semantics; used by the inspector's Delete
+  // button so deletion is discoverable without knowing the shortcut.
+  const handleDelete = () => {
+    const current = flowRef.current;
+    if (current.id === "") return;
+    let next: Flow | null = null;
+    if (selectedNodeId) {
+      next = removeFlowNode(current, selectedNodeId);
+      setSelectedNodeId(null);
+    } else if (selectedEdgeId) {
+      next = removeFlowEdge(current, selectedEdgeId);
+      setSelectedEdgeId(null);
+    }
+    if (next) persistFlow(next);
+  };
+
   return (
     <Box
       data-testid="flow-canvas"
-      sx={{ flex: 1, height: 500, border: "1px solid #3a3a3c", borderRadius: 2, overflow: "hidden" }}
+      sx={{
+        flex: 1,
+        minHeight: 320,
+        display: "flex",
+        gap: 1.5,
+        minWidth: 0,
+      }}
     >
-      <ReactFlow
-        nodes={rfNodes}
-        edges={rfEdges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onNodeClick={(_, node) => {
-          setSelectedNodeId(node.id);
-          setSelectedEdgeId(null);
+      <Box
+        data-testid="flow-canvas-stage"
+        sx={{
+          flex: 1,
+          minWidth: 0,
+          border: "1px solid #3a3a3c",
+          borderRadius: 2,
+          overflow: "hidden",
         }}
-        onPaneClick={() => {
-          setSelectedNodeId(null);
-          setSelectedEdgeId(null);
-        }}
-        onEdgeClick={(_, edge) => {
-          setSelectedEdgeId(edge.id);
-          setSelectedNodeId(null);
-        }}
-        fitView
       >
-        <Background />
-        <Controls />
-      </ReactFlow>
-      <Box sx={{ p: 1.5 }}>
+        <ReactFlow
+          nodes={rfNodes}
+          edges={rfEdges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onNodeClick={(_, node) => {
+            setSelectedNodeId(node.id);
+            setSelectedEdgeId(null);
+          }}
+          onPaneClick={() => {
+            setSelectedNodeId(null);
+            setSelectedEdgeId(null);
+          }}
+          onEdgeClick={(_, edge) => {
+            setSelectedEdgeId(edge.id);
+            setSelectedNodeId(null);
+          }}
+          fitView
+        >
+          <Background />
+          <Controls />
+        </ReactFlow>
+      </Box>
+      <Box
+        data-testid="flow-inspector-panel"
+        sx={{
+          width: 280,
+          flexShrink: 0,
+          overflowY: "auto",
+          minHeight: 0,
+        }}
+      >
         <FlowInspector
           flow={flow}
           selectedNodeId={selectedNodeId}
           selectedEdgeId={selectedEdgeId}
           onUpdate={persistFlow}
+          onDelete={handleDelete}
         />
       </Box>
     </Box>
@@ -265,7 +303,9 @@ const EmptyFlow: Flow = {
 export const FlowEditor = () => {
   const dispatch = useDispatch();
   const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows);
-  const [selectedFlowId, setSelectedFlowId] = useState<string | null>(null);
+  // The app is single-flow: the first flow is THE flow. No rail, no naming,
+  // no creating/deleting flows — samples and drops just replace or fill it.
+  const flow = flows[0] ?? null;
 
   // Persist flow edits to localStorage on every change. Guard: the first
   // effect run (including StrictMode's simulated remount) establishes a
@@ -283,45 +323,11 @@ export const FlowEditor = () => {
     localStorage.setItem("flows", serialized);
   }, [flows]);
 
-  // Keep a flow selected: default to the first flow; if flows empty, none.
-  useEffect(() => {
-    if (flows.length === 0) {
-      if (selectedFlowId !== null) setSelectedFlowId(null);
-      return;
-    }
-    if (!flows.some((f) => f.id === selectedFlowId)) {
-      setSelectedFlowId(flows[0].id);
-    }
-  }, [flows, selectedFlowId]);
-
-  const selectedFlow = flows.find((f) => f.id === selectedFlowId) ?? null;
-
-  const handleNewFlow = () => {
-    const flow = createFlow();
-    const start = createFlowNode("start", { x: 0, y: 0 });
-    dispatch(addFlow({ ...flow, nodes: [start], startNodeId: start.id }));
-    setSelectedFlowId(flow.id);
-  };
-
-  const handleDeleteFlow = (id: string) => {
-    const remaining = flows.filter((f) => f.id !== id);
-    dispatch(removeFlow(id));
-    // Select a remaining flow (prefer the one at the same index).
-    const index = flows.findIndex((f) => f.id === id);
-    const nextSelected = remaining[Math.min(index, remaining.length - 1)];
-    setSelectedFlowId(nextSelected ? nextSelected.id : null);
-  };
-
-  const handleRename = (name: string) => {
-    if (!selectedFlow) return;
-    dispatch(updateFlow({ ...selectedFlow, name }));
-  };
-
   const handlePalettePick = (type: FlowNodeType) => {
     const node = createFlowNode(type, { x: 120, y: 80 });
-    // No flow selected yet: create one containing the picked node, mirroring
-    // the onDrop empty-case (createFlow + addFlow + select the new flow).
-    if (selectedFlow === null) {
+    // No flow yet: create one containing the picked node, mirroring the
+    // onDrop empty-case (createFlow + addFlow).
+    if (flow === null) {
       const created = createFlow();
       dispatch(
         addFlow({
@@ -330,124 +336,57 @@ export const FlowEditor = () => {
           startNodeId: type === "start" ? node.id : "",
         })
       );
-      setSelectedFlowId(created.id);
       return;
     }
-    // Add the node to the selected flow, offset for each new node so they do
+    // Add the node to the single flow, offset for each new node so they do
     // not stack exactly on top of one another.
-    const offset = (selectedFlow.nodes.length % 5) * 40;
+    const offset = (flow.nodes.length % 5) * 40;
     dispatch(
       updateFlow({
-        ...selectedFlow,
+        ...flow,
         nodes: [
-          ...selectedFlow.nodes,
+          ...flow.nodes,
           { ...node, position: { x: 120 + offset, y: 80 + offset } },
         ],
-        startNodeId: type === "start" ? node.id : selectedFlow.startNodeId,
+        startNodeId: type === "start" ? node.id : flow.startNodeId,
       })
     );
   };
 
-  const errors = selectedFlow ? validateFlow(selectedFlow) : [];
+  // Samples replace the single flow (never append — multiple flows are not
+  // allowed). setFlows([loaded]) also covers the no-flow case.
+  const handleSampleLoaded = (loaded: Flow) => {
+    dispatch(setFlows([loaded]));
+  };
+
+  const errors = flow ? validateFlow(flow) : [];
 
   return (
-    <Box data-testid="flow-editor">
-      <Typography variant="h3" sx={{ mb: 0.5 }}>Flows</Typography>
+    <Box
+      data-testid="flow-editor"
+      sx={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}
+    >
+      <Typography variant="h3" sx={{ mb: 0.5 }}>Flow</Typography>
       <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
-        Build conversational flows by dragging nodes from the palette onto the
+        Build a conversational flow by dragging nodes from the palette onto the
         canvas and connecting them.
       </Typography>
 
-      <Box sx={{ display: "flex", gap: 2 }}>
+      <Box sx={{ display: "flex", gap: 2, flex: 1, minHeight: 0 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <FlowPalette onPick={handlePalettePick} />
-          <FlowSamples onLoaded={(flow) => setSelectedFlowId(flow.id)} />
+          <FlowSamples onLoaded={handleSampleLoaded} />
         </Box>
 
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          {/* Toolbar */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5, flexWrap: "wrap" }}>
-            <Button variant="contained" size="small" onClick={handleNewFlow}>
-              + New Flow
-            </Button>
-            {selectedFlow && (
-              <Button
-                variant="outlined"
-                size="small"
-                color="error"
-                onClick={() => handleDeleteFlow(selectedFlow.id)}
-              >
-                Delete Flow
-              </Button>
-            )}
-            {selectedFlow && (
-              <TextField
-                label="Flow name"
-                size="small"
-                value={selectedFlow.name}
-                onChange={(e) => handleRename(e.target.value)}
-                sx={{ flex: 1, maxWidth: 320 }}
-              />
-            )}
-          </Box>
-
-          {/* Flow rail (list) */}
-          {flows.length > 0 && (
-            <Box
-              sx={{
-                display: "flex",
-                gap: 0.5,
-                mb: 1.5,
-                flexWrap: "wrap",
-              }}
-            >
-              {flows.map((flow) => (
-                <Box
-                  key={flow.id}
-                  data-testid={`flow-item-${flow.id}`}
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={flow.id === selectedFlowId}
-                  onClick={() => setSelectedFlowId(flow.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedFlowId(flow.id);
-                    }
-                  }}
-                  sx={{
-                    px: 1.25,
-                    py: 0.5,
-                    borderRadius: 1,
-                    cursor: "pointer",
-                    bgcolor:
-                      flow.id === selectedFlowId
-                        ? "rgba(124,58,237,0.18)"
-                        : "transparent",
-                    border:
-                      flow.id === selectedFlowId
-                        ? "1px solid #7c3aed"
-                        : "1px solid #3a3a3c",
-                    fontSize: 14,
-                  }}
-                >
-                  {flow.name}
-                </Box>
-              ))}
-            </Box>
-          )}
-
-          {selectedFlow && (
-            <Typography
-              className="flow-name-display"
-              variant="subtitle1"
-              data-testid="flow-name-display"
-              sx={{ mb: 1 }}
-            >
-              {selectedFlow.name}
-            </Typography>
-          )}
-
+        <Box
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
           {errors.length > 0 && (
             <Box sx={{ mb: 1.5 }}>
               {errors.map((error) => (
@@ -463,13 +402,12 @@ export const FlowEditor = () => {
           )}
 
           <ReactFlowProvider>
-            <EditorCanvas flow={selectedFlow ?? EmptyFlow} onFlowCreated={setSelectedFlowId} />
+            <EditorCanvas flow={flow ?? EmptyFlow} />
           </ReactFlowProvider>
 
-          {flows.length === 0 && (
+          {flow === null && (
             <Typography variant="body2" sx={{ mt: 1.5 }}>
-              No flows yet — create a new flow and drag nodes from the palette,
-              or load a sample.
+              No flow yet — add a node from the palette or load a sample.
             </Typography>
           )}
         </Box>

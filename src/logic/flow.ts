@@ -125,6 +125,25 @@ export function dropNodeDimensionChanges<T extends { type: string }>(
   return changes.filter((change) => change.type !== "dimensions");
 }
 
+// Removes a node and every edge connected to it (the same semantics as the
+// canvas Delete key: a node cannot stay wired to a graph it is no longer in).
+// Deleting the start node also clears startNodeId so validation reports it.
+export function removeFlowNode(flow: Flow, nodeId: string): Flow {
+  return {
+    ...flow,
+    nodes: flow.nodes.filter((n) => n.id !== nodeId),
+    edges: flow.edges.filter(
+      (e) => e.source !== nodeId && e.target !== nodeId
+    ),
+    startNodeId: flow.startNodeId === nodeId ? "" : flow.startNodeId,
+  };
+}
+
+// Removes a single edge by id; nodes are untouched.
+export function removeFlowEdge(flow: Flow, edgeId: string): Flow {
+  return { ...flow, edges: flow.edges.filter((e) => e.id !== edgeId) };
+}
+
 export function createFlowNode(
   type: FlowNodeType,
   position?: { x: number; y: number }
@@ -240,9 +259,6 @@ export function executeFlow(
 // evaluated from the flow's start node.
 export class FlowRuntime {
   constructor(private flow: Flow) {}
-
-  // No-op: execution is stateless, so there is no per-user state to clear.
-  reset(_userId: number): void {}
 
   // Evaluates the message from the start node every time.
   //   - undefined  -> no send node reached (caller falls through to next rule)

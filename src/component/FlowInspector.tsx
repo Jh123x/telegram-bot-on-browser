@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -21,6 +22,7 @@ interface FlowInspectorProps {
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
   onUpdate: (next: Flow) => void;
+  onDelete?: () => void;
 }
 
 // The four flow node types, keyed by the kind of panel they render.
@@ -53,6 +55,7 @@ export const FlowInspector = ({
   selectedNodeId,
   selectedEdgeId,
   onUpdate,
+  onDelete,
 }: FlowInspectorProps) => {
   const selectedNode = selectedNodeId
     ? flow.nodes.find((n) => n.id === selectedNodeId) ?? null
@@ -61,9 +64,19 @@ export const FlowInspector = ({
     ? flow.edges.find((e) => e.id === selectedEdgeId) ?? null
     : null;
 
+  // The panel lives BELOW the 500px canvas, so on small screens it can sit
+  // below the fold. When the user selects a node/edge, bring the panel into
+  // view so the edit fields are actually visible (snappy scroll, no fade).
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!selectedNodeId && !selectedEdgeId) return;
+    // Optional-call: jsdom has no scrollIntoView; browsers do.
+    panelRef.current?.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+  }, [selectedNodeId, selectedEdgeId]);
+
   if (!selectedNode && !selectedEdge) {
     return (
-      <Paper sx={{ p: 1.5 }}>
+      <Paper ref={panelRef} sx={{ p: 1.5 }}>
         <Typography variant="caption" sx={{ color: "text.secondary" }}>
           Select a node or edge to edit it.
         </Typography>
@@ -82,6 +95,21 @@ export const FlowInspector = ({
       }
     />
   );
+
+  const DeleteButton = ({ label }: { label: string }) =>
+    onDelete ? (
+      <Button
+        data-testid="flow-inspector-delete"
+        variant="outlined"
+        color="error"
+        size="small"
+        fullWidth
+        sx={{ mt: 1.5 }}
+        onClick={onDelete}
+      >
+        {label}
+      </Button>
+    ) : null;
 
   if (selectedNode) {
     if (selectedNode.type === "transform") {
@@ -109,7 +137,7 @@ export const FlowInspector = ({
       };
 
       return (
-        <Paper sx={{ p: 1.5 }}>
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Transform Node
           </Typography>
@@ -160,6 +188,7 @@ export const FlowInspector = ({
               onChange={setTransformField("pattern")}
             />
           )}
+          <DeleteButton label="Delete node" />
         </Paper>
       );
     }
@@ -185,7 +214,7 @@ export const FlowInspector = ({
       };
 
       return (
-        <Paper sx={{ p: 1.5 }}>
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Condition Node
           </Typography>
@@ -214,6 +243,7 @@ export const FlowInspector = ({
             value={trigger.value}
             onChange={setTriggerValue}
           />
+          <DeleteButton label="Delete node" />
         </Paper>
       );
     }
@@ -227,7 +257,7 @@ export const FlowInspector = ({
       };
 
       return (
-        <Paper sx={{ p: 1.5 }}>
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Send Node
           </Typography>
@@ -242,17 +272,19 @@ export const FlowInspector = ({
             value={replies.join("\n")}
             onChange={(e) => updateReplies(e.target.value)}
           />
+          <DeleteButton label="Delete node" />
         </Paper>
       );
     }
 
     // start node: label only.
     return (
-      <Paper sx={{ p: 1.5 }}>
+      <Paper ref={panelRef} sx={{ p: 1.5 }}>
         <Typography variant="subtitle2" sx={{ mb: 1 }}>
           Start Node
         </Typography>
         <LabelField label="Node label" value={selectedNode.data.label} />
+        <DeleteButton label="Delete node" />
       </Paper>
     );
   }
@@ -266,13 +298,14 @@ export const FlowInspector = ({
       : "Connection";
 
   return (
-    <Paper sx={{ p: 1.5 }}>
+    <Paper ref={panelRef} sx={{ p: 1.5 }}>
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
         Edge
       </Typography>
       <Typography variant="body2" data-testid="flow-inspector-edge-caption">
         {caption}
       </Typography>
+      <DeleteButton label="Delete edge" />
     </Paper>
   );
 };

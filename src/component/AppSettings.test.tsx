@@ -174,6 +174,7 @@ test("import settings applies token, resets flows to empty and applies autoStart
       JSON.stringify({
         version: 1,
         token: "imp-token",
+        flows: [],
         autoStart: true,
       }),
     ],
@@ -189,11 +190,44 @@ test("import settings applies token, resets flows to empty and applies autoStart
   });
 
   expect(store.getState().bot.token).toBe("imp-token");
-  // No flows key in the file: flows reset to empty.
+  // An empty flows list imports as empty.
   expect(store.getState().bot.flows).toEqual([]);
   expect(store.getState().bot.autoStart).toBe(true);
   expect(localStorage.getItem("token")).toBe("imp-token");
   expect(localStorage.getItem("autoStart")).toBe("true");
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+});
+
+test("import settings collapses multiple flows to the first one", async () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  const second = { ...validFlow, id: "f2", name: "Second Flow" };
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [validFlow, second],
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  const flows = store.getState().bot.flows;
+  expect(flows).toHaveLength(1);
+  expect(flows[0].id).toBe(validFlow.id);
+  expect(flows[0].name).toBe("Order");
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Settings imported."
   );
@@ -208,6 +242,7 @@ test("import settings restores pollRate when present in the file", async () => {
       JSON.stringify({
         version: 1,
         token: "imp-token",
+        flows: [],
         pollRate: 3,
       }),
     ],
@@ -238,6 +273,7 @@ test("import settings without pollRate keeps the default", async () => {
       JSON.stringify({
         version: 1,
         token: "imp-token",
+        flows: [],
         autoStart: false,
       }),
     ],
@@ -267,6 +303,7 @@ test("import settings with an invalid pollRate falls back to the default", async
       JSON.stringify({
         version: 1,
         token: "imp-token",
+        flows: [],
         pollRate: -3,
       }),
     ],
@@ -410,7 +447,7 @@ test("import settings restores flows into the store and localStorage", async () 
   );
 });
 
-test("importing an old-format file without flows succeeds and resets flows to empty", async () => {
+test("importing a file without flows shows an error and changes nothing", async () => {
   const store = setupStore(seedState);
   localStorage.setItem("token", "abc:TOKEN");
   localStorage.setItem("flows", JSON.stringify([validFlow]));
@@ -435,13 +472,12 @@ test("importing an old-format file without flows succeeds and resets flows to em
     await new Promise((r) => setTimeout(r, 10));
   });
 
-  expect(store.getState().bot).toMatchObject({
-    token: "imp-token",
-    flows: [],
-  });
-  expect(localStorage.getItem("flows")).toBe("[]");
+  // flows is required — a file without it is rejected, nothing changes.
+  expect(store.getState().bot.token).toBe("abc:TOKEN");
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+  expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
   expect(screen.getByTestId("import-status").textContent).toContain(
-    "Settings imported."
+    "Could not import settings"
   );
 });
 
