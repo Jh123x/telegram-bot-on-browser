@@ -42,7 +42,7 @@ Object {
                       tabindex="0"
                       type="button"
                     >
-                      Programs
+                      Flow
                     </button>
                     <button
                       aria-selected="false"
@@ -70,15 +70,6 @@ Object {
                       type="button"
                     >
                       Docs
-                    </button>
-                    <button
-                      aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
-                      role="tab"
-                      tabindex="-1"
-                      type="button"
-                    >
-                      Flows
                     </button>
                   </div>
                   <span
@@ -114,878 +105,198 @@ Object {
           class="MuiBox-root css-jg3ssn"
           data-testid="app-content"
         >
-          <div>
+          <div
+            class="MuiBox-root css-0"
+            data-testid="flow-editor"
+          >
             <h3
-              class="MuiTypography-root MuiTypography-h3 css-xrxebb-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h3 css-ite520-MuiTypography-root"
             >
-              Programs
+              Flows
             </h3>
             <p
-              class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body2 css-84gl1-MuiTypography-root"
             >
-              Add blocks with the buttons on each program card. When a user sends a message, the first program whose trigger matches replies with its actions.
+              Build conversational flows by dragging nodes from the palette onto the canvas and connecting them.
             </p>
             <div
-              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
-              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
+              class="MuiBox-root css-10egq61"
             >
-              <h6
-                class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
-              >
-                Blocks
-              </h6>
               <div
-                class="MuiBox-root css-1ijwczz"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1jnj1i4-MuiPaper-root"
+                data-testid="flow-palette"
+                style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >
+                <h6
+                  class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
+                >
+                  Palette
+                </h6>
                 <span
-                  class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
                 >
-                  What each block does. Add blocks with the buttons on each program card.
+                  Drag a node onto the canvas.
                 </span>
-                <button
-                  aria-controls="palette-collapse"
-                  aria-expanded="true"
-                  class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary css-153uswc-MuiButtonBase-root-MuiButton-root"
-                  data-testid="palette-toggle"
-                  tabindex="0"
-                  type="button"
+                <div
+                  class="MuiBox-root css-1lf1isb"
+                  data-testid="palette-item-start"
+                  draggable="true"
                 >
-                  Hide block reference
-                </button>
+                  Start
+                </div>
+                <div
+                  class="MuiBox-root css-1lf1isb"
+                  data-testid="palette-item-state"
+                  draggable="true"
+                >
+                  State
+                </div>
               </div>
               <div
-                class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
-                data-testid="palette-collapse"
-                id="palette-collapse"
-                style="min-height: 0px;"
+                class="MuiBox-root css-1fjtzvx"
               >
                 <div
-                  class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
+                  class="MuiBox-root css-tjbe7t"
                 >
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary css-tk53q5-MuiButtonBase-root-MuiButton-root"
+                    tabindex="0"
+                    type="button"
+                  >
+                    + New Flow
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError css-1ikr06c-MuiButtonBase-root-MuiButton-root"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Delete Flow
+                  </button>
                   <div
-                    class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
+                    class="MuiFormControl-root MuiTextField-root css-2dt1v9-MuiFormControl-root-MuiTextField-root"
+                  >
+                    <label
+                      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-yqloyo-MuiFormLabel-root-MuiInputLabel-root"
+                      data-shrink="true"
+                      for="_r_8_"
+                      id="_r_8_-label"
+                    >
+                      Flow name
+                    </label>
+                    <div
+                      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-sizeSmall css-17o3msk-MuiInputBase-root-MuiOutlinedInput-root"
+                    >
+                      <input
+                        aria-invalid="false"
+                        class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
+                        id="_r_8_"
+                        type="text"
+                        value="Welcome Flow"
+                      />
+                      <fieldset
+                        aria-hidden="true"
+                        class="MuiOutlinedInput-notchedOutline css-vy4cj6-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                      >
+                        <legend
+                          class="css-ex8a5f-MuiNotchedOutlined-root"
+                        >
+                          <span>
+                            Flow name
+                          </span>
+                        </legend>
+                      </fieldset>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
+                    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                   >
                     <h6
-                      class="MuiTypography-root MuiTypography-subtitle2 css-tme4xk-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
                     >
-                      <span
-                        style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-                      />
-                      Triggers
+                      Samples
                     </h6>
                     <div
-                      class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                      data-testid="palette-table-trigger"
+                      class="MuiBox-root css-zryp6"
                     >
-                      <table
-                        class="MuiTable-root css-1o9t8bs-MuiTable-root"
+                      <button
+                        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
+                        data-testid="flow-sample-Welcome Flow"
+                        tabindex="0"
+                        type="button"
                       >
-                        <thead
-                          class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-                        >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                          >
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Block Type
-                            </th>
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Description
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody
-                          class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                        >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              When message equals
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-trigger-equals"
-                            >
-                              Runs when the message is exactly the trigger value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              When message contains
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-trigger-contains"
-                            >
-                              Runs when the message includes the trigger value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              When message starts with
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-trigger-startsWith"
-                            >
-                              Runs when the message begins with the trigger value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              When message ends with
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-trigger-endsWith"
-                            >
-                              Runs when the message ends with the trigger value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              When message does not equal
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-trigger-notEquals"
-                            >
-                              Runs when the message is not exactly the trigger value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              When message does not contain
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-trigger-notContains"
-                            >
-                              Runs when the message does not include the trigger value.
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                        Welcome Flow
+                      </button>
+                      <button
+                        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
+                        data-testid="flow-sample-Echo Flow"
+                        tabindex="0"
+                        type="button"
+                      >
+                        Echo Flow
+                      </button>
+                      <button
+                        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
+                        data-testid="flow-sample-Quiz Flow"
+                        tabindex="0"
+                        type="button"
+                      >
+                        Quiz Flow
+                      </button>
                     </div>
-                    <h6
-                      class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
-                    >
-                      <span
-                        style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-                      />
-                      Logic
-                    </h6>
+                  </div>
+                </div>
+                <div
+                  class="MuiBox-root css-610yxv"
+                >
+                  <div
+                    class="MuiBox-root css-13y8p9h"
+                    data-testid="flow-item-1700000000000-m7zzznrt"
+                  >
+                    Welcome Flow
+                  </div>
+                </div>
+                <h6
+                  class="MuiTypography-root MuiTypography-subtitle1 flow-name-display css-a6cskh-MuiTypography-root"
+                  data-testid="flow-name-display"
+                >
+                  Welcome Flow
+                </h6>
+                <div
+                  data-testid="reactflow-provider"
+                >
+                  <div
+                    class="MuiBox-root css-8wqtc7"
+                    data-testid="flow-canvas"
+                  >
                     <div
-                      class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                      data-testid="palette-table-logic"
+                      data-testid="reactflow-mock"
                     >
-                      <table
-                        class="MuiTable-root css-1o9t8bs-MuiTable-root"
-                      >
-                        <thead
-                          class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-                        >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                          >
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Block Type
-                            </th>
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Description
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody
-                          class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                        >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message length is greater than
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-lengthGreater"
-                            >
-                              Passes when the message is longer than the number.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message length is less than
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-lengthLess"
-                            >
-                              Passes when the message is shorter than the number.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message matches regex
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-matchesRegex"
-                            >
-                              Passes when the message matches the regular expression.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message length equals
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-lengthEquals"
-                            >
-                              Passes when the message length equals the number.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message is a number
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-isNumber"
-                            >
-                              Passes when the message is a number.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message equals
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-equals"
-                            >
-                              Passes when the message is exactly the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message contains
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-contains"
-                            >
-                              Passes when the message includes the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message starts with
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-startsWith"
-                            >
-                              Passes when the message begins with the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message ends with
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-endsWith"
-                            >
-                              Passes when the message ends with the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message does not equal
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notEquals"
-                            >
-                              Passes when the message is not exactly the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message does not contain
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notContains"
-                            >
-                              Passes when the message does not include the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message does not start with
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notStartsWith"
-                            >
-                              Passes when the message does not begin with the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message does not end with
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notEndsWith"
-                            >
-                              Passes when the message does not end with the value.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message length is not greater than
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notLengthGreater"
-                            >
-                              Passes when the message is not longer than the number.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message length is not less than
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notLengthLess"
-                            >
-                              Passes when the message is not shorter than the number.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message length does not equal
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notLengthEquals"
-                            >
-                              Passes when the message length does not equal the number.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message does not match regex
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notMatchesRegex"
-                            >
-                              Passes when the message does not match the regular expression.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              message is not a number
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-logic-notIsNumber"
-                            >
-                              Passes when the message is not a number.
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div
+                        data-testid="reactflow-background"
+                      />
+                      <div
+                        data-testid="reactflow-controls"
+                      />
                     </div>
-                    <h6
-                      class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
-                    >
-                      <span
-                        style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-                      />
-                      Transform
-                    </h6>
                     <div
-                      class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                      data-testid="palette-table-transform"
+                      class="MuiBox-root css-38zrbw"
                     >
-                      <table
-                        class="MuiTable-root css-1o9t8bs-MuiTable-root"
+                      <div
+                        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
+                        style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                       >
-                        <thead
-                          class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
                         >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                          >
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Block Type
-                            </th>
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Description
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody
-                          class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                        >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              make uppercase
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-uppercase"
-                            >
-                              Changes the message to UPPERCASE.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              make lowercase
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-lowercase"
-                            >
-                              Changes the message to lowercase.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              trim whitespace
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-trim"
-                            >
-                              Removes spaces at the start and end.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              replace text
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-replace"
-                            >
-                              Replaces matching text with new text.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              concat text
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-concat"
-                            >
-                              Adds text before or after the message.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              capitalize first letter
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-capitalize"
-                            >
-                              Capitalizes the first letter.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              capitalize each word
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-titleCase"
-                            >
-                              Capitalizes the first letter of each word.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              reverse text
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-reverse"
-                            >
-                              Reverses the text.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              remove text
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-transform-remove"
-                            >
-                              Removes matching text.
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <h6
-                      class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
-                    >
-                      <span
-                        style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-                      />
-                      Action
-                    </h6>
-                    <div
-                      class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                      data-testid="palette-table-action"
-                    >
-                      <table
-                        class="MuiTable-root css-1o9t8bs-MuiTable-root"
-                      >
-                        <thead
-                          class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-                        >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                          >
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Block Type
-                            </th>
-                            <th
-                              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                              scope="col"
-                            >
-                              Description
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody
-                          class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                        >
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              reply with text
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-action-reply"
-                            >
-                              Sends a fixed reply.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              reply random choice
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-action-random"
-                            >
-                              Picks one reply from a list.
-                            </td>
-                          </tr>
-                          <tr
-                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                          >
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            >
-                              echo the current message
-                            </td>
-                            <td
-                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                              data-testid="palette-description-action-echo"
-                            >
-                              Sends the message as it is now.
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                          Select a node or edge to edit it.
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div
-              class="MuiBox-root css-1yuhvjn"
-            >
-              <div
-                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
-                style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
-              >
-                <h6
-                  class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
-                >
-                  Samples
-                </h6>
-                <span
-                  class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
-                >
-                  Click a sample to add it as a program.
-                </span>
-                <div
-                  class="MuiBox-root css-zryp6"
-                  data-testid="samples-buttons"
-                >
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Welcome
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Coin Flip
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Help
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Echo Clean
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Shout
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Shout Back
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Short Replies
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Only Numbers
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Title Case
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Palindrome
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Capitalize
-                  </button>
-                </div>
-              </div>
-            </div>
-            <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-keq513-MuiButtonBase-root-MuiButton-root"
-              tabindex="0"
-              type="button"
-            >
-              + New Program
-            </button>
-            <p
-              class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
-            >
-              No programs yet — add a new program and use its buttons, or load a sample above.
-            </p>
           </div>
         </main>
         <footer
@@ -1049,7 +360,7 @@ Object {
                     tabindex="0"
                     type="button"
                   >
-                    Programs
+                    Flow
                   </button>
                   <button
                     aria-selected="false"
@@ -1077,15 +388,6 @@ Object {
                     type="button"
                   >
                     Docs
-                  </button>
-                  <button
-                    aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
-                    role="tab"
-                    tabindex="-1"
-                    type="button"
-                  >
-                    Flows
                   </button>
                 </div>
                 <span
@@ -1121,878 +423,198 @@ Object {
         class="MuiBox-root css-jg3ssn"
         data-testid="app-content"
       >
-        <div>
+        <div
+          class="MuiBox-root css-0"
+          data-testid="flow-editor"
+        >
           <h3
-            class="MuiTypography-root MuiTypography-h3 css-xrxebb-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h3 css-ite520-MuiTypography-root"
           >
-            Programs
+            Flows
           </h3>
           <p
-            class="MuiTypography-root MuiTypography-body1 css-1a782mv-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body2 css-84gl1-MuiTypography-root"
           >
-            Add blocks with the buttons on each program card. When a user sends a message, the first program whose trigger matches replies with its actions.
+            Build conversational flows by dragging nodes from the palette onto the canvas and connecting them.
           </p>
           <div
-            class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
-            style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
+            class="MuiBox-root css-10egq61"
           >
-            <h6
-              class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
-            >
-              Blocks
-            </h6>
             <div
-              class="MuiBox-root css-1ijwczz"
+              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1jnj1i4-MuiPaper-root"
+              data-testid="flow-palette"
+              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
             >
+              <h6
+                class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
+              >
+                Palette
+              </h6>
               <span
-                class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
               >
-                What each block does. Add blocks with the buttons on each program card.
+                Drag a node onto the canvas.
               </span>
-              <button
-                aria-controls="palette-collapse"
-                aria-expanded="true"
-                class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary css-153uswc-MuiButtonBase-root-MuiButton-root"
-                data-testid="palette-toggle"
-                tabindex="0"
-                type="button"
+              <div
+                class="MuiBox-root css-1lf1isb"
+                data-testid="palette-item-start"
+                draggable="true"
               >
-                Hide block reference
-              </button>
+                Start
+              </div>
+              <div
+                class="MuiBox-root css-1lf1isb"
+                data-testid="palette-item-state"
+                draggable="true"
+              >
+                State
+              </div>
             </div>
             <div
-              class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
-              data-testid="palette-collapse"
-              id="palette-collapse"
-              style="min-height: 0px;"
+              class="MuiBox-root css-1fjtzvx"
             >
               <div
-                class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
+                class="MuiBox-root css-tjbe7t"
               >
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary css-tk53q5-MuiButtonBase-root-MuiButton-root"
+                  tabindex="0"
+                  type="button"
+                >
+                  + New Flow
+                </button>
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorError css-1ikr06c-MuiButtonBase-root-MuiButton-root"
+                  tabindex="0"
+                  type="button"
+                >
+                  Delete Flow
+                </button>
                 <div
-                  class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
+                  class="MuiFormControl-root MuiTextField-root css-2dt1v9-MuiFormControl-root-MuiTextField-root"
+                >
+                  <label
+                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-yqloyo-MuiFormLabel-root-MuiInputLabel-root"
+                    data-shrink="true"
+                    for="_r_8_"
+                    id="_r_8_-label"
+                  >
+                    Flow name
+                  </label>
+                  <div
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-sizeSmall css-17o3msk-MuiInputBase-root-MuiOutlinedInput-root"
+                  >
+                    <input
+                      aria-invalid="false"
+                      class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
+                      id="_r_8_"
+                      type="text"
+                      value="Welcome Flow"
+                    />
+                    <fieldset
+                      aria-hidden="true"
+                      class="MuiOutlinedInput-notchedOutline css-vy4cj6-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                    >
+                      <legend
+                        class="css-ex8a5f-MuiNotchedOutlined-root"
+                      >
+                        <span>
+                          Flow name
+                        </span>
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+                <div
+                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
+                  style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                 >
                   <h6
-                    class="MuiTypography-root MuiTypography-subtitle2 css-tme4xk-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-subtitle2 css-1f8jsrp-MuiTypography-root"
                   >
-                    <span
-                      style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(96, 165, 250); margin-right: 6px;"
-                    />
-                    Triggers
+                    Samples
                   </h6>
                   <div
-                    class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                    data-testid="palette-table-trigger"
+                    class="MuiBox-root css-zryp6"
                   >
-                    <table
-                      class="MuiTable-root css-1o9t8bs-MuiTable-root"
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Welcome Flow"
+                      tabindex="0"
+                      type="button"
                     >
-                      <thead
-                        class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-                      >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                        >
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Block Type
-                          </th>
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Description
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody
-                        class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                      >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            When message equals
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-trigger-equals"
-                          >
-                            Runs when the message is exactly the trigger value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            When message contains
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-trigger-contains"
-                          >
-                            Runs when the message includes the trigger value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            When message starts with
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-trigger-startsWith"
-                          >
-                            Runs when the message begins with the trigger value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            When message ends with
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-trigger-endsWith"
-                          >
-                            Runs when the message ends with the trigger value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            When message does not equal
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-trigger-notEquals"
-                          >
-                            Runs when the message is not exactly the trigger value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            When message does not contain
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-trigger-notContains"
-                          >
-                            Runs when the message does not include the trigger value.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                      Welcome Flow
+                    </button>
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Echo Flow"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Echo Flow
+                    </button>
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary css-1pgndde-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Quiz Flow"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Quiz Flow
+                    </button>
                   </div>
-                  <h6
-                    class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
-                  >
-                    <span
-                      style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(251, 191, 36); margin-right: 6px;"
-                    />
-                    Logic
-                  </h6>
+                </div>
+              </div>
+              <div
+                class="MuiBox-root css-610yxv"
+              >
+                <div
+                  class="MuiBox-root css-13y8p9h"
+                  data-testid="flow-item-1700000000000-m7zzznrt"
+                >
+                  Welcome Flow
+                </div>
+              </div>
+              <h6
+                class="MuiTypography-root MuiTypography-subtitle1 flow-name-display css-a6cskh-MuiTypography-root"
+                data-testid="flow-name-display"
+              >
+                Welcome Flow
+              </h6>
+              <div
+                data-testid="reactflow-provider"
+              >
+                <div
+                  class="MuiBox-root css-8wqtc7"
+                  data-testid="flow-canvas"
+                >
                   <div
-                    class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                    data-testid="palette-table-logic"
+                    data-testid="reactflow-mock"
                   >
-                    <table
-                      class="MuiTable-root css-1o9t8bs-MuiTable-root"
-                    >
-                      <thead
-                        class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-                      >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                        >
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Block Type
-                          </th>
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Description
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody
-                        class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                      >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message length is greater than
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-lengthGreater"
-                          >
-                            Passes when the message is longer than the number.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message length is less than
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-lengthLess"
-                          >
-                            Passes when the message is shorter than the number.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message matches regex
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-matchesRegex"
-                          >
-                            Passes when the message matches the regular expression.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message length equals
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-lengthEquals"
-                          >
-                            Passes when the message length equals the number.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message is a number
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-isNumber"
-                          >
-                            Passes when the message is a number.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message equals
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-equals"
-                          >
-                            Passes when the message is exactly the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message contains
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-contains"
-                          >
-                            Passes when the message includes the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message starts with
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-startsWith"
-                          >
-                            Passes when the message begins with the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message ends with
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-endsWith"
-                          >
-                            Passes when the message ends with the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message does not equal
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notEquals"
-                          >
-                            Passes when the message is not exactly the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message does not contain
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notContains"
-                          >
-                            Passes when the message does not include the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message does not start with
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notStartsWith"
-                          >
-                            Passes when the message does not begin with the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message does not end with
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notEndsWith"
-                          >
-                            Passes when the message does not end with the value.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message length is not greater than
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notLengthGreater"
-                          >
-                            Passes when the message is not longer than the number.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message length is not less than
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notLengthLess"
-                          >
-                            Passes when the message is not shorter than the number.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message length does not equal
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notLengthEquals"
-                          >
-                            Passes when the message length does not equal the number.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message does not match regex
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notMatchesRegex"
-                          >
-                            Passes when the message does not match the regular expression.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            message is not a number
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-logic-notIsNumber"
-                          >
-                            Passes when the message is not a number.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <div
+                      data-testid="reactflow-background"
+                    />
+                    <div
+                      data-testid="reactflow-controls"
+                    />
                   </div>
-                  <h6
-                    class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
-                  >
-                    <span
-                      style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
-                    />
-                    Transform
-                  </h6>
                   <div
-                    class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                    data-testid="palette-table-transform"
+                    class="MuiBox-root css-38zrbw"
                   >
-                    <table
-                      class="MuiTable-root css-1o9t8bs-MuiTable-root"
+                    <div
+                      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-r13o30-MuiPaper-root"
+                      style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                     >
-                      <thead
-                        class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
+                      <span
+                        class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
                       >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                        >
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Block Type
-                          </th>
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Description
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody
-                        class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                      >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            make uppercase
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-uppercase"
-                          >
-                            Changes the message to UPPERCASE.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            make lowercase
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-lowercase"
-                          >
-                            Changes the message to lowercase.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            trim whitespace
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-trim"
-                          >
-                            Removes spaces at the start and end.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            replace text
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-replace"
-                          >
-                            Replaces matching text with new text.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            concat text
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-concat"
-                          >
-                            Adds text before or after the message.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            capitalize first letter
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-capitalize"
-                          >
-                            Capitalizes the first letter.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            capitalize each word
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-titleCase"
-                          >
-                            Capitalizes the first letter of each word.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            reverse text
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-reverse"
-                          >
-                            Reverses the text.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            remove text
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-transform-remove"
-                          >
-                            Removes matching text.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <h6
-                    class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
-                  >
-                    <span
-                      style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
-                    />
-                    Action
-                  </h6>
-                  <div
-                    class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiTableContainer-root css-i5pl2f-MuiPaper-root-MuiTableContainer-root"
-                    data-testid="palette-table-action"
-                  >
-                    <table
-                      class="MuiTable-root css-1o9t8bs-MuiTable-root"
-                    >
-                      <thead
-                        class="MuiTableHead-root css-1a7iywq-MuiTableHead-root"
-                      >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-head css-1a181x8-MuiTableRow-root"
-                        >
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Block Type
-                          </th>
-                          <th
-                            class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-jbeccm-MuiTableCell-root"
-                            scope="col"
-                          >
-                            Description
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody
-                        class="MuiTableBody-root css-gmh7jj-MuiTableBody-root"
-                      >
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            reply with text
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-action-reply"
-                          >
-                            Sends a fixed reply.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            reply random choice
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-action-random"
-                          >
-                            Picks one reply from a list.
-                          </td>
-                        </tr>
-                        <tr
-                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
-                        >
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                          >
-                            echo the current message
-                          </td>
-                          <td
-                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
-                            data-testid="palette-description-action-echo"
-                          >
-                            Sends the message as it is now.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                        Select a node or edge to edit it.
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div
-            class="MuiBox-root css-1yuhvjn"
-          >
-            <div
-              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-e1atlv-MuiPaper-root"
-              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
-            >
-              <h6
-                class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
-              >
-                Samples
-              </h6>
-              <span
-                class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
-              >
-                Click a sample to add it as a program.
-              </span>
-              <div
-                class="MuiBox-root css-zryp6"
-                data-testid="samples-buttons"
-              >
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Welcome
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Coin Flip
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Help
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Echo Clean
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Shout
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Shout Back
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Short Replies
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Only Numbers
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Title Case
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Palindrome
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Capitalize
-                </button>
-              </div>
-            </div>
-          </div>
-          <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-keq513-MuiButtonBase-root-MuiButton-root"
-            tabindex="0"
-            type="button"
-          >
-            + New Program
-          </button>
-          <p
-            class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
-          >
-            No programs yet — add a new program and use its buttons, or load a sample above.
-          </p>
         </div>
       </main>
       <footer

@@ -9,14 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 
-export type Page = "programs" | "chat" | "settings" | "docs" | "flows";
+export type Page = "flow" | "chat" | "settings" | "docs";
 
 const PAGE_TABS: { value: Page; label: string }[] = [
-  { value: "programs", label: "Programs" },
+  { value: "flow", label: "Flow" },
   { value: "chat", label: "Chat" },
   { value: "settings", label: "Settings" },
   { value: "docs", label: "Docs" },
-  { value: "flows", label: "Flows" },
 ];
 
 export const Navbar = ({

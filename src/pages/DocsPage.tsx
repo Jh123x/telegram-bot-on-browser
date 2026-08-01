@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 
-type DocPageId = "programs" | "chat" | "settings" | "docs";
+type DocPageId = "flow" | "chat" | "settings" | "docs";
 
 interface DocsPageProps {
   onNavigate?: (page: DocPageId) => void;
@@ -89,10 +89,10 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
         sx={{ color: "primary.main" }}
       />
       <Chip
-        label="Open the Programs tab"
+        label="Open the Flow tab"
         component="button"
         clickable
-        onClick={() => onNavigate?.("programs")}
+        onClick={() => onNavigate?.("flow")}
         sx={{ color: "primary.main" }}
       />
       <Chip
@@ -142,10 +142,10 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           Build a program in the{" "}
           <Link
             component="button"
-            onClick={() => onNavigate?.("programs")}
+            onClick={() => onNavigate?.("flow")}
             sx={tabLinkSx}
           >
-            Programs tab
+            Flow tab
           </Link>{" "}
           and add blocks with the buttons on each program card.
         </Typography>
@@ -480,10 +480,10 @@ replies:
           reorder your programs in the{" "}
           <Link
             component="button"
-            onClick={() => onNavigate?.("programs")}
+            onClick={() => onNavigate?.("flow")}
             sx={tabLinkSx}
           >
-            Programs tab
+            Flow tab
           </Link>
           .
         </Typography>

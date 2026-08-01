@@ -30,7 +30,13 @@ import { StartNode, StateNode } from "./flowNodes.tsx";
 // each flow node renders as its dedicated MUI card.
 const nodeTypes = { start: StartNode, state: StateNode };
 
-const EditorCanvas = ({ flow }: { flow: Flow }) => {
+const EditorCanvas = ({
+  flow,
+  onFlowCreated,
+}: {
+  flow: Flow;
+  onFlowCreated?: (id: string) => void;
+}) => {
   const dispatch = useDispatch();
   const { screenToFlowPosition } = useReactFlow();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -125,6 +131,14 @@ const EditorCanvas = ({ flow }: { flow: Flow }) => {
     if (type !== "start" && type !== "state") return;
     const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
     const node = createFlowNode(type, { x: position.x, y: position.y });
+    // If no flow exists (the EmptyFlow placeholder is shown), create one
+    // containing the dropped node instead of silently discarding it.
+    if (flow.id === "") {
+      const created = createFlow();
+      dispatch(addFlow({ ...created, nodes: [node], startNodeId: type === "start" ? node.id : "" }));
+      onFlowCreated?.(created.id);
+      return;
+    }
     persistFlow({
       ...flow,
       nodes: [...flow.nodes, node],
@@ -224,7 +238,8 @@ export const FlowEditor = () => {
 
   const handleNewFlow = () => {
     const flow = createFlow();
-    dispatch(addFlow(flow));
+    const start = createFlowNode("start", { x: 0, y: 0 });
+    dispatch(addFlow({ ...flow, nodes: [start], startNodeId: start.id }));
     setSelectedFlowId(flow.id);
   };
 
@@ -348,7 +363,7 @@ export const FlowEditor = () => {
           )}
 
           <ReactFlowProvider>
-            <EditorCanvas flow={selectedFlow ?? EmptyFlow} />
+            <EditorCanvas flow={selectedFlow ?? EmptyFlow} onFlowCreated={setSelectedFlowId} />
           </ReactFlowProvider>
 
           {flows.length === 0 && (

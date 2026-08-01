@@ -5,20 +5,31 @@ import { theme } from "./theme.ts";
 import { Navbar, Page } from "./component/Navbar.tsx";
 import { Footer } from "./component/Footer.tsx";
 import { SettingsPage } from "./pages/SettingsPage.tsx";
-import { ProgramsPage } from "./pages/ProgramsPage.tsx";
 import { ChatPage } from "./pages/ChatPage.tsx";
 import { DocsPage } from "./pages/DocsPage.tsx";
 import { FlowsPage } from "./pages/FlowsPage.tsx";
 import { useBot } from "./hooks/useBot.ts";
-import { useDispatch } from "react-redux";
-import { setToken, setPrograms, setAutoStart, setHydrated, setFlows } from "./redux/botSlice.ts";
-import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken, setPrograms, setAutoStart, setHydrated, setFlows, addFlow } from "./redux/botSlice.ts";
+import { useEffect, useRef } from "react";
 import React from "react";
+import { flowFromSample } from "./logic/flow.ts";
+import { SAMPLE_FLOWS } from "./logic/flowSamples.ts";
+import { Flow } from "./interfaces/flow.ts";
+import { BotWithConfig } from "./redux/types.ts";
+
+// Stable empty array so the flows selector never returns a fresh reference
+// (a new [] each render would warn and cause unnecessary rerenders).
+const EMPTY_FLOWS: Flow[] = [];
 
 export const App = () => {
   const dispatch = useDispatch();
-  const [page, setPage] = useState<Page>("programs");
+  const [page, setPage] = useState<Page>("flow");
   const { bot, started, start, stop } = useBot();
+  const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows ?? EMPTY_FLOWS);
+  const hydrated = useSelector<BotWithConfig, boolean>(
+    (state) => state.bot.hydrated ?? false
+  );
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -33,6 +44,15 @@ export const App = () => {
     // decisions are made at exactly this point (load-only semantics).
     dispatch(setHydrated(true));
   }, [dispatch]);
+
+  const seededRef = useRef(false);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (seededRef.current) return;
+    seededRef.current = true;
+    if (flows.length > 0) return;
+    dispatch(addFlow(flowFromSample(SAMPLE_FLOWS[0])));
+  }, [hydrated, flows, dispatch]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -58,10 +78,9 @@ export const App = () => {
           sx={{ flex: 1, minHeight: 0, overflowY: "auto", width: "100%", px: 3, py: 2 }}
         >
           {page === "settings" && <SettingsPage />}
-          {page === "programs" && <ProgramsPage />}
+          {page === "flow" && <FlowsPage />}
           {page === "chat" && <ChatPage bot={bot} />}
           {page === "docs" && <DocsPage onNavigate={setPage} />}
-          {page === "flows" && <FlowsPage />}
         </Box>
         <Footer />
       </Container>
