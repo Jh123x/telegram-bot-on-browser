@@ -1,4 +1,5 @@
 import {
+  ALL_NODE_TYPES,
   applyTransform,
   createFlow,
   createFlowNode,
@@ -9,9 +10,12 @@ import {
   flowFromSample,
   generateId,
   interpolate,
+  matchTrigger,
+  nodeCategory,
   removeFlowEdge,
   removeFlowNode,
   validateFlow,
+  TRANSFORM_TYPES,
   TRIGGER_TYPES,
   TRIGGER_LABELS,
 } from "./flow.ts";
@@ -64,6 +68,46 @@ describe("TRIGGER_TYPES / TRIGGER_LABELS", () => {
     );
     expect(TRIGGER_LABELS.contains).toBe("message contains");
     expect(TRIGGER_LABELS.equals).toBe("message equals");
+  });
+});
+
+describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
+  test("exposes the five concrete transform types", () => {
+    expect(TRANSFORM_TYPES).toEqual([
+      "lowercase",
+      "uppercase",
+      "trim",
+      "replace",
+      "extractRegex",
+    ]);
+  });
+
+  test("ALL_NODE_TYPES contains every concrete node type once", () => {
+    expect(ALL_NODE_TYPES).toEqual([
+      "start",
+      ...TRANSFORM_TYPES,
+      ...TRIGGER_TYPES,
+      "send",
+      "random",
+    ]);
+    expect(new Set(ALL_NODE_TYPES).size).toBe(ALL_NODE_TYPES.length);
+  });
+
+  test("start maps to the start category", () => {
+    expect(nodeCategory("start")).toBe("start");
+  });
+
+  test("every transform type maps to the transform category", () => {
+    TRANSFORM_TYPES.forEach((t) => expect(nodeCategory(t)).toBe("transform"));
+  });
+
+  test("every trigger type maps to the condition category", () => {
+    TRIGGER_TYPES.forEach((t) => expect(nodeCategory(t)).toBe("condition"));
+  });
+
+  test("send and random map to the send category", () => {
+    expect(nodeCategory("send")).toBe("send");
+    expect(nodeCategory("random")).toBe("send");
   });
 });
 
@@ -121,50 +165,82 @@ describe("interpolate", () => {
   });
 });
 
-describe("applyTransform", () => {
-  test("undefined transform returns the message unchanged", () => {
-    expect(applyTransform(undefined, "  Hello  ")).toBe("  Hello  ");
+describe("matchTrigger", () => {
+  test("equals trims both sides before comparing", () => {
+    expect(matchTrigger("equals", "hi", "  hi  ")).toBe(true);
+    expect(matchTrigger("equals", "hi", "hey")).toBe(false);
   });
 
+  test("notEquals trims both sides and negates", () => {
+    expect(matchTrigger("notEquals", "hi", "  hi  ")).toBe(false);
+    expect(matchTrigger("notEquals", "hi", "hey")).toBe(true);
+  });
+
+  test("contains is a raw substring check", () => {
+    expect(matchTrigger("contains", "hi", "say hi there")).toBe(true);
+    expect(matchTrigger("contains", "hi", "hey")).toBe(false);
+  });
+
+  test("notContains negates the raw substring check", () => {
+    expect(matchTrigger("notContains", "hi", "hey")).toBe(true);
+    expect(matchTrigger("notContains", "hi", "say hi")).toBe(false);
+  });
+
+  test("startsWith checks the prefix", () => {
+    expect(matchTrigger("startsWith", "/cmd", "/cmd run")).toBe(true);
+    expect(matchTrigger("startsWith", "/cmd", "run /cmd")).toBe(false);
+  });
+
+  test("endsWith checks the suffix", () => {
+    expect(matchTrigger("endsWith", "bye", "good bye")).toBe(true);
+    expect(matchTrigger("endsWith", "bye", "bye good")).toBe(false);
+  });
+});
+
+describe("applyTransform", () => {
   test("lowercase transforms the message", () => {
-    expect(applyTransform({ type: "lowercase", find: "", replacement: "", pattern: "" }, "HeLLo")).toBe("hello");
+    expect(applyTransform("lowercase", { label: "L" }, "HeLLo")).toBe("hello");
   });
 
   test("uppercase transforms the message", () => {
-    expect(applyTransform({ type: "uppercase", find: "", replacement: "", pattern: "" }, "hello")).toBe("HELLO");
+    expect(applyTransform("uppercase", { label: "U" }, "hello")).toBe("HELLO");
   });
 
   test("trim strips surrounding whitespace", () => {
-    expect(applyTransform({ type: "trim", find: "", replacement: "", pattern: "" }, "  hi  ")).toBe("hi");
+    expect(applyTransform("trim", { label: "T" }, "  hi  ")).toBe("hi");
   });
 
   test("replace replaces every occurrence literally", () => {
     expect(
-      applyTransform({ type: "replace", find: "a", replacement: "o", pattern: "" }, "banana")
+      applyTransform("replace", { label: "R", find: "a", replacement: "o" }, "banana")
     ).toBe("bonono");
   });
 
   test("replace with an empty find returns the message unchanged", () => {
     expect(
-      applyTransform({ type: "replace", find: "", replacement: "x", pattern: "" }, "hello")
+      applyTransform("replace", { label: "R", find: "", replacement: "x" }, "hello")
     ).toBe("hello");
+  });
+
+  test("replace with a missing find returns the message unchanged", () => {
+    expect(applyTransform("replace", { label: "R" }, "hello")).toBe("hello");
   });
 
   test("extractRegex returns the first full match", () => {
     expect(
-      applyTransform({ type: "extractRegex", find: "", replacement: "", pattern: "\\d+" }, "abc 123 def 456")
+      applyTransform("extractRegex", { label: "E", pattern: "\\d+" }, "abc 123 def 456")
     ).toBe("123");
   });
 
   test("extractRegex returns an empty string when there is no match", () => {
     expect(
-      applyTransform({ type: "extractRegex", find: "", replacement: "", pattern: "\\d+" }, "no digits")
+      applyTransform("extractRegex", { label: "E", pattern: "\\d+" }, "no digits")
     ).toBe("");
   });
 
   test("extractRegex returns an empty string for an invalid regex", () => {
     expect(
-      applyTransform({ type: "extractRegex", find: "", replacement: "", pattern: "(" }, "abc")
+      applyTransform("extractRegex", { label: "E", pattern: "(" }, "abc")
     ).toBe("");
   });
 });
@@ -178,21 +254,37 @@ describe("createFlowNode", () => {
     expect(node.position).toEqual({ x: 0, y: 0 });
   });
 
-  test("transform node gets default transform data", () => {
-    const node = createFlowNode("transform");
-    expect(node.type).toBe("transform");
-    expect(node.data).toEqual({
-      label: "New Transform",
-      transform: { type: "lowercase", find: "", replacement: "", pattern: "" },
-    });
+  test("lowercase/uppercase/trim nodes get only a label", () => {
+    expect(createFlowNode("lowercase").data).toEqual({ label: "Lowercase" });
+    expect(createFlowNode("uppercase").data).toEqual({ label: "Uppercase" });
+    expect(createFlowNode("trim").data).toEqual({ label: "Trim" });
   });
 
-  test("condition node gets a default trigger", () => {
-    const node = createFlowNode("condition");
-    expect(node.type).toBe("condition");
-    expect(node.data).toEqual({
-      label: "New Condition",
-      trigger: { type: "contains", value: "" },
+  test("replace node gets empty find/replacement fields", () => {
+    const node = createFlowNode("replace");
+    expect(node.type).toBe("replace");
+    expect(node.data).toEqual({ label: "Replace", find: "", replacement: "" });
+  });
+
+  test("extractRegex node gets an empty pattern field", () => {
+    const node = createFlowNode("extractRegex");
+    expect(node.type).toBe("extractRegex");
+    expect(node.data).toEqual({ label: "Extract Regex", pattern: "" });
+  });
+
+  test("every trigger node gets its humanized label and empty value", () => {
+    const expected: Record<string, string> = {
+      equals: "Equals",
+      notEquals: "Not Equals",
+      startsWith: "Starts With",
+      endsWith: "Ends With",
+      contains: "Contains",
+      notContains: "Not Contains",
+    };
+    TRIGGER_TYPES.forEach((type) => {
+      const node = createFlowNode(type);
+      expect(node.type).toBe(type);
+      expect(node.data).toEqual({ label: expected[type], value: "" });
     });
   });
 
@@ -200,6 +292,12 @@ describe("createFlowNode", () => {
     const node = createFlowNode("send");
     expect(node.type).toBe("send");
     expect(node.data).toEqual({ label: "New Send", replies: [] });
+  });
+
+  test("random node gets empty replies and its own type", () => {
+    const node = createFlowNode("random");
+    expect(node.type).toBe("random");
+    expect(node.data).toEqual({ label: "Random", replies: [] });
   });
 
   test("honors a provided position", () => {
@@ -251,13 +349,13 @@ describe("executeFlow (graph walk)", () => {
     expect(executeFlow(flow, "hi")).toEqual(["Hello!"]);
   });
 
-  test("start -> transform(uppercase) -> send feeds the transformed message to {msg}", () => {
+  test("start -> uppercase -> send feeds the transformed message to {msg}", () => {
     const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
     const transform = {
       id: "tx",
-      type: "transform" as const,
+      type: "uppercase" as const,
       position: { x: 240, y: 0 },
-      data: { label: "Up", transform: { type: "uppercase" as const, find: "", replacement: "", pattern: "" } },
+      data: { label: "Up" },
     };
     const send = sendNode("send", ["You said: {msg}"]);
     const flow = startFlow(
@@ -275,9 +373,9 @@ describe("executeFlow (graph walk)", () => {
     const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
     const cond = {
       id: "c",
-      type: "condition" as const,
+      type: "contains" as const,
       position: { x: 240, y: 0 },
-      data: { label: "C", trigger: { type: "contains" as const, value: "hi" } },
+      data: { label: "C", value: "hi" },
     };
     const ifSend = sendNode("if", ["Hello! 👋"]);
     const elseSend = sendNode("else", ["Say hi!"]);
@@ -297,9 +395,9 @@ describe("executeFlow (graph walk)", () => {
     const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
     const cond = {
       id: "c",
-      type: "condition" as const,
+      type: "contains" as const,
       position: { x: 240, y: 0 },
-      data: { label: "C", trigger: { type: "contains" as const, value: "hi" } },
+      data: { label: "C", value: "hi" },
     };
     const ifSend = sendNode("if", ["Hello! 👋"]);
     const elseSend = sendNode("else", ["Say hi!"]);
@@ -319,9 +417,9 @@ describe("executeFlow (graph walk)", () => {
     const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
     const cond = {
       id: "c",
-      type: "condition" as const,
+      type: "contains" as const,
       position: { x: 240, y: 0 },
-      data: { label: "C", trigger: { type: "contains" as const, value: "hi" } },
+      data: { label: "C", value: "hi" },
     };
     const ifSend = sendNode("if", ["Hello! 👋"]);
     const flow = startFlow(
@@ -339,17 +437,17 @@ describe("executeFlow (graph walk)", () => {
     const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
     const dead = {
       id: "dead",
-      type: "transform" as const,
+      type: "lowercase" as const,
       position: { x: 240, y: 0 },
-      data: { label: "Dead", transform: { type: "lowercase" as const, find: "", replacement: "", pattern: "" } },
+      data: { label: "Dead" },
     };
     const flow = startFlow("start", [start, dead], [{ id: "e1", source: "start", target: "dead" }]);
     expect(executeFlow(flow, "hi")).toBeUndefined();
   });
 
   test("a cycle with no send returns undefined (cycle guard)", () => {
-    const a = { id: "a", type: "transform" as const, position: { x: 0, y: 0 }, data: { label: "A", transform: { type: "lowercase" as const, find: "", replacement: "", pattern: "" } } };
-    const b = { id: "b", type: "transform" as const, position: { x: 0, y: 0 }, data: { label: "B", transform: { type: "lowercase" as const, find: "", replacement: "", pattern: "" } } };
+    const a = { id: "a", type: "lowercase" as const, position: { x: 0, y: 0 }, data: { label: "A" } };
+    const b = { id: "b", type: "uppercase" as const, position: { x: 0, y: 0 }, data: { label: "B" } };
     const flow = startFlow("a", [a, b], [
       { id: "e1", source: "a", target: "b" },
       { id: "e2", source: "b", target: "a" },
@@ -374,6 +472,44 @@ describe("executeFlow (graph walk)", () => {
     const send = sendNode("send", ["x"]);
     const flow = startFlow("", [send], []);
     expect(executeFlow(flow, "hi")).toBeUndefined();
+  });
+});
+
+describe("executeFlow (random node)", () => {
+  function randomFlow(replies: string[]): Flow {
+    return {
+      id: "f1",
+      name: "Random",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "rand", type: "random", position: { x: 240, y: 0 }, data: { label: "Rand", replies } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "rand" }],
+    };
+  }
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test("returns exactly ONE of the replies (first when random is 0)", () => {
+    jest.spyOn(Math, "random").mockReturnValue(0);
+    expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["A"]);
+  });
+
+  test("returns the last reply when random is near 1", () => {
+    jest.spyOn(Math, "random").mockReturnValue(0.999);
+    expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["C"]);
+  });
+
+  test("interpolates {msg} in the picked reply", () => {
+    jest.spyOn(Math, "random").mockReturnValue(0.4);
+    expect(executeFlow(randomFlow(["{msg}", "fixed"]), "hello")).toEqual(["hello"]);
+  });
+
+  test("random with empty replies returns []", () => {
+    expect(executeFlow(randomFlow([]), "hi")).toEqual([]);
   });
 });
 
@@ -423,7 +559,7 @@ describe("FlowRuntime (stateless)", () => {
       startNodeId: "start",
       nodes: [
         { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
-        { id: "t", type: "transform", position: { x: 240, y: 0 }, data: { label: "T", transform: { type: "lowercase", find: "", replacement: "", pattern: "" } } },
+        { id: "t", type: "lowercase", position: { x: 240, y: 0 }, data: { label: "T" } },
       ],
       edges: [{ id: "e1", source: "start", target: "t" }],
     });
@@ -443,6 +579,20 @@ describe("FlowRuntime (stateless)", () => {
     });
     expect(rt.handleMessage(1, "a")).toEqual([]);
   });
+
+  test("a random node with one reply returns that reply as a string", () => {
+    const rt = new FlowRuntime({
+      id: "f1",
+      name: "Rand",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "rand", type: "random", position: { x: 240, y: 0 }, data: { label: "R", replies: ["Only"] } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "rand" }],
+    });
+    expect(rt.handleMessage(1, "a")).toBe("Only");
+  });
 });
 
 describe("validateFlow", () => {
@@ -458,17 +608,23 @@ describe("validateFlow", () => {
     position: { x: 0, y: 0 },
     data: { label: "Send", replies: ["hi"] },
   };
+  const randomNode: Flow["nodes"][number] = {
+    id: "rand",
+    type: "random",
+    position: { x: 0, y: 0 },
+    data: { label: "Rand", replies: ["a", "b"] },
+  };
   const transformNode: Flow["nodes"][number] = {
     id: "tx",
-    type: "transform",
+    type: "lowercase",
     position: { x: 0, y: 0 },
-    data: { label: "T", transform: { type: "lowercase", find: "", replacement: "", pattern: "" } },
+    data: { label: "T" },
   };
   const conditionNode: Flow["nodes"][number] = {
     id: "c",
-    type: "condition",
+    type: "contains",
     position: { x: 0, y: 0 },
-    data: { label: "C", trigger: { type: "contains", value: "hi" } },
+    data: { label: "C", value: "hi" },
   };
 
   function validFlow(): Flow {
@@ -590,6 +746,18 @@ describe("validateFlow", () => {
       "Node send is a send node and cannot have outgoing edges"
     );
   });
+
+  test("random node with an outgoing edge is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, randomNode, transformNode];
+    flow.edges = [
+      { id: "e1", source: "start", target: "rand" },
+      { id: "e2", source: "rand", target: "tx" },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Node rand is a send node and cannot have outgoing edges"
+    );
+  });
 });
 
 describe("flowFromSample", () => {
@@ -601,15 +769,15 @@ describe("flowFromSample", () => {
   };
   const transformNode: Flow["nodes"][number] = {
     id: "node-tx",
-    type: "transform",
+    type: "replace",
     position: { x: 240, y: 0 },
-    data: { label: "T", transform: { type: "lowercase", find: "a", replacement: "o", pattern: "\\d+" } },
+    data: { label: "T", find: "a", replacement: "o" },
   };
   const conditionNode: Flow["nodes"][number] = {
     id: "node-c",
-    type: "condition",
+    type: "contains",
     position: { x: 480, y: 0 },
-    data: { label: "C", trigger: { type: "contains", value: "hi" } },
+    data: { label: "C", value: "hi" },
   };
   const ifSend: Flow["nodes"][number] = {
     id: "node-if",
@@ -640,13 +808,13 @@ describe("flowFromSample", () => {
     },
   };
 
-  test("copies the name, structure, transforms, triggers, and replies", () => {
+  test("copies the name, structure, transform fields, trigger values, and replies", () => {
     const created = flowFromSample(sample);
     expect(created.name).toBe("Greeting Check");
     expect(created.nodes.map((n) => n.data)).toEqual([
       { label: "Start" },
-      { label: "T", transform: { type: "lowercase", find: "a", replacement: "o", pattern: "\\d+" } },
-      { label: "C", trigger: { type: "contains", value: "hi" } },
+      { label: "T", find: "a", replacement: "o" },
+      { label: "C", value: "hi" },
       { label: "If", replies: ["Hello! 👋"] },
       { label: "Else", replies: ["Say hi!"] },
     ]);
@@ -683,24 +851,19 @@ describe("flowFromSample", () => {
 
   test("deep-copies data so mutating the copy does not affect the source", () => {
     const created = flowFromSample(sample);
-    const createdTx = created.nodes.find((n) => n.type === "transform")!;
-    (createdTx.data.transform as NonNullable<typeof createdTx.data.transform>).find = "Z";
-    (createdTx.data.transform as NonNullable<typeof createdTx.data.transform>).pattern = "Q";
+    const createdTx = created.nodes.find((n) => n.type === "replace")!;
+    createdTx.data.find = "Z";
+    createdTx.data.replacement = "Q";
 
-    const createdCond = created.nodes.find((n) => n.type === "condition")!;
-    (createdCond.data.trigger as NonNullable<typeof createdCond.data.trigger>).value = "changed";
+    const createdCond = created.nodes.find((n) => n.type === "contains")!;
+    createdCond.data.value = "changed";
 
     const createdIf = created.nodes.find((n) => n.id === created.nodes.find((nn) => nn.type === "send" && (nn.data.replies?.[0] === "Hello! 👋"))!.id)!;
     createdIf.data.replies!.push("mutated");
 
     // Source transform/trigger/replies unaffected.
-    expect(sample.flow.nodes[1].data.transform).toEqual({
-      type: "lowercase",
-      find: "a",
-      replacement: "o",
-      pattern: "\\d+",
-    });
-    expect(sample.flow.nodes[2].data.trigger).toEqual({ type: "contains", value: "hi" });
+    expect(sample.flow.nodes[1].data).toEqual({ label: "T", find: "a", replacement: "o" });
+    expect(sample.flow.nodes[2].data).toEqual({ label: "C", value: "hi" });
     const srcIf = sample.flow.nodes.find((n) => n.type === "send")!;
     expect(srcIf.data.replies).toEqual(["Hello! 👋"]);
     // The created flow still validates cleanly.
@@ -719,7 +882,7 @@ describe("removeFlowNode / removeFlowEdge", () => {
     startNodeId: "start",
     nodes: [
       { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
-      { id: "cond", type: "condition", position: { x: 100, y: 0 }, data: { label: "Cond", trigger: { type: "contains", value: "hi" } } },
+      { id: "cond", type: "contains", position: { x: 100, y: 0 }, data: { label: "Cond", value: "hi" } },
       { id: "send", type: "send", position: { x: 200, y: 0 }, data: { label: "Send", replies: ["ok"] } },
     ],
     edges: [

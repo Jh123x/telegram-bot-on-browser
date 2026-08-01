@@ -280,8 +280,8 @@ test("Test User preview with no flow response shows the silent note", () => {
   const strictFlow = (() => {
     const f = createFlow("Strict");
     const start = createFlowNode("start", { x: 0, y: 0 });
-    const check = createFlowNode("condition", { x: 120, y: 0 });
-    check.data.trigger = { type: "equals", value: "/secret" };
+    const check = createFlowNode("equals", { x: 120, y: 0 });
+    check.data.value = "/secret";
     const reveal = createFlowNode("send", { x: 240, y: 0 });
     reveal.data.label = "Reveal";
     reveal.data.replies = ["The secret is 42"];

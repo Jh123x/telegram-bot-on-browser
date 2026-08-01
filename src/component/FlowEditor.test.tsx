@@ -6,8 +6,36 @@ import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { BotWithConfig } from "../redux/types.ts";
 import { Flow } from "../interfaces/flow.ts";
 
-// The four palette node types the editor now understands.
-const TYPES = ["start", "transform", "condition", "send"] as const;
+// Node types the editor now understands, one per category (the palette is
+// two-level: pick a category, then a concrete node type).
+const TYPES = ["start", "lowercase", "equals", "send", "random"] as const;
+
+// The palette shows the start category by default; other categories must be
+// selected before their items become visible.
+const selectCategory = (cat: string) => {
+  fireEvent.click(screen.getByTestId(`palette-category-${cat}`));
+};
+
+const openPaletteItem = (type: string) => {
+  if (type === "start") {
+    fireEvent.click(screen.getByTestId("palette-item-start"));
+    return;
+  }
+  if (type === "send" || type === "random") {
+    selectCategory("send");
+  } else if (
+    type === "lowercase" ||
+    type === "uppercase" ||
+    type === "trim" ||
+    type === "replace" ||
+    type === "extractRegex"
+  ) {
+    selectCategory("transform");
+  } else {
+    selectCategory("condition");
+  }
+  fireEvent.click(screen.getByTestId(`palette-item-${type}`));
+};
 
 const makeFlow = (name: string, id = name.toLowerCase() + "-id"): Flow => ({
   id,
@@ -145,7 +173,7 @@ test("clicking each palette item adds the right node type to the selected flow",
 
     expect(store.getState().bot.flows[0].nodes).toHaveLength(0);
 
-    fireEvent.click(screen.getByTestId(`palette-item-${type}`));
+    openPaletteItem(type);
 
     const nodes = store.getState().bot.flows[0].nodes;
     expect(nodes).toHaveLength(1);
@@ -159,6 +187,7 @@ test("clicking a palette item with no flow creates a flow containing the node", 
   const store = makeStore();
   renderWithProviders(<FlowEditor />, { store });
 
+  selectCategory("send");
   fireEvent.click(screen.getByTestId("palette-item-send"));
 
   const storeFlows = store.getState().bot.flows;
@@ -197,13 +226,14 @@ test("persists flow changes to localStorage after the initial render", () => {
 
   expect(localStorage.getItem("flows")).toBeNull();
 
-  fireEvent.click(screen.getByTestId("palette-item-transform"));
+  selectCategory("transform");
+  fireEvent.click(screen.getByTestId("palette-item-lowercase"));
 
   const stored = JSON.parse(localStorage.getItem("flows")!);
   expect(stored).toHaveLength(1);
   expect(stored[0].id).toBe(flow.id);
   expect(stored[0].nodes).toHaveLength(1);
-  expect(stored[0].nodes[0].type).toBe("transform");
+  expect(stored[0].nodes[0].type).toBe("lowercase");
 });
 
 test("renders the inspector as a side panel beside the graph canvas", () => {

@@ -1,7 +1,11 @@
 import React from "react";
 import { Box, Chip, Typography } from "@mui/material";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { FlowNodeData, TransformData } from "../interfaces/flow.ts";
+import {
+  FlowNodeData,
+  FlowTriggerType,
+  TransformNodeType,
+} from "../interfaces/flow.ts";
 import { TRIGGER_LABELS } from "../logic/flow.ts";
 import { GRAPH_COLORS } from "../theme.ts";
 
@@ -70,9 +74,11 @@ const TypeBadge = ({ label, color }: { label: string; color: string }) => (
 );
 
 // Human-readable one-liner for a transform node's caption.
-export function transformSummary(transform: TransformData | undefined): string {
-  if (!transform) return "no transform";
-  switch (transform.type) {
+export function transformSummary(
+  type: TransformNodeType,
+  data: FlowNodeData
+): string {
+  switch (type) {
     case "lowercase":
       return "lowercase";
     case "uppercase":
@@ -80,14 +86,22 @@ export function transformSummary(transform: TransformData | undefined): string {
     case "trim":
       return "trim";
     case "replace":
-      return transform.find
-        ? `replace "${transform.find}" → "${transform.replacement}"`
+      return data.find
+        ? `replace "${data.find}" → "${data.replacement ?? ""}"`
         : "replace";
     case "extractRegex":
       return "extract regex";
     default:
       return "transform";
   }
+}
+
+// Human-readable caption for a condition node: `message contains "hi"`.
+export function conditionSummary(
+  type: FlowTriggerType,
+  value: string
+): string {
+  return `${TRIGGER_LABELS[type]} "${value}"`;
 }
 
 export const StartNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
@@ -101,30 +115,43 @@ export const StartNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
   );
 };
 
-export const TransformNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+// One renderer for every concrete transform type; the specific type arrives
+// via the `type` prop React Flow passes to custom nodes.
+export const TransformNode = ({
+  type,
+  data,
+  selected,
+}: NodeProps<FlowNodeData>) => {
   const { accent, bg } = GRAPH_COLORS.node.transform;
   return (
     <Box data-testid="flow-node-transform" sx={cardSx(accent, bg, selected)}>
       <CardLabel>{data.label}</CardLabel>
-      <TypeBadge label="transform" color={accent} />
-      <CardCaption>{transformSummary(data.transform)}</CardCaption>
+      <TypeBadge label={type} color={accent} />
+      <CardCaption>
+        {transformSummary(type as TransformNodeType, data)}
+      </CardCaption>
       <Handle type="target" position={Position.Left} style={{ background: accent }} />
       <Handle type="source" position={Position.Right} style={{ background: accent }} />
     </Box>
   );
 };
 
-export const ConditionNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+// One renderer for every concrete trigger type (equals, contains, ...). The
+// specific type arrives via the `type` prop; the caption is the trigger
+// label + the configured value.
+export const ConditionNode = ({
+  type,
+  data,
+  selected,
+}: NodeProps<FlowNodeData>) => {
   const { accent, bg } = GRAPH_COLORS.node.condition;
-  const trigger = data.trigger;
-  const caption = trigger
-    ? `${TRIGGER_LABELS[trigger.type]} "${trigger.value}"`
-    : "condition";
   return (
     <Box data-testid="flow-node-condition" sx={cardSx(accent, bg, selected)}>
       <CardLabel>{data.label}</CardLabel>
-      <TypeBadge label="condition" color={accent} />
-      <CardCaption>{caption}</CardCaption>
+      <TypeBadge label={type} color={accent} />
+      <CardCaption>
+        {conditionSummary(type as FlowTriggerType, data.value ?? "")}
+      </CardCaption>
       <Handle type="target" position={Position.Left} style={{ background: accent }} />
       <Handle
         id="if"
@@ -153,6 +180,25 @@ export const SendNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
       <TypeBadge label="send" color={accent} />
       <CardCaption>
         {replyCount} {replyCount === 1 ? "reply" : "replies"}
+      </CardCaption>
+      <Handle type="target" position={Position.Left} style={{ background: accent }} />
+    </Box>
+  );
+};
+
+// A RandomNode sends exactly ONE of its reply lines, chosen at random. Also
+// terminal: a single target handle, no source.
+export const RandomNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+  const { accent, bg } = GRAPH_COLORS.node.send;
+  const replyCount = (data.replies ?? []).length;
+  return (
+    <Box data-testid="flow-node-random" sx={cardSx(accent, bg, selected)}>
+      <CardLabel>{data.label}</CardLabel>
+      <TypeBadge label="random" color={accent} />
+      <CardCaption>
+        {replyCount === 0
+          ? "no replies"
+          : `1 of ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}
       </CardCaption>
       <Handle type="target" position={Position.Left} style={{ background: accent }} />
     </Box>

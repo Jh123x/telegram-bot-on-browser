@@ -13,25 +13,28 @@ back to the user.
 
 ### Building a flow
 
-Drag nodes from the palette onto the canvas and connect them by dragging from
-a node's output handle to the next node's input handle. Select a node or
-edge to edit it in the inspector panel.
+Pick a category in the palette (Start, Transform, Condition, Send), then drag
+the actual node onto the canvas. Connect nodes by dragging from a node's
+output handle to the next node's input handle. Select a node or edge to edit
+it in the inspector panel.
 
 - **Start** — the entry marker (exactly one per flow). It has a single
   output and no input.
-- **Transform** — 1 input, 1 output. Transforms the message before it
-  continues: **lowercase**, **uppercase**, **trim**, **replace text**, or
-  **extract regex**. The transformed message is what downstream nodes see
-  (both `{msg}` interpolation and condition matching).
-- **Condition** — 1 input, 2 outputs. Evaluates the message against one of
-  the matchers below and follows the **if** edge when it matches, the
-  **else** edge otherwise.
+- **Transform** nodes — 1 input, 1 output. Each transform is its own node:
+  **lowercase**, **uppercase**, **trim**, **replace text**, or **extract
+  regex**. The transformed message is what downstream nodes see (both `{msg}`
+  interpolation and condition matching).
+- **Condition** nodes — 1 input, 2 outputs. Each matcher is its own node
+  (see below); the node only asks for the value to match. It follows the
+  **if** edge when the message matches, the **else** edge otherwise.
 - **Send** — 1 input, no output (terminal). Sends its reply lines and ends
   the flow for this message.
+- **Random** — 1 input, no output (terminal). Sends exactly ONE of its
+  option lines, chosen at random.
 
 ### Condition matchers
 
-A condition node's **if** branch is decided by one of:
+A condition node's **if** branch is decided by its node type — one of:
 
 - **message equals** a value,
 - **message contains** a value,
@@ -45,10 +48,10 @@ condition without an else edge stays silent on non-matching messages.
 
 ### Send replies
 
-Each send node sends one message per line. You can use `{msg}` in a reply to
-interpolate the current message — after any transforms, so an *uppercase*
-transform followed by a send that says `You said: {msg}` echoes the message
-in caps.
+Each send node sends one message per line. A random node sends one of its
+lines, chosen at random. You can use `{msg}` in a reply to interpolate the
+current message — after any transforms, so an *uppercase* transform followed
+by a send that says `You said: {msg}` echoes the message in caps.
 
 ### Stateless evaluation
 

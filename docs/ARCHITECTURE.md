@@ -104,15 +104,16 @@ until it reaches a **Send** node whose replies go back to the user.
 
 ```mermaid
 flowchart TD
-  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start, transform, condition or send, label, data]
+  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: concrete operation, label, data]
   F --> FE[FlowEdge<br/>id, source, target, sourceHandle]
 ```
 
 When a message arrives, the engine walks the graph from the start node.
 **Transform** nodes rewrite the message before passing it on; **Condition**
 nodes evaluate it and follow their **if** or **else** edge; **Send** nodes
-return their replies (with `{msg}` interpolated to the current message). The
-walk is stateless — every message starts from the start node.
+return their replies (with `{msg}` interpolated to the current message) and
+**Random** nodes return one random reply line. The walk is stateless — every
+message starts from the start node.
 
 ## Incoming message flow
 
@@ -239,36 +240,41 @@ The flow types live in `src/interfaces/flow.ts`:
 
 ```mermaid
 flowchart TD
-  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start, transform, condition or send, label, data]
+  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: concrete operation, label, data]
   F --> FE[FlowEdge<br/>id, source, target, sourceHandle]
 ```
 
 - **Flow** — `{ id, name, startNodeId, nodes, edges }`. Exactly one `start`
   node; `startNodeId` points at it.
-- **FlowNode** — one of four types:
+- **FlowNode** — the `type` IS the operation (no per-node type selectors):
   - `start` — the entry marker; carries `data.label`.
-  - `transform` — 1 input, 1 output; carries `data.transform` (type +
-    find/replacement/pattern params).
-  - `condition` — 1 input, 2 outputs; carries `data.trigger`
-    (`{ type, value }` where type is one of the six message matchers).
-  - `send` — 1 input, no output (terminal); carries `data.replies` (one
-    message per line).
+  - Transforms (1 input, 1 output) — `lowercase`, `uppercase`, `trim`,
+    `replace`, `extractRegex`. `replace` uses `data.find` +
+    `data.replacement`; `extractRegex` uses `data.pattern`.
+  - Conditions (1 input, 2 outputs) — `equals`, `contains`, `startsWith`,
+    `endsWith`, `notEquals`, `notContains`. The type is the matcher; the node
+    carries only `data.value` (the text to match).
+  - Send category (1 input, no output, terminal) — `send` returns every line
+    of `data.replies`; `random` returns exactly ONE of them, chosen at random.
 - **FlowEdge** — a connection from `source` to `target`. Edges carry no
   trigger data; a condition's branch is recorded in `sourceHandle` (`"if"` /
-  `"else"`).
+  `"else"`). `nodeCategory(type)` maps any concrete node type back to its
+  category (`start` / `transform` / `condition` / `send`) for validation,
+  palette grouping, and runtime dispatch.
 
 ### Engine
 
 The pure engine lives in `src/logic/flow.ts` (no React or Redux):
 
-- `applyTransform(transform, message)` — applies a transform (lowercase,
-  uppercase, trim, replace, extractRegex) to the message.
+- `applyTransform(type, data, message)` — applies a concrete transform
+  (lowercase, uppercase, trim, replace, extractRegex) to the message.
 - `executeFlow(flow, message)` — walks the graph from `startNodeId` with a
   visited-set cycle guard. Transform nodes rewrite the message; condition
-  nodes follow the `if` edge when their trigger matches and the `else` edge
+  nodes follow the `if` edge when their matcher passes and the `else` edge
   otherwise; a send node's replies are returned (with `{msg}` interpolated to
-  the current message). Returns `undefined` when the walk cannot reach a send
-  node (dead end, cycle, missing branch).
+  the current message), while a random node returns one interpolated line.
+  Returns `undefined` when the walk cannot reach a send node (dead end,
+  cycle, missing branch).
 - `FlowRuntime` — stateless wrapper around `executeFlow`. `handleMessage`
   evaluates every message from the start node; `userId` is accepted for API
   stability but ignored. A send node with no replies returns `[]` (the
@@ -276,7 +282,8 @@ The pure engine lives in `src/logic/flow.ts` (no React or Redux):
 - `validateFlow(flow)` — checks the name, exactly one start node, no
   duplicate ids, no edges to missing nodes, no incoming edges to the start
   node, at most one outgoing edge per start/transform node, at most one `if`
-  and one `else` edge per condition, and no outgoing edges from send nodes.
+  and one `else` edge per condition, and no outgoing edges from send-category
+  nodes (send and random are both terminal).
 - `flowFromSample(sample)` — deep-copies a sample's flow with fresh ids for
   the flow, every node, and every edge so loading a sample twice yields two
   independent flows.

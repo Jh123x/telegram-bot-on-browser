@@ -6,27 +6,32 @@ export type FlowTriggerType =
   | "notEquals"
   | "notContains";
 
-export type FlowNodeType = "start" | "transform" | "condition" | "send";
-
-export type TransformType =
+export type TransformNodeType =
   | "lowercase"
   | "uppercase"
   | "trim"
   | "replace"
   | "extractRegex";
 
-export interface TransformData {
-  type: TransformType;
-  find: string; // used by "replace"
-  replacement: string; // used by "replace"
-  pattern: string; // used by "extractRegex"
-}
+export type SendNodeType = "send" | "random";
+
+// Every concrete node type. The category is derived via nodeCategory() in
+// logic/flow.ts; the type itself IS the operation (no per-node type selectors).
+export type FlowNodeType =
+  | "start"
+  | TransformNodeType
+  | FlowTriggerType
+  | SendNodeType;
+
+export type FlowNodeCategory = "start" | "transform" | "condition" | "send";
 
 export interface FlowNodeData {
   label: string;
-  replies?: string[]; // send nodes
-  transform?: TransformData; // transform nodes
-  trigger?: { type: FlowTriggerType; value: string }; // condition nodes
+  value?: string; // condition nodes: the trigger value to match
+  find?: string; // "replace" transform: text to find
+  replacement?: string; // "replace" transform: replacement text
+  pattern?: string; // "extractRegex" transform: regex pattern
+  replies?: string[]; // "send" / "random" nodes: one message per line
 }
 
 export interface FlowNode {

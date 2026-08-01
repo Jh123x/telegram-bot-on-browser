@@ -21,18 +21,15 @@ const validFlow = {
     },
     {
       id: "n2",
-      type: "transform",
+      type: "trim",
       position: { x: 200, y: 0 },
-      data: {
-        label: "Clean",
-        transform: { type: "trim", find: "", replacement: "", pattern: "" },
-      },
+      data: { label: "Clean" },
     },
     {
       id: "n3",
-      type: "condition",
+      type: "contains",
       position: { x: 400, y: 0 },
-      data: { label: "Has hi", trigger: { type: "contains", value: "hi" } },
+      data: { label: "Has hi", value: "hi" },
     },
     {
       id: "n4",

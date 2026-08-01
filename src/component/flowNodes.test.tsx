@@ -6,6 +6,7 @@ import {
   TransformNode,
   ConditionNode,
   SendNode,
+  RandomNode,
 } from "./flowNodes.tsx";
 
 // Node components receive a single `NodeProps` object; we construct a minimal
@@ -36,24 +37,20 @@ test("StartNode renders its label and the start badge with a testid", () => {
 });
 
 test("TransformNode renders its label, transform summary, and a testid", () => {
-  const { getByTestId, getByText } = render(
-    <TransformNode
-      {...makeNodeProps({ label: "Upper", transform: { type: "uppercase" } })}
-    />
+  const { getByTestId, getByText, getAllByText } = render(
+    <TransformNode {...makeNodeProps({ label: "Upper" }, "uppercase")} />
   );
 
   expect(getByTestId("flow-node-transform")).toBeTruthy();
   expect(getByText("Upper")).toBeTruthy();
-  expect(getByText("uppercase")).toBeTruthy();
+  // The badge and the summary caption both read "uppercase".
+  expect(getAllByText("uppercase").length).toBeGreaterThan(0);
 });
 
 test("TransformNode renders the replace summary with find and replacement", () => {
   const { getByText, queryByText } = render(
     <TransformNode
-      {...makeNodeProps({
-        label: "Swap",
-        transform: { type: "replace", find: "a", replacement: "b" },
-      })}
+      {...makeNodeProps({ label: "Swap", find: "a", replacement: "b" }, "replace")}
     />
   );
 
@@ -62,48 +59,37 @@ test("TransformNode renders the replace summary with find and replacement", () =
 });
 
 test("TransformNode falls back to a bare replace label when find is empty", () => {
-  const { getByText } = render(
+  const { getAllByText } = render(
     <TransformNode
-      {...makeNodeProps({
-        label: "Swap",
-        transform: { type: "replace", find: "", replacement: "b" },
-      })}
+      {...makeNodeProps({ label: "Swap", find: "", replacement: "b" }, "replace")}
     />
   );
 
-  expect(getByText("replace")).toBeTruthy();
+  // Badge + caption both read "replace" when find is empty.
+  expect(getAllByText("replace").length).toBeGreaterThan(0);
 });
 
 test("TransformNode renders the extract regex summary", () => {
   const { getByText } = render(
     <TransformNode
-      {...makeNodeProps({
-        label: "Grab",
-        transform: { type: "extractRegex", pattern: "\\d+" },
-      })}
+      {...makeNodeProps({ label: "Grab", pattern: "\\d+" }, "extractRegex")}
     />
   );
 
   expect(getByText("extract regex")).toBeTruthy();
 });
 
-test("TransformNode shows no summary label when it has no transform", () => {
-  const { queryByText } = render(
-    <TransformNode {...makeNodeProps({ label: "Noop" })} />
+test("TransformNode shows a lowercase badge for the lowercase type", () => {
+  const { getAllByText } = render(
+    <TransformNode {...makeNodeProps({ label: "Noop" }, "lowercase")} />
   );
 
-  expect(queryByText(/^lowercase$/)).toBeNull();
-  expect(queryByText(/^uppercase$/)).toBeNull();
+  expect(getAllByText("lowercase").length).toBeGreaterThan(0);
 });
 
 test("ConditionNode renders its label and a trigger caption", () => {
   const { getByTestId, getByText } = render(
-    <ConditionNode
-      {...makeNodeProps({
-        label: "Has hi",
-        trigger: { type: "contains", value: "hi" },
-      })}
-    />
+    <ConditionNode {...makeNodeProps({ label: "Has hi", value: "hi" }, "contains")} />
   );
 
   expect(getByTestId("flow-node-condition")).toBeTruthy();
@@ -111,14 +97,23 @@ test("ConditionNode renders its label and a trigger caption", () => {
   expect(getByText('message contains "hi"')).toBeTruthy();
 });
 
-test("ConditionNode shows a neutral caption when it has no trigger", () => {
-  const { getAllByText } = render(
-    <ConditionNode {...makeNodeProps({ label: "Cond" })} />
+test("ConditionNode shows the type badge for the concrete trigger", () => {
+  const { getByText } = render(
+    <ConditionNode {...makeNodeProps({ label: "Is hi", value: "hi" }, "equals")} />
   );
 
-  // The node always renders its type badge ("condition"); with no trigger the
-  // caption also falls back to "condition", so tolerate both occurrences.
-  expect(getAllByText("condition").length).toBeGreaterThan(0);
+  expect(getByText("equals")).toBeTruthy();
+  expect(getByText('message equals "hi"')).toBeTruthy();
+});
+
+test("ConditionNode shows a neutral caption when it has no value", () => {
+  const { getByText } = render(
+    <ConditionNode {...makeNodeProps({ label: "Cond" }, "contains")} />
+  );
+
+  // Badge says "contains" and caption says `message contains ""`, so the
+  // trigger label appears twice.
+  expect(getByText("message contains \"\"")).toBeTruthy();
 });
 
 test("SendNode renders its label, reply count, and a testid", () => {
@@ -141,9 +136,36 @@ test("SendNode pluralizes singular reply count", () => {
   expect(getByText("1 reply")).toBeTruthy();
 });
 
+test("RandomNode renders its label and one-of-N caption", () => {
+  const { getByTestId, getByText } = render(
+    <RandomNode {...makeNodeProps({ label: "Flip", replies: ["a", "b"] })} />
+  );
+
+  expect(getByTestId("flow-node-random")).toBeTruthy();
+  expect(getByText("Flip")).toBeTruthy();
+  expect(getByText("1 of 2 replies")).toBeTruthy();
+});
+
+test("RandomNode shows no replies when the list is empty", () => {
+  const { getByText } = render(
+    <RandomNode {...makeNodeProps({ label: "Flip", replies: [] })} />
+  );
+
+  expect(getByText("no replies")).toBeTruthy();
+});
+
 test("SendNode has a single (target) handle and no source handle", () => {
   const { container } = render(
     <SendNode {...makeNodeProps({ label: "Echo", replies: ["hi"] })} />
+  );
+
+  const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
+  expect(handles).toHaveLength(1);
+});
+
+test("RandomNode has a single (target) handle and no source handle", () => {
+  const { container } = render(
+    <RandomNode {...makeNodeProps({ label: "Flip", replies: ["hi"] })} />
   );
 
   const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
@@ -158,14 +180,14 @@ test("StartNode card border uses the start accent color", () => {
 });
 
 test("TransformNode card border uses the transform accent color", () => {
-  const { getByTestId } = render(<TransformNode {...makeNodeProps({ label: "Upper" })} />);
+  const { getByTestId } = render(<TransformNode {...makeNodeProps({ label: "Upper" }, "uppercase")} />);
   expect(getComputedStyle(getByTestId("flow-node-transform")).borderColor).toBe(
     "#38bdf8"
   );
 });
 
 test("ConditionNode card border uses the condition accent color", () => {
-  const { getByTestId } = render(<ConditionNode {...makeNodeProps({ label: "Cond" })} />);
+  const { getByTestId } = render(<ConditionNode {...makeNodeProps({ label: "Cond" }, "contains")} />);
   expect(getComputedStyle(getByTestId("flow-node-condition")).borderColor).toBe(
     "#fbbf24"
   );
@@ -180,7 +202,7 @@ test("SendNode card border uses the send accent color", () => {
 
 test("a selected node shows a selection ring in its accent color", () => {
   const { getByTestId } = render(
-    <TransformNode {...makeNodeProps({ label: "Upper" }, "transform", true)} />
+    <TransformNode {...makeNodeProps({ label: "Upper" }, "uppercase", true)} />
   );
   expect(getComputedStyle(getByTestId("flow-node-transform")).boxShadow).toContain(
     "#38bdf8"
@@ -188,24 +210,18 @@ test("a selected node shows a selection ring in its accent color", () => {
 });
 
 test("TransformNode renders its type badge", () => {
-  const { getByText } = render(<TransformNode {...makeNodeProps({ label: "Upper" })} />);
-  expect(getByText("transform")).toBeTruthy();
+  const { getAllByText } = render(<TransformNode {...makeNodeProps({ label: "Upper" }, "uppercase")} />);
+  expect(getAllByText("uppercase").length).toBeGreaterThan(0);
 });
 
 test("ConditionNode renders its type badge", () => {
   const { getByText } = render(
-    <ConditionNode
-      {...makeNodeProps({
-        label: "Cond",
-        trigger: { type: "contains", value: "hi" },
-      })}
-    />
+    <ConditionNode {...makeNodeProps({ label: "Cond", value: "hi" }, "contains")} />
   );
-  expect(getByText("condition")).toBeTruthy();
+  expect(getByText("contains")).toBeTruthy();
 });
 
 test("SendNode renders its type badge", () => {
   const { getByText } = render(<SendNode {...makeNodeProps({ label: "Echo" })} />);
   expect(getByText("send")).toBeTruthy();
 });
-

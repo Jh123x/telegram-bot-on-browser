@@ -53,7 +53,7 @@ const helloFlow = {
   startNodeId: "start",
   nodes: [
     { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } },
-    { id: "cond", type: "condition" as const, position: { x: 0, y: 0 }, data: { label: "Check", trigger: { type: "equals" as const, value: "/hello" } } },
+    { id: "cond", type: "equals" as const, position: { x: 0, y: 0 }, data: { label: "Check", value: "/hello" } },
     { id: "reply", type: "send" as const, position: { x: 0, y: 0 }, data: { label: "Reply", replies: ["hi"] } },
   ],
   edges: [
@@ -269,8 +269,8 @@ test("a silent flow falls through to the next flow (multi-flow rules)", async ()
   const silentFlow = (() => {
     const f = createFlow("Silent");
     const start = createFlowNode("start", { x: 0, y: 0 });
-    const check = createFlowNode("condition", { x: 120, y: 0 });
-    check.data.trigger = { type: "equals", value: "/help" };
+    const check = createFlowNode("equals", { x: 120, y: 0 });
+    check.data.value = "/help";
     const help = createFlowNode("send", { x: 240, y: 0 });
     help.data.label = "Help";
     help.data.replies = ["Help text"];
@@ -371,8 +371,8 @@ test("a flow with no matching transition sends no reply", async () => {
   const strictFlow = (() => {
     const f = createFlow("Strict");
     const start = createFlowNode("start", { x: 0, y: 0 });
-    const check = createFlowNode("condition", { x: 120, y: 0 });
-    check.data.trigger = { type: "equals", value: "/secret" };
+    const check = createFlowNode("equals", { x: 120, y: 0 });
+    check.data.value = "/secret";
     const reveal = createFlowNode("send", { x: 240, y: 0 });
     reveal.data.label = "Reveal";
     reveal.data.replies = ["The secret is 42"];
