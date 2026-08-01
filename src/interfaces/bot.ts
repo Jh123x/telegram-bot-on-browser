@@ -1,6 +1,6 @@
 export interface BotRule {
-  matcher: (message: string) => boolean;
-  callback: (message: string) => string | string[];
+  matcher: (message: string, userId?: number) => boolean;
+  callback: (message: string, userId?: number) => string | string[];
 }
 
 export class BrowserBot {
@@ -17,7 +17,10 @@ export class BrowserBot {
     this.rules = [];
   }
 
-  addRule(matcher: (message: string) => boolean, callback: (message: string) => string | string[]) {
+  addRule(
+    matcher: (message: string, userId?: number) => boolean,
+    callback: (message: string, userId?: number) => string | string[]
+  ) {
     this.rules.push({ matcher, callback });
   }
 
@@ -25,9 +28,9 @@ export class BrowserBot {
     this.rules = [];
   }
 
-  handleMessage(message: string): string | string[] | undefined {
+  handleMessage(message: string, userId?: number): string | string[] | undefined {
     for (const rule of this.rules) {
-      if (rule.matcher(message)) return rule.callback(message);
+      if (rule.matcher(message, userId)) return rule.callback(message, userId);
     }
     return undefined;
   }
@@ -44,7 +47,7 @@ export class BrowserBot {
       console.debug(`[Main] Received: ${message} from ${username}`);
       responseSender(date * 1000, username, chatID, message);
 
-      const response = this.handleMessage(message);
+      const response = this.handleMessage(message, chatID);
       if (response === undefined) {
         console.debug(`[Main] No matching rule for ${message}`);
         return;

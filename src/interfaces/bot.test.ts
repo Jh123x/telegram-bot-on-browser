@@ -1,5 +1,5 @@
 import { test, expect } from "@jest/globals";
-import { BrowserBot } from "./bot";
+import { BrowserBot } from "./bot.ts";
 
 class MockWorker {
   onmessage: ((e: { data: unknown }) => void) | null = null;
@@ -190,4 +190,47 @@ test("sendMessage does nothing when send_worker is undefined", () => {
   const bot = createBot();
   expect(() => bot.sendMessage(99, "hello")).not.toThrow();
   expect(bot.send_worker).toBeUndefined();
+});
+
+test("handleMessage passes userId to both matcher and callback when provided", () => {
+  const bot = createBot();
+  const matcher = jest.fn(() => true);
+  const callback = jest.fn((m: string, u?: number) => `echo:${m}:${u}`);
+  bot.addRule(matcher, callback);
+
+  const result = bot.handleMessage("/hi", 42);
+
+  expect(result).toBe("echo:/hi:42");
+  expect(matcher).toHaveBeenCalledWith("/hi", 42);
+  expect(callback).toHaveBeenCalledWith("/hi", 42);
+});
+
+test("handleMessage passes undefined as userId when omitted", () => {
+  const bot = createBot();
+  const matcher = jest.fn(() => true);
+  const callback = jest.fn();
+  bot.addRule(matcher, callback);
+
+  const result = bot.handleMessage("/hi");
+
+  expect(result).toBeUndefined();
+  expect(matcher).toHaveBeenCalledWith("/hi", undefined);
+  expect(callback).toHaveBeenCalledWith("/hi", undefined);
+});
+
+test("existing one-argument rules continue to work through handleMessage", () => {
+  const bot = createBot();
+  bot.addRule((m) => m === "/hello", (m) => `echo:${m}`);
+
+  expect(bot.handleMessage("/hello", 123)).toBe("echo:/hello");
+});
+
+test("start() passes chatID from the worker payload to the matching rule's callback", async () => {
+  const bot = createBot();
+  bot.addRule((m) => m === "/hello", (m, u) => `user:${u}`);
+  bot.start(() => {});
+
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 555, "/hello"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledWith([SEND_URL, "user:555", 555]);
 });
