@@ -16,7 +16,7 @@ const makeFlow = (name: string, id = name.toLowerCase() + "-id"): Flow => ({
 
 const makeStore = (flows: Flow[] = []) =>
   setupStore<BotWithConfig>({
-    bot: { token: "", programs: [], flows, response: [], users: [] },
+    bot: { token: "", flows, response: [], users: [] },
   });
 
 afterEach(() => {

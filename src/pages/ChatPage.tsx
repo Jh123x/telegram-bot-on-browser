@@ -22,9 +22,7 @@ import {
 } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig, Response, User } from "../redux/types.ts";
-import { Program } from "../interfaces/program.ts";
 import { Flow } from "../interfaces/flow.ts";
-import { executeProgram, findMatchingProgram } from "../logic/program.ts";
 import { FlowRuntime } from "../logic/flow.ts";
 
 type DisplayItem =
@@ -56,7 +54,6 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const dispatch = useDispatch();
   const storeUsers = useSelector<BotWithConfig, User[]>((state) => state.bot.users);
   const responses = useSelector<BotWithConfig, Response[]>((state) => state.bot.response);
-  const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
   const flows = useSelector<BotWithConfig, Flow[]>(
     (state) => state.bot.flows ?? EMPTY_FLOWS
   );
@@ -130,47 +127,9 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
       },
     ];
 
-    const program = findMatchingProgram(programs, text);
-    if (program) {
-      newItems.push({
-        id: `sim-${now}-${i++}`,
-        kind: "note",
-        time: nextTime(),
-        text: `Matched program: ${program.name}`,
-      });
-      const replies = executeProgram(program, text);
-      if (replies.length === 0) {
-        newItems.push({
-          id: `sim-${now}-${i++}`,
-          kind: "note",
-          time: nextTime(),
-          text: "The program matched but produced no reply.",
-        });
-      } else {
-        replies.forEach((reply) => {
-          const t = nextTime();
-          newItems.push({
-            id: `sim-${now}-${i++}`,
-            kind: "message",
-            time: t,
-            response: {
-              FromUser: "Bot",
-              UserID: TEST_USER.UserID,
-              Message: reply,
-              TimeStamp: t,
-              fromBot: true,
-            },
-          });
-        });
-      }
-      setSimulated((prev) => [...prev, ...newItems]);
-      setMessage("");
-      return;
-    }
-
-    // No program matched: give flows a chance. First flow whose current state
-    // has a matching transition wins — the same per-user path production uses
-    // (FlowRuntime keyed by user id, here the Test User).
+    // Flows get the message: first flow whose current state has a matching
+    // transition wins — the same per-user path production uses (FlowRuntime
+    // keyed by user id, here the Test User).
     let matchedFlow: Flow | undefined;
     let flowReplies: string[] = [];
     for (const flow of flows) {
@@ -189,7 +148,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         id: `sim-${now}-${i++}`,
         kind: "note",
         time: nextTime(),
-        text: "No program matched this message — the bot would stay silent.",
+        text: "No flow matched this message — the bot would stay silent.",
       });
     } else {
       newItems.push({

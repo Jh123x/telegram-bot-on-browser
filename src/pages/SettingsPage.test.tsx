@@ -24,7 +24,7 @@ test("renders the settings page title and the token input", () => {
 
 test("renders the token value from the store in the input", () => {
   const store = setupStore({
-    bot: { token: "abc:TOKEN", programs: [], response: [], users: [] },
+    bot: { token: "abc:TOKEN", response: [], users: [] },
   });
   renderWithProviders(<SettingsPage />, { store });
 
@@ -56,7 +56,7 @@ test("renders the localStorage caption below the card", () => {
 
 test("clicking Save writes the current token from the store to localStorage", () => {
   const store = setupStore({
-    bot: { token: "ios:persist", programs: [], response: [], users: [] },
+    bot: { token: "ios:persist", response: [], users: [] },
   });
   renderWithProviders(<SettingsPage />, { store });
 

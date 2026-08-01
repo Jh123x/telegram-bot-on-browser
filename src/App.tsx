@@ -10,13 +10,12 @@ import { DocsPage } from "./pages/DocsPage.tsx";
 import { FlowsPage } from "./pages/FlowsPage.tsx";
 import { useBot } from "./hooks/useBot.ts";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken, setPrograms, setAutoStart, setHydrated, setFlows, addFlow } from "./redux/botSlice.ts";
+import { setToken, setAutoStart, setHydrated, setFlows, addFlow } from "./redux/botSlice.ts";
 import { useEffect, useRef } from "react";
 import React from "react";
 import { flowFromSample } from "./logic/flow.ts";
 import { SAMPLE_FLOWS } from "./logic/flowSamples.ts";
 import { Flow } from "./interfaces/flow.ts";
-import { Program } from "./interfaces/program.ts";
 import { BotWithConfig } from "./redux/types.ts";
 
 // Stable empty array so the flows selector never returns a fresh reference
@@ -41,18 +40,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 // match the expected shape is treated as absent so a bad localStorage value
 // can never crash the app at startup (blank page) — we simply keep the default
 // state.
-const isValidProgram = (p: unknown): boolean => {
-  const prog = p as Record<string, unknown>;
-  return (
-    isRecord(p) &&
-    typeof prog.id === "string" &&
-    typeof prog.name === "string" &&
-    isRecord(prog.trigger) &&
-    typeof prog.trigger.type === "string" &&
-    Array.isArray(prog.blocks)
-  );
-};
-
 const isValidFlow = (f: unknown): boolean => {
   const flow = f as Record<string, unknown>;
   return (
@@ -82,15 +69,6 @@ export const App = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token !== null) dispatch(setToken(token));
-    const programs = localStorage.getItem("programs");
-    if (programs !== null) {
-      const parsed = parseJson(programs);
-      if (Array.isArray(parsed) && parsed.every(isValidProgram)) {
-        dispatch(setPrograms(parsed as Program[]));
-      }
-      // Corrupt or wrong-shape programs: keep the default (empty) list so a
-      // bad value cannot crash the app.
-    }
     const flows = localStorage.getItem("flows");
     if (flows !== null) {
       // Set the flag whenever the key exists — even if its content is corrupt

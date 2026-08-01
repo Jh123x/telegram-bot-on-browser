@@ -33,50 +33,13 @@ test("renders app correctly", () => {
   expect(component).toMatchSnapshot();
 });
 
-test("hydrates store from localStorage token and programs on mount", () => {
+test("hydrates store from localStorage token on mount", () => {
   localStorage.setItem("token", "hydrated-token");
-  localStorage.setItem(
-    "programs",
-    JSON.stringify([
-      {
-        id: "p1",
-        name: "Greet",
-        trigger: { type: "equals", value: "/start" },
-        blocks: [
-          {
-            id: "b1",
-            category: "action",
-            kind: "reply",
-            value: "hi",
-            value2: "",
-            fallback: "",
-          },
-        ],
-      },
-    ])
-  );
 
   const store = setupStore(generateDefaultState());
   renderWithProviders(<App />, { store });
 
   expect(store.getState().bot.token).toBe("hydrated-token");
-  expect(store.getState().bot.programs).toEqual([
-    {
-      id: "p1",
-      name: "Greet",
-      trigger: { type: "equals", value: "/start" },
-      blocks: [
-        {
-          id: "b1",
-          category: "action",
-          kind: "reply",
-          value: "hi",
-          value2: "",
-          fallback: "",
-        },
-      ],
-    },
-  ]);
   // Hydration completed whether or not localStorage had values.
   expect(store.getState().bot.hydrated).toBe(true);
 });
@@ -86,56 +49,18 @@ test("leaves the default state when localStorage is empty", () => {
   renderWithProviders(<App />, { store });
 
   expect(store.getState().bot.token).toBe("");
-  expect(store.getState().bot.programs).toEqual([]);
   expect(store.getState().bot.autoStart).toBe(false);
   // Hydration completed even with no localStorage values.
   expect(store.getState().bot.hydrated).toBe(true);
 });
 
-test("hydrates token when only token is stored (no programs key)", () => {
+test("hydrates token when only token is stored", () => {
   localStorage.setItem("token", "only-token");
 
   const store = setupStore(generateDefaultState());
   renderWithProviders(<App />, { store });
 
   expect(store.getState().bot.token).toBe("only-token");
-  expect(store.getState().bot.programs).toEqual([]);
-});
-
-test("hydrates saved programs under StrictMode without clobbering localStorage", () => {
-  const savedPrograms = [
-    {
-      id: "p1",
-      name: "Greet",
-      trigger: { type: "equals", value: "/start" },
-      blocks: [
-        {
-          id: "b1",
-          category: "action",
-          kind: "reply",
-          value: "hi",
-          value2: "",
-          fallback: "",
-        },
-      ],
-    },
-  ];
-  const saved = JSON.stringify(savedPrograms);
-  localStorage.setItem("programs", saved);
-
-  const store = setupStore(generateDefaultState());
-  renderWithProviders(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-    { store }
-  );
-
-  // The editor's persistence effect must not overwrite saved programs with
-  // an empty array during StrictMode's double mount, so App hydration
-  // still sees them and the store is populated.
-  expect(localStorage.getItem("programs")).toBe(saved);
-  expect(store.getState().bot.programs).toEqual(savedPrograms);
 });
 
 test("switching tabs shows the right page", () => {
@@ -243,16 +168,6 @@ test("does not crash and keeps flows empty when flows JSON is corrupt", () => {
   // The app renders (no startup crash) and flows stay at the default empty.
   expect(screen.getByTestId("app-root")).toBeTruthy();
   expect(store.getState().bot.flows).toEqual([]);
-});
-
-test("does not crash and keeps programs empty when programs JSON is corrupt", () => {
-  localStorage.setItem("programs", "{bad json");
-
-  const store = setupStore(generateDefaultState());
-  renderWithProviders(<App />, { store });
-
-  expect(screen.getByTestId("app-root")).toBeTruthy();
-  expect(store.getState().bot.programs).toEqual([]);
 });
 
 test("does not crash and does not seed when flows JSON is valid but the wrong shape", () => {

@@ -10,13 +10,12 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useRef, useState } from "react";
-import { BotWithConfig, Program } from "../redux/types.ts";
+import { BotWithConfig } from "../redux/types.ts";
 import { Flow } from "../interfaces/flow.ts";
 import {
   resetAll,
   setAutoStart,
   setFlows,
-  setPrograms,
   setToken,
 } from "../redux/botSlice.ts";
 
@@ -28,33 +27,6 @@ const sectionHeader = {
 } as const;
 
 const sectionCaption = { color: "text.secondary", pl: 2 } as const;
-
-const VALID_BLOCK_CATEGORIES = ["logic", "transform", "action"] as const;
-
-const isValidBlock = (b: unknown): boolean => {
-  if (!b || typeof b !== "object") return false;
-  const block = b as Record<string, unknown>;
-  return (
-    typeof block.id === "string" &&
-    typeof block.kind === "string" &&
-    typeof block.value === "string" &&
-    typeof block.category === "string" &&
-    (VALID_BLOCK_CATEGORIES as readonly string[]).includes(block.category)
-  );
-};
-
-const isValidProgram = (p: unknown): boolean => {
-  if (!isRecord(p)) return false;
-  const prog = p as Record<string, unknown>;
-  return (
-    typeof prog.id === "string" &&
-    typeof prog.name === "string" &&
-    isRecord(prog.trigger) &&
-    typeof (prog.trigger as Record<string, unknown>).type === "string" &&
-    Array.isArray(prog.blocks) &&
-    prog.blocks.every(isValidBlock)
-  );
-};
 
 const isValidFlowNode = (n: unknown): boolean => {
   if (!isRecord(n)) return false;
@@ -110,9 +82,6 @@ const EMPTY_FLOWS: Flow[] = [];
 export const AppSettings = () => {
   const dispatch = useDispatch();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
-  const programs = useSelector<BotWithConfig, Program[]>(
-    (state) => state.bot.programs
-  );
   const flows = useSelector<BotWithConfig, Flow[]>(
     (state) => state.bot.flows ?? EMPTY_FLOWS
   );
@@ -131,7 +100,7 @@ export const AppSettings = () => {
   };
 
   const handleExport = () => {
-    const data = { version: 1, token, programs, flows, autoStart };
+    const data = { version: 1, token, flows, autoStart };
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
@@ -154,11 +123,7 @@ export const AppSettings = () => {
     reader.onload = () => {
       try {
         const parsed = JSON.parse(String(reader.result));
-        if (
-          typeof parsed.token !== "string" ||
-          !Array.isArray(parsed.programs) ||
-          !parsed.programs.every(isValidProgram)
-        ) {
+        if (typeof parsed.token !== "string") {
           setImportStatus({
             kind: "error",
             text: "Could not import settings: invalid file.",
@@ -181,11 +146,9 @@ export const AppSettings = () => {
         }
         const importedFlows = parsed.flows ?? [];
         dispatch(setToken(parsed.token));
-        dispatch(setPrograms(parsed.programs));
         dispatch(setFlows(importedFlows));
         dispatch(setAutoStart(parsed.autoStart === true));
         localStorage.setItem("token", parsed.token);
-        localStorage.setItem("programs", JSON.stringify(parsed.programs));
         localStorage.setItem("flows", JSON.stringify(importedFlows));
         localStorage.setItem("autoStart", String(parsed.autoStart === true));
         setImportStatus({ kind: "success", text: "Settings imported." });
@@ -202,14 +165,13 @@ export const AppSettings = () => {
   const handleReset = () => {
     if (
       !window.confirm(
-        "Reset all settings to default? This clears your token, programs, flows and preferences."
+        "Reset all settings to default? This clears your token, flows and preferences."
       )
     ) {
       return;
     }
     dispatch(resetAll());
     localStorage.removeItem("token");
-    localStorage.removeItem("programs");
     localStorage.removeItem("flows");
     localStorage.removeItem("autoStart");
   };
@@ -334,7 +296,7 @@ export const AppSettings = () => {
         </List>
       </Paper>
       <Typography variant="caption" sx={sectionCaption}>
-        Clears your token, programs, flows and preferences from this browser.
+        Clears your token, flows and preferences from this browser.
       </Typography>
 
       {/* SUPPORT */}

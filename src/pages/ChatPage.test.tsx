@@ -25,7 +25,6 @@ const convoStore = () =>
   setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [
         { FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 2000 },
         { FromUser: "Bot", UserID: 42, Message: "hello there!", TimeStamp: 3000, fromBot: true },
@@ -59,7 +58,6 @@ test("when users list is empty, derives users from the response list", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [{ FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 1000 }],
       users: [],
     },
@@ -105,7 +103,6 @@ test("shows a no-messages state when the selected user has no messages", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [],
       users: [{ Username: "alice", UserID: 42 }],
     },
@@ -190,34 +187,18 @@ test("chat panel fills the available page height", () => {
   expect(panel).toHaveStyle({ flexGrow: "1" });
 });
 
-const greetStore = () =>
+const welcomeFlowStore = () =>
   setupStore({
     bot: {
       token: "TOKEN",
-      programs: [
-        {
-          id: "p1",
-          name: "Greet",
-          trigger: { type: "equals", value: "/start" },
-          blocks: [
-            {
-              id: "b1",
-              category: "action",
-              kind: "reply",
-              value: "Welcome!",
-              value2: "",
-              fallback: "",
-            },
-          ],
-        },
-      ],
+      flows: [SAMPLE_FLOWS[0].flow], // Welcome Flow
       response: [{ FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 1000 }],
       users: [{ Username: "alice", UserID: 42 }],
     },
   });
 
 test("renders a Test User conversation in the sidebar like any other user", () => {
-  const store = greetStore();
+  const store = welcomeFlowStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
   expect(screen.getByRole("button", { name: /alice/ })).toBeTruthy();
@@ -225,7 +206,7 @@ test("renders a Test User conversation in the sidebar like any other user", () =
 });
 
 test("selecting the Test User simulates replies as bubbles without sending to Telegram", () => {
-  const store = greetStore();
+  const store = welcomeFlowStore();
   const bot = new BrowserBot("123:TOKEN");
   const spy = jest.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
@@ -237,15 +218,16 @@ test("selecting the Test User simulates replies as bubbles without sending to Te
   fireEvent.change(textbox, { target: { value: "/start" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
 
-  // Nothing is sent to Telegram, but the reply shows in the feed.
+  // Nothing is sent to Telegram, but the flow's replies show in the feed.
   expect(spy).not.toHaveBeenCalled();
-  expect(screen.getByText("Welcome!")).toBeTruthy();
-  expect(screen.getByText(/Matched program: Greet/)).toBeTruthy();
+  expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
+  expect(screen.getByText("Try /echo <something> or answer the quiz.")).toBeTruthy();
+  expect(screen.getByText(/Matched flow: Welcome Flow/)).toBeTruthy();
   expect(screen.getByText("/start")).toBeTruthy();
   expect(screen.getByText(/Test User ·/)).toBeTruthy();
 });
 
-test("Test User with no matching program shows the silent note", () => {
+test("Test User with no matching flow shows the silent note", () => {
   const store = convoStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
@@ -255,14 +237,13 @@ test("Test User with no matching program shows the silent note", () => {
   fireEvent.change(textbox, { target: { value: "nope" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
 
-  expect(screen.getByText(/No program matched/)).toBeTruthy();
+  expect(screen.getByText(/No flow matched/)).toBeTruthy();
 });
 
 const flowStore = () =>
   setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
       response: [],
       users: [],
@@ -296,7 +277,6 @@ test("Test User preview with no flow response shows the silent note", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       flows: [SAMPLE_FLOWS[1].flow], // Echo Flow
       response: [],
       users: [],
@@ -315,47 +295,7 @@ test("Test User preview with no flow response shows the silent note", () => {
   // Second unmatched message from the menu triggers no transition.
   fireEvent.change(textbox, { target: { value: "hello" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-  expect(screen.getByText(/No program matched/)).toBeTruthy();
-});
-
-test("Test User preview: a matched program wins over a flow", () => {
-  const store = setupStore({
-    bot: {
-      token: "TOKEN",
-      programs: [
-        {
-          id: "p1",
-          name: "Greet",
-          trigger: { type: "equals", value: "/start" },
-          blocks: [
-            {
-              id: "b1",
-              category: "action",
-              kind: "reply",
-              value: "Welcome!",
-              value2: "",
-              fallback: "",
-            },
-          ],
-        },
-      ],
-      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
-      response: [],
-      users: [],
-    },
-  });
-  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
-
-  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
-
-  const textbox = screen.getByRole("textbox");
-  fireEvent.change(textbox, { target: { value: "/start" } });
-  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-
-  // Programs run first in the preview, mirroring the production rule order, so
-  // the greeting wins and the flow never advances.
-  expect(screen.getByText("Welcome!")).toBeTruthy();
-  expect(screen.queryByText("What is 2 + 2?")).toBeNull();
+  expect(screen.getByText(/No flow matched/)).toBeTruthy();
 });
 
 test("Test User simulated messages do not touch the store", () => {
@@ -376,23 +316,7 @@ test("Test User works with no real users and never sends to Telegram", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [
-        {
-          id: "p1",
-          name: "Greet",
-          trigger: { type: "equals", value: "/start" },
-          blocks: [
-            {
-              id: "b1",
-              category: "action",
-              kind: "reply",
-              value: "Welcome!",
-              value2: "",
-              fallback: "",
-            },
-          ],
-        },
-      ],
+      flows: [SAMPLE_FLOWS[0].flow], // Welcome Flow
       response: [],
       users: [],
     },
@@ -413,7 +337,7 @@ test("Test User works with no real users and never sends to Telegram", () => {
   fireEvent.change(textbox, { target: { value: "/start" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
 
-  expect(screen.getByText("Welcome!")).toBeTruthy();
+  expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
   expect(spy).not.toHaveBeenCalled();
 });
 
@@ -474,7 +398,6 @@ test("falls back to the Test User when the remembered user no longer exists", ()
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [],
       users: [{ Username: "alice", UserID: 42 }],
       selectedUserId: 999,
@@ -560,7 +483,6 @@ test("import chat replaces the store's users and responses", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [],
       users: [],
     },

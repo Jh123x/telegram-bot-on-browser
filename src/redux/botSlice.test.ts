@@ -2,27 +2,7 @@ import { test, expect } from "@jest/globals";
 import { configureStore } from "@reduxjs/toolkit";
 import { botSlice, defaultBotState } from "./botSlice";
 import { BotWithConfig, Response, User } from "./types";
-import { Program } from "../interfaces/program.ts";
 import { Flow } from "../interfaces/flow.ts";
-
-function makeProgram(overrides: Partial<Program> = {}): Program {
-  return {
-    id: "p1",
-    name: "Greet",
-    trigger: { type: "equals", value: "/start" },
-    blocks: [
-      {
-        id: "a1",
-        category: "action",
-        kind: "reply",
-        value: "hi",
-        value2: "",
-        fallback: "",
-      },
-    ],
-    ...overrides,
-  };
-}
 
 function makeFlow(overrides: Partial<Flow> = {}): Flow {
   return {
@@ -44,11 +24,6 @@ function setupStore(preloadedState?) {
   });
 }
 
-test("default state has empty programs", () => {
-  const store = setupStore();
-  expect(store.getState().bot.programs).toEqual([]);
-});
-
 test("default state has hydrated false", () => {
   const store = setupStore();
   expect(store.getState().bot.hydrated).toBe(false);
@@ -63,13 +38,6 @@ test("setHydrated stores the flag", () => {
 
   store.dispatch(botSlice.actions.setHydrated(false));
   expect(store.getState().bot.hydrated).toBe(false);
-});
-
-test("setPrograms replaces the programs array", () => {
-  const store = setupStore();
-  const programs: Program[] = [makeProgram(), makeProgram({ id: "p2" })];
-  store.dispatch(botSlice.actions.setPrograms(programs));
-  expect(store.getState().bot.programs).toEqual(programs);
 });
 
 test("setSelectedUserId stores the selected user id", () => {
@@ -97,16 +65,13 @@ test("setAutoStart stores the flag", () => {
 test("resetAll restores the default state", () => {
   const store = setupStore();
   store.dispatch(
-    botSlice.actions.setPrograms([
-      makeProgram(),
-      makeProgram({ id: "p2", name: "Other" }),
-    ])
+    botSlice.actions.setFlows([makeFlow(), makeFlow({ id: "f2", name: "Other" })])
   );
   store.dispatch(botSlice.actions.setToken("abc:token"));
   store.dispatch(botSlice.actions.setAutoStart(true));
   store.dispatch(botSlice.actions.setSelectedUserId(42));
 
-  expect(store.getState().bot.programs).toHaveLength(2);
+  expect(store.getState().bot.flows).toHaveLength(2);
   expect(store.getState().bot.autoStart).toBe(true);
 
   store.dispatch(botSlice.actions.resetAll());

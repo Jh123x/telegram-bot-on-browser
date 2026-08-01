@@ -1,9 +1,7 @@
-import { Program } from "../interfaces/program.ts";
 import { Flow } from "../interfaces/flow.ts";
 
 export interface IBotState {
     token: string;
-    programs: Program[];
     flows?: Flow[];
     response: Response[];
     users: User[];

@@ -20,7 +20,7 @@ import {
   flowEdgeLabel,
   validateFlow,
 } from "../logic/flow.ts";
-import { generateId } from "../logic/program.ts";
+import { generateId } from "../logic/flow.ts";
 import { addFlow, removeFlow, updateFlow } from "../redux/botSlice.ts";
 import { BotWithConfig } from "../redux/types.ts";
 import { Flow, FlowEdge, FlowNodeType } from "../interfaces/flow.ts";
@@ -225,10 +225,10 @@ export const FlowEditor = () => {
   const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows);
   const [selectedFlowId, setSelectedFlowId] = useState<string | null>(null);
 
-  // Persist flow edits to localStorage on every change, mirroring
-  // ProgramEditor. Guard: the first effect run (including StrictMode's
-  // simulated remount) establishes a baseline and never writes, so we do not
-  // clobber saved flows before App hydrates them on startup.
+  // Persist flow edits to localStorage on every change. Guard: the first
+  // effect run (including StrictMode's simulated remount) establishes a
+  // baseline and never writes, so we do not clobber saved flows before App
+  // hydrates them on startup.
   const lastWritten = useRef<string | null>(null);
   useEffect(() => {
     const serialized = JSON.stringify(flows);

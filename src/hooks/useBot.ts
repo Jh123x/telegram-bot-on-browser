@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserBot } from "../interfaces/bot.ts";
-import { BotWithConfig, Program } from "../redux/types.ts";
-import { matchTrigger, executeBlocks } from "../logic/program.ts";
+import { BotWithConfig } from "../redux/types.ts";
 import { FlowRuntime } from "../logic/flow.ts";
 import { Flow } from "../interfaces/flow.ts";
 import { addResponse, addUser } from "../redux/botSlice.ts";
@@ -20,7 +19,6 @@ export const useBot = () => {
   // an infinite loop). `setBot` still drives the re-render consumers need.
   const botRef = useRef<BrowserBot>();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
-  const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
   const flows = useSelector<BotWithConfig, Flow[]>(
     (state) => state.bot.flows ?? EMPTY_FLOWS
   );
@@ -60,16 +58,10 @@ export const useBot = () => {
   useEffect(() => {
     if (bot === undefined) return;
     bot.clearRules();
-    programs.forEach((program) => {
-      bot.addRule(
-        (message: string) => matchTrigger(program.trigger, message),
-        (message: string) => executeBlocks(program.blocks, message)
-      );
-    });
-    // One rule per flow, each backed by its own FlowRuntime. Rules run after
-    // programs; a flow with no matching transition returns undefined and the
-    // next rule runs. A fresh FlowRuntime per rebuild means editing a flow
-    // resets that flow's users' states, which is expected.
+    // One rule per flow, each backed by its own FlowRuntime. A flow with no
+    // matching transition returns undefined and the next rule runs. A fresh
+    // FlowRuntime per rebuild means editing a flow resets that flow's users'
+    // states, which is expected.
     flows.forEach((flow) => {
       const runtime = new FlowRuntime(flow);
       bot.addRule(
@@ -77,7 +69,7 @@ export const useBot = () => {
         (message: string, userId?: number) => runtime.handleMessage(userId ?? 0, message)
       );
     });
-  }, [bot, programs, flows]);
+  }, [bot, flows]);
 
   // Auto-start the bot once on load when the setting is enabled and a token
   // existed at hydration-completion time. Uses botRef.current (the newest

@@ -65,4 +65,4 @@ docs/          Feature and architecture documentation
 - [x] Receive chats from users
 - [x] Send custom chat to users
 - [x] Process user-made commands on the website
-- [ ] Export a program as an Express Telegram bot application
+- [ ] Export a flow as an Express Telegram bot application

@@ -160,10 +160,11 @@ test("documents the built-in flow samples", () => {
   expect(screen.getAllByText(/Quiz Flow/i).length).toBeGreaterThan(0);
 });
 
-test("notes that legacy saved programs still run before flows", () => {
+test("no longer mentions legacy saved programs", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/saved programs still run before flows/i).length).toBeGreaterThan(0);
+  expect(screen.queryByText(/saved programs/i)).toBeNull();
+  expect(screen.queryByText(/block-based/i)).toBeNull();
 });
 
 test("getting started points to dragging nodes from the palette", () => {

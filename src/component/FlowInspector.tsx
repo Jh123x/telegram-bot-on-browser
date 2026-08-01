@@ -1,6 +1,6 @@
 import React from "react";
 import { MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
-import { TRIGGER_TYPES, TRIGGER_LABELS } from "../logic/program.ts";
+import { TRIGGER_TYPES, TRIGGER_LABELS } from "../logic/flow.ts";
 import { Flow, FlowEdgeTriggerType } from "../interfaces/flow.ts";
 
 interface FlowInspectorProps {

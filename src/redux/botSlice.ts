@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IBotState, Response, User } from "./types.ts";
-import { Program } from "../interfaces/program.ts";
 import { Flow } from "../interfaces/flow.ts";
 
 export const defaultBotState: IBotState = {
   token: "",
-  programs: [],
   flows: [],
   response: [],
   users: [],
@@ -20,9 +18,6 @@ export const botSlice = createSlice({
   reducers: {
     setToken: (state, action: { payload: string, type: string }) => {
       state.token = action.payload;
-    },
-    setPrograms: (state, action: { payload: Program[], type: string }) => {
-      state.programs = action.payload;
     },
     setFlows: (state, action: { payload: Flow[], type: string }) => {
       state.flows = action.payload;
@@ -63,7 +58,6 @@ export const botSlice = createSlice({
       ...defaultBotState,
       // Fresh arrays so anything holding a reference to the previous state's
       // lists (e.g. a component-cached default) cannot alias stale data.
-      programs: [],
       flows: [],
       response: [],
       users: [],
@@ -71,4 +65,4 @@ export const botSlice = createSlice({
   },
 });
 
-export const { setToken, setPrograms, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;
+export const { setToken, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;

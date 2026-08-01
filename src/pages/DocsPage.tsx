@@ -198,11 +198,6 @@ replies:
       users can be in different states at the same time.
     </Typography>
 
-    <Typography variant="body1" sx={{ mt: 2 }}>
-      If you saved block-based programs with the old editor, those saved
-      programs still run before flows, but new logic is built with flows.
-    </Typography>
-
     <Typography variant="h4" id="triggers" sx={{ mt: 3 }}>
       Triggers
     </Typography>

@@ -4,7 +4,7 @@ import {
   FlowEdgeData,
   FlowNode,
 } from "../interfaces/flow.ts";
-import { generateId } from "./program.ts";
+import { generateId } from "./flow.ts";
 import { createFlow, createFlowNode } from "./flow.ts";
 
 export interface FlowSample {

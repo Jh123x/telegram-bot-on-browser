@@ -8,7 +8,7 @@ import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
 
 const makeStore = () =>
   setupStore<BotWithConfig>({
-    bot: { token: "", programs: [], flows: [], response: [], users: [] },
+    bot: { token: "", flows: [], response: [], users: [] },
   });
 
 test("renders all sample flow names", () => {

@@ -4,8 +4,7 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { useBot } from "./useBot.ts";
 import { setupStore } from "../redux/testUtils.tsx";
-import { setAutoStart, setHydrated, setPrograms, setToken } from "../redux/botSlice.ts";
-import { Program } from "../interfaces/program.ts";
+import { setAutoStart, setHydrated, setToken } from "../redux/botSlice.ts";
 import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
 import { createFlow, createFlowNode } from "../logic/flow.ts";
 
@@ -39,23 +38,6 @@ afterEach(() => {
   }
 });
 
-const program = (overrides: Partial<Program> = {}): Program => ({
-  id: "p1",
-  name: "Greet",
-  trigger: { type: "equals", value: "/hello" },
-  blocks: [
-    {
-      id: "b1",
-      category: "action",
-      kind: "reply",
-      value: "hi",
-      value2: "",
-      fallback: "",
-    },
-  ],
-  ...overrides,
-});
-
 const wrapper = (store: ReturnType<typeof setupStore>) => {
   const Wrapper = ({ children }: { children: React.ReactNode }) => {
     return <Provider store={store}>{children}</Provider>;
@@ -63,9 +45,23 @@ const wrapper = (store: ReturnType<typeof setupStore>) => {
   return Wrapper;
 };
 
+// A minimal flow: a "/hello" message transitions to a state that replies "hi".
+const helloFlow = {
+  id: "f1",
+  name: "Hello",
+  startNodeId: "start",
+  nodes: [
+    { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start", replies: [] } },
+    { id: "reply", type: "state" as const, position: { x: 0, y: 0 }, data: { label: "Reply", replies: ["hi"] } },
+  ],
+  edges: [
+    { id: "e1", source: "start", target: "reply", data: { trigger: { type: "equals" as const, value: "/hello" } } },
+  ],
+};
+
 test("starts with started=false and a bot instance created from the token", () => {
   const store = setupStore({
-    bot: { token: "TOKEN", programs: [], response: [], users: [] },
+    bot: { token: "TOKEN", response: [], users: [] },
   });
   const { result } = renderHook(() => useBot(), {
     wrapper: wrapper(store),
@@ -80,7 +76,7 @@ test("start() creates two workers, sets started=true, and dispatches responses/u
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [program()],
+      flows: [helloFlow],
       response: [],
       users: [],
     },
@@ -125,7 +121,7 @@ test("start() dispatches bot replies with fromBot=true and FromUser='Bot'", asyn
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [program()],
+      flows: [helloFlow],
       response: [],
       users: [],
     },
@@ -160,7 +156,7 @@ test("start() dispatches bot replies with fromBot=true and FromUser='Bot'", asyn
 
 test("start() when already started does nothing", () => {
   const store = setupStore({
-    bot: { token: "TOKEN", programs: [], response: [], users: [] },
+    bot: { token: "TOKEN", response: [], users: [] },
   });
   const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
 
@@ -177,7 +173,7 @@ test("start() when already started does nothing", () => {
 
 test("stop() terminates workers and sets started=false", () => {
   const store = setupStore({
-    bot: { token: "TOKEN", programs: [], response: [], users: [] },
+    bot: { token: "TOKEN", response: [], users: [] },
   });
   const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
 
@@ -196,7 +192,7 @@ test("stop() terminates workers and sets started=false", () => {
 
 test("changing the token while running stops the old bot and resets started", () => {
   const store = setupStore({
-    bot: { token: "TOKEN", programs: [], response: [], users: [] },
+    bot: { token: "TOKEN", response: [], users: [] },
   });
   const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
 
@@ -219,53 +215,10 @@ test("changing the token while running stops the old bot and resets started", ()
   expect(result.current.bot?.token).toBe("NEW_TOKEN");
 });
 
-test("rules are rebuilt when programs change so new programs take effect", async () => {
-  const store = setupStore({
-    bot: {
-      token: "TOKEN",
-      programs: [program({ trigger: { type: "equals", value: "/a" } })],
-      response: [],
-      users: [],
-    },
-  });
-  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
-
-  act(() => {
-    result.current.start();
-  });
-  const poll = instances[0];
-  const send = instances[1];
-
-  // Program A matches /a.
-  await act(async () => {
-    await poll.onmessage!({ data: [1, "alice", 42, "/a"] });
-  });
-  expect(send.postMessage).toHaveBeenCalledTimes(1);
-
-  // Replace programs with program B matching /b.
-  act(() => {
-    store.dispatch(
-      setPrograms([program({ trigger: { type: "equals", value: "/b" } })])
-    );
-  });
-
-  // /a should no longer match.
-  await act(async () => {
-    await poll.onmessage!({ data: [2, "alice", 42, "/a"] });
-  });
-
-  // /b should match now.
-  await act(async () => {
-    await poll.onmessage!({ data: [3, "alice", 42, "/b"] });
-  });
-  expect(send.postMessage).toHaveBeenCalledTimes(2);
-});
-
 test("flows from the store are registered as rules and respond via the worker", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
       response: [],
       users: [],
@@ -313,7 +266,6 @@ test("a silent flow falls through to the next flow (multi-flow rules)", async ()
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       flows: [silentFlow, SAMPLE_FLOWS[2].flow], // Silent, then Quiz Flow
       response: [],
       users: [],
@@ -342,7 +294,6 @@ test("flows keep independent per-user state through the worker", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
       response: [],
       users: [],
@@ -412,7 +363,6 @@ test("a flow with no matching transition sends no reply", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       flows: [SAMPLE_FLOWS[1].flow], // Echo Flow
       response: [],
       users: [],
@@ -439,42 +389,10 @@ test("a flow with no matching transition sends no reply", async () => {
   expect(send.postMessage).toHaveBeenCalledTimes(1);
 });
 
-test("a matched program still wins over a matching flow", async () => {
-  const greet = program({ trigger: { type: "equals", value: "/start" } });
-  const store = setupStore({
-    bot: {
-      token: "TOKEN",
-      programs: [greet],
-      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
-      response: [],
-      users: [],
-    },
-  });
-  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
-
-  act(() => {
-    result.current.start();
-  });
-  const poll = instances[0];
-  const send = instances[1];
-
-  // The program rule is registered before flow rules, so /start hits the
-  // program and never advances the flow.
-  await act(async () => {
-    await poll.onmessage!({ data: [1, "alice", 42, "/start"] });
-  });
-  expect(send.postMessage).toHaveBeenLastCalledWith([
-    "https://api.telegram.org/botTOKEN/sendMessage",
-    "hi",
-    42,
-  ]);
-});
-
 test("auto-starts once when autoStart and token are set at load", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [],
       users: [],
       autoStart: true,
@@ -491,7 +409,6 @@ test("does not auto-start when the token is empty at load", () => {
   const store = setupStore({
     bot: {
       token: "",
-      programs: [],
       response: [],
       users: [],
       autoStart: true,
@@ -508,7 +425,6 @@ test("does not auto-start when autoStart is false at load", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [],
       users: [],
       autoStart: false,
@@ -523,7 +439,7 @@ test("does not auto-start when autoStart is false at load", () => {
 
 test("auto-starts the bot instance with the hydrated token, not the stale one", () => {
   const store = setupStore({
-    bot: { token: "", programs: [], response: [], users: [], autoStart: true, hydrated: false },
+    bot: { token: "", response: [], users: [], autoStart: true, hydrated: false },
   });
   const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
 
@@ -546,7 +462,7 @@ test("auto-starts the bot instance with the hydrated token, not the stale one", 
 
 test("does not auto-start when the token is added after load", () => {
   const store = setupStore({
-    bot: { token: "", programs: [], response: [], users: [], autoStart: true, hydrated: true },
+    bot: { token: "", response: [], users: [], autoStart: true, hydrated: true },
   });
   const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
 
@@ -564,7 +480,7 @@ test("does not auto-start when the token is added after load", () => {
 
 test("does not auto-start when the switch is toggled on after load", () => {
   const store = setupStore({
-    bot: { token: "TOKEN", programs: [], response: [], users: [], autoStart: false, hydrated: true },
+    bot: { token: "TOKEN", response: [], users: [], autoStart: false, hydrated: true },
   });
   const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
 
@@ -582,7 +498,7 @@ test("does not auto-start when the switch is toggled on after load", () => {
 
 test("does not auto-start when hydration has not completed", () => {
   const store = setupStore({
-    bot: { token: "TOKEN", programs: [], response: [], users: [], autoStart: true, hydrated: false },
+    bot: { token: "TOKEN", response: [], users: [], autoStart: true, hydrated: false },
   });
   const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
 
@@ -594,7 +510,6 @@ test("manual stop is not overridden by the auto-start effect", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [],
       users: [],
       autoStart: true,
@@ -614,7 +529,7 @@ test("manual stop is not overridden by the auto-start effect", () => {
   // Force a re-render via an unrelated store update; the auto-start effect
   // must not restart the bot.
   act(() => {
-    store.dispatch(setPrograms([]));
+    store.dispatch(setAutoStart(false));
   });
   expect(result.current.started).toBe(false);
   expect(instances.length).toBe(2);
@@ -624,7 +539,6 @@ test("auto-starts exactly once under StrictMode", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      programs: [],
       response: [],
       users: [],
       autoStart: true,

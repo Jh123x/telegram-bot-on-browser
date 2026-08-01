@@ -1,4 +1,10 @@
-import { TriggerType } from "./program.ts";
+export type FlowTriggerType =
+  | "equals"
+  | "contains"
+  | "startsWith"
+  | "endsWith"
+  | "notEquals"
+  | "notContains";
 
 export type FlowNodeType = "start" | "state";
 
@@ -15,9 +21,9 @@ export interface FlowNode {
   data: FlowNodeData;
 }
 
-// Reuses TriggerType from program.ts (equals/contains/startsWith/endsWith/
-// notEquals/notContains) plus "fallback" = matches any message.
-export type FlowEdgeTriggerType = TriggerType | "fallback";
+// Uses the locally-defined FlowTriggerType (equals/contains/startsWith/
+// endsWith/notEquals/notContains) plus "fallback" = matches any message.
+export type FlowEdgeTriggerType = FlowTriggerType | "fallback";
 
 export interface FlowEdgeData {
   trigger: { type: FlowEdgeTriggerType; value: string };

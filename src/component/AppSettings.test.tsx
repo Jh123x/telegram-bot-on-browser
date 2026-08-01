@@ -6,22 +6,6 @@ import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { defaultBotState } from "../redux/botSlice.ts";
 import { AppSettings } from "./AppSettings.tsx";
 
-const validProgram = {
-  id: "p1",
-  name: "Greet",
-  trigger: { type: "equals", value: "/start" },
-  blocks: [
-    {
-      id: "b1",
-      category: "action",
-      kind: "reply",
-      value: "hi",
-      value2: "",
-      fallback: "",
-    },
-  ],
-};
-
 const validFlow = {
   id: "f1",
   name: "Order",
@@ -40,7 +24,6 @@ const validFlow = {
 const seedState = {
   bot: {
     token: "abc:TOKEN",
-    programs: [validProgram],
     flows: [validFlow],
     response: [],
     users: [],
@@ -120,7 +103,6 @@ test("export settings downloads a JSON file with the current settings", async ()
   expect(parsed).toEqual({
     version: 1,
     token: "abc:TOKEN",
-    programs: [validProgram],
     flows: [validFlow],
     autoStart: false,
   });
@@ -128,7 +110,7 @@ test("export settings downloads a JSON file with the current settings", async ()
   expect((URL as any).revokeObjectURL).toHaveBeenCalledWith("blob:mock");
 });
 
-test("import settings applies token, programs and autoStart", async () => {
+test("import settings applies token, resets flows to empty and applies autoStart", async () => {
   const store = setupStore(seedState);
   renderWithProviders(<AppSettings />, { store });
 
@@ -137,7 +119,6 @@ test("import settings applies token, programs and autoStart", async () => {
       JSON.stringify({
         version: 1,
         token: "imp-token",
-        programs: [validProgram],
         autoStart: true,
       }),
     ],
@@ -153,10 +134,10 @@ test("import settings applies token, programs and autoStart", async () => {
   });
 
   expect(store.getState().bot.token).toBe("imp-token");
-  expect(store.getState().bot.programs).toEqual([validProgram]);
+  // No flows key in the file: flows reset to empty.
+  expect(store.getState().bot.flows).toEqual([]);
   expect(store.getState().bot.autoStart).toBe(true);
   expect(localStorage.getItem("token")).toBe("imp-token");
-  expect(localStorage.getItem("programs")).toBe(JSON.stringify([validProgram]));
   expect(localStorage.getItem("autoStart")).toBe("true");
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Settings imported."
@@ -166,7 +147,6 @@ test("import settings applies token, programs and autoStart", async () => {
 test("import with an invalid file shows an error and changes nothing", async () => {
   const store = setupStore(seedState);
   localStorage.setItem("token", "abc:TOKEN");
-  localStorage.setItem("programs", JSON.stringify([validProgram]));
   localStorage.setItem("autoStart", "false");
   renderWithProviders(<AppSettings />, { store });
 
@@ -183,7 +163,6 @@ test("import with an invalid file shows an error and changes nothing", async () 
     "Could not import settings"
   );
   expect(store.getState().bot.token).toBe("abc:TOKEN");
-  expect(store.getState().bot.programs).toEqual([validProgram]);
   expect(store.getState().bot.autoStart).toBe(false);
   expect(localStorage.getItem("token")).toBe("abc:TOKEN");
 });
@@ -207,14 +186,12 @@ test("import with a valid-JSON-but-wrong-shape file shows an error and changes n
     "Could not import settings"
   );
   expect(store.getState().bot.token).toBe("abc:TOKEN");
-  expect(store.getState().bot.programs).toEqual([validProgram]);
   expect(store.getState().bot.autoStart).toBe(false);
 });
 
 test("reset to default clears the store and localStorage after confirm", () => {
   const store = setupStore(seedState);
   localStorage.setItem("token", "abc:TOKEN");
-  localStorage.setItem("programs", JSON.stringify([validProgram]));
   localStorage.setItem("flows", JSON.stringify([validFlow]));
   localStorage.setItem("autoStart", "false");
   renderWithProviders(<AppSettings />, { store });
@@ -227,7 +204,6 @@ test("reset to default clears the store and localStorage after confirm", () => {
 
   expect(store.getState().bot).toEqual(defaultBotState);
   expect(localStorage.getItem("token")).toBeNull();
-  expect(localStorage.getItem("programs")).toBeNull();
   expect(localStorage.getItem("flows")).toBeNull();
   expect(localStorage.getItem("autoStart")).toBeNull();
 });
@@ -242,7 +218,6 @@ test("reset to default does nothing when confirm is declined", () => {
   fireEvent.click(screen.getByRole("button", { name: "Reset to default" }));
 
   expect(store.getState().bot.token).toBe("abc:TOKEN");
-  expect(store.getState().bot.programs).toEqual([validProgram]);
   expect(store.getState().bot.autoStart).toBe(false);
   expect(localStorage.getItem("token")).toBe("abc:TOKEN");
 });
@@ -263,7 +238,6 @@ test("import settings restores flows into the store and localStorage", async () 
       JSON.stringify({
         version: 1,
         token: "imp-token",
-        programs: [validProgram],
         flows: [validFlow],
         autoStart: true,
       }),
@@ -289,7 +263,6 @@ test("import settings restores flows into the store and localStorage", async () 
 test("importing an old-format file without flows succeeds and resets flows to empty", async () => {
   const store = setupStore(seedState);
   localStorage.setItem("token", "abc:TOKEN");
-  localStorage.setItem("programs", JSON.stringify([validProgram]));
   localStorage.setItem("flows", JSON.stringify([validFlow]));
   renderWithProviders(<AppSettings />, { store });
 
@@ -298,7 +271,6 @@ test("importing an old-format file without flows succeeds and resets flows to em
       JSON.stringify({
         version: 1,
         token: "imp-token",
-        programs: [validProgram],
         autoStart: false,
       }),
     ],
@@ -315,7 +287,6 @@ test("importing an old-format file without flows succeeds and resets flows to em
 
   expect(store.getState().bot).toMatchObject({
     token: "imp-token",
-    programs: [validProgram],
     flows: [],
   });
   expect(localStorage.getItem("flows")).toBe("[]");
@@ -327,7 +298,6 @@ test("importing an old-format file without flows succeeds and resets flows to em
 test("import with an invalid flows array shows an error and changes nothing", async () => {
   const store = setupStore(seedState);
   localStorage.setItem("token", "abc:TOKEN");
-  localStorage.setItem("programs", JSON.stringify([validProgram]));
   localStorage.setItem("flows", JSON.stringify([validFlow]));
   renderWithProviders(<AppSettings />, { store });
 
@@ -336,7 +306,6 @@ test("import with an invalid flows array shows an error and changes nothing", as
       JSON.stringify({
         version: 1,
         token: "imp-token",
-        programs: [validProgram],
         flows: [{ id: "no-name" }],
         autoStart: false,
       }),
@@ -380,7 +349,6 @@ test("import rejects a flow whose node is missing data.label and changes nothing
   };
   const store = setupStore(seedState);
   localStorage.setItem("token", "abc:TOKEN");
-  localStorage.setItem("programs", JSON.stringify([validProgram]));
   localStorage.setItem("flows", JSON.stringify([validFlow]));
   renderWithProviders(<AppSettings />, { store });
 
@@ -389,7 +357,6 @@ test("import rejects a flow whose node is missing data.label and changes nothing
       JSON.stringify({
         version: 1,
         token: "imp-token",
-        programs: [validProgram],
         flows: [badFlow],
         autoStart: false,
       }),

@@ -5,6 +5,8 @@ import {
   flowEdgeLabel,
   FlowRuntime,
   flowFromSample,
+  generateId,
+  interpolate,
   matchFlowTrigger,
   validateFlow,
 } from "./flow.ts";
@@ -704,6 +706,58 @@ describe("validateFlow", () => {
     expect(errors).toContain(
       "Node start has multiple fallback edges; only the first is reachable"
     );
+  });
+});
+
+describe("generateId", () => {
+  test("returns non-empty ids and differs between calls", () => {
+    const id1 = generateId();
+    const id2 = generateId();
+    expect(id1.length).toBeGreaterThan(0);
+    expect(id2.length).toBeGreaterThan(0);
+    expect(id1).not.toBe(id2);
+  });
+
+  test("returns a UUID when crypto.randomUUID is available", () => {
+    const hasCryptoUuid =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function";
+    if (!hasCryptoUuid) return; // fallback path is covered by the test above
+    const id = generateId();
+    expect(id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    );
+  });
+});
+
+describe("interpolate", () => {
+  test("replaces known keys with their variable values", () => {
+    expect(interpolate("Hello {name}!", { name: "World" })).toBe(
+      "Hello World!"
+    );
+  });
+
+  test("leaves tokens with no matching key as-is", () => {
+    expect(interpolate("Hello {unknown}!", {})).toBe("Hello {unknown}!");
+  });
+
+  test("handles {prev} via the variables map", () => {
+    expect(interpolate("echo: {prev}", { prev: "HELLO" })).toBe(
+      "echo: HELLO"
+    );
+  });
+
+  test("leaves {prev} as-is when not in the variables map", () => {
+    expect(interpolate("echo: {prev}", {})).toBe("echo: {prev}");
+  });
+
+  test("replaces multiple distinct tokens in one pass", () => {
+    expect(
+      interpolate("{a}-{b}-{a}", { a: "x", b: "y" })
+    ).toBe("x-y-x");
+  });
+
+  test("empty template returns empty string", () => {
+    expect(interpolate("", {})).toBe("");
   });
 });
 
