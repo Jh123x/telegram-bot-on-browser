@@ -498,3 +498,143 @@ test("transform hint chip shows a tooltip when a variable is bound", async () =>
   const tooltip = await screen.findByRole("tooltip");
   expect(tooltip.textContent).toContain("{shouted}");
 });
+
+test("changing trigger select type to message does not equal dispatches update with value unchanged", async () => {
+  const { store } = renderCard(makeProgram(), 0, 1);
+  fireEvent.mouseDown(within(screen.getByTestId("trigger-zone-p1")).getByRole("combobox"));
+  const option = await screen.findByRole("option", {
+    name: "message does not equal",
+  });
+  fireEvent.click(option);
+  const trigger = store.getState().bot.programs[0].trigger;
+  expect(trigger.type).toBe("notEquals");
+  expect(trigger.value).toBe("/start");
+});
+
+test("remove transform block renders a Remove text input and updates value", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "transform",
+        kind: "remove",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  const { store } = renderCard(p, 0, 1);
+  const removeField = screen.getByLabelText("Remove text") as HTMLInputElement;
+  expect(removeField.value).toBe("");
+
+  fireEvent.change(removeField, { target: { value: "l" } });
+
+  const block = store.getState().bot.programs[0].blocks[0];
+  expect(block.value).toBe("l");
+});
+
+test("isNumber logic block renders (no value needed) and the Else reply fallback field", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "logic",
+        kind: "isNumber",
+        value: "",
+        value2: "",
+        fallback: "Not a number",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  expect(screen.getByText("(no value needed)")).toBeTruthy();
+  expect(screen.getByLabelText("Else reply (optional)")).toBeTruthy();
+});
+
+test("lengthEquals logic block renders a Number input (not a Regex input)", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "logic",
+        kind: "lengthEquals",
+        value: "5",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  const { store } = renderCard(p, 0, 1);
+  const numberField = screen.getByLabelText("Number") as HTMLInputElement;
+  expect(numberField.value).toBe("5");
+  expect(screen.queryByLabelText("Regex")).toBeNull();
+
+  fireEvent.change(numberField, { target: { value: "7" } });
+  expect(store.getState().bot.programs[0].blocks[0].value).toBe("7");
+});
+
+test("remove transform value hint chip shows the preview with matches stripped", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "transform",
+        kind: "remove",
+        value: "l",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  expect(screen.getByTestId("value-hint-b1")).toBeTruthy();
+  expect(screen.getByText("Heo Word")).toBeTruthy();
+});
+
+test("capitalize/titleCase/reverse transform blocks render (no value needed) and the Variable name field", () => {
+  for (const kind of ["capitalize", "titleCase", "reverse"] as const) {
+    const p: Program = {
+      id: "p1",
+      name: "Greet",
+      trigger: { type: "equals", value: "/start" },
+      blocks: [
+        {
+          id: "b1",
+          category: "transform",
+          kind,
+          value: "",
+          value2: "",
+          fallback: "",
+        },
+      ],
+    };
+    const store = makeStore([p]);
+    const { unmount } = renderWithProviders(
+      <ProgramCard
+        program={p}
+        index={0}
+        total={1}
+        onMoveUp={jest.fn()}
+        onMoveDown={jest.fn()}
+      />,
+      { store }
+    );
+    expect(screen.getByText("(no value needed)")).toBeTruthy();
+    expect(screen.getByLabelText("Variable name (optional)")).toBeTruthy();
+    expect(screen.queryByLabelText("Remove text")).toBeNull();
+    unmount();
+  }
+});

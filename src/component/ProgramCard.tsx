@@ -38,14 +38,26 @@ const TRIGGER_TYPES: TriggerType[] = [
   "contains",
   "startsWith",
   "endsWith",
+  "notEquals",
+  "notContains",
 ];
-const LOGIC_TYPES: LogicType[] = ["lengthGreater", "lengthLess", "matchesRegex"];
+const LOGIC_TYPES: LogicType[] = [
+  "lengthGreater",
+  "lengthLess",
+  "matchesRegex",
+  "lengthEquals",
+  "isNumber",
+];
 const TRANSFORM_TYPES: TransformType[] = [
   "uppercase",
   "lowercase",
   "trim",
   "replace",
   "concat",
+  "capitalize",
+  "titleCase",
+  "reverse",
+  "remove",
 ];
 const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
 
@@ -202,23 +214,36 @@ const BlockRow = ({
 
   const renderValueInputs = () => {
     if (block.category === "logic") {
+      let valueInput: React.ReactNode;
+      if (
+        block.kind === "lengthGreater" ||
+        block.kind === "lengthLess" ||
+        block.kind === "lengthEquals"
+      ) {
+        valueInput = (
+          <TextField
+            size="small"
+            label="Number"
+            value={block.value}
+            onChange={(e) => onChange(block.id, { value: e.target.value })}
+          />
+        );
+      } else if (block.kind === "matchesRegex") {
+        valueInput = (
+          <TextField
+            size="small"
+            label="Regex"
+            value={block.value}
+            onChange={(e) => onChange(block.id, { value: e.target.value })}
+          />
+        );
+      } else {
+        // isNumber needs no value input.
+        valueInput = <Typography variant="body2">(no value needed)</Typography>;
+      }
       return (
         <>
-          {block.kind === "lengthGreater" || block.kind === "lengthLess" ? (
-            <TextField
-              size="small"
-              label="Number"
-              value={block.value}
-              onChange={(e) => onChange(block.id, { value: e.target.value })}
-            />
-          ) : (
-            <TextField
-              size="small"
-              label="Regex"
-              value={block.value}
-              onChange={(e) => onChange(block.id, { value: e.target.value })}
-            />
-          )}
+          {valueInput}
           <TextField
             size="small"
             label="Else reply (optional)"
@@ -277,6 +302,19 @@ const BlockRow = ({
             <TextField
               size="small"
               label="Append text"
+              value={block.value}
+              onChange={(e) => onChange(block.id, { value: e.target.value })}
+            />
+            {variableField}
+          </>
+        );
+      }
+      if (block.kind === "remove") {
+        return (
+          <>
+            <TextField
+              size="small"
+              label="Remove text"
               value={block.value}
               onChange={(e) => onChange(block.id, { value: e.target.value })}
             />

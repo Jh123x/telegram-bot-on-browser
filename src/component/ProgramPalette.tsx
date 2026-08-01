@@ -22,14 +22,26 @@ const TRIGGER_TYPES: TriggerType[] = [
   "contains",
   "startsWith",
   "endsWith",
+  "notEquals",
+  "notContains",
 ];
-const LOGIC_TYPES: LogicType[] = ["lengthGreater", "lengthLess", "matchesRegex"];
+const LOGIC_TYPES: LogicType[] = [
+  "lengthGreater",
+  "lengthLess",
+  "matchesRegex",
+  "lengthEquals",
+  "isNumber",
+];
 const TRANSFORM_TYPES: TransformType[] = [
   "uppercase",
   "lowercase",
   "trim",
   "replace",
   "concat",
+  "capitalize",
+  "titleCase",
+  "reverse",
+  "remove",
 ];
 const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
 

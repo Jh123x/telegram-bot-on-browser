@@ -198,6 +198,36 @@ Object {
                   Runs when the message ends with the trigger value.
                 </span>
               </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  When message does not equal
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-trigger-notEquals"
+                >
+                  Runs when the message is not exactly the trigger value.
+                </span>
+              </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  When message does not contain
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-trigger-notContains"
+                >
+                  Runs when the message does not include the trigger value.
+                </span>
+              </div>
               <h6
                 class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
               >
@@ -249,6 +279,36 @@ Object {
                   data-testid="palette-description-logic-matchesRegex"
                 >
                   Passes when the message matches the regular expression.
+                </span>
+              </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  message length equals
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-logic-lengthEquals"
+                >
+                  Passes when the message length equals the number.
+                </span>
+              </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  message is a number
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-logic-isNumber"
+                >
+                  Passes when the message is a number.
                 </span>
               </div>
               <h6
@@ -332,6 +392,66 @@ Object {
                   data-testid="palette-description-transform-concat"
                 >
                   Adds text before or after the message.
+                </span>
+              </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  capitalize first letter
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-capitalize"
+                >
+                  Capitalizes the first letter.
+                </span>
+              </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  capitalize each word
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-titleCase"
+                >
+                  Capitalizes the first letter of each word.
+                </span>
+              </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  reverse text
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-reverse"
+                >
+                  Reverses the text.
+                </span>
+              </div>
+              <div
+                class="MuiBox-root css-1fhgjcy"
+              >
+                <p
+                  class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+                >
+                  remove text
+                </p>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  data-testid="palette-description-transform-remove"
+                >
+                  Removes matching text.
                 </span>
               </div>
               <h6
@@ -457,6 +577,34 @@ Object {
                     type="button"
                   >
                     Short Replies
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Only Numbers
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Title Case
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Palindrome
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Capitalize
                   </button>
                 </div>
               </div>
@@ -692,6 +840,36 @@ Object {
                 Runs when the message ends with the trigger value.
               </span>
             </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                When message does not equal
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-trigger-notEquals"
+              >
+                Runs when the message is not exactly the trigger value.
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                When message does not contain
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-trigger-notContains"
+              >
+                Runs when the message does not include the trigger value.
+              </span>
+            </div>
             <h6
               class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
             >
@@ -743,6 +921,36 @@ Object {
                 data-testid="palette-description-logic-matchesRegex"
               >
                 Passes when the message matches the regular expression.
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                message length equals
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-logic-lengthEquals"
+              >
+                Passes when the message length equals the number.
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                message is a number
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-logic-isNumber"
+              >
+                Passes when the message is a number.
               </span>
             </div>
             <h6
@@ -826,6 +1034,66 @@ Object {
                 data-testid="palette-description-transform-concat"
               >
                 Adds text before or after the message.
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                capitalize first letter
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-capitalize"
+              >
+                Capitalizes the first letter.
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                capitalize each word
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-titleCase"
+              >
+                Capitalizes the first letter of each word.
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                reverse text
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-reverse"
+              >
+                Reverses the text.
+              </span>
+            </div>
+            <div
+              class="MuiBox-root css-1fhgjcy"
+            >
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-ruqefn-MuiTypography-root"
+              >
+                remove text
+              </p>
+              <span
+                class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                data-testid="palette-description-transform-remove"
+              >
+                Removes matching text.
               </span>
             </div>
             <h6
@@ -951,6 +1219,34 @@ Object {
                   type="button"
                 >
                   Short Replies
+                </button>
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                  tabindex="0"
+                  type="button"
+                >
+                  Only Numbers
+                </button>
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                  tabindex="0"
+                  type="button"
+                >
+                  Title Case
+                </button>
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                  tabindex="0"
+                  type="button"
+                >
+                  Palindrome
+                </button>
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-11knjew-MuiButtonBase-root-MuiButton-root"
+                  tabindex="0"
+                  type="button"
+                >
+                  Capitalize
                 </button>
               </div>
             </div>

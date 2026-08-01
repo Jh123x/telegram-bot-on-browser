@@ -33,12 +33,20 @@ test("renders a label and description for each block type", () => {
     "Runs when the message begins with the trigger value.",
     "When message ends with",
     "Runs when the message ends with the trigger value.",
+    "When message does not equal",
+    "Runs when the message is not exactly the trigger value.",
+    "When message does not contain",
+    "Runs when the message does not include the trigger value.",
     "message length is greater than",
     "Passes when the message is longer than the number.",
     "message length is less than",
     "Passes when the message is shorter than the number.",
     "message matches regex",
     "Passes when the message matches the regular expression.",
+    "message length equals",
+    "Passes when the message length equals the number.",
+    "message is a number",
+    "Passes when the message is a number.",
     "make uppercase",
     "Changes the message to UPPERCASE.",
     "make lowercase",
@@ -49,6 +57,14 @@ test("renders a label and description for each block type", () => {
     "Replaces matching text with new text.",
     "concat text",
     "Adds text before or after the message.",
+    "capitalize first letter",
+    "Capitalizes the first letter.",
+    "capitalize each word",
+    "Capitalizes the first letter of each word.",
+    "reverse text",
+    "Reverses the text.",
+    "remove text",
+    "Removes matching text.",
     "reply with text",
     "Sends a fixed reply.",
     "reply random choice",
@@ -68,14 +84,22 @@ test("descriptions use the palette-description testids per category and type", (
   expect(screen.getByTestId("palette-description-trigger-contains")).toBeTruthy();
   expect(screen.getByTestId("palette-description-trigger-startsWith")).toBeTruthy();
   expect(screen.getByTestId("palette-description-trigger-endsWith")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-trigger-notEquals")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-trigger-notContains")).toBeTruthy();
   expect(screen.getByTestId("palette-description-logic-lengthGreater")).toBeTruthy();
   expect(screen.getByTestId("palette-description-logic-lengthLess")).toBeTruthy();
   expect(screen.getByTestId("palette-description-logic-matchesRegex")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-lengthEquals")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-isNumber")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-uppercase")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-lowercase")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-trim")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-replace")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-concat")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-capitalize")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-titleCase")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-reverse")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-transform-remove")).toBeTruthy();
   expect(screen.getByTestId("palette-description-action-reply")).toBeTruthy();
   expect(screen.getByTestId("palette-description-action-random")).toBeTruthy();
   expect(screen.getByTestId("palette-description-action-echo")).toBeTruthy();
