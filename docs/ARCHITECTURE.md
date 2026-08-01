@@ -118,16 +118,28 @@ sequenceDiagram
   participant C as Chat Page
 
   U->>API: sends message
-  API-->>PW: getUpdates response
+  API-->>PW: new message (getUpdates)
+  activate PW
   PW->>B: new message event
-  B->>L: first matching rule
+  deactivate PW
+  activate B
+  B->>L: findMatchingProgram(message)
+  activate L
   L->>L: executeBlocks (transforms, gates, replies)
   L-->>B: replies
+  deactivate L
   B->>SW: sendMessage(reply)
+  activate SW
   SW->>API: sendMessage request
+  API-->>SW: OK
+  deactivate SW
   API-->>U: delivers reply
   B->>S: addResponse / addUser
+  activate S
+  S-->>B: state updated
+  deactivate S
   S-->>C: conversation updates
+  deactivate B
 ```
 
 ## Test User simulation flow
@@ -143,13 +155,17 @@ sequenceDiagram
   participant S as Redux Store
 
   U->>C: types a message, presses Simulate
+  activate C
   C->>L: findMatchingProgram(message)
+  activate L
   alt a program matches
     L-->>C: matched program + replies
   else no program matches
     L-->>C: silent note
   end
+  deactivate L
   C-->>U: bubbles in the conversation
+  deactivate C
 
   Note over C,S: Nothing is sent to Telegram.<br/>The store is not changed.
 ```
@@ -165,10 +181,20 @@ sequenceDiagram
   participant B as BrowserBot
 
   U->>E: edits a block
+  activate E
   E->>S: updateProgram
+  activate S
   S->>LS: persist programs
   S->>B: rebuild rules
-  B-->>U: bot uses the new logic on the next message
+  activate B
+  B-->>S: rules rebuilt
+  deactivate B
+  S-->>E: program updated
+  deactivate S
+  E-->>U: card updates
+  deactivate E
+
+  Note over B,U: The next message uses the new logic.
 ```
 
 ## Design decisions
