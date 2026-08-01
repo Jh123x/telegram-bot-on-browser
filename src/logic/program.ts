@@ -451,3 +451,38 @@ export function validateProgram(program: Program): string[] {
   }
   return errors;
 }
+
+// Pure helper: swaps a block with its immediate neighbor (up for -1, down for
+// +1). Returns a new array, or the input reference when the block is missing
+// or the target index would be out of bounds.
+export function moveBlock(
+  blocks: Block[],
+  blockId: string,
+  direction: -1 | 1
+): Block[] {
+  const index = blocks.findIndex((b) => b.id === blockId);
+  if (index === -1) return blocks;
+  const target = index + direction;
+  if (target < 0 || target >= blocks.length) return blocks;
+  const next = blocks.slice();
+  [next[index], next[target]] = [next[target], next[index]];
+  return next;
+}
+
+// Pure helper: removes a block from its current position and re-inserts it at
+// the requested index (clamped to valid bounds). Returns a new array, or the
+// input reference when the block is missing or already at the target index.
+export function moveBlockToIndex(
+  blocks: Block[],
+  blockId: string,
+  targetIndex: number
+): Block[] {
+  const index = blocks.findIndex((b) => b.id === blockId);
+  if (index === -1) return blocks;
+  const target = Math.max(0, Math.min(targetIndex, blocks.length - 1));
+  if (target === index) return blocks;
+  const next = blocks.slice();
+  const [block] = next.splice(index, 1);
+  next.splice(target, 0, block);
+  return next;
+}

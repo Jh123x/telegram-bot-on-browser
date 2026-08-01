@@ -18,6 +18,8 @@ import {
   createBlock,
   generateId,
   interpolate,
+  moveBlock,
+  moveBlockToIndex,
   BLOCK_DESCRIPTIONS,
   TRIGGER_LABELS,
   LOGIC_LABELS,
@@ -1036,5 +1038,129 @@ describe("BLOCK_DESCRIPTIONS", () => {
       expect(BLOCK_DESCRIPTIONS.action[type]).toBeTruthy();
       expect(BLOCK_DESCRIPTIONS.action[type].length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("moveBlock", () => {
+  test("moves a block up by one position", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "one"),
+      actionBlock("reply", "two"),
+      actionBlock("reply", "three"),
+    ];
+    const ids = blocks.map((b) => b.id);
+    const targetId = ids[1];
+    const result = moveBlock(blocks, targetId, -1);
+    expect(result.length).toBe(3);
+    expect(result[0].id).toBe(ids[1]);
+    expect(result[1].id).toBe(ids[0]);
+    expect(result[2].id).toBe(ids[2]);
+  });
+
+  test("moves a block down by one position", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "one"),
+      actionBlock("reply", "two"),
+      actionBlock("reply", "three"),
+    ];
+    const ids = blocks.map((b) => b.id);
+    const targetId = ids[1];
+    const result = moveBlock(blocks, targetId, 1);
+    expect(result.length).toBe(3);
+    expect(result[0].id).toBe(ids[0]);
+    expect(result[1].id).toBe(ids[2]);
+    expect(result[2].id).toBe(ids[1]);
+  });
+
+  test("returns the same reference when the block is not found", () => {
+    const blocks: Block[] = [actionBlock("reply", "one")];
+    expect(moveBlock(blocks, "does-not-exist", -1)).toBe(blocks);
+  });
+
+  test("returns the same reference when moving the first block up", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "one"),
+      actionBlock("reply", "two"),
+    ];
+    expect(moveBlock(blocks, blocks[0].id, -1)).toBe(blocks);
+  });
+
+  test("returns the same reference when moving the last block down", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "one"),
+      actionBlock("reply", "two"),
+    ];
+    expect(moveBlock(blocks, blocks[1].id, 1)).toBe(blocks);
+  });
+
+  test("does not mutate the input array", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "one"),
+      actionBlock("reply", "two"),
+      actionBlock("reply", "three"),
+    ];
+    const originalIds = blocks.map((b) => b.id);
+    moveBlock(blocks, blocks[1].id, -1);
+    expect(blocks.map((b) => b.id)).toEqual(originalIds);
+  });
+});
+
+describe("moveBlockToIndex", () => {
+  test("moves a block to a valid target index", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "a"),
+      actionBlock("reply", "b"),
+      actionBlock("reply", "c"),
+      actionBlock("reply", "d"),
+    ];
+    const ids = blocks.map((b) => b.id);
+    const result = moveBlockToIndex(blocks, ids[3], 1);
+    expect(result.map((b) => b.id)).toEqual([ids[0], ids[3], ids[1], ids[2]]);
+  });
+
+  test("clamps a target index below 0 to 0", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "a"),
+      actionBlock("reply", "b"),
+      actionBlock("reply", "c"),
+    ];
+    const ids = blocks.map((b) => b.id);
+    const result = moveBlockToIndex(blocks, ids[2], -5);
+    expect(result.map((b) => b.id)).toEqual([ids[2], ids[0], ids[1]]);
+  });
+
+  test("clamps a target index above length-1 to the last index", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "a"),
+      actionBlock("reply", "b"),
+      actionBlock("reply", "c"),
+    ];
+    const ids = blocks.map((b) => b.id);
+    const result = moveBlockToIndex(blocks, ids[0], 99);
+    expect(result.map((b) => b.id)).toEqual([ids[1], ids[2], ids[0]]);
+  });
+
+  test("returns the same reference when the block is not found", () => {
+    const blocks: Block[] = [actionBlock("reply", "a")];
+    expect(moveBlockToIndex(blocks, "does-not-exist", 0)).toBe(blocks);
+  });
+
+  test("returns the same reference when the target equals the current index", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "a"),
+      actionBlock("reply", "b"),
+    ];
+    expect(moveBlockToIndex(blocks, blocks[1].id, 1)).toBe(blocks);
+  });
+
+  test("does not mutate the input array", () => {
+    const blocks: Block[] = [
+      actionBlock("reply", "a"),
+      actionBlock("reply", "b"),
+      actionBlock("reply", "c"),
+    ];
+    const originalIds = blocks.map((b) => b.id);
+    moveBlockToIndex(blocks, blocks[0].id, 2);
+    expect(blocks.map((b) => b.id)).toEqual(originalIds);
   });
 });
