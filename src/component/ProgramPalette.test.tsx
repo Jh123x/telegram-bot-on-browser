@@ -143,6 +143,7 @@ test("starts expanded with a hide toggle", () => {
 
   const toggle = screen.getByRole("button", { name: "Hide block reference" });
   expect(toggle).toHaveAttribute("aria-expanded", "true");
+  expect(toggle).toHaveAttribute("aria-controls", "palette-collapse");
   expect(screen.getByTestId("palette-description-trigger-equals")).toBeVisible();
 });
 

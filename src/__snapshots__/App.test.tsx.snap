@@ -134,6 +134,7 @@ Object {
                   What each block does. Add blocks with the buttons on each program card.
                 </span>
                 <button
+                  aria-controls="palette-collapse"
                   aria-expanded="true"
                   class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary css-153uswc-MuiButtonBase-root-MuiButton-root"
                   data-testid="palette-toggle"
@@ -146,6 +147,7 @@ Object {
               <div
                 class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
                 data-testid="palette-collapse"
+                id="palette-collapse"
                 style="min-height: 0px;"
               >
                 <div
@@ -935,6 +937,7 @@ Object {
                 What each block does. Add blocks with the buttons on each program card.
               </span>
               <button
+                aria-controls="palette-collapse"
                 aria-expanded="true"
                 class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary css-153uswc-MuiButtonBase-root-MuiButton-root"
                 data-testid="palette-toggle"
@@ -947,6 +950,7 @@ Object {
             <div
               class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
               data-testid="palette-collapse"
+              id="palette-collapse"
               style="min-height: 0px;"
             >
               <div

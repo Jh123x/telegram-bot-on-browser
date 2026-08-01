@@ -136,13 +136,14 @@ export const ProgramPalette = () => {
           size="small"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
+          aria-controls="palette-collapse"
           data-testid="palette-toggle"
         >
           {open ? "Hide block reference" : "Show block reference"}
         </Button>
       </Box>
 
-      <Collapse in={open} data-testid="palette-collapse">
+      <Collapse in={open} id="palette-collapse" data-testid="palette-collapse">
         <SectionHeader label="Triggers" color={BLOCK_COLORS.trigger.main} first />
         <SectionTable
           category="trigger"
