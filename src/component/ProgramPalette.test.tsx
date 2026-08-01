@@ -59,6 +59,20 @@ test("renders a label and description for each block type", () => {
     "Passes when the message is not exactly the value.",
     "message does not contain",
     "Passes when the message does not include the value.",
+    "message does not start with",
+    "Passes when the message does not begin with the value.",
+    "message does not end with",
+    "Passes when the message does not end with the value.",
+    "message length is not greater than",
+    "Passes when the message is not longer than the number.",
+    "message length is not less than",
+    "Passes when the message is not shorter than the number.",
+    "message length does not equal",
+    "Passes when the message length does not equal the number.",
+    "message does not match regex",
+    "Passes when the message does not match the regular expression.",
+    "message is not a number",
+    "Passes when the message is not a number.",
     "make uppercase",
     "Changes the message to UPPERCASE.",
     "make lowercase",
@@ -109,6 +123,13 @@ test("descriptions use the palette-description testids per category and type", (
   expect(screen.getByTestId("palette-description-logic-endsWith")).toBeTruthy();
   expect(screen.getByTestId("palette-description-logic-notEquals")).toBeTruthy();
   expect(screen.getByTestId("palette-description-logic-notContains")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notStartsWith")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notEndsWith")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notLengthGreater")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notLengthLess")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notLengthEquals")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notMatchesRegex")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notIsNumber")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-uppercase")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-lowercase")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-trim")).toBeTruthy();
@@ -144,7 +165,7 @@ test("each table has the right number of rows", () => {
 
   const expected = [
     ["palette-table-trigger", 6],
-    ["palette-table-logic", 11],
+    ["palette-table-logic", 18],
     ["palette-table-transform", 9],
     ["palette-table-action", 3],
   ] as const;

@@ -490,6 +490,111 @@ Object {
                               Passes when the message does not include the value.
                             </td>
                           </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message does not start with
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notStartsWith"
+                            >
+                              Passes when the message does not begin with the value.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message does not end with
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notEndsWith"
+                            >
+                              Passes when the message does not end with the value.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message length is not greater than
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notLengthGreater"
+                            >
+                              Passes when the message is not longer than the number.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message length is not less than
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notLengthLess"
+                            >
+                              Passes when the message is not shorter than the number.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message length does not equal
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notLengthEquals"
+                            >
+                              Passes when the message length does not equal the number.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message does not match regex
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notMatchesRegex"
+                            >
+                              Passes when the message does not match the regular expression.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message is not a number
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notIsNumber"
+                            >
+                              Passes when the message is not a number.
+                            </td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -1381,6 +1486,111 @@ Object {
                             data-testid="palette-description-logic-notContains"
                           >
                             Passes when the message does not include the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message does not start with
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notStartsWith"
+                          >
+                            Passes when the message does not begin with the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message does not end with
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notEndsWith"
+                          >
+                            Passes when the message does not end with the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message length is not greater than
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notLengthGreater"
+                          >
+                            Passes when the message is not longer than the number.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message length is not less than
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notLengthLess"
+                          >
+                            Passes when the message is not shorter than the number.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message length does not equal
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notLengthEquals"
+                          >
+                            Passes when the message length does not equal the number.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message does not match regex
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notMatchesRegex"
+                          >
+                            Passes when the message does not match the regular expression.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message is not a number
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notIsNumber"
+                          >
+                            Passes when the message is not a number.
                           </td>
                         </tr>
                       </tbody>

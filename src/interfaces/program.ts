@@ -16,7 +16,14 @@ export type LogicType =
   | "startsWith"
   | "endsWith"
   | "notEquals"
-  | "notContains";
+  | "notContains"
+  | "notStartsWith"
+  | "notEndsWith"
+  | "notLengthGreater"
+  | "notLengthLess"
+  | "notLengthEquals"
+  | "notMatchesRegex"
+  | "notIsNumber";
 export type TransformType =
   | "uppercase"
   | "lowercase"

@@ -16,6 +16,8 @@ const CONTENT_MATCH_KINDS = new Set([
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
 ]);
 
 export const BlockValueInputs = ({
@@ -28,7 +30,10 @@ export const BlockValueInputs = ({
     if (
       block.kind === "lengthGreater" ||
       block.kind === "lengthLess" ||
-      block.kind === "lengthEquals"
+      block.kind === "lengthEquals" ||
+      block.kind === "notLengthGreater" ||
+      block.kind === "notLengthLess" ||
+      block.kind === "notLengthEquals"
     ) {
       valueInput = (
         <TextField
@@ -38,7 +43,10 @@ export const BlockValueInputs = ({
           onChange={(e) => onChange(block.id, { value: e.target.value })}
         />
       );
-    } else if (block.kind === "matchesRegex") {
+    } else if (
+      block.kind === "matchesRegex" ||
+      block.kind === "notMatchesRegex"
+    ) {
       valueInput = (
         <TextField
           size="small"
@@ -57,7 +65,7 @@ export const BlockValueInputs = ({
         />
       );
     } else {
-      // isNumber needs no value input.
+      // isNumber / notIsNumber need no value input.
       valueInput = <Typography variant="body2">(no value needed)</Typography>;
     }
     return (

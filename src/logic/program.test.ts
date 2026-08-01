@@ -66,7 +66,14 @@ const logicBlock = (
     | "startsWith"
     | "endsWith"
     | "notEquals"
-    | "notContains",
+    | "notContains"
+    | "notStartsWith"
+    | "notEndsWith"
+    | "notLengthGreater"
+    | "notLengthLess"
+    | "notLengthEquals"
+    | "notMatchesRegex"
+    | "notIsNumber",
   value = "",
   fallback = ""
 ): Block => ({ id: generateId(), category: "logic", kind, value, value2: "", fallback });
@@ -481,6 +488,102 @@ describe("checkLogic", () => {
     const block = logicBlock("notContains", "ello");
     expect(checkLogic(block, "hello")).toBe(false);
   });
+
+  test("notStartsWith: passes when the message does not begin with the value", () => {
+    const block = logicBlock("notStartsWith", "hel");
+    expect(checkLogic(block, "goodbye")).toBe(true);
+  });
+
+  test("notStartsWith: matching prefix is false", () => {
+    const block = logicBlock("notStartsWith", "hel");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notEndsWith: passes when the message does not end with the value", () => {
+    const block = logicBlock("notEndsWith", "llo");
+    expect(checkLogic(block, "help")).toBe(true);
+  });
+
+  test("notEndsWith: matching suffix is false", () => {
+    const block = logicBlock("notEndsWith", "llo");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notLengthGreater: passes when message length is not greater", () => {
+    const block = logicBlock("notLengthGreater", "3");
+    expect(checkLogic(block, "hi")).toBe(true);
+  });
+
+  test("notLengthGreater: message longer than value is false", () => {
+    const block = logicBlock("notLengthGreater", "3");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notLengthGreater: non-numeric value returns false", () => {
+    const block = logicBlock("notLengthGreater", "abc");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notLengthLess: passes when message length is not less", () => {
+    const block = logicBlock("notLengthLess", "3");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("notLengthLess: message shorter than value is false", () => {
+    const block = logicBlock("notLengthLess", "10");
+    expect(checkLogic(block, "hi")).toBe(false);
+  });
+
+  test("notLengthLess: non-numeric value returns false", () => {
+    const block = logicBlock("notLengthLess", "abc");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notLengthEquals: passes when message length differs", () => {
+    const block = logicBlock("notLengthEquals", "3");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("notLengthEquals: message length equal to value is false", () => {
+    const block = logicBlock("notLengthEquals", "5");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notLengthEquals: non-numeric value returns false", () => {
+    const block = logicBlock("notLengthEquals", "abc");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notMatchesRegex: passes when regex does not match", () => {
+    const block = logicBlock("notMatchesRegex", "^\\d+$");
+    expect(checkLogic(block, "abc")).toBe(true);
+  });
+
+  test("notMatchesRegex: matching regex is false", () => {
+    const block = logicBlock("notMatchesRegex", "^\\d+$");
+    expect(checkLogic(block, "123")).toBe(false);
+  });
+
+  test("notMatchesRegex: invalid regex returns false without throwing", () => {
+    const block = logicBlock("notMatchesRegex", "(");
+    expect(() => checkLogic(block, "abc")).not.toThrow();
+    expect(checkLogic(block, "abc")).toBe(false);
+  });
+
+  test("notIsNumber: passes for non-numeric strings", () => {
+    const block = logicBlock("notIsNumber");
+    expect(checkLogic(block, "abc")).toBe(true);
+    expect(checkLogic(block, "")).toBe(true);
+    expect(checkLogic(block, "   ")).toBe(true);
+    expect(checkLogic(block, "12abc")).toBe(true);
+  });
+
+  test("notIsNumber: numeric strings are false", () => {
+    const block = logicBlock("notIsNumber");
+    expect(checkLogic(block, "42")).toBe(false);
+    expect(checkLogic(block, "-3.5")).toBe(false);
+    expect(checkLogic(block, " 12 ")).toBe(false);
+  });
 });
 
 describe("executeBlocks", () => {
@@ -514,6 +617,22 @@ describe("executeBlocks", () => {
       actionBlock("reply", "matched"),
     ];
     expect(executeBlocks(blocks, "goodbye")).toEqual(["nope"]);
+  });
+
+  test("negated gate passes through when the condition is absent", () => {
+    const blocks: Block[] = [
+      logicBlock("notContains", "hello"),
+      actionBlock("reply", "matched"),
+    ];
+    expect(executeBlocks(blocks, "goodbye")).toEqual(["matched"]);
+  });
+
+  test("negated gate failing uses the fallback and stops the flow", () => {
+    const blocks: Block[] = [
+      logicBlock("notContains", "hello", "nope"),
+      actionBlock("reply", "matched"),
+    ];
+    expect(executeBlocks(blocks, "say hello")).toEqual(["nope"]);
   });
 
   test("transform then echo applies pipeline", () => {
@@ -707,6 +826,60 @@ describe("validateProgram", () => {
     expect(validateProgram(program)).not.toContain("Logic block needs text to compare");
   });
 
+  test("logic notStartsWith with empty value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notStartsWith", ""));
+    expect(validateProgram(program)).toContain("Logic block needs text to compare");
+  });
+
+  test("logic notEndsWith with empty value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notEndsWith", ""));
+    expect(validateProgram(program)).toContain("Logic block needs text to compare");
+  });
+
+  test("logic notStartsWith with a value is accepted", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notStartsWith", "x"));
+    expect(validateProgram(program)).not.toContain("Logic block needs text to compare");
+  });
+
+  test("logic notLengthGreater with non-numeric value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notLengthGreater", "abc"));
+    expect(validateProgram(program)).toContain("Logic block needs a number");
+  });
+
+  test("logic notLengthLess with non-numeric value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notLengthLess", "abc"));
+    expect(validateProgram(program)).toContain("Logic block needs a number");
+  });
+
+  test("logic notLengthEquals with non-numeric value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notLengthEquals", "abc"));
+    expect(validateProgram(program)).toContain("Logic block needs a number");
+  });
+
+  test("logic notLengthGreater with a numeric value is accepted", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notLengthGreater", "5"));
+    expect(validateProgram(program)).not.toContain("Logic block needs a number");
+  });
+
+  test("logic notMatchesRegex with invalid regex is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notMatchesRegex", "("));
+    expect(validateProgram(program)).toContain("Logic block needs a valid regex");
+  });
+
+  test("logic notMatchesRegex with a valid regex is accepted", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("notMatchesRegex", "^\\d+$"));
+    expect(validateProgram(program)).not.toContain("Logic block needs a valid regex");
+  });
+
   test("replace transform with empty value is an error", () => {
     const program = validProgram();
     program.blocks.push(transformBlock("replace", ""));
@@ -793,6 +966,13 @@ describe("block type arrays", () => {
       "endsWith",
       "notEquals",
       "notContains",
+      "notStartsWith",
+      "notEndsWith",
+      "notLengthGreater",
+      "notLengthLess",
+      "notLengthEquals",
+      "notMatchesRegex",
+      "notIsNumber",
     ]);
     expect(new Set(LOGIC_TYPES).size).toBe(LOGIC_TYPES.length);
   });
@@ -1146,6 +1326,13 @@ describe("BLOCK_DESCRIPTIONS", () => {
   test("has the new logic labels", () => {
     expect(LOGIC_LABELS.lengthEquals).toBe("message length equals");
     expect(LOGIC_LABELS.isNumber).toBe("message is a number");
+    expect(LOGIC_LABELS.notStartsWith).toBe("message does not start with");
+    expect(LOGIC_LABELS.notEndsWith).toBe("message does not end with");
+    expect(LOGIC_LABELS.notLengthGreater).toBe("message length is not greater than");
+    expect(LOGIC_LABELS.notLengthLess).toBe("message length is not less than");
+    expect(LOGIC_LABELS.notLengthEquals).toBe("message length does not equal");
+    expect(LOGIC_LABELS.notMatchesRegex).toBe("message does not match regex");
+    expect(LOGIC_LABELS.notIsNumber).toBe("message is not a number");
   });
 
   test("has the new transform labels", () => {

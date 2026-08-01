@@ -29,6 +29,13 @@ export const LOGIC_TYPES: LogicType[] = [
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
+  "notLengthGreater",
+  "notLengthLess",
+  "notLengthEquals",
+  "notMatchesRegex",
+  "notIsNumber",
 ];
 export const TRANSFORM_TYPES: TransformType[] = [
   "uppercase",
@@ -44,7 +51,14 @@ export const TRANSFORM_TYPES: TransformType[] = [
 export const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
 
 // Logic kinds whose validation requires a numeric block value.
-const REQUIRES_NUMERIC = new Set<LogicType>(["lengthGreater", "lengthLess", "lengthEquals"]);
+const REQUIRES_NUMERIC = new Set<LogicType>([
+  "lengthGreater",
+  "lengthLess",
+  "lengthEquals",
+  "notLengthGreater",
+  "notLengthLess",
+  "notLengthEquals",
+]);
 
 // Logic kinds whose validation requires a non-empty text block value.
 const REQUIRES_TEXT = new Set<LogicType>([
@@ -54,6 +68,8 @@ const REQUIRES_TEXT = new Set<LogicType>([
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
 ]);
 
 export const TRIGGER_LABELS: Record<TriggerType, string> = {
@@ -77,6 +93,13 @@ export const LOGIC_LABELS: Record<LogicType, string> = {
   endsWith: "message ends with",
   notEquals: "message does not equal",
   notContains: "message does not contain",
+  notStartsWith: "message does not start with",
+  notEndsWith: "message does not end with",
+  notLengthGreater: "message length is not greater than",
+  notLengthLess: "message length is not less than",
+  notLengthEquals: "message length does not equal",
+  notMatchesRegex: "message does not match regex",
+  notIsNumber: "message is not a number",
 };
 
 export const TRANSFORM_LABELS: Record<TransformType, string> = {
@@ -132,6 +155,13 @@ export const BLOCK_DESCRIPTIONS: {
     endsWith: "Passes when the message ends with the value.",
     notEquals: "Passes when the message is not exactly the value.",
     notContains: "Passes when the message does not include the value.",
+    notStartsWith: "Passes when the message does not begin with the value.",
+    notEndsWith: "Passes when the message does not end with the value.",
+    notLengthGreater: "Passes when the message is not longer than the number.",
+    notLengthLess: "Passes when the message is not shorter than the number.",
+    notLengthEquals: "Passes when the message length does not equal the number.",
+    notMatchesRegex: "Passes when the message does not match the regular expression.",
+    notIsNumber: "Passes when the message is not a number.",
   },
   transform: {
     uppercase: "Changes the message to UPPERCASE.",
@@ -362,6 +392,35 @@ export function checkLogic(block: Block, message: string): boolean {
       return message.trim() !== block.value.trim();
     case "notContains":
       return !message.includes(block.value);
+    case "notStartsWith":
+      return !message.startsWith(block.value);
+    case "notEndsWith":
+      return !message.endsWith(block.value);
+    case "notLengthGreater": {
+      const n = Number(block.value);
+      if (!Number.isFinite(n)) return false;
+      return !(message.length > n);
+    }
+    case "notLengthLess": {
+      const n = Number(block.value);
+      if (!Number.isFinite(n)) return false;
+      return !(message.length < n);
+    }
+    case "notLengthEquals": {
+      const n = Number(block.value);
+      if (!Number.isFinite(n)) return false;
+      return !(message.length === n);
+    }
+    case "notMatchesRegex":
+      try {
+        return !new RegExp(block.value).test(message);
+      } catch {
+        return false;
+      }
+    case "notIsNumber":
+      return !(
+        message.trim() !== "" && Number.isFinite(Number(message.trim()))
+      );
     case "matchesRegex":
       try {
         return new RegExp(block.value).test(message);
@@ -457,7 +516,10 @@ export function validateProgram(program: Program): string[] {
   if (program.blocks.length === 0) errors.push("Add at least one block");
   for (const block of program.blocks) {
     if (block.category === "logic") {
-      if (block.kind === "matchesRegex") {
+      if (
+        block.kind === "matchesRegex" ||
+        block.kind === "notMatchesRegex"
+      ) {
         try {
           new RegExp(block.value);
         } catch {

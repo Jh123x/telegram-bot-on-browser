@@ -42,8 +42,9 @@ Blocks fall into four groups:
 - **Triggers** — decide when the program runs. Examples: message equals,
   message contains, message does not equal.
 - **Logic** — gates that stop the flow when a check fails. Examples: message
-  length is greater than, message contains text, message is a number. You can
-  set an "Else reply" for when the check fails.
+  length is greater than, message contains text, message is a number. Every
+  check can also be negated (for example, message does not contain, message is
+  not a number). You can set an "Else reply" for when the check fails.
 - **Transform** — change the message as it flows. Examples: make uppercase,
   remove text, reverse text, capitalize each word.
 - **Action** — produce the reply. Examples: reply with text, reply a random

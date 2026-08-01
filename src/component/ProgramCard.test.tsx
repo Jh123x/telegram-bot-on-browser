@@ -252,6 +252,55 @@ test("typing into logic Number field updates value", () => {
   expect(store.getState().bot.programs[0].blocks[0].value).toBe("7");
 });
 
+test("logical negated length kinds render a Number field that updates value", () => {
+  for (const kind of ["notLengthGreater", "notLengthLess", "notLengthEquals"] as const) {
+    const p: Program = {
+      id: "p1",
+      name: "Greet",
+      trigger: { type: "equals", value: "/start" },
+      blocks: [
+        {
+          id: "b1",
+          category: "logic",
+          kind,
+          value: "",
+          value2: "",
+          fallback: "",
+        },
+      ],
+    };
+    const { store, unmount } = renderCard(p, 0, 1);
+    fireEvent.change(screen.getByLabelText("Number"), {
+      target: { value: "7" },
+    });
+    expect(store.getState().bot.programs[0].blocks[0].value).toBe("7");
+    unmount();
+  }
+});
+
+test("logic notMatchesRegex renders a Regex field that updates value", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "logic",
+        kind: "notMatchesRegex",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  const { store } = renderCard(p, 0, 1);
+  fireEvent.change(screen.getByLabelText("Regex"), {
+    target: { value: "^\\d+$" },
+  });
+  expect(store.getState().bot.programs[0].blocks[0].value).toBe("^\\d+$");
+});
+
 test("content-matching logic kinds render a Value field that updates value", () => {
   for (const kind of [
     "equals",
@@ -260,6 +309,8 @@ test("content-matching logic kinds render a Value field that updates value", () 
     "endsWith",
     "notEquals",
     "notContains",
+    "notStartsWith",
+    "notEndsWith",
   ] as const) {
     const p: Program = {
       id: "p1",

@@ -229,7 +229,9 @@ action: reply "You shouted: {shouted}!"`}
           contains, starts or ends with), check if the message is a number, or
           match a regex. Logic checks the message as it flows,
           after earlier transforms. If the check fails, the program stops. It
-          sends the &quot;Else reply&quot; text if that is set.
+          sends the &quot;Else reply&quot; text if that is set. Every check can
+          also be negated (for example, message does not contain, message is
+          not a number).
         </Typography>
       </li>
       <li>
