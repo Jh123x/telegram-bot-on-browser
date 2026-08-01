@@ -432,6 +432,11 @@ describe("checkLogic", () => {
     expect(checkLogic(block, "hello")).toBe(false);
   });
 
+  test("contains: does not trim whitespace from the value", () => {
+    const block = logicBlock("contains", " hello");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
   test("startsWith: passes when the message begins with the value", () => {
     const block = logicBlock("startsWith", "hel");
     expect(checkLogic(block, "hello")).toBe(true);
