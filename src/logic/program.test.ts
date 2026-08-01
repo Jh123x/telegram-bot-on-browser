@@ -60,7 +60,13 @@ const logicBlock = (
     | "lengthLess"
     | "matchesRegex"
     | "lengthEquals"
-    | "isNumber",
+    | "isNumber"
+    | "equals"
+    | "contains"
+    | "startsWith"
+    | "endsWith"
+    | "notEquals"
+    | "notContains",
   value = "",
   fallback = ""
 ): Block => ({ id: generateId(), category: "logic", kind, value, value2: "", fallback });
@@ -400,6 +406,76 @@ describe("checkLogic", () => {
     expect(checkLogic(block, "abc")).toBe(false);
     expect(checkLogic(block, "12abc")).toBe(false);
   });
+
+  test("equals: passes when the message is exactly the value", () => {
+    const block = logicBlock("equals", "hello");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("equals: surrounding whitespace is trimmed", () => {
+    const block = logicBlock("equals", "hello");
+    expect(checkLogic(block, "  hello  ")).toBe(true);
+  });
+
+  test("equals: different message is false", () => {
+    const block = logicBlock("equals", "hello");
+    expect(checkLogic(block, "goodbye")).toBe(false);
+  });
+
+  test("contains: passes when the message includes the value", () => {
+    const block = logicBlock("contains", "ello");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("contains: absent substring is false", () => {
+    const block = logicBlock("contains", "xyz");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("startsWith: passes when the message begins with the value", () => {
+    const block = logicBlock("startsWith", "hel");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("startsWith: non-matching prefix is false", () => {
+    const block = logicBlock("startsWith", "hel");
+    expect(checkLogic(block, "goodbye")).toBe(false);
+  });
+
+  test("endsWith: passes when the message ends with the value", () => {
+    const block = logicBlock("endsWith", "llo");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("endsWith: non-matching suffix is false", () => {
+    const block = logicBlock("endsWith", "llo");
+    expect(checkLogic(block, "help")).toBe(false);
+  });
+
+  test("notEquals: passes when the message differs from the value", () => {
+    const block = logicBlock("notEquals", "hello");
+    expect(checkLogic(block, "goodbye")).toBe(true);
+  });
+
+  test("notEquals: trims whitespace around both sides", () => {
+    const block = logicBlock("notEquals", "hello");
+    expect(checkLogic(block, "  hello  ")).toBe(false);
+  });
+
+  test("notEquals: exact match is false", () => {
+    const block = logicBlock("notEquals", "hello");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
+
+  test("notContains: passes when the message does not include the value", () => {
+    const block = logicBlock("notContains", "xyz");
+    expect(checkLogic(block, "hello")).toBe(true);
+  });
+
+  test("notContains: present substring is false", () => {
+    const block = logicBlock("notContains", "ello");
+    expect(checkLogic(block, "hello")).toBe(false);
+  });
 });
 
 describe("executeBlocks", () => {
@@ -417,6 +493,22 @@ describe("executeBlocks", () => {
       actionBlock("echo"),
     ];
     expect(executeBlocks(blocks, "hi")).toEqual(["That's all you have to say?"]);
+  });
+
+  test("content gate passes and flow continues to the action", () => {
+    const blocks: Block[] = [
+      logicBlock("contains", "hello"),
+      actionBlock("reply", "matched"),
+    ];
+    expect(executeBlocks(blocks, "say hello")).toEqual(["matched"]);
+  });
+
+  test("content gate failing uses the fallback and stops the flow", () => {
+    const blocks: Block[] = [
+      logicBlock("contains", "hello", "nope"),
+      actionBlock("reply", "matched"),
+    ];
+    expect(executeBlocks(blocks, "goodbye")).toEqual(["nope"]);
   });
 
   test("transform then echo applies pipeline", () => {
@@ -598,6 +690,18 @@ describe("validateProgram", () => {
     expect(validateProgram(program)).not.toContain("Logic block needs a number");
   });
 
+  test("logic content gate with an empty value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("contains", ""));
+    expect(validateProgram(program)).toContain("Logic block needs text to compare");
+  });
+
+  test("logic content gate with a value is accepted", () => {
+    const program = validProgram();
+    program.blocks.push(logicBlock("equals", "x"));
+    expect(validateProgram(program)).not.toContain("Logic block needs text to compare");
+  });
+
   test("replace transform with empty value is an error", () => {
     const program = validProgram();
     program.blocks.push(transformBlock("replace", ""));
@@ -678,6 +782,12 @@ describe("block type arrays", () => {
       "matchesRegex",
       "lengthEquals",
       "isNumber",
+      "equals",
+      "contains",
+      "startsWith",
+      "endsWith",
+      "notEquals",
+      "notContains",
     ]);
     expect(new Set(LOGIC_TYPES).size).toBe(LOGIC_TYPES.length);
   });

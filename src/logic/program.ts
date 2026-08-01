@@ -23,6 +23,12 @@ export const LOGIC_TYPES: LogicType[] = [
   "matchesRegex",
   "lengthEquals",
   "isNumber",
+  "equals",
+  "contains",
+  "startsWith",
+  "endsWith",
+  "notEquals",
+  "notContains",
 ];
 export const TRANSFORM_TYPES: TransformType[] = [
   "uppercase",
@@ -40,6 +46,16 @@ export const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
 // Logic kinds whose validation requires a numeric block value.
 const REQUIRES_NUMERIC = new Set<LogicType>(["lengthGreater", "lengthLess", "lengthEquals"]);
 
+// Logic kinds whose validation requires a non-empty text block value.
+const REQUIRES_TEXT = new Set<LogicType>([
+  "equals",
+  "contains",
+  "startsWith",
+  "endsWith",
+  "notEquals",
+  "notContains",
+]);
+
 export const TRIGGER_LABELS: Record<TriggerType, string> = {
   equals: "message equals",
   contains: "message contains",
@@ -55,6 +71,12 @@ export const LOGIC_LABELS: Record<LogicType, string> = {
   matchesRegex: "message matches regex",
   lengthEquals: "message length equals",
   isNumber: "message is a number",
+  equals: "message equals",
+  contains: "message contains",
+  startsWith: "message starts with",
+  endsWith: "message ends with",
+  notEquals: "message does not equal",
+  notContains: "message does not contain",
 };
 
 export const TRANSFORM_LABELS: Record<TransformType, string> = {
@@ -104,6 +126,12 @@ export const BLOCK_DESCRIPTIONS: {
     matchesRegex: "Passes when the message matches the regular expression.",
     lengthEquals: "Passes when the message length equals the number.",
     isNumber: "Passes when the message is a number.",
+    equals: "Passes when the message is exactly the value.",
+    contains: "Passes when the message includes the value.",
+    startsWith: "Passes when the message begins with the value.",
+    endsWith: "Passes when the message ends with the value.",
+    notEquals: "Passes when the message is not exactly the value.",
+    notContains: "Passes when the message does not include the value.",
   },
   transform: {
     uppercase: "Changes the message to UPPERCASE.",
@@ -322,6 +350,18 @@ export function checkLogic(block: Block, message: string): boolean {
       return (
         message.trim() !== "" && Number.isFinite(Number(message.trim()))
       );
+    case "equals":
+      return message.trim() === block.value.trim();
+    case "contains":
+      return message.includes(block.value);
+    case "startsWith":
+      return message.startsWith(block.value);
+    case "endsWith":
+      return message.endsWith(block.value);
+    case "notEquals":
+      return message.trim() !== block.value.trim();
+    case "notContains":
+      return !message.includes(block.value);
     case "matchesRegex":
       try {
         return new RegExp(block.value).test(message);
@@ -426,6 +466,9 @@ export function validateProgram(program: Program): string[] {
       } else if (REQUIRES_NUMERIC.has(block.kind)) {
         if (!Number.isFinite(Number(block.value)))
           errors.push("Logic block needs a number");
+      } else if (REQUIRES_TEXT.has(block.kind)) {
+        if (block.value.trim() === "")
+          errors.push("Logic block needs text to compare");
       }
     } else if (block.category === "transform") {
       if (block.kind === "replace" && block.value.trim() === "")

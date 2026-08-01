@@ -47,6 +47,18 @@ test("renders a label and description for each block type", () => {
     "Passes when the message length equals the number.",
     "message is a number",
     "Passes when the message is a number.",
+    "message equals",
+    "Passes when the message is exactly the value.",
+    "message contains",
+    "Passes when the message includes the value.",
+    "message starts with",
+    "Passes when the message begins with the value.",
+    "message ends with",
+    "Passes when the message ends with the value.",
+    "message does not equal",
+    "Passes when the message is not exactly the value.",
+    "message does not contain",
+    "Passes when the message does not include the value.",
     "make uppercase",
     "Changes the message to UPPERCASE.",
     "make lowercase",
@@ -91,6 +103,12 @@ test("descriptions use the palette-description testids per category and type", (
   expect(screen.getByTestId("palette-description-logic-matchesRegex")).toBeTruthy();
   expect(screen.getByTestId("palette-description-logic-lengthEquals")).toBeTruthy();
   expect(screen.getByTestId("palette-description-logic-isNumber")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-equals")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-contains")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-startsWith")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-endsWith")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notEquals")).toBeTruthy();
+  expect(screen.getByTestId("palette-description-logic-notContains")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-uppercase")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-lowercase")).toBeTruthy();
   expect(screen.getByTestId("palette-description-transform-trim")).toBeTruthy();
@@ -126,7 +144,7 @@ test("each table has the right number of rows", () => {
 
   const expected = [
     ["palette-table-trigger", 6],
-    ["palette-table-logic", 5],
+    ["palette-table-logic", 11],
     ["palette-table-transform", 9],
     ["palette-table-action", 3],
   ] as const;

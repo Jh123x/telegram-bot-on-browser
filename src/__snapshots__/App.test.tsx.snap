@@ -400,6 +400,96 @@ Object {
                               Passes when the message is a number.
                             </td>
                           </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message equals
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-equals"
+                            >
+                              Passes when the message is exactly the value.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message contains
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-contains"
+                            >
+                              Passes when the message includes the value.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message starts with
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-startsWith"
+                            >
+                              Passes when the message begins with the value.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message ends with
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-endsWith"
+                            >
+                              Passes when the message ends with the value.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message does not equal
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notEquals"
+                            >
+                              Passes when the message is not exactly the value.
+                            </td>
+                          </tr>
+                          <tr
+                            class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                          >
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            >
+                              message does not contain
+                            </td>
+                            <td
+                              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                              data-testid="palette-description-logic-notContains"
+                            >
+                              Passes when the message does not include the value.
+                            </td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -1201,6 +1291,96 @@ Object {
                             data-testid="palette-description-logic-isNumber"
                           >
                             Passes when the message is a number.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message equals
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-equals"
+                          >
+                            Passes when the message is exactly the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message contains
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-contains"
+                          >
+                            Passes when the message includes the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message starts with
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-startsWith"
+                          >
+                            Passes when the message begins with the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message ends with
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-endsWith"
+                          >
+                            Passes when the message ends with the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message does not equal
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notEquals"
+                          >
+                            Passes when the message is not exactly the value.
+                          </td>
+                        </tr>
+                        <tr
+                          class="MuiTableRow-root MuiTableRow-hover css-1a181x8-MuiTableRow-root"
+                        >
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                          >
+                            message does not contain
+                          </td>
+                          <td
+                            class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-1bhpc32-MuiTableCell-root"
+                            data-testid="palette-description-logic-notContains"
+                          >
+                            Passes when the message does not include the value.
                           </td>
                         </tr>
                       </tbody>

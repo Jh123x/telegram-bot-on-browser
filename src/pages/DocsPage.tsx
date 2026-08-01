@@ -225,8 +225,9 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          Logic — gates. Check message length, check if the message is a
-          number, or match a regex. Logic checks the message as it flows,
+          Logic — gates. Check message length, check message content (equals,
+          contains, starts or ends with), check if the message is a number, or
+          match a regex. Logic checks the message as it flows,
           after earlier transforms. If the check fails, the program stops. It
           sends the &quot;Else reply&quot; text if that is set.
         </Typography>

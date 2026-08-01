@@ -10,7 +10,13 @@ export type LogicType =
   | "lengthLess"
   | "matchesRegex"
   | "lengthEquals"
-  | "isNumber";
+  | "isNumber"
+  | "equals"
+  | "contains"
+  | "startsWith"
+  | "endsWith"
+  | "notEquals"
+  | "notContains";
 export type TransformType =
   | "uppercase"
   | "lowercase"
