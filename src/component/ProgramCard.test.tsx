@@ -58,6 +58,13 @@ const makeThreeBlockProgram = (): Program => ({
 const blockIds = (program: Program): string[] =>
   program.blocks.map((b) => b.id);
 
+const createDataTransfer = (payload: string) => ({
+  setData: jest.fn(),
+  getData: jest.fn(() => payload),
+  dropEffect: "move",
+  effectAllowed: "move",
+} as unknown as DataTransfer);
+
 const makeStore = (programs: Program[]) =>
   setupStore<BotWithConfig>({
     bot: { token: "", programs, response: [], users: [] },
@@ -349,6 +356,83 @@ test("move up/down buttons call callbacks and disabled states are correct", () =
   expect((downBtn2 as HTMLButtonElement).disabled).toBe(true);
   fireEvent.click(upBtn2);
   expect(onMoveUp2).toHaveBeenCalledWith("p2");
+});
+
+test("renders a drag handle on each block row", () => {
+  renderCard(makeThreeBlockProgram(), 0, 1);
+  expect(screen.getAllByTestId(/^block-drag-handle-/)).toHaveLength(3);
+});
+
+test("dragging block b1 onto block b3 reorders blocks", () => {
+  const p = makeThreeBlockProgram();
+  const { store } = renderCard(p, 0, 1);
+  const dt = createDataTransfer(JSON.stringify({ blockId: "b1" }));
+  fireEvent.dragStart(screen.getByTestId("block-drag-handle-b1"), {
+    dataTransfer: dt,
+  });
+  fireEvent.dragOver(screen.getByTestId("block-row-b3"), {
+    dataTransfer: dt,
+  });
+  fireEvent.drop(screen.getByTestId("block-row-b3"), { dataTransfer: dt });
+  expect(blockIds(store.getState().bot.programs[0])).toEqual([
+    "b2",
+    "b3",
+    "b1",
+  ]);
+});
+
+test("dragging block b3 onto block b1 reorders blocks", () => {
+  const p = makeThreeBlockProgram();
+  const { store } = renderCard(p, 0, 1);
+  const dt = createDataTransfer(JSON.stringify({ blockId: "b3" }));
+  fireEvent.dragStart(screen.getByTestId("block-drag-handle-b3"), {
+    dataTransfer: dt,
+  });
+  fireEvent.dragOver(screen.getByTestId("block-row-b1"), {
+    dataTransfer: dt,
+  });
+  fireEvent.drop(screen.getByTestId("block-row-b1"), { dataTransfer: dt });
+  expect(blockIds(store.getState().bot.programs[0])).toEqual([
+    "b3",
+    "b1",
+    "b2",
+  ]);
+});
+
+test("dropping a block on itself keeps the order", () => {
+  const p = makeThreeBlockProgram();
+  const { store } = renderCard(p, 0, 1);
+  const dt = createDataTransfer(JSON.stringify({ blockId: "b2" }));
+  fireEvent.dragStart(screen.getByTestId("block-drag-handle-b2"), {
+    dataTransfer: dt,
+  });
+  fireEvent.dragOver(screen.getByTestId("block-row-b2"), {
+    dataTransfer: dt,
+  });
+  fireEvent.drop(screen.getByTestId("block-row-b2"), { dataTransfer: dt });
+  expect(blockIds(store.getState().bot.programs[0])).toEqual([
+    "b1",
+    "b2",
+    "b3",
+  ]);
+});
+
+test("dropping with a malformed payload keeps the order", () => {
+  const p = makeThreeBlockProgram();
+  const { store } = renderCard(p, 0, 1);
+  const dt = createDataTransfer("not-json");
+  fireEvent.dragStart(screen.getByTestId("block-drag-handle-b1"), {
+    dataTransfer: dt,
+  });
+  fireEvent.dragOver(screen.getByTestId("block-row-b3"), {
+    dataTransfer: dt,
+  });
+  fireEvent.drop(screen.getByTestId("block-row-b3"), { dataTransfer: dt });
+  expect(blockIds(store.getState().bot.programs[0])).toEqual([
+    "b1",
+    "b2",
+    "b3",
+  ]);
 });
 
 const getTransformProgram = (): Program => ({

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Button,
   Chip,
@@ -31,6 +31,7 @@ import {
   computeFlowPreview,
   NodeHint,
   moveBlock,
+  moveBlockToIndex,
 } from "../logic/program.ts";
 import { BLOCK_COLORS } from "../theme.ts";
 import { Port, Connector, HintChip } from "./pipeline.tsx";
@@ -56,6 +57,12 @@ interface BlockRowProps {
   onDelete: (id: string) => void;
   onMoveUp: (id: string) => void;
   onMoveDown: (id: string) => void;
+  isDragging: boolean;
+  isOver: boolean;
+  onDragStart: (e: React.DragEvent, id: string) => void;
+  onDragOver: (e: React.DragEvent, id: string) => void;
+  onDrop: (e: React.DragEvent, id: string) => void;
+  onDragEnd: () => void;
 }
 
 const BlockRow = ({
@@ -70,6 +77,12 @@ const BlockRow = ({
   onDelete,
   onMoveUp,
   onMoveDown,
+  isDragging,
+  isOver,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
 }: BlockRowProps) => {
   const renderKindOptions = () => {
     switch (block.category) {
@@ -95,8 +108,34 @@ const BlockRow = ({
   };
 
   return (
-    <Box sx={{ mb: 1 }} data-testid={`block-row-${block.id}`}>
+    <Box
+      sx={{
+        mb: 1,
+        opacity: isDragging ? 0.5 : 1,
+        bgcolor: isOver ? "action.selected" : "transparent",
+        borderRadius: 1,
+      }}
+      data-testid={`block-row-${block.id}`}
+      onDragOver={(e) => onDragOver(e, block.id)}
+      onDrop={(e) => onDrop(e, block.id)}
+    >
       <Box display="flex" alignItems="center" gap={1}>
+        <IconButton
+          aria-label="Drag to reorder"
+          draggable
+          data-testid={`block-drag-handle-${block.id}`}
+          onDragStart={(e) => onDragStart(e, block.id)}
+          onDragEnd={onDragEnd}
+          sx={{
+            minWidth: 32,
+            p: 0.5,
+            color: "text.secondary",
+            cursor: "grab",
+            userSelect: "none",
+          }}
+        >
+          ⠿
+        </IconButton>
         <Port
           testId={`block-input-${block.id}`}
           color={BLOCK_COLORS[block.category].main}
@@ -189,6 +228,39 @@ export const ProgramCard = ({
     update({ blocks: moveBlock(current.blocks, id, -1) });
   const moveBlockDown = (id: string) =>
     update({ blocks: moveBlock(current.blocks, id, 1) });
+
+  const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
+  const [overBlockId, setOverBlockId] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    e.dataTransfer.setData("text/plain", JSON.stringify({ blockId: id }));
+    e.dataTransfer.effectAllowed = "move";
+    setDraggedBlockId(id);
+  };
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setOverBlockId(id);
+  };
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    setOverBlockId(null);
+    setDraggedBlockId(null);
+    let draggedId = "";
+    try {
+      draggedId = JSON.parse(e.dataTransfer.getData("text/plain")).blockId ?? "";
+    } catch {
+      return;
+    }
+    if (!draggedId || draggedId === targetId) return;
+    const targetIndex = current.blocks.findIndex((b) => b.id === targetId);
+    if (targetIndex === -1) return;
+    update({ blocks: moveBlockToIndex(current.blocks, draggedId, targetIndex) });
+  };
+  const handleDragEnd = () => {
+    setDraggedBlockId(null);
+    setOverBlockId(null);
+  };
 
   // Live preview of the value that flows out of each node, computed from the
   // default "Hello World" user message.
@@ -308,6 +380,12 @@ export const ProgramCard = ({
                   onDelete={deleteBlock}
                   onMoveUp={moveBlockUp}
                   onMoveDown={moveBlockDown}
+                  isDragging={draggedBlockId === block.id}
+                  isOver={overBlockId === block.id}
+                  onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  onDragEnd={handleDragEnd}
                 />
               </Fragment>
             ))}
