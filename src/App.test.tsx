@@ -189,6 +189,17 @@ test("does not seed a sample when flows already exist", () => {
   expect(flows[0].name).toBe("Existing Flow");
 });
 
+test("does not re-seed after all flows were deleted (empty array persisted)", () => {
+  // The user deliberately emptied their flows: the localStorage key exists
+  // with an empty array. The graph should stay truly empty — no resurrection.
+  localStorage.setItem("flows", "[]");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  expect(store.getState().bot.flows).toEqual([]);
+});
+
 test("seeds exactly one sample under StrictMode double-mount", () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(

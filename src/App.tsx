@@ -31,13 +31,21 @@ export const App = () => {
     (state) => state.bot.hydrated ?? false
   );
 
+  // True only when a "flows" key existed in localStorage at hydration time —
+  // even if it held "[]". Distinguishes a genuine first visit (seed a sample)
+  // from a user who deliberately emptied their flows (leave the graph empty).
+  const hadFlowsKeyRef = useRef(false);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token !== null) dispatch(setToken(token));
     const programs = localStorage.getItem("programs");
     if (programs !== null) dispatch(setPrograms(JSON.parse(programs)));
     const flows = localStorage.getItem("flows");
-    if (flows !== null) dispatch(setFlows(JSON.parse(flows)));
+    if (flows !== null) {
+      hadFlowsKeyRef.current = true;
+      dispatch(setFlows(JSON.parse(flows)));
+    }
     const autoStart = localStorage.getItem("autoStart");
     if (autoStart !== null) dispatch(setAutoStart(autoStart === "true"));
     // Hydration is complete whether or not localStorage had values. Auto-start
@@ -50,6 +58,9 @@ export const App = () => {
     if (!hydrated) return;
     if (seededRef.current) return;
     seededRef.current = true;
+    // Seed only on a true first visit (no flows key ever saved). If the user
+    // deleted every flow, the key exists as "[]" and the graph stays empty.
+    if (hadFlowsKeyRef.current) return;
     if (flows.length > 0) return;
     dispatch(addFlow(flowFromSample(SAMPLE_FLOWS[0])));
   }, [hydrated, flows, dispatch]);
