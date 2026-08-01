@@ -17,7 +17,7 @@ test("renders all section headings", () => {
   const headings = [
     "Getting Started",
     "How Flows Work",
-    "Triggers",
+    "Condition Matchers",
     "Variables",
     "Samples",
     "Tips",
@@ -35,16 +35,16 @@ test("renders key content strings", () => {
   expect(screen.getAllByText(/@BotFather/).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/localStorage/i).length).toBeGreaterThan(0);
   expect(
-    screen.getByText(/the bot follows the first transition whose trigger matches/i)
+    screen.getByText(/every user message starts at the/i)
   ).toBeTruthy();
   expect(screen.getAllByText(/message ends with/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/any other message/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/else edge/i).length).toBeGreaterThan(0);
 });
 
 test("keeps the copy concise and free of filler words", () => {
   render(<DocsPage />);
 
-  const body = screen.getByText(/the bot follows the first transition whose trigger matches/i);
+  const body = screen.getByText(/every user message starts at the/i);
   expect(body).toBeTruthy();
   expect(screen.queryAllByText(/additionally/i)).toHaveLength(0);
   expect(screen.queryAllByText(/please/i)).toHaveLength(0);
@@ -64,7 +64,7 @@ test("renders a table of contents with anchor links for every section", () => {
   const tocLinks = [
     { name: "Getting Started", href: "#getting-started" },
     { name: "How Flows Work", href: "#how-flows-work" },
-    { name: "Triggers", href: "#triggers" },
+    { name: "Condition Matchers", href: "#triggers" },
     { name: "Variables", href: "#variables" },
     { name: "Samples", href: "#samples" },
     { name: "Tips", href: "#tips" },
@@ -123,41 +123,43 @@ test("calls onNavigate when clicking an in-app tab link", () => {
   expect(onNavigate).toHaveBeenCalledWith("chat");
 });
 
-test("renders styled <pre> code samples for state replies and {msg}", () => {
+test("renders styled <pre> code samples for send replies and {msg}", () => {
   render(<DocsPage />);
 
   const replies = screen.getByTestId("code-sample-replies");
   expect(replies).toHaveProperty("tagName", "PRE");
   expect(replies.textContent).toContain("Welcome");
-  expect(replies.textContent).toContain("Try /echo or answer the quiz.");
+  expect(replies.textContent).toContain("Try /echo or say hi.");
 
   const msg = screen.getByTestId("code-sample-msg");
   expect(msg).toHaveProperty("tagName", "PRE");
   expect(msg.textContent).toContain("{msg}");
 });
 
-test("renders a triggers list with the fallback and negated triggers", () => {
+test("renders a condition matchers list without a fallback option", () => {
   render(<DocsPage />);
 
   expect(screen.getAllByText(/message equals a value/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/message does not equal/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/message does not contain/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/any other message/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/else edge/i).length).toBeGreaterThan(0);
+  expect(screen.queryByText(/any other message/i)).toBeNull();
 });
 
-test("documents per-user state and {msg} interpolation", () => {
+test("documents stateless evaluation and {msg} interpolation", () => {
   render(<DocsPage />);
 
   expect(screen.getAllByText(/\{msg\}/).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/tracked independently/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/stateless/i).length).toBeGreaterThan(0);
 });
 
 test("documents the built-in flow samples", () => {
   render(<DocsPage />);
 
   expect(screen.getAllByText(/Welcome Flow/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Echo Flow/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Quiz Flow/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Uppercase Echo/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Greeting Check/i).length).toBeGreaterThan(0);
+  expect(screen.queryByText(/Quiz Flow/i)).toBeNull();
 });
 
 test("no longer mentions legacy saved programs", () => {
@@ -170,7 +172,7 @@ test("no longer mentions legacy saved programs", () => {
 test("getting started points to dragging nodes from the palette", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/drag (Start and State )?nodes from the palette/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/drag Start, Transform, Condition and Send nodes/i).length).toBeGreaterThan(0);
   expect(screen.queryByText(/buttons on each program card/i)).toBeNull();
 });
 

@@ -11,11 +11,12 @@ You can visit the live site here: <https://telebot.jh123x.com/>
 
 ## What you can do
 
-- Build conversational bot logic as a visual flow on a canvas: drag **Start** and
-  **State** nodes from the palette, connect them with trigger-labeled
-  transitions, and edit replies per state.
-- Load sample flows (Welcome, Echo, Quiz) to see how flows are built, or start
-  from a blank flow — a new flow comes with a Start node ready to connect.
+- Build conversational bot logic as a visual graph on a canvas: drag **Start**,
+  **Transform**, **Condition** and **Send** nodes from the palette, connect
+  them with edges, and edit each node in the inspector.
+- Load sample flows (Welcome, Uppercase Echo, Greeting Check) to see how flows
+  are built, or start from a blank flow — a new flow comes with a Start node
+  ready to connect.
 - Test your bot in a built-in chat before you start it.
 - Run the bot from the Chat tab and talk to real Telegram users.
 
@@ -27,7 +28,8 @@ You can visit the live site here: <https://telebot.jh123x.com/>
    browser's localStorage.
 3. Open the **Flow** tab. A Welcome sample is loaded on your first visit so the
    canvas is never empty — drag nodes from the palette onto the canvas and
-   connect them with triggers, or load another sample (Welcome, Echo, Quiz).
+   connect them with edges, or load another sample (Welcome, Uppercase Echo,
+   Greeting Check).
 4. Open the **Chat** tab and press **Start** in the header. The bot starts
    polling Telegram.
 5. Use **Test User** in the Chat tab to preview replies without sending
