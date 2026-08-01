@@ -11,9 +11,11 @@ You can visit the live site here: <https://telebot.jh123x.com/>
 
 ## What you can do
 
-- Build bot reply logic with a drag-and-drop style block editor.
-- Build state-machine flows visually on a canvas (states + trigger-labeled
-  transitions) in the Flows tab.
+- Build conversational bot logic as a visual flow on a canvas: drag **Start** and
+  **State** nodes from the palette, connect them with trigger-labeled
+  transitions, and edit replies per state.
+- Load sample flows (Welcome, Echo, Quiz) to see how flows are built, or start
+  from a blank flow — a new flow comes with a Start node ready to connect.
 - Test your bot in a built-in chat before you start it.
 - Run the bot from the Chat tab and talk to real Telegram users.
 
@@ -23,14 +25,12 @@ You can visit the live site here: <https://telebot.jh123x.com/>
    Copy the token it gives you.
 2. Open the **Settings** tab and paste the token. It is stored only in your
    browser's localStorage.
-3. Open the **Programs** tab and build a program, or click a sample to load
-   one (Welcome, Coin Flip, Shout, Only Numbers, and more).
-4. Open the **Flows** tab to build state-machine flows visually (drag states
-   onto the canvas and connect them with triggers), or load a sample flow
-   (Welcome, Echo, Quiz).
-5. Open the **Chat** tab and press **Start** in the header. The bot starts
+3. Open the **Flow** tab. A Welcome sample is loaded on your first visit so the
+   canvas is never empty — drag nodes from the palette onto the canvas and
+   connect them with triggers, or load another sample (Welcome, Echo, Quiz).
+4. Open the **Chat** tab and press **Start** in the header. The bot starts
    polling Telegram.
-6. Use **Test User** in the Chat tab to preview replies without sending
+5. Use **Test User** in the Chat tab to preview replies without sending
    anything to Telegram.
 
 ## Documentation
@@ -49,11 +49,11 @@ You can visit the live site here: <https://telebot.jh123x.com/>
 
 ```
 src/
-  component/   UI building blocks (program cards, chat, editor)
+  component/   UI building blocks (flow canvas, palette, chat, settings)
   hooks/       React hooks (bot lifecycle)
   interfaces/  TypeScript types
-  logic/       Pure bot logic (triggers, transforms, execution)
-  pages/       Page views (Programs, Flows, Chat, Settings, Docs)
+  logic/       Pure bot logic (triggers, transforms, flow execution)
+  pages/       Page views (Flow, Chat, Settings, Docs)
   redux/       Redux store and slices
 docs/          Feature and architecture documentation
 ```
