@@ -27,12 +27,13 @@ export const TRANSFORM_LABELS: Record<TransformType, string> = {
   lowercase: "make lowercase",
   trim: "trim whitespace",
   replace: "replace text",
+  concat: "concat text",
 };
 
 export const ACTION_LABELS: Record<ActionType, string> = {
   reply: "reply with text",
   random: "reply random choice",
-  echo: "echo the message",
+  echo: "echo the current message",
 };
 
 export const BLOCK_CATEGORY_LABELS: Record<BlockCategory, string> = {
@@ -105,6 +106,8 @@ export function applyTransform(block: Block, data: string): string {
       return data.trim();
     case "replace":
       return data.split(block.value).join(block.value2);
+    case "concat":
+      return (block.value2 ?? "") + data + (block.value ?? "");
     default:
       return data;
   }
@@ -123,6 +126,20 @@ export function interpolate(
       ? variables[key]
       : match
   );
+}
+
+// Splits a random-choice block's value into non-empty lines and interpolates
+// each line with the variables in scope. Lives at module level so the block
+// loop never declares closures over loop variables.
+function interpolateOptions(
+  value: string,
+  variables: Record<string, string>
+): string[] {
+  return value
+    .split("\n")
+    .map((line: string) => line.trim())
+    .filter((line: string) => line.length > 0)
+    .map((line: string) => interpolate(line, variables));
 }
 
 // Pure preview of the value that would flow out of a transform node. Used by
@@ -169,17 +186,27 @@ export function executeBlocks(
   const variables: Record<string, string> = {};
   const replies: string[] = [];
   for (const block of blocks) {
+    const vars = { prev: data, ...variables };
     if (block.category === "logic") {
       if (!checkLogic(block, message)) {
         if (block.fallback !== "") {
-          replies.push(
-            interpolate(block.fallback, { prev: data, ...variables })
-          );
+          replies.push(interpolate(block.fallback, vars));
         }
         break;
       }
     } else if (block.category === "transform") {
-      data = applyTransform(block, data);
+      if (block.kind === "concat") {
+        data = applyTransform(
+          {
+            ...block,
+            value: interpolate(block.value ?? "", vars),
+            value2: interpolate(block.value2 ?? "", vars),
+          },
+          data
+        );
+      } else {
+        data = applyTransform(block, data);
+      }
       if (block.outputVar && block.outputVar !== "") {
         variables[block.outputVar] = data;
       }
@@ -187,14 +214,10 @@ export function executeBlocks(
       // action
       switch (block.kind) {
         case "reply":
-          replies.push(interpolate(block.value, { prev: data, ...variables }));
+          replies.push(interpolate(block.value, vars));
           break;
         case "random": {
-          const options = block.value
-            .split("\n")
-            .map((line) => line.trim())
-            .filter((line) => line.length > 0)
-            .map((line) => interpolate(line, { prev: data, ...variables }));
+          const options = interpolateOptions(block.value, vars);
           const choice = randomChoice(options, random);
           if (choice !== undefined) replies.push(choice);
           break;
@@ -248,6 +271,12 @@ export function validateProgram(program: Program): string[] {
     } else if (block.category === "transform") {
       if (block.kind === "replace" && block.value.trim() === "")
         errors.push("Replace block needs text to find");
+      if (
+        block.kind === "concat" &&
+        block.value.trim() === "" &&
+        block.value2.trim() === ""
+      )
+        errors.push("Concat block needs text to append or prepend");
       if (block.outputVar && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(block.outputVar))
         errors.push("Variable name must be letters, numbers or underscores");
     } else {

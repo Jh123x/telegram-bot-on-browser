@@ -492,3 +492,47 @@ test("replace block also renders the Variable name (optional) field", () => {
   expect(screen.getByLabelText("Find")).toBeTruthy();
   expect(screen.getByLabelText("Replace with")).toBeTruthy();
 });
+
+test("concat block shows Append and Prepend text fields", () => {
+  const p = makeProgram();
+  p.blocks = [
+    {
+      id: "b-concat",
+      category: "transform",
+      kind: "concat",
+      value: "!",
+      value2: "",
+      fallback: "",
+    },
+  ];
+  renderCard(p, 0, 1);
+
+  expect(screen.getByLabelText("Append text")).toBeTruthy();
+  expect(screen.getByLabelText("Prepend text")).toBeTruthy();
+});
+
+test("echo block shows a live preview of the message it will echo", () => {
+  const p = makeProgram();
+  p.blocks = [
+    {
+      id: "b-up",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+    },
+    {
+      id: "b-echo",
+      category: "action",
+      kind: "echo",
+      value: "",
+      value2: "",
+      fallback: "",
+    },
+  ];
+  renderCard(p, 0, 1);
+
+  // The flowing value after the uppercase transform is HELLO WORLD.
+  expect(screen.getByText(/Echoes: "HELLO WORLD"/)).toBeTruthy();
+});

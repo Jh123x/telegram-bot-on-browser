@@ -243,9 +243,9 @@ action: reply "You shouted: {shouted}!"`}
       </li>
       <li>
         <Typography component="span">
-          Transform — make uppercase, make lowercase, trim, or replace. They
-          change the message as it flows through, and echo replies with the
-          transformed message.
+          Transform — make uppercase, make lowercase, trim, replace, or
+          concat (prepend/append) text. They change the message as it flows
+          through, and echo replies with the transformed message.
         </Typography>
       </li>
       <li>

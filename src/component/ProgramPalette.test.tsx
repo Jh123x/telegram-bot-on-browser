@@ -12,7 +12,7 @@ const createDataTransfer = (payload: string) =>
     effectAllowed: "move",
   } as unknown as DataTransfer);
 
-test("renders the palette header, caption, and 14 blocks", () => {
+test("renders the palette header, caption, and 15 blocks", () => {
   render(<ProgramPalette />);
 
   expect(screen.getByText("Blocks")).toBeInTheDocument();
@@ -36,9 +36,10 @@ test("renders the palette header, caption, and 14 blocks", () => {
     "make lowercase",
     "trim whitespace",
     "replace text",
+    "concat text",
     "reply with text",
     "reply random choice",
-    "echo the message",
+    "echo the current message",
   ];
   for (const label of expectedLabels) {
     expect(screen.getByText(label)).toBeInTheDocument();
@@ -47,13 +48,13 @@ test("renders the palette header, caption, and 14 blocks", () => {
   expect(screen.getAllByText(/When message/)).toHaveLength(4);
   expect(screen.getAllByTestId(/^palette-trigger-/)).toHaveLength(4);
   expect(screen.getAllByTestId(/^palette-logic-/)).toHaveLength(3);
-  expect(screen.getAllByTestId(/^palette-transform-/)).toHaveLength(4);
+  expect(screen.getAllByTestId(/^palette-transform-/)).toHaveLength(5);
   expect(screen.getAllByTestId(/^palette-action-/)).toHaveLength(3);
   expect(
     document.querySelectorAll(
       '[data-testid^="palette-trigger-"], [data-testid^="palette-logic-"], [data-testid^="palette-transform-"], [data-testid^="palette-action-"]'
     )
-  ).toHaveLength(14);
+  ).toHaveLength(15);
 });
 
 test("trigger blocks drag with the correct kind and type", () => {

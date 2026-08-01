@@ -598,3 +598,54 @@ describe("validateProgram outputVar", () => {
     expect(validateProgram(program)).toEqual([]);
   });
 });
+
+describe("concat transform", () => {
+  test("appends the value to the data", () => {
+    const block = transformBlock("concat", "!");
+    expect(applyTransform(block, "HELLO")).toBe("HELLO!");
+  });
+
+  test("prepends value2 and appends value", () => {
+    const block = transformBlock("concat", "!", ">> ");
+    expect(applyTransform(block, "HELLO")).toBe(">> HELLO!");
+  });
+
+  test("with no text leaves the data unchanged", () => {
+    const block = transformBlock("concat", "", "");
+    expect(applyTransform(block, "HELLO")).toBe("HELLO");
+  });
+
+  test("flows into echo after concatenation", () => {
+    const blocks: Block[] = [
+      transformBlock("uppercase"),
+      transformBlock("concat", "!"),
+      actionBlock("echo"),
+    ];
+    expect(executeBlocks(blocks, "hello")).toEqual(["HELLO!"]);
+  });
+
+  test("concat value supports {prev} and named variables", () => {
+    const blocks: Block[] = [
+      {
+        id: "t1",
+        category: "transform",
+        kind: "uppercase",
+        value: "",
+        value2: "",
+        fallback: "",
+        outputVar: "shouted",
+      },
+      transformBlock("concat", " ({shouted})", "say: "),
+      actionBlock("echo"),
+    ];
+    expect(executeBlocks(blocks, "hi")).toEqual(["say: HI (HI)"]);
+  });
+
+  test("validateProgram rejects concat with neither append nor prepend", () => {
+    const program = createProgram("Concat");
+    program.blocks = [transformBlock("concat", "", "")];
+    expect(validateProgram(program)).toContain(
+      "Concat block needs text to append or prepend"
+    );
+  });
+});

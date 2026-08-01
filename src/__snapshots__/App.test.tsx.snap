@@ -268,6 +268,16 @@ Object {
                 />
                 replace text
               </div>
+              <div
+                data-testid="palette-transform-concat"
+                draggable="true"
+                style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+              >
+                <span
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
+                />
+                concat text
+              </div>
               <h6
                 class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
               >
@@ -304,7 +314,7 @@ Object {
                 <span
                   style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
                 />
-                echo the message
+                echo the current message
               </div>
             </div>
             <div
@@ -681,6 +691,16 @@ Object {
               />
               replace text
             </div>
+            <div
+              data-testid="palette-transform-concat"
+              draggable="true"
+              style="padding: 8px; margin: 4px 0px; border: 1px solid #a78bfa40; border-radius: 6px; cursor: grab; background-color: rgb(46, 16, 101); color: rgb(167, 139, 250);"
+            >
+              <span
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(167, 139, 250); margin-right: 6px;"
+              />
+              concat text
+            </div>
             <h6
               class="MuiTypography-root MuiTypography-subtitle2 css-1ymfzcb-MuiTypography-root"
             >
@@ -717,7 +737,7 @@ Object {
               <span
                 style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(52, 211, 153); margin-right: 6px;"
               />
-              echo the message
+              echo the current message
             </div>
           </div>
           <div

@@ -149,3 +149,10 @@ test("renders a variables code sample describing {prev} and named variables", ()
   expect(variables.textContent).toContain("{shouted}");
   expect(variables.textContent).toContain("You shouted: {shouted}!");
 });
+
+test("mentions concat and trim in the transform docs", () => {
+  render(<DocsPage />);
+
+  expect(screen.getAllByText(/concat/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/trim/i).length).toBeGreaterThan(0);
+});

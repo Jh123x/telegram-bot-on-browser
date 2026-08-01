@@ -1,6 +1,11 @@
 export type TriggerType = "equals" | "contains" | "startsWith" | "endsWith";
 export type LogicType = "lengthGreater" | "lengthLess" | "matchesRegex";
-export type TransformType = "uppercase" | "lowercase" | "trim" | "replace";
+export type TransformType =
+  | "uppercase"
+  | "lowercase"
+  | "trim"
+  | "replace"
+  | "concat";
 export type ActionType = "reply" | "random" | "echo";
 export type BlockCategory = "logic" | "transform" | "action";
 

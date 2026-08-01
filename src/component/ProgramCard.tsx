@@ -45,6 +45,7 @@ const TRANSFORM_TYPES: TransformType[] = [
   "lowercase",
   "trim",
   "replace",
+  "concat",
 ];
 const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
 
@@ -66,6 +67,7 @@ interface BlockRowProps {
   block: Block;
   blockIndex: number;
   hint?: NodeHint;
+  echoPreview?: string;
   onChange: (id: string, patch: Partial<Block>) => void;
   onKindChange: (id: string, kind: Block["kind"]) => void;
   onDelete: (id: string) => void;
@@ -159,6 +161,7 @@ const BlockRow = ({
   block,
   blockIndex,
   hint,
+  echoPreview,
   onChange,
   onKindChange,
   onDelete,
@@ -242,6 +245,25 @@ const BlockRow = ({
           </>
         );
       }
+      if (block.kind === "concat") {
+        return (
+          <>
+            <TextField
+              size="small"
+              label="Prepend text"
+              value={block.value2}
+              onChange={(e) => onChange(block.id, { value2: e.target.value })}
+            />
+            <TextField
+              size="small"
+              label="Append text"
+              value={block.value}
+              onChange={(e) => onChange(block.id, { value: e.target.value })}
+            />
+            {variableField}
+          </>
+        );
+      }
       return (
         <>
           <Typography variant="body2">(no value needed)</Typography>
@@ -271,7 +293,11 @@ const BlockRow = ({
         />
       );
     }
-    return <Typography variant="body2">(the user's message)</Typography>;
+    return (
+      <Typography variant="body2" sx={{ color: "text.secondary" }}>
+        Echoes: "{echoPreview ?? ""}"
+      </Typography>
+    );
   };
 
   return (
@@ -373,8 +399,10 @@ export const ProgramCard = ({
   // Compute the value that flows out of each node (a live preview of the
   // pipeline using the default "Hello World" user message).
   const hints = new Map<string, NodeHint>();
+  const flowingByBlock = new Map<string, string>();
   let flowing = "Hello World";
   for (const b of current.blocks) {
+    flowingByBlock.set(b.id, flowing);
     if (b.category === "transform") {
       flowing = transformPreview(b, flowing);
       hints.set(b.id, {
@@ -512,6 +540,7 @@ export const ProgramCard = ({
                   block={block}
                   blockIndex={i + 1}
                   hint={hints.get(block.id)}
+                  echoPreview={flowingByBlock.get(block.id)}
                   onChange={changeBlockValue}
                   onKindChange={changeBlockKind}
                   onDelete={deleteBlock}

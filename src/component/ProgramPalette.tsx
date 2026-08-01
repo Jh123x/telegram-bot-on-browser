@@ -28,6 +28,7 @@ const TRANSFORM_TYPES: TransformType[] = [
   "lowercase",
   "trim",
   "replace",
+  "concat",
 ];
 const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
 
