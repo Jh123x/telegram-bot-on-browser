@@ -15,7 +15,7 @@ flowchart LR
     Store[(Redux Store<br/>token, flows, messages)]
     Logic[Logic Engine<br/>matchFlowTrigger, executeFlow, FlowRuntime]
     Bot[BrowserBot<br/>rules + workers]
-    Local[(localStorage<br/>token, flows)]
+    Local[(localStorage<br/>token, flows, prefs)]
 
     UI <--> Store
     UI --> Logic
@@ -37,7 +37,8 @@ The UI is split into four pages:
 
 - **Flow** — the visual flow editor built on React Flow.
 - **Chat** — the live conversation list and the Test User simulator.
-- **Settings** — the bot token, auto-start toggle, and data export/import.
+- **Settings** — the bot token, auto-start toggle, poll rate, and data
+  export/import/reset.
 - **Docs** — in-app documentation.
 
 Components are thin. Complex pieces are split into small files: the flow
@@ -47,16 +48,18 @@ layer).
 
 ### State layer (Redux Toolkit)
 
-The store (`botSlice`) holds five things:
+The store (`botSlice`) holds six things:
 
 - `token` — the Telegram bot token.
 - `flows` — the user's flows (optional field, defaults to an empty list).
 - `response` — the message history shown in Chat.
 - `users` — the users that have messaged the bot.
+- `pollRate` — how often the bot polls Telegram for new messages, in
+  seconds (default 5).
 - `autoStart`, `selectedUserId`, `hydrated` — UI/runtime flags.
 
-The token and flows are persisted to `localStorage`. The rest is in-memory
-only.
+The token, flows, auto-start flag and poll rate are persisted to
+`localStorage`. The rest is in-memory only.
 
 ### Logic layer (pure functions)
 
@@ -299,7 +302,13 @@ Chat tab matches a live flow.
 Flows live in the Redux `botSlice` under an optional `flows` field (empty by
 default, so existing saved state loads fine). The flows are persisted to
 `localStorage` under the `"flows"` key and are included in Settings
-export/import/reset alongside the token.
+export/import/reset alongside the token, the auto-start flag and the poll
+rate (`"autoStart"` and `"pollRate"` keys). On mount, `App` hydrates token,
+flows, auto-start and poll rate from `localStorage` before marking the store
+hydrated (the auto-start decision is made at exactly that point); the
+settings page also re-reads the poll rate so the field reflects the saved
+preference. Importing an old settings file without a `pollRate` falls back
+to the default (5 seconds).
 
 ### Editor
 

@@ -31,7 +31,8 @@ You can visit the live site here: <https://telebot.jh123x.com/>
    connect them with edges, or load another sample (Welcome, Uppercase Echo,
    Greeting Check).
 4. Open the **Chat** tab and press **Start** in the header. The bot starts
-   polling Telegram.
+   polling Telegram (every 5 seconds by default; adjust the **Poll rate** in
+   Settings).
 5. Use **Test User** in the Chat tab to preview replies without sending
    anything to Telegram.
 

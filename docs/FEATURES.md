@@ -106,6 +106,19 @@ This is the fastest way to try your bot before starting it.
 The **Settings** tab stores your bot token. The token never leaves your
 browser. Paste it once, and the bot can start.
 
+- **Auto start bot on load** — starts the bot automatically when the page
+  loads (only if a token is present).
+- **Poll rate (seconds)** — how often the bot checks Telegram for new
+  messages (default 5s). Lower values respond faster but make more API
+  requests. The rate is applied when the bot starts — change it while the
+  bot is running by stopping and starting it again.
+- **Export settings** — downloads your token, flows and preferences as a
+  JSON file.
+- **Import settings** — restores settings from an exported JSON file.
+  Files without a `pollRate` (old exports) fall back to the default.
+- **Reset to default** — clears your token, flows and preferences from
+  this browser.
+
 ## Docs
 
 The **Docs** tab explains the concepts in the browser: nodes, conditions,
