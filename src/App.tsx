@@ -8,6 +8,7 @@ import { SettingsPage } from "./pages/SettingsPage.tsx";
 import { ProgramsPage } from "./pages/ProgramsPage.tsx";
 import { ChatPage } from "./pages/ChatPage.tsx";
 import { DocsPage } from "./pages/DocsPage.tsx";
+import { FlowsPage } from "./pages/FlowsPage.tsx";
 import { useBot } from "./hooks/useBot.ts";
 import { useDispatch } from "react-redux";
 import { setToken, setPrograms, setAutoStart, setHydrated, setFlows } from "./redux/botSlice.ts";
@@ -60,6 +61,7 @@ export const App = () => {
           {page === "programs" && <ProgramsPage />}
           {page === "chat" && <ChatPage bot={bot} />}
           {page === "docs" && <DocsPage onNavigate={setPage} />}
+          {page === "flows" && <FlowsPage />}
         </Box>
         <Footer />
       </Container>
