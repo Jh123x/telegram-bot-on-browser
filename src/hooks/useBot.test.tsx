@@ -7,6 +7,7 @@ import { setupStore } from "../redux/testUtils.tsx";
 import { setAutoStart, setHydrated, setPrograms, setToken } from "../redux/botSlice.ts";
 import { Program } from "../interfaces/program.ts";
 import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
+import { createFlow, createFlowNode } from "../logic/flow.ts";
 
 class MockWorker {
   onmessage: ((e: { data: unknown }) => void) | null = null;
@@ -279,6 +280,54 @@ test("flows from the store are registered as rules and respond via the worker", 
   const send = instances[1];
 
   // First message: any message transitions start -> q1, replying with the question.
+  await act(async () => {
+    await poll.onmessage!({ data: [1, "alice", 42, "hi"] });
+  });
+  expect(send.postMessage).toHaveBeenCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "What is 2 + 2?",
+    42,
+  ]);
+});
+
+test("a silent flow falls through to the next flow (multi-flow rules)", async () => {
+  // First flow only matches /help (no fallback), so other messages decline.
+  const silentFlow = (() => {
+    const f = createFlow("Silent");
+    const start = createFlowNode("start", { x: 0, y: 0 });
+    const help = createFlowNode("state", { x: 120, y: 0 });
+    help.data.label = "Help";
+    help.data.replies = ["Help text"];
+    f.startNodeId = start.id;
+    f.nodes = [start, help];
+    f.edges = [
+      {
+        id: "e1",
+        source: start.id,
+        target: help.id,
+        data: { trigger: { type: "equals", value: "/help" } },
+      },
+    ];
+    return f;
+  })();
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      flows: [silentFlow, SAMPLE_FLOWS[2].flow], // Silent, then Quiz Flow
+      response: [],
+      users: [],
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  const poll = instances[0];
+  const send = instances[1];
+
+  // Silent flow declines "hi" (no /help transition); the quiz flow answers.
   await act(async () => {
     await poll.onmessage!({ data: [1, "alice", 42, "hi"] });
   });

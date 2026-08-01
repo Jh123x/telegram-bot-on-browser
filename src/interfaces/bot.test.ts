@@ -57,6 +57,14 @@ test("first matching rule wins (ordered)", () => {
   expect(bot.handleMessage("/hi")).toBe("first");
 });
 
+test("a matching rule whose callback returns undefined lets the next rule run", () => {
+  const bot = createBot();
+  bot.addRule(() => true, () => undefined);
+  bot.addRule(() => true, () => "second rule reply");
+
+  expect(bot.handleMessage("anything")).toBe("second rule reply");
+});
+
 test("handleMessage returns string[] arrays as-is when callback returns an array", () => {
   const bot = createBot();
   bot.addRule((m) => true, (m) => ["a", "b"]);

@@ -53,6 +53,10 @@ const isValidFlow = (f: unknown): boolean => {
   );
 };
 
+// Stable empty array so the flows selector never returns a fresh reference
+// (a new [] each render would warn and cause unnecessary rerenders).
+const EMPTY_FLOWS: Flow[] = [];
+
 /**
  * Additional iOS-style settings groups: General (auto-start toggle),
  * Data (export/import settings JSON), Danger (reset to default) and
@@ -65,7 +69,7 @@ export const AppSettings = () => {
     (state) => state.bot.programs
   );
   const flows = useSelector<BotWithConfig, Flow[]>(
-    (state) => state.bot.flows ?? []
+    (state) => state.bot.flows ?? EMPTY_FLOWS
   );
   const autoStart = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.autoStart ?? false

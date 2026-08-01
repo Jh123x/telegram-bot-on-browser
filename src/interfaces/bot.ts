@@ -30,7 +30,11 @@ export class BrowserBot {
 
   handleMessage(message: string, userId?: number): string | string[] | undefined {
     for (const rule of this.rules) {
-      if (rule.matcher(message, userId)) return rule.callback(message, userId);
+      if (!rule.matcher(message, userId)) continue;
+      // A matching rule may decline to respond (e.g. a flow with no matching
+      // transition); fall through to the next rule in that case.
+      const response = rule.callback(message, userId);
+      if (response !== undefined) return response;
     }
     return undefined;
   }
