@@ -50,6 +50,7 @@ export function nodeCategory(type: FlowNodeType): FlowNodeCategory {
   if (type === "start") return "start";
   if ((TRANSFORM_TYPES as string[]).includes(type)) return "transform";
   if ((TRIGGER_TYPES as string[]).includes(type)) return "condition";
+  if ((SEND_TYPES as string[]).includes(type)) return "send";
   return "send";
 }
 

@@ -74,7 +74,11 @@ const isValidFlowNode = (n: unknown): boolean => {
   if (data.pattern !== undefined && typeof data.pattern !== "string") {
     return false;
   }
-  if (data.replies !== undefined && !Array.isArray(data.replies)) {
+  if (
+    data.replies !== undefined &&
+    (!Array.isArray(data.replies) ||
+      !data.replies.every((r: unknown) => typeof r === "string"))
+  ) {
     return false;
   }
   return true;
