@@ -1,8 +1,11 @@
 import {
   Flow,
+  FlowNodeCategory,
+  FlowNodeData,
   FlowNodeType,
   FlowTriggerType,
-  TransformData,
+  SendNodeType,
+  TransformNodeType,
 } from "../interfaces/flow.ts";
 import type { FlowSample } from "./flowSamples.ts";
 
@@ -23,6 +26,32 @@ export const TRIGGER_LABELS: Record<FlowTriggerType, string> = {
   notEquals: "message does not equal",
   notContains: "message does not contain",
 };
+
+export const TRANSFORM_TYPES: TransformNodeType[] = [
+  "lowercase",
+  "uppercase",
+  "trim",
+  "replace",
+  "extractRegex",
+];
+
+export const SEND_TYPES: SendNodeType[] = ["send", "random"];
+
+export const ALL_NODE_TYPES: FlowNodeType[] = [
+  "start",
+  ...TRANSFORM_TYPES,
+  ...TRIGGER_TYPES,
+  ...SEND_TYPES,
+];
+
+// Maps a concrete node type to its category. Start is its own category; every
+// transform/trigger/send type maps to its respective group.
+export function nodeCategory(type: FlowNodeType): FlowNodeCategory {
+  if (type === "start") return "start";
+  if ((TRANSFORM_TYPES as string[]).includes(type)) return "transform";
+  if ((TRIGGER_TYPES as string[]).includes(type)) return "condition";
+  return "send";
+}
 
 export function generateId(): string {
   if (
@@ -55,37 +84,40 @@ function interpolateReplies(replies: string[], message: string): string[] {
   return replies.map((reply) => interpolate(reply, { msg: message }));
 }
 
+// Evaluates a trigger against a message. equals/notEquals trim both sides;
+// the contains/startsWith/endsWith/notContains checks are raw string ops.
 export function matchTrigger(
-  trigger: { type: FlowTriggerType; value: string },
+  type: FlowTriggerType,
+  value: string,
   message: string
 ): boolean {
-  switch (trigger.type) {
+  switch (type) {
     case "equals":
-      return message.trim() === trigger.value.trim();
+      return message.trim() === value.trim();
     case "contains":
-      return message.includes(trigger.value);
+      return message.includes(value);
     case "startsWith":
-      return message.startsWith(trigger.value);
+      return message.startsWith(value);
     case "endsWith":
-      return message.endsWith(trigger.value);
+      return message.endsWith(value);
     case "notEquals":
-      return message.trim() !== trigger.value.trim();
+      return message.trim() !== value.trim();
     case "notContains":
-      return !message.includes(trigger.value);
+      return !message.includes(value);
     default:
       return false;
   }
 }
 
-// Applies a transform to a message. An undefined transform (or a transform
-// that cannot apply, e.g. an invalid extractRegex pattern) leaves the message
-// effectively unmodified/empty per the transform's contract.
+// Applies a concrete transform to a message. replace with an empty (or
+// undefined) find leaves the message unchanged; an invalid extractRegex
+// pattern yields an empty string.
 export function applyTransform(
-  transform: TransformData | undefined,
+  type: TransformNodeType,
+  data: FlowNodeData,
   message: string
 ): string {
-  if (!transform) return message;
-  switch (transform.type) {
+  switch (type) {
     case "lowercase":
       return message.toLowerCase();
     case "uppercase":
@@ -93,11 +125,13 @@ export function applyTransform(
     case "trim":
       return message.trim();
     case "replace":
-      if (transform.find === "") return message;
-      return message.split(transform.find).join(transform.replacement);
+      if (data.find === "" || data.find === undefined) return message;
+      return message
+        .split(data.find)
+        .join(data.replacement ?? "");
     case "extractRegex":
       try {
-        const m = message.match(new RegExp(transform.pattern));
+        const m = message.match(new RegExp(data.pattern ?? ""));
         return m ? m[0] : "";
       } catch {
         return "";
@@ -109,7 +143,9 @@ export function applyTransform(
 
 // Labels a condition edge by its source handle. Edges without a handle
 // (start/transform/plain connections) carry no label.
-export function flowEdgeLabel(sourceHandle: "if" | "else" | undefined): string | undefined {
+export function flowEdgeLabel(
+  sourceHandle: "if" | "else" | undefined
+): string | undefined {
   if (sourceHandle === "if" || sourceHandle === "else") return sourceHandle;
   return undefined;
 }
@@ -144,6 +180,16 @@ export function removeFlowEdge(flow: Flow, edgeId: string): Flow {
   return { ...flow, edges: flow.edges.filter((e) => e.id !== edgeId) };
 }
 
+// Humanized condition-node default labels.
+const CONDITION_DEFAULT_LABELS: Record<FlowTriggerType, string> = {
+  equals: "Equals",
+  notEquals: "Not Equals",
+  startsWith: "Starts With",
+  endsWith: "Ends With",
+  contains: "Contains",
+  notContains: "Not Contains",
+};
+
 export function createFlowNode(
   type: FlowNodeType,
   position?: { x: number; y: number }
@@ -156,21 +202,33 @@ export function createFlowNode(
   switch (type) {
     case "start":
       return { ...base, data: { label: "Start" } };
-    case "transform":
+    case "lowercase":
+      return { ...base, data: { label: "Lowercase" } };
+    case "uppercase":
+      return { ...base, data: { label: "Uppercase" } };
+    case "trim":
+      return { ...base, data: { label: "Trim" } };
+    case "replace":
       return {
         ...base,
-        data: {
-          label: "New Transform",
-          transform: { type: "lowercase", find: "", replacement: "", pattern: "" },
-        },
+        data: { label: "Replace", find: "", replacement: "" },
       };
-    case "condition":
+    case "extractRegex":
+      return { ...base, data: { label: "Extract Regex", pattern: "" } };
+    case "equals":
+    case "notEquals":
+    case "startsWith":
+    case "endsWith":
+    case "contains":
+    case "notContains":
       return {
         ...base,
-        data: { label: "New Condition", trigger: { type: "contains", value: "" } },
+        data: { label: CONDITION_DEFAULT_LABELS[type], value: "" },
       };
     case "send":
       return { ...base, data: { label: "New Send", replies: [] } };
+    case "random":
+      return { ...base, data: { label: "Random", replies: [] } };
   }
 }
 
@@ -213,42 +271,58 @@ export function executeFlow(
     if (visited.has(current.id)) return undefined; // cycle guard
     visited.add(current.id);
 
-    switch (current.type) {
-      case "start": {
-        const outgoing = edgesOut.get(current.id) ?? [];
-        if (outgoing.length === 0) return undefined;
-        const next = nodesById.get(outgoing[0].target);
-        if (!next) return undefined;
-        // start transitions are unconditional; follow the first outgoing edge
-        current = next;
-        continue;
-      }
-      case "transform": {
-        currentMessage = applyTransform(current.data.transform, currentMessage);
-        const outgoing = edgesOut.get(current.id) ?? [];
-        if (outgoing.length === 0) return undefined;
-        const next = nodesById.get(outgoing[0].target);
-        if (!next) return undefined;
-        current = next;
-        continue;
-      }
-      case "condition": {
-        const trigger = current.data.trigger;
-        if (!trigger) return undefined;
-        const matched = matchTrigger(trigger, currentMessage);
-        const handle = matched ? "if" : "else";
-        const outgoing = edgesOut.get(current.id) ?? [];
-        const branch = outgoing.find((e) => e.sourceHandle === handle);
-        if (!branch) return undefined;
-        const next = nodesById.get(branch.target);
-        if (!next) return undefined;
-        current = next;
-        continue;
-      }
-      case "send": {
-        return interpolateReplies(current.data.replies ?? [], currentMessage);
-      }
+    const category = nodeCategory(current.type);
+
+    if (category === "start") {
+      const outgoing = edgesOut.get(current.id) ?? [];
+      if (outgoing.length === 0) return undefined;
+      const next = nodesById.get(outgoing[0].target);
+      if (!next) return undefined;
+      // start transitions are unconditional; follow the first outgoing edge
+      current = next;
+      continue;
     }
+
+    if (category === "transform") {
+      currentMessage = applyTransform(
+        current.type as TransformNodeType,
+        current.data,
+        currentMessage
+      );
+      const outgoing = edgesOut.get(current.id) ?? [];
+      if (outgoing.length === 0) return undefined;
+      const next = nodesById.get(outgoing[0].target);
+      if (!next) return undefined;
+      current = next;
+      continue;
+    }
+
+    if (category === "condition") {
+      const matched = matchTrigger(
+        current.type as FlowTriggerType,
+        current.data.value ?? "",
+        currentMessage
+      );
+      const handle = matched ? "if" : "else";
+      const outgoing = edgesOut.get(current.id) ?? [];
+      const branch = outgoing.find((e) => e.sourceHandle === handle);
+      if (!branch) return undefined;
+      const next = nodesById.get(branch.target);
+      if (!next) return undefined;
+      current = next;
+      continue;
+    }
+
+    // send category (send / random)
+    const replies = interpolateReplies(
+      current.data.replies ?? [],
+      currentMessage
+    );
+    if (current.type === "random") {
+      if (replies.length === 0) return [];
+      return [replies[Math.floor(Math.random() * replies.length)]];
+    }
+    return replies;
   }
 
   return undefined;
@@ -324,7 +398,7 @@ export function validateFlow(flow: Flow): string[] {
   // A start or transform node has exactly one deterministic output; any extra
   // outgoing edges are unreachable dead branches.
   for (const node of flow.nodes) {
-    if (node.type === "start" || node.type === "transform") {
+    if (node.type === "start" || nodeCategory(node.type) === "transform") {
       const outgoing = flow.edges.filter((e) => e.source === node.id);
       if (outgoing.length > 1) {
         errors.push(
@@ -336,7 +410,7 @@ export function validateFlow(flow: Flow): string[] {
 
   // A condition node has exactly one if branch and one else branch.
   for (const node of flow.nodes) {
-    if (node.type === "condition") {
+    if (nodeCategory(node.type) === "condition") {
       const outgoing = flow.edges.filter((e) => e.source === node.id);
       const ifCount = outgoing.filter((e) => e.sourceHandle === "if").length;
       const elseCount = outgoing.filter((e) => e.sourceHandle === "else").length;
@@ -353,9 +427,9 @@ export function validateFlow(flow: Flow): string[] {
     }
   }
 
-  // A send node is terminal and cannot lead anywhere.
+  // A send node (send or random) is terminal and cannot lead anywhere.
   for (const node of flow.nodes) {
-    if (node.type === "send") {
+    if (nodeCategory(node.type) === "send") {
       const outgoing = flow.edges.filter((e) => e.source === node.id);
       if (outgoing.length > 0) {
         errors.push(
@@ -378,16 +452,18 @@ export function validateFlow(flow: Flow): string[] {
 
 // Deep-copies a sample's flow with FRESH ids for the flow, every node, and
 // every edge so loading a sample twice creates two independent flows. Node
-// data (label, replies, transform, trigger) and edge sourceHandle are
+// data (label and the flat optional fields) and edge sourceHandle are
 // deep-copied too. The startNodeId is remapped to the freshly generated start
 // node.
 export function flowFromSample(sample: FlowSample): Flow {
   const nodes = sample.flow.nodes.map((node) => {
-    const data: Flow["nodes"][number]["data"] = { label: node.data.label };
+    const data: FlowNodeData = { label: node.data.label };
+    if (node.data.value !== undefined) data.value = node.data.value;
+    if (node.data.find !== undefined) data.find = node.data.find;
+    if (node.data.replacement !== undefined)
+      data.replacement = node.data.replacement;
+    if (node.data.pattern !== undefined) data.pattern = node.data.pattern;
     if (node.data.replies !== undefined) data.replies = [...node.data.replies];
-    if (node.data.transform !== undefined)
-      data.transform = { ...node.data.transform };
-    if (node.data.trigger !== undefined) data.trigger = { ...node.data.trigger };
     return {
       ...node,
       id: generateId(),

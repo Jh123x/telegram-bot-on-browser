@@ -3,7 +3,7 @@ import {
   FlowEdge,
   FlowNode,
   FlowTriggerType,
-  TransformData,
+  TransformNodeType,
 } from "../interfaces/flow.ts";
 import { createFlow, createFlowNode, generateId } from "./flow.ts";
 
@@ -21,20 +21,24 @@ function startNode(position: { x: number; y: number }): FlowNode {
 }
 
 function transformNode(
-  transform: TransformData,
+  type: TransformNodeType,
+  label: string,
   position: { x: number; y: number }
 ): FlowNode {
-  const node = createFlowNode("transform", position);
-  node.data.transform = { ...transform };
+  const node = createFlowNode(type, position);
+  node.data.label = label;
   return node;
 }
 
 function conditionNode(
-  trigger: { type: FlowTriggerType; value: string },
+  type: FlowTriggerType,
+  value: string,
+  label: string,
   position: { x: number; y: number }
 ): FlowNode {
-  const node = createFlowNode("condition", position);
-  node.data.trigger = { type: trigger.type, value: trigger.value };
+  const node = createFlowNode(type, position);
+  node.data.label = label;
+  node.data.value = value;
   return node;
 }
 
@@ -66,7 +70,7 @@ function welcomeFlow(): Flow {
 function uppercaseEchoFlow(): Flow {
   const flow = createFlow("Uppercase Echo");
   const start = startNode({ x: 0, y: 0 });
-  const upper = transformNode({ type: "uppercase", find: "", replacement: "", pattern: "" }, { x: 240, y: 0 });
+  const upper = transformNode("uppercase", "Uppercase", { x: 240, y: 0 });
   const echo = sendNode("Echo", ["You said: {msg}"], { x: 480, y: 0 });
   flow.nodes = [start, upper, echo];
   flow.edges = [edge(start.id, upper.id), edge(upper.id, echo.id)];
@@ -77,7 +81,7 @@ function uppercaseEchoFlow(): Flow {
 function greetingCheckFlow(): Flow {
   const flow = createFlow("Greeting Check");
   const start = startNode({ x: 0, y: 0 });
-  const cond = conditionNode({ type: "contains", value: "hi" }, { x: 240, y: 0 });
+  const cond = conditionNode("contains", "hi", "Contains", { x: 240, y: 0 });
   const ifSend = sendNode("Hello", ["Hello! 👋"], { x: 480, y: -140 });
   const elseSend = sendNode("Else", ["Say hi!"], { x: 480, y: 140 });
   flow.nodes = [start, cond, ifSend, elseSend];
