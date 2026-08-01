@@ -16,10 +16,9 @@ test("renders all section headings", () => {
 
   const headings = [
     "Getting Started",
-    "How Programs Work",
+    "How Flows Work",
+    "Triggers",
     "Variables",
-    "Blocks",
-    "Flows",
     "Samples",
     "Tips",
     "Troubleshooting",
@@ -36,18 +35,16 @@ test("renders key content strings", () => {
   expect(screen.getAllByText(/@BotFather/).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/localStorage/i).length).toBeGreaterThan(0);
   expect(
-    screen.getByText(/The first program whose trigger matches runs its blocks/i)
+    screen.getByText(/the bot follows the first transition whose trigger matches/i)
   ).toBeTruthy();
-  expect(screen.getByText(/Later programs are skipped/i)).toBeTruthy();
   expect(screen.getAllByText(/message ends with/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/uppercase/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Heads/).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/any other message/i).length).toBeGreaterThan(0);
 });
 
 test("keeps the copy concise and free of filler words", () => {
   render(<DocsPage />);
 
-  const body = screen.getByText(/The first program whose trigger matches runs its blocks/i);
+  const body = screen.getByText(/the bot follows the first transition whose trigger matches/i);
   expect(body).toBeTruthy();
   expect(screen.queryAllByText(/additionally/i)).toHaveLength(0);
   expect(screen.queryAllByText(/please/i)).toHaveLength(0);
@@ -66,10 +63,9 @@ test("renders a table of contents with anchor links for every section", () => {
 
   const tocLinks = [
     { name: "Getting Started", href: "#getting-started" },
-    { name: "How Programs Work", href: "#how-programs-work" },
+    { name: "How Flows Work", href: "#how-flows-work" },
+    { name: "Triggers", href: "#triggers" },
     { name: "Variables", href: "#variables" },
-    { name: "Blocks", href: "#blocks" },
-    { name: "Flows", href: "#flows" },
     { name: "Samples", href: "#samples" },
     { name: "Tips", href: "#tips" },
     { name: "Troubleshooting", href: "#troubleshooting" },
@@ -127,69 +123,54 @@ test("calls onNavigate when clicking an in-app tab link", () => {
   expect(onNavigate).toHaveBeenCalledWith("chat");
 });
 
-test("renders styled <pre> code sample blocks with expected content", () => {
+test("renders styled <pre> code samples for state replies and {msg}", () => {
   render(<DocsPage />);
 
-  const welcome = screen.getByTestId("code-sample-welcome");
-  expect(welcome).toBeTruthy();
-  expect(welcome).toHaveProperty("tagName", "PRE");
-  expect(welcome.textContent).toContain("/start");
-  expect(welcome.textContent).toContain("reply");
+  const replies = screen.getByTestId("code-sample-replies");
+  expect(replies).toHaveProperty("tagName", "PRE");
+  expect(replies.textContent).toContain("Welcome");
+  expect(replies.textContent).toContain("Try /echo or answer the quiz.");
 
-  const shout = screen.getByTestId("code-sample-shout");
-  expect(shout).toBeTruthy();
-  expect(shout).toHaveProperty("tagName", "PRE");
-  expect(shout.textContent).toContain("uppercase");
-  expect(shout.textContent).toContain("echo");
-
-  const pipeline = screen.getByTestId("code-sample-pipeline");
-  expect(pipeline).toBeTruthy();
-  expect(pipeline).toHaveProperty("tagName", "PRE");
-  expect(pipeline.textContent).toContain("message");
-  expect(pipeline.textContent).toContain("action");
-  expect(pipeline.textContent).toContain("reply");
+  const msg = screen.getByTestId("code-sample-msg");
+  expect(msg).toHaveProperty("tagName", "PRE");
+  expect(msg.textContent).toContain("{msg}");
 });
 
-test("renders a variables code sample describing {prev} and named variables", () => {
+test("renders a triggers list with the fallback and negated triggers", () => {
   render(<DocsPage />);
 
-  const variables = screen.getByTestId("code-sample-variables");
-  expect(variables).toBeTruthy();
-  expect(variables).toHaveProperty("tagName", "PRE");
-  expect(variables.textContent).toContain("shout");
-  expect(variables.textContent).toContain("uppercase");
-  expect(variables.textContent).toContain("{shouted}");
-  expect(variables.textContent).toContain("You shouted: {shouted}!");
+  expect(screen.getAllByText(/message equals a value/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/message does not equal/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/message does not contain/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/any other message/i).length).toBeGreaterThan(0);
 });
 
-test("mentions concat and trim in the transform docs", () => {
+test("documents per-user state and {msg} interpolation", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/concat/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/trim/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/\{msg\}/).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/tracked independently/i).length).toBeGreaterThan(0);
 });
 
-test("documents the new negated, logic, and transform operations", () => {
+test("documents the built-in flow samples", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/does not equal/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/does not contain/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/is a number/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/reverse/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/capitalize each word/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Welcome Flow/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Echo Flow/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Quiz Flow/i).length).toBeGreaterThan(0);
 });
 
-test("mentions the Only Numbers sample", () => {
+test("notes that legacy saved programs still run before flows", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/Only Numbers/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/saved programs still run before flows/i).length).toBeGreaterThan(0);
 });
 
-test("getting started points to the card buttons instead of dragging", () => {
+test("getting started points to dragging nodes from the palette", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/buttons on each program card/i).length).toBeGreaterThan(0);
-  expect(screen.queryByText(/drag blocks/i)).toBeNull();
+  expect(screen.getAllByText(/drag (Start and State )?nodes from the palette/i).length).toBeGreaterThan(0);
+  expect(screen.queryByText(/buttons on each program card/i)).toBeNull();
 });
 
 test("mentions Test mode in the tips", () => {
@@ -198,21 +179,12 @@ test("mentions Test mode in the tips", () => {
   expect(screen.getAllByText(/Test mode/i).length).toBeGreaterThan(0);
 });
 
-test("documents the flows section with triggers and {msg} interpolation", () => {
+test("no longer documents the old block editor", () => {
   render(<DocsPage />);
 
-  expect(
-    screen.getByRole("link", { name: "On this page: Flows" })
-  ).toHaveAttribute("href", "#flows");
-  expect(screen.getByRole("heading", { name: "Flows" })).toBeTruthy();
-
-  // The fallback trigger is described.
-  expect(screen.getAllByText(/any other message/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/message does not contain/i).length).toBeGreaterThan(0);
-
-  // The {msg} interpolation note is present.
-  expect(screen.getAllByText(/\{msg\}/).length).toBeGreaterThan(0);
-
-  // Flows run after programs; a silent flow lets later rules run.
-  expect(screen.getAllByText(/Programs are checked before flows/i).length).toBeGreaterThan(0);
+  expect(screen.queryByRole("heading", { name: "How Programs Work" })).toBeNull();
+  expect(screen.queryByRole("heading", { name: "Blocks" })).toBeNull();
+  expect(screen.queryByText(/Coin Flip/i)).toBeNull();
+  expect(screen.queryByText(/Shout/i)).toBeNull();
+  expect(screen.queryByText(/Only Numbers/i)).toBeNull();
 });

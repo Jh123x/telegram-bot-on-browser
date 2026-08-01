@@ -50,10 +50,9 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
       <Stack component="ol" spacing={0.5} sx={{ mt: 1, pl: 3 }}>
         {[
           { label: "Getting Started", href: "#getting-started" },
-          { label: "How Programs Work", href: "#how-programs-work" },
+          { label: "How Flows Work", href: "#how-flows-work" },
+          { label: "Triggers", href: "#triggers" },
           { label: "Variables", href: "#variables" },
-          { label: "Blocks", href: "#blocks" },
-          { label: "Flows", href: "#flows" },
           { label: "Samples", href: "#samples" },
           { label: "Tips", href: "#tips" },
           { label: "Troubleshooting", href: "#troubleshooting" },
@@ -139,7 +138,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
       </li>
       <li>
         <Typography component="span">
-          Build a program in the{" "}
+          Open the{" "}
           <Link
             component="button"
             onClick={() => onNavigate?.("flow")}
@@ -147,7 +146,8 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           >
             Flow tab
           </Link>{" "}
-          and add blocks with the buttons on each program card.
+          and build a flow: drag Start and State nodes from the palette onto
+          the canvas and connect them. The Welcome sample loads on first visit.
         </Typography>
       </li>
       <li>
@@ -170,103 +170,23 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
       </li>
     </Box>
 
-    <Typography variant="h4" id="how-programs-work" sx={{ mt: 3 }}>
-      How Programs Work
+    <Typography variant="h4" id="how-flows-work" sx={{ mt: 3 }}>
+      How Flows Work
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      A program is one trigger plus a list of blocks. When a user sends a
-      message, the first program whose trigger matches runs its blocks. Later
-      programs are skipped. If no program matches, the bot stays silent. Your
-      work is saved to localStorage automatically.
-    </Typography>
-
-    <Typography variant="body1" sx={{ mt: 2 }}>
-      Think of each program as a small pipeline:
-    </Typography>
-    <pre data-testid="code-sample-pipeline" style={codeStyle}>
-      {`message -> trigger -> logic -> transform -> action -> reply`}
-    </pre>
-
-    <Typography variant="h4" id="variables" sx={{ mt: 3 }}>
-      Variables
-    </Typography>
-    <Typography variant="body1" sx={{ mt: 1 }}>
-      A transform node can save its output to a variable. You can use the
-      variable in any reply, fallback, or random option. {"{prev}"} is the
-      message as it flows through the pipeline. A named variable keeps the
-      output of one transform. Give a transform the name {"shouted"} and then
-      use {"{shouted}"} in a reply. It inserts the transformed text anywhere
-      in the message.
-    </Typography>
-    <Typography variant="body1" sx={{ mt: 2 }}>
-      {"{prev}"} always means the current value before the reply. A named
-      variable keeps the output of a specific transform. Tokens that match no
-      variable stay exactly as typed.
-    </Typography>
-    <pre data-testid="code-sample-variables" style={codeStyle}>
-      {`trigger: message contains "shout"
-transform: make uppercase  → save as {shouted}
-action: reply "You shouted: {shouted}!"`}
-    </pre>
-
-    <Typography variant="h4" id="blocks" sx={{ mt: 3 }}>
-      Blocks
-    </Typography>
-    <Typography variant="body1" sx={{ mt: 1 }}>
-      Blocks fall into four groups:
-    </Typography>
-    <Box component="ul" sx={{ mt: 1, pl: 3 }}>
-      <li>
-        <Typography component="span">
-          Triggers — decide when the program runs. Use message equals, message
-          contains, message starts with, or message ends with a value. Negated
-          triggers run when the message does not equal or does not contain a
-          value.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Logic — gates. Check message length, check message content (equals,
-          contains, starts or ends with), check if the message is a number, or
-          match a regex. Logic checks the message as it flows,
-          after earlier transforms. If the check fails, the program stops. It
-          sends the &quot;Else reply&quot; text if that is set. Every check can
-          also be negated (for example, message does not contain, message is
-          not a number).
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Transform — change the message as it flows. Make uppercase, make
-          lowercase, capitalize the first letter, capitalize each word,
-          reverse, trim, remove, replace, or concat (prepend/append) text.
-          Echo replies return the transformed message.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Action — produce the reply. Reply with text, reply a random choice,
-          or echo the message.
-        </Typography>
-      </li>
-    </Box>
-
-    <Typography variant="h4" id="flows" sx={{ mt: 3 }}>
-      Flows
-    </Typography>
-    <Typography variant="body1" sx={{ mt: 1 }}>
-      Flows are visual state machines. A flow is a set of states drawn on a
-      canvas and connected by transitions. When a user is in a state, the bot
-      follows the first transition whose trigger matches and replies with the
-      target state&apos;s messages.
+      A flow is a state machine. It is a set of states drawn on a canvas and
+      connected by transitions. When a user is in a state, the bot follows the
+      first transition whose trigger matches and replies with the target
+      state&apos;s messages.
     </Typography>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
       To build one, drag a <strong>Start</strong> node and <strong>State</strong>{" "}
       nodes from the palette onto the canvas, connect them, then pick a trigger
-      for each connection. Each state has a label and a list of replies:
+      for each connection. Each state has a label and a list of replies, one
+      per line:
     </Typography>
-    <pre data-testid="code-sample-flow-replies" style={codeStyle}>
+    <pre data-testid="code-sample-replies" style={codeStyle}>
       {`state "Welcome"
 replies:
   "Welcome! I'm a browser bot."
@@ -274,7 +194,21 @@ replies:
     </pre>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      Transitions are checked in order; the first match wins. A trigger can be:
+      Each user&apos;s position in every flow is tracked independently, so two
+      users can be in different states at the same time.
+    </Typography>
+
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      If you saved block-based programs with the old editor, those saved
+      programs still run before flows, but new logic is built with flows.
+    </Typography>
+
+    <Typography variant="h4" id="triggers" sx={{ mt: 3 }}>
+      Triggers
+    </Typography>
+    <Typography variant="body1" sx={{ mt: 1 }}>
+      Transitions are checked in order, and the first match wins. A trigger can
+      be:
     </Typography>
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
@@ -315,135 +249,51 @@ replies:
     </Box>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      Each state sends one message per line when it is entered. Use{" "}
-      {"{msg}"} in a reply to insert the user&apos;s raw message. Each
-      Telegram user&apos;s position in the flow is tracked independently, so
-      two users can be in different states at the same time.
+      The equals trigger is case-sensitive and trims whitespace.
     </Typography>
 
-    <Typography variant="body1" sx={{ mt: 2 }}>
-      Programs are checked before flows. A flow that has no matching
-      transition stays silent, so later rules can still run.
+    <Typography variant="h4" id="variables" sx={{ mt: 3 }}>
+      Variables
     </Typography>
-
-    <Typography variant="body1" sx={{ mt: 2 }}>
-      Built-in samples: <strong>Welcome Flow</strong> greets every user,{" "}
-      <strong>Echo Flow</strong> echoes back when the message starts with{" "}
-      {`/echo`}, and <strong>Quiz Flow</strong> asks a question and accepts
-      {" 4 "} as the correct answer.
+    <Typography variant="body1" sx={{ mt: 1 }}>
+      {"{msg}"} in a reply inserts the user&apos;s raw message. Tokens that
+      match no variable stay exactly as typed.
     </Typography>
+    <pre data-testid="code-sample-msg" style={codeStyle}>
+      {`state "Echo"
+replies:
+  "You said: {msg}"`}
+    </pre>
 
     <Typography variant="h4" id="samples" sx={{ mt: 3 }}>
       Samples
     </Typography>
     <Typography variant="body1" sx={{ mt: 1 }}>
-      A few samples are built in. You can start right away:
+      Built-in flow samples load with one click in the Flow tab. You can start
+      right away:
     </Typography>
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          Welcome — replies to /start.
+          <strong>Welcome Flow</strong> greets every user.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Coin Flip — random Heads or Tails on /flip.
+          <strong>Echo Flow</strong> echoes back when the message starts with{" "}
+          {`/echo`}.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Help — replies when the message contains &quot;help&quot;.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Echo Clean — removes a leading &quot;/say &quot; and echoes the rest.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Shout — echoes your message in uppercase.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Shout Back — makes your message uppercase, then replies
-          &quot;You shouted: &lt;message&gt;!&quot;.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Short Replies — rejects messages over 10 characters on /short.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Only Numbers — rejects non-numbers on /num.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Title Case — capitalizes each word on /title.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Palindrome — reverses the text on /reverse.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          Capitalize — capitalizes the first letter on /cap.
+          <strong>Quiz Flow</strong> asks a question and accepts{" "}
+          {" 4 "}as the correct answer.
         </Typography>
       </li>
     </Box>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      The built-in <strong>Welcome</strong> program looks like this as JSON:
-    </Typography>
-    <pre data-testid="code-sample-welcome" style={codeStyle}>
-      {`{
-  "name": "Welcome",
-  "trigger": {
-    "type": "equals",
-    "value": "/start"
-  },
-  "blocks": [
-    {
-      "type": "action",
-      "kind": "reply",
-      "text": "Hi! Welcome to the bot."
-    }
-  ]
-}`}
-    </pre>
-
-    <Typography variant="body1" sx={{ mt: 2 }}>
-      The <strong>Shout</strong> program makes the message uppercase, then
-      echoes it:
-    </Typography>
-    <pre data-testid="code-sample-shout" style={codeStyle}>
-      {`{
-  "name": "Shout",
-  "trigger": {
-    "type": "contains",
-    "value": "shout"
-  },
-  "blocks": [
-    {
-      "type": "transform",
-      "kind": "uppercase"
-    },
-    {
-      "type": "action",
-      "kind": "echo"
-    }
-  ]
-}`}
-    </pre>
-
-    <Typography variant="body1" sx={{ mt: 2 }}>
-      For the full list of block types and fields, see the{" "}
+      For the full list of flow behavior and fields, see the{" "}
       <Link
         href="https://core.telegram.org/bots/api"
         target="_blank"
@@ -476,8 +326,8 @@ replies:
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          Order matters. The first match wins. Use the arrow buttons to
-          reorder your programs in the{" "}
+          Order matters. Transitions are checked in order, so put the fallback
+          last in the{" "}
           <Link
             component="button"
             onClick={() => onNavigate?.("flow")}
@@ -500,13 +350,13 @@ replies:
       </li>
       <li>
         <Typography component="span">
-          Clearing browser data resets your programs and token.
+          Clearing browser data resets your flows and token.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Use Test mode on the Chat tab to preview how
-          the whole bot responds before starting it.
+          Use Test mode on the Chat tab to preview how the whole bot responds
+          before starting it.
         </Typography>
       </li>
     </Box>
@@ -518,8 +368,8 @@ replies:
       <li>
         <Typography component="span">
           Bot not replying? Check the header says &quot;Bot started&quot;. Keep
-          the page open. Make sure the trigger matches exactly. Equals is
-          case-sensitive and trims whitespace.
+          the page open. Make sure a transition matches from the user&apos;s
+          current state. Equals is case-sensitive and trims whitespace.
         </Typography>
       </li>
       <li>
