@@ -12,7 +12,14 @@ export const useBot = () => {
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
   const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
 
-  useEffect(() => setBot(new BrowserBot(token)), [token]);
+  useEffect(() => {
+    // `bot` is intentionally not in the deps: including it would recreate the
+    // instance on every bot change (infinite loop). We only want a fresh bot
+    // when the token changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    bot?.stop();
+    setBot(new BrowserBot(token));
+  }, [token]);
 
   useEffect(() => {
     if (bot === undefined) return;

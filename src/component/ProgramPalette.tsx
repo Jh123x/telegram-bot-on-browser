@@ -1,49 +1,21 @@
 import React from "react";
 import { Paper, Typography, Box } from "@mui/material";
 import {
-  ActionType,
   BlockCategory,
-  LogicType,
-  TransformType,
-  TriggerType,
 } from "../interfaces/program.ts";
 import {
   ACTION_LABELS,
+  ACTION_TYPES,
   BLOCK_CATEGORY_LABELS,
   BLOCK_DESCRIPTIONS,
   LOGIC_LABELS,
+  LOGIC_TYPES,
   TRIGGER_LABELS,
+  TRIGGER_TYPES,
   TRANSFORM_LABELS,
+  TRANSFORM_TYPES,
 } from "../logic/program.ts";
 import { BLOCK_COLORS } from "../theme.ts";
-
-const TRIGGER_TYPES: TriggerType[] = [
-  "equals",
-  "contains",
-  "startsWith",
-  "endsWith",
-  "notEquals",
-  "notContains",
-];
-const LOGIC_TYPES: LogicType[] = [
-  "lengthGreater",
-  "lengthLess",
-  "matchesRegex",
-  "lengthEquals",
-  "isNumber",
-];
-const TRANSFORM_TYPES: TransformType[] = [
-  "uppercase",
-  "lowercase",
-  "trim",
-  "replace",
-  "concat",
-  "capitalize",
-  "titleCase",
-  "reverse",
-  "remove",
-];
-const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
 
 const Dot = ({ color }: { color: string }) => (
   <span

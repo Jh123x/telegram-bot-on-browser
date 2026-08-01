@@ -27,6 +27,18 @@ const codeStyle = {
   color: "text.primary",
 } as const;
 
+// Shared styling for in-page links that act as buttons (e.g. "Open the
+// Settings tab"), kept identical across every tab-link site.
+const tabLinkSx = {
+  color: "primary.main",
+  background: "none",
+  border: "none",
+  padding: 0,
+  fontSize: "inherit",
+  cursor: "pointer",
+  textDecoration: "underline",
+};
+
 export const DocsPage = ({ onNavigate }: DocsPageProps) => (
   <>
     <Typography variant="h3">Docs</Typography>
@@ -116,15 +128,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           <Link
             component="button"
             onClick={() => onNavigate?.("settings")}
-            sx={{
-              color: "primary.main",
-              background: "none",
-              border: "none",
-              padding: 0,
-              fontSize: "inherit",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
+            sx={tabLinkSx}
           >
             Settings tab
           </Link>{" "}
@@ -138,15 +142,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           <Link
             component="button"
             onClick={() => onNavigate?.("programs")}
-            sx={{
-              color: "primary.main",
-              background: "none",
-              border: "none",
-              padding: 0,
-              fontSize: "inherit",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
+            sx={tabLinkSx}
           >
             Programs tab
           </Link>{" "}
@@ -164,15 +160,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           <Link
             component="button"
             onClick={() => onNavigate?.("chat")}
-            sx={{
-              color: "primary.main",
-              background: "none",
-              border: "none",
-              padding: 0,
-              fontSize: "inherit",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
+            sx={tabLinkSx}
           >
             Chat tab
           </Link>{" "}
@@ -407,15 +395,7 @@ action: reply "You shouted: {shouted}!"`}
           <Link
             component="button"
             onClick={() => onNavigate?.("programs")}
-            sx={{
-              color: "primary.main",
-              background: "none",
-              border: "none",
-              padding: 0,
-              fontSize: "inherit",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
+            sx={tabLinkSx}
           >
             Programs tab
           </Link>
@@ -462,15 +442,7 @@ action: reply "You shouted: {shouted}!"`}
           <Link
             component="button"
             onClick={() => onNavigate?.("chat")}
-            sx={{
-              color: "primary.main",
-              background: "none",
-              border: "none",
-              padding: 0,
-              fontSize: "inherit",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
+            sx={tabLinkSx}
           >
             Chat tab
           </Link>

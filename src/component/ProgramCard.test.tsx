@@ -1,6 +1,7 @@
 import { test, expect } from "@jest/globals";
 import React from "react";
 import { fireEvent, screen, within } from "@testing-library/react";
+import { useSelector } from "react-redux";
 import { ProgramCard } from "./ProgramCard";
 import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { BotWithConfig } from "../redux/types.ts";
@@ -120,7 +121,27 @@ test("add transform appends a transform uppercase block", () => {
 });
 
 test("add reply/random/echo appends blocks", () => {
-  const { store } = renderCard(makeProgram(), 0, 1);
+  const store = makeStore([makeProgram()]);
+
+  // Render through a harness that (like the real ProgramEditor) subscribes to
+  // the store and forwards the live program down as a prop, so each added
+  // block is reflected in the card.
+  const Harness = () => {
+    const programs = useSelector<BotWithConfig, Program[]>(
+      (state) => state.bot.programs
+    );
+    return (
+      <ProgramCard
+        program={programs[0]}
+        index={0}
+        total={1}
+        onMoveUp={jest.fn()}
+        onMoveDown={jest.fn()}
+      />
+    );
+  };
+  renderWithProviders(<Harness />, { store });
+
   fireEvent.click(screen.getByRole("button", { name: "Add reply" }));
   expect(store.getState().bot.programs[0].blocks).toHaveLength(2);
   expect(store.getState().bot.programs[0].blocks[1].kind).toBe("reply");

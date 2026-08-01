@@ -77,16 +77,18 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     if (text === "") return;
 
     const now = Date.now();
+    let i = 0;
+    const nextTime = () => now + i++;
     const newItems: DisplayItem[] = [
       {
-        id: `sim-${now}-0`,
+        id: `sim-${now}-${i++}`,
         kind: "message",
-        time: now,
+        time: now + (i - 1),
         response: {
           FromUser: TEST_USER.Username,
           UserID: TEST_USER.UserID,
           Message: text,
-          TimeStamp: now,
+          TimeStamp: now + (i - 1),
           fromBot: false,
         },
       },
@@ -95,37 +97,37 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     const program = findMatchingProgram(programs, text);
     if (!program) {
       newItems.push({
-        id: `sim-${now}-1`,
+        id: `sim-${now}-${i++}`,
         kind: "note",
-        time: Date.now(),
+        time: nextTime(),
         text: "No program matched this message — the bot would stay silent.",
       });
     } else {
       newItems.push({
-        id: `sim-${Date.now()}-note`,
+        id: `sim-${now}-${i++}`,
         kind: "note",
-        time: Date.now(),
+        time: nextTime(),
         text: `Matched program: ${program.name}`,
       });
       const replies = executeProgram(program, text);
       if (replies.length === 0) {
         newItems.push({
-          id: `sim-${Date.now()}-emptynote`,
+          id: `sim-${now}-${i++}`,
           kind: "note",
-          time: Date.now(),
+          time: nextTime(),
           text: "The program matched but produced no reply.",
         });
       } else {
-        replies.forEach((reply, index) => {
+        replies.forEach((reply) => {
           newItems.push({
-            id: `sim-${Date.now()}-${index + 1}`,
+            id: `sim-${now}-${i++}`,
             kind: "message",
-            time: Date.now(),
+            time: nextTime(),
             response: {
               FromUser: "Bot",
               UserID: TEST_USER.UserID,
               Message: reply,
-              TimeStamp: Date.now(),
+              TimeStamp: nextTime(),
               fromBot: true,
             },
           });
@@ -244,7 +246,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
               No messages yet.
             </Typography>
           ) : (
-            displayItems.map((item, index) => {
+            displayItems.map((item) => {
               if (item.kind === "note") {
                 return (
                   <Box
@@ -262,7 +264,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
               const isBot = response.fromBot === true;
               return (
                 <Stack
-                  key={`${item.kind}-${item.time}-${index}`}
+                  key={item.id}
                   data-testid={`chat-message-${response.TimeStamp}${isBot ? "-bot" : ""}`}
                   direction="row"
                   justifyContent={isBot ? "flex-start" : "flex-end"}

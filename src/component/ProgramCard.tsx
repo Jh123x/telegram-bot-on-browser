@@ -7,59 +7,33 @@ import {
   Paper,
   Select,
   TextField,
-  Tooltip,
   Typography,
   Box,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateProgram, removeProgram } from "../redux/botSlice.ts";
 import {
-  ActionType,
   Block,
-  LogicType,
   Program,
-  TransformType,
   TriggerType,
 } from "../interfaces/program.ts";
 import {
   ACTION_LABELS,
+  ACTION_TYPES,
   BLOCK_CATEGORY_LABELS,
   LOGIC_LABELS,
+  LOGIC_TYPES,
   TRIGGER_LABELS,
+  TRIGGER_TYPES,
   TRANSFORM_LABELS,
+  TRANSFORM_TYPES,
   createBlock,
-  transformPreview,
+  computeFlowPreview,
+  NodeHint,
 } from "../logic/program.ts";
-import { BotWithConfig } from "../redux/types.ts";
 import { BLOCK_COLORS } from "../theme.ts";
-
-const TRIGGER_TYPES: TriggerType[] = [
-  "equals",
-  "contains",
-  "startsWith",
-  "endsWith",
-  "notEquals",
-  "notContains",
-];
-const LOGIC_TYPES: LogicType[] = [
-  "lengthGreater",
-  "lengthLess",
-  "matchesRegex",
-  "lengthEquals",
-  "isNumber",
-];
-const TRANSFORM_TYPES: TransformType[] = [
-  "uppercase",
-  "lowercase",
-  "trim",
-  "replace",
-  "concat",
-  "capitalize",
-  "titleCase",
-  "reverse",
-  "remove",
-];
-const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
+import { Port, Connector, HintChip } from "./pipeline.tsx";
+import { BlockValueInputs } from "./BlockValueInputs.tsx";
 
 interface ProgramCardProps {
   program: Program;
@@ -68,12 +42,6 @@ interface ProgramCardProps {
   onMoveUp: (id: string) => void;
   onMoveDown: (id: string) => void;
 }
-
-// A hint describing what value/label flows out of a node in the pipeline.
-type NodeHint =
-  | { category: "transform"; text: string; outputVar?: string }
-  | { category: "logic"; fallback: string }
-  | { category: "action"; text: string };
 
 interface BlockRowProps {
   block: Block;
@@ -84,101 +52,6 @@ interface BlockRowProps {
   onKindChange: (id: string, kind: Block["kind"]) => void;
   onDelete: (id: string) => void;
 }
-
-// Round input/output port marker for a pipeline node.
-const Port = ({
-  testId,
-  color,
-  label,
-}: {
-  testId: string;
-  color: string;
-  label?: string;
-}) => (
-  <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>
-    <Box
-      data-testid={testId}
-      sx={{
-        width: 12,
-        height: 12,
-        borderRadius: "50%",
-        border: `2px solid ${color}`,
-        bgcolor: "background.paper",
-        flexShrink: 0,
-      }}
-    />
-    {label && (
-      <Typography
-        variant="caption"
-        sx={{ color: "text.secondary", fontSize: 10, lineHeight: 1 }}
-      >
-        {label}
-      </Typography>
-    )}
-  </Box>
-);
-
-// Vertical connector line showing the message flowing between nodes.
-const Connector = ({ color }: { color: string }) => (
-  <Box
-    sx={{
-      width: 2,
-      height: 14,
-      bgcolor: color,
-      margin: "0 auto",
-      opacity: 0.6,
-    }}
-  />
-);
-
-// Small chip showing the flowing value / gate / reply shape for a node.
-const HintChip = ({ hint }: { hint: NodeHint }) => {
-  if (hint.category === "transform") {
-    const label =
-      hint.outputVar && hint.outputVar !== ""
-        ? `{${hint.outputVar}} = ${hint.text}`
-        : hint.text;
-    const chip = (
-      <Chip
-        size="small"
-        label={label}
-        sx={{
-          bgcolor: BLOCK_COLORS.transform.bg,
-          color: BLOCK_COLORS.transform.main,
-          fontFamily: "monospace",
-        }}
-      />
-    );
-    if (hint.outputVar && hint.outputVar !== "") {
-      return (
-        <Tooltip
-          title={`Saved as {${hint.outputVar}}. Use {${hint.outputVar}} in any later reply, random option, or fallback.`}
-          enterDelay={0}
-        >
-          {chip}
-        </Tooltip>
-      );
-    }
-    return chip;
-  }
-  if (hint.category === "logic") {
-    const label = hint.fallback ? `else → ${hint.fallback}` : "else → silent";
-    return (
-      <Chip
-        size="small"
-        label={label}
-        sx={{ bgcolor: BLOCK_COLORS.logic.bg, color: BLOCK_COLORS.logic.main }}
-      />
-    );
-  }
-  return (
-    <Chip
-      size="small"
-      label={hint.text}
-      sx={{ bgcolor: BLOCK_COLORS.action.bg, color: BLOCK_COLORS.action.main }}
-    />
-  );
-};
 
 const BlockRow = ({
   block,
@@ -212,152 +85,6 @@ const BlockRow = ({
     }
   };
 
-  const renderValueInputs = () => {
-    if (block.category === "logic") {
-      let valueInput: React.ReactNode;
-      if (
-        block.kind === "lengthGreater" ||
-        block.kind === "lengthLess" ||
-        block.kind === "lengthEquals"
-      ) {
-        valueInput = (
-          <TextField
-            size="small"
-            label="Number"
-            value={block.value}
-            onChange={(e) => onChange(block.id, { value: e.target.value })}
-          />
-        );
-      } else if (block.kind === "matchesRegex") {
-        valueInput = (
-          <TextField
-            size="small"
-            label="Regex"
-            value={block.value}
-            onChange={(e) => onChange(block.id, { value: e.target.value })}
-          />
-        );
-      } else {
-        // isNumber needs no value input.
-        valueInput = <Typography variant="body2">(no value needed)</Typography>;
-      }
-      return (
-        <>
-          {valueInput}
-          <TextField
-            size="small"
-            label="Else reply (optional)"
-            value={block.fallback}
-            onChange={(e) => onChange(block.id, { fallback: e.target.value })}
-          />
-        </>
-      );
-    }
-    if (block.category === "transform") {
-      const variableField = (
-        <Tooltip
-          title={
-            "Save this block's output as a variable. Use {name} in any later " +
-            'reply, random option, or fallback — e.g. "You said: {name}". ' +
-            "{prev} always means the current message."
-          }
-          enterDelay={0}
-        >
-          <TextField
-            size="small"
-            label="Variable name (optional)"
-            value={block.outputVar ?? ""}
-            onChange={(e) => onChange(block.id, { outputVar: e.target.value })}
-          />
-        </Tooltip>
-      );
-      if (block.kind === "replace") {
-        return (
-          <>
-            <TextField
-              size="small"
-              label="Find"
-              value={block.value}
-              onChange={(e) => onChange(block.id, { value: e.target.value })}
-            />
-            <TextField
-              size="small"
-              label="Replace with"
-              value={block.value2}
-              onChange={(e) => onChange(block.id, { value2: e.target.value })}
-            />
-            {variableField}
-          </>
-        );
-      }
-      if (block.kind === "concat") {
-        return (
-          <>
-            <TextField
-              size="small"
-              label="Prepend text"
-              value={block.value2}
-              onChange={(e) => onChange(block.id, { value2: e.target.value })}
-            />
-            <TextField
-              size="small"
-              label="Append text"
-              value={block.value}
-              onChange={(e) => onChange(block.id, { value: e.target.value })}
-            />
-            {variableField}
-          </>
-        );
-      }
-      if (block.kind === "remove") {
-        return (
-          <>
-            <TextField
-              size="small"
-              label="Remove text"
-              value={block.value}
-              onChange={(e) => onChange(block.id, { value: e.target.value })}
-            />
-            {variableField}
-          </>
-        );
-      }
-      return (
-        <>
-          <Typography variant="body2">(no value needed)</Typography>
-          {variableField}
-        </>
-      );
-    }
-    // action
-    if (block.kind === "reply") {
-      return (
-        <TextField
-          size="small"
-          label="Response"
-          value={block.value}
-          onChange={(e) => onChange(block.id, { value: e.target.value })}
-        />
-      );
-    }
-    if (block.kind === "random") {
-      return (
-        <TextField
-          size="small"
-          label="One option per line"
-          value={block.value}
-          multiline
-          onChange={(e) => onChange(block.id, { value: e.target.value })}
-        />
-      );
-    }
-    return (
-      <Typography variant="body2" sx={{ color: "text.secondary" }}>
-        Echoes: "{echoPreview ?? ""}"
-      </Typography>
-    );
-  };
-
   return (
     <Box sx={{ mb: 1 }}>
       <Box display="flex" alignItems="center" gap={1}>
@@ -388,7 +115,11 @@ const BlockRow = ({
         >
           {renderKindOptions()}
         </Select>
-        {renderValueInputs()}
+        <BlockValueInputs
+          block={block}
+          onChange={onChange}
+          echoPreview={echoPreview}
+        />
         <IconButton aria-label="Delete block" onClick={() => onDelete(block.id)}>
           ✕
         </IconButton>
@@ -415,10 +146,7 @@ export const ProgramCard = ({
   onMoveDown,
 }: ProgramCardProps) => {
   const dispatch = useDispatch();
-  const live = useSelector<BotWithConfig, Program | undefined>(
-    (state) => state.bot.programs.find((p) => p.id === program.id)
-  );
-  const current: Program = live ?? program;
+  const current: Program = program;
   const update = (patch: Partial<Program>) =>
     dispatch(updateProgram({ ...current, ...patch }));
 
@@ -435,41 +163,9 @@ export const ProgramCard = ({
   const deleteBlock = (id: string) =>
     update({ blocks: current.blocks.filter((b) => b.id !== id) });
 
-  // Compute the value that flows out of each node (a live preview of the
-  // pipeline using the default "Hello World" user message).
-  const hints = new Map<string, NodeHint>();
-  const flowingByBlock = new Map<string, string>();
-  let flowing = "Hello World";
-  for (const b of current.blocks) {
-    flowingByBlock.set(b.id, flowing);
-    if (b.category === "transform") {
-      flowing = transformPreview(b, flowing);
-      hints.set(b.id, {
-        category: "transform",
-        text: flowing,
-        outputVar: b.outputVar,
-      });
-    } else if (b.category === "logic") {
-      hints.set(b.id, { category: "logic", fallback: b.fallback });
-    } else {
-      let text: string;
-      if (b.kind === "reply") {
-        text = `reply: ${b.value || "(empty)"}`;
-      } else if (b.kind === "random") {
-        const opts = b.value
-          .split("\n")
-          .map((s: string) => s.trim())
-          .filter((s: string) => s.length > 0);
-        text =
-          opts.length > 0
-            ? `random: ${opts.map((o) => `"${o}"`).join(", ")}`
-            : "random: (no options)";
-      } else {
-        text = `echo: ${flowing}`;
-      }
-      hints.set(b.id, { category: "action", text });
-    }
-  }
+  // Live preview of the value that flows out of each node, computed from the
+  // default "Hello World" user message.
+  const { hints, flowingByBlock } = computeFlowPreview(current.blocks);
 
   return (
     <Paper
