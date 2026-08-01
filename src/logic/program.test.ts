@@ -33,7 +33,16 @@ const actionBlock = (
 ): Block => ({ id: generateId(), category: "action", kind, value, value2, fallback: "" });
 
 const transformBlock = (
-  kind: "uppercase" | "lowercase" | "trim" | "replace",
+  kind:
+    | "uppercase"
+    | "lowercase"
+    | "trim"
+    | "replace"
+    | "concat"
+    | "capitalize"
+    | "titleCase"
+    | "reverse"
+    | "remove",
   value = "",
   value2 = ""
 ): Block => ({ id: generateId(), category: "transform", kind, value, value2, fallback: "" });
@@ -163,6 +172,51 @@ describe("applyTransform", () => {
     };
     expect(applyTransform(block, " unchanged ")).toBe(" unchanged ");
   });
+
+  test("capitalize uppercases only the first letter", () => {
+    const block = transformBlock("capitalize");
+    expect(applyTransform(block, "hello")).toBe("Hello");
+  });
+
+  test("capitalize leaves the rest of the string unchanged", () => {
+    const block = transformBlock("capitalize");
+    expect(applyTransform(block, "hELLO")).toBe("HELLO");
+  });
+
+  test("capitalize on an empty string returns empty", () => {
+    const block = transformBlock("capitalize");
+    expect(applyTransform(block, "")).toBe("");
+  });
+
+  test("titleCase capitalizes the first letter of each word", () => {
+    const block = transformBlock("titleCase");
+    expect(applyTransform(block, "hello world")).toBe("Hello World");
+  });
+
+  test("titleCase preserves spacing between words", () => {
+    const block = transformBlock("titleCase");
+    expect(applyTransform(block, "hello   world")).toBe("Hello   World");
+  });
+
+  test("reverse reverses the characters", () => {
+    const block = transformBlock("reverse");
+    expect(applyTransform(block, "abc")).toBe("cba");
+  });
+
+  test("reverse keeps surrogate pairs (emoji) intact", () => {
+    const block = transformBlock("reverse");
+    expect(applyTransform(block, "ab👍cd")).toBe("dc👍ba");
+  });
+
+  test("remove strips all matching text", () => {
+    const block = transformBlock("remove", "l");
+    expect(applyTransform(block, "hello world")).toBe("heo word");
+  });
+
+  test("remove with an empty find is identity", () => {
+    const block = transformBlock("remove", "");
+    expect(applyTransform(block, "hello")).toBe("hello");
+  });
 });
 
 describe("transformPreview", () => {
@@ -194,6 +248,26 @@ describe("transformPreview", () => {
   test("non-transform block returns the input unchanged", () => {
     const block = actionBlock("echo");
     expect(transformPreview(block, "Hello World")).toBe("Hello World");
+  });
+
+  test("capitalize previews the first letter uppercased", () => {
+    const block = transformBlock("capitalize");
+    expect(transformPreview(block, "hello world")).toBe("Hello world");
+  });
+
+  test("titleCase previews each word capitalized", () => {
+    const block = transformBlock("titleCase");
+    expect(transformPreview(block, "hello world")).toBe("Hello World");
+  });
+
+  test("reverse previews the text reversed", () => {
+    const block = transformBlock("reverse");
+    expect(transformPreview(block, "abc")).toBe("cba");
+  });
+
+  test("remove previews the text with matches stripped", () => {
+    const block = transformBlock("remove", "l");
+    expect(transformPreview(block, "Hello World")).toBe("Heo Word");
   });
 });
 
@@ -448,6 +522,12 @@ describe("validateProgram", () => {
     const program = validProgram();
     program.blocks.push(transformBlock("replace", ""));
     expect(validateProgram(program)).toContain("Replace block needs text to find");
+  });
+
+  test("remove transform with empty value is an error", () => {
+    const program = validProgram();
+    program.blocks.push(transformBlock("remove", ""));
+    expect(validateProgram(program)).toContain("Remove block needs text to remove");
   });
 
   test("reply action with empty value is an error", () => {
@@ -754,6 +834,13 @@ describe("BLOCK_DESCRIPTIONS", () => {
   test("has the new logic labels", () => {
     expect(LOGIC_LABELS.lengthEquals).toBe("message length equals");
     expect(LOGIC_LABELS.isNumber).toBe("message is a number");
+  });
+
+  test("has the new transform labels", () => {
+    expect(TRANSFORM_LABELS.capitalize).toBe("capitalize first letter");
+    expect(TRANSFORM_LABELS.titleCase).toBe("capitalize each word");
+    expect(TRANSFORM_LABELS.reverse).toBe("reverse text");
+    expect(TRANSFORM_LABELS.remove).toBe("remove text");
   });
 
   test("has a non-empty description for every trigger type", () => {

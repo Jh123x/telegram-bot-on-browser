@@ -32,6 +32,10 @@ export const TRANSFORM_LABELS: Record<TransformType, string> = {
   trim: "trim whitespace",
   replace: "replace text",
   concat: "concat text",
+  capitalize: "capitalize first letter",
+  titleCase: "capitalize each word",
+  reverse: "reverse text",
+  remove: "remove text",
 };
 
 export const ACTION_LABELS: Record<ActionType, string> = {
@@ -74,6 +78,10 @@ export const BLOCK_DESCRIPTIONS: Record<
     trim: "Removes spaces at the start and end.",
     replace: "Replaces matching text with new text.",
     concat: "Adds text before or after the message.",
+    capitalize: "Capitalizes the first letter.",
+    titleCase: "Capitalizes the first letter of each word.",
+    reverse: "Reverses the text.",
+    remove: "Removes matching text.",
   },
   action: {
     reply: "Sends a fixed reply.",
@@ -152,6 +160,14 @@ export function applyTransform(block: Block, data: string): string {
       return data.split(block.value).join(block.value2);
     case "concat":
       return (block.value2 ?? "") + data + (block.value ?? "");
+    case "capitalize":
+      return data.charAt(0).toUpperCase() + data.slice(1);
+    case "titleCase":
+      return data.replace(/\b\w/g, (c) => c.toUpperCase());
+    case "reverse":
+      return [...data].reverse().join("");
+    case "remove":
+      return data.split(block.value).join("");
     default:
       return data;
   }
@@ -325,6 +341,8 @@ export function validateProgram(program: Program): string[] {
     } else if (block.category === "transform") {
       if (block.kind === "replace" && block.value.trim() === "")
         errors.push("Replace block needs text to find");
+      if (block.kind === "remove" && block.value.trim() === "")
+        errors.push("Remove block needs text to remove");
       if (
         block.kind === "concat" &&
         block.value.trim() === "" &&

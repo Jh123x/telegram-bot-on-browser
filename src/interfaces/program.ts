@@ -16,7 +16,11 @@ export type TransformType =
   | "lowercase"
   | "trim"
   | "replace"
-  | "concat";
+  | "concat"
+  | "capitalize"
+  | "titleCase"
+  | "reverse"
+  | "remove";
 export type ActionType = "reply" | "random" | "echo";
 export type BlockCategory = "logic" | "transform" | "action";
 
