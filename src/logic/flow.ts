@@ -78,9 +78,15 @@ export class FlowRuntime {
   }
 
   // Evaluates a message from the user's current node (or the start node for a
-  // brand-new user). On a transition stores the user's new node and returns the
-  // target state's replies as a single string / array / undefined. On no match
-  // the user's state is unchanged and undefined is returned.
+  // brand-new user). On a matched transition the user's state always advances
+  // to the target node; the return value distinguishes matched from unmatched:
+  //   - undefined  -> no transition matched, the user's state is unchanged
+  //   - []         -> a transition matched but the target state has no replies
+  //   - string     -> a matched transition whose target state has a single reply
+  //   - string[]   -> a matched transition whose target state has several replies
+  // Returning [] (rather than undefined) for matched-but-silent transitions lets
+  // callers stop their rule chain: the message WAS consumed by this flow even
+  // though it produced no reply, so no other flow should pick it up.
   handleMessage(
     userId: number,
     message: string
@@ -91,7 +97,7 @@ export class FlowRuntime {
     this.currentNodes.set(userId, step.nextNodeId);
     // Replies may reference the raw message via {msg}.
     const replies = step.replies.map((reply) => interpolate(reply, { msg: message }));
-    if (replies.length === 0) return undefined;
+    if (replies.length === 0) return [];
     if (replies.length === 1) return replies[0];
     return replies;
   }
@@ -126,6 +132,34 @@ export function validateFlow(flow: Flow): string[] {
   for (const edge of flow.edges) {
     if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) {
       errors.push(`Edge ${edge.id} references a missing node`);
+    }
+  }
+
+  // startNodeId must be consistent with the flow's actual node structure.
+  if (flow.startNodeId !== "") {
+    if (!nodeIds.has(flow.startNodeId)) {
+      errors.push(`Start node id "${flow.startNodeId}" points to a missing node`);
+    } else if (
+      startNodes.length === 1 &&
+      flow.startNodeId !== startNodes[0].id
+    ) {
+      errors.push("startNodeId must point to the start node");
+    }
+  }
+
+  // A source node may only have one fallback edge: the first one in edge-order
+  // always matches, so any additional fallbacks are unreachable dead branches.
+  const fallbackCounts = new Map<string, number>();
+  for (const edge of flow.edges) {
+    if (edge.data.trigger.type === "fallback") {
+      fallbackCounts.set(edge.source, (fallbackCounts.get(edge.source) ?? 0) + 1);
+    }
+  }
+  for (const [source, count] of fallbackCounts) {
+    if (count > 1) {
+      errors.push(
+        `Node ${source} has multiple fallback edges; only the first is reachable`
+      );
     }
   }
 

@@ -818,3 +818,35 @@ describe("concat transform", () => {
     expect(executeBlocks(blocks, "hi")).toEqual(["say: HI (HI)"]);
   });
 });
+
+describe("matchesRegex regex cache", () => {
+  test("an invalid regex is cached as a miss across calls without throwing", () => {
+    const block = logicBlock("matchesRegex", "(");
+    const block2 = logicBlock("notMatchesRegex", "(");
+    expect(checkLogic(block, "abc")).toBe(false);
+    expect(checkLogic(block, "abc")).toBe(false);
+    expect(checkLogic(block2, "abc")).toBe(false);
+  });
+
+  test("a valid regex is compiled once for repeated evaluations", () => {
+    const RealRegExp = global.RegExp;
+    const compileSpy = jest.fn();
+    (global as { RegExp: typeof RegExp }).RegExp = class extends RealRegExp {
+      constructor(pattern: string | RegExp, flags?: string) {
+        super(pattern, flags);
+        compileSpy(pattern);
+      }
+    };
+    try {
+      // Use a pattern not compiled anywhere else in this suite, since the
+      // module-level cache persists across the file's tests.
+      const block = logicBlock("matchesRegex", "^[a-c]+z$");
+      expect(checkLogic(block, "abz")).toBe(true);
+      expect(checkLogic(block, "ccz")).toBe(true);
+      // Two evaluations of the same pattern must only compile once.
+      expect(compileSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      (global as { RegExp: typeof RegExp }).RegExp = RealRegExp;
+    }
+  });
+});

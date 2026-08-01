@@ -118,6 +118,26 @@ function interpolateOptions(
     .map((line: string) => interpolate(line, variables));
 }
 
+// Caches the compiled regex for each matchesRegex/notMatchesRegex pattern so a
+// pattern seen before is not recompiled (and re-parsed for ReDoS on the main
+// thread) on every message. Invalid patterns cache as `undefined`.
+const regexCache = new Map<string, RegExp | undefined>();
+
+// Returns the cached compiled regex for `pattern`, or undefined when the
+// pattern is invalid (not a valid regular expression). Compiles at most once
+// per unique pattern.
+function compiledRegex(pattern: string): RegExp | undefined {
+  if (regexCache.has(pattern)) return regexCache.get(pattern);
+  let compiled: RegExp | undefined;
+  try {
+    compiled = new RegExp(pattern);
+  } catch {
+    compiled = undefined;
+  }
+  regexCache.set(pattern, compiled);
+  return compiled;
+}
+
 export function checkLogic(block: Block, message: string): boolean {
   switch (block.kind) {
     case "lengthGreater": {
@@ -139,18 +159,24 @@ export function checkLogic(block: Block, message: string): boolean {
       return (
         message.trim() !== "" && Number.isFinite(Number(message.trim()))
       );
+    // The shared trigger predicates delegate to matchTrigger so the six
+    // equals/contains/startsWith/endsWith/notEquals/notContains semantics are
+    // defined in exactly one place. block.kind is the wider LogicType, but for
+    // these cases it extends the narrower TriggerType (with the same values),
+    // so the cast (with the guard below) is safe.
     case "equals":
-      return message.trim() === block.value.trim();
     case "contains":
-      return message.includes(block.value);
     case "startsWith":
-      return message.startsWith(block.value);
     case "endsWith":
-      return message.endsWith(block.value);
     case "notEquals":
-      return message.trim() !== block.value.trim();
     case "notContains":
-      return !message.includes(block.value);
+      return matchTrigger(
+        {
+          type: block.kind as TriggerType,
+          value: block.value,
+        },
+        message
+      );
     case "notStartsWith":
       return !message.startsWith(block.value);
     case "notEndsWith":
@@ -170,22 +196,20 @@ export function checkLogic(block: Block, message: string): boolean {
       if (!Number.isFinite(n)) return false;
       return !(message.length === n);
     }
-    case "notMatchesRegex":
-      try {
-        return !new RegExp(block.value).test(message);
-      } catch {
-        return false;
-      }
+    case "notMatchesRegex": {
+      const regex = compiledRegex(block.value);
+      if (regex === undefined) return false;
+      return !regex.test(message);
+    }
     case "notIsNumber":
       return !(
         message.trim() !== "" && Number.isFinite(Number(message.trim()))
       );
-    case "matchesRegex":
-      try {
-        return new RegExp(block.value).test(message);
-      } catch {
-        return false;
-      }
+    case "matchesRegex": {
+      const regex = compiledRegex(block.value);
+      if (regex === undefined) return false;
+      return regex.test(message);
+    }
     default:
       return false;
   }

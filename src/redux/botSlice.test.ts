@@ -10,7 +10,16 @@ function makeProgram(overrides: Partial<Program> = {}): Program {
     id: "p1",
     name: "Greet",
     trigger: { type: "equals", value: "/start" },
-    actions: [{ id: "a1", type: "reply", value: "hi" }],
+    blocks: [
+      {
+        id: "a1",
+        category: "action",
+        kind: "reply",
+        value: "hi",
+        value2: "",
+        fallback: "",
+      },
+    ],
     ...overrides,
   };
 }

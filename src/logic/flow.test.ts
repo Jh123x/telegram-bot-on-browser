@@ -445,7 +445,7 @@ describe("FlowRuntime", () => {
     ]);
   });
 
-  test("returns undefined when a state has no replies", () => {
+  test("returns [] when a matched transition lands on a state with no replies and still advances", () => {
     const flow = buildFlow();
     const silentNode: Flow["nodes"][number] = {
       id: "silent",
@@ -463,7 +463,24 @@ describe("FlowRuntime", () => {
       },
     ];
     const runtime = new FlowRuntime(flow);
-    expect(runtime.handleMessage(1, "hi")).toBeUndefined();
+    // Matched-and-silent must be [] (chain-stopping) and the state must advance.
+    expect(runtime.handleMessage(1, "hi")).toEqual([]);
+    // The user is now in "silent", which has no edges, so the next message
+    // matches nothing -> undefined.
+    expect(runtime.handleMessage(1, "/menu")).toBeUndefined();
+  });
+
+  test("no matching transition returns undefined and does NOT advance the state", () => {
+    const runtime = new FlowRuntime(buildFlow());
+    // From start, the /menu edge matches and advances to menu.
+    expect(runtime.handleMessage(1, "/menu")).toBe("Welcome!");
+    // From menu, "nothing" matches no edge -> undefined and the user stays in menu.
+    expect(runtime.handleMessage(1, "nothing")).toBeUndefined();
+    // Still in menu: the /quiz edge still works.
+    expect(runtime.handleMessage(1, "/quiz")).toEqual([
+      "What is 2 + 2?",
+      "Pick a number.",
+    ]);
   });
 
   test("no-match leaves the state unchanged", () => {
@@ -646,7 +663,47 @@ describe("validateFlow", () => {
     const errors = validateFlow(flow);
     expect(errors).toContain("Flow name is required");
     expect(errors).toContain("Flow must have a start node");
-    expect(errors).toHaveLength(2);
+    // The still-standing startNodeId "start" no longer exists in the node list.
+    expect(errors).toContain('Start node id "start" points to a missing node');
+    expect(errors).toHaveLength(3);
+  });
+
+  test("startNodeId pointing at a missing node is rejected", () => {
+    const flow = validFlow();
+    flow.startNodeId = "ghost";
+    expect(validateFlow(flow)).toContain(
+      'Start node id "ghost" points to a missing node'
+    );
+  });
+
+  test("startNodeId pointing at a non-start node is rejected", () => {
+    const flow = validFlow();
+    flow.startNodeId = "a"; // 'a' exists but is a state node, not the start node
+    expect(validateFlow(flow)).toContain(
+      "startNodeId must point to the start node"
+    );
+  });
+
+  test("a second fallback edge from the same source is rejected", () => {
+    const flow = validFlow();
+    flow.edges = [
+      {
+        id: "e1",
+        source: "start",
+        target: "a",
+        data: { trigger: { type: "fallback", value: "" } },
+      },
+      {
+        id: "e2",
+        source: "start",
+        target: "a",
+        data: { trigger: { type: "fallback", value: "" } },
+      },
+    ];
+    const errors = validateFlow(flow);
+    expect(errors).toContain(
+      "Node start has multiple fallback edges; only the first is reachable"
+    );
   });
 });
 
