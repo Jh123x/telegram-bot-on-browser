@@ -172,13 +172,26 @@ sequenceDiagram
 
 ## Program editing flow
 
+The bot keeps running while the user edits. Messages that arrive before the
+edit is saved are handled by the **old rules**. Once the store rebuilds the
+rules, later messages use the **new logic**.
+
 ```mermaid
 sequenceDiagram
-  participant U as User
+  participant U as Bot Owner
+  participant T as Telegram User
   participant E as Program Editor
   participant S as Redux Store
   participant LS as localStorage
   participant B as BrowserBot
+
+  Note over B: Old rules are active.
+
+  T->>B: sends a message
+  activate B
+  B->>B: old rules run
+  B-->>T: old reply
+  deactivate B
 
   U->>E: edits a block
   activate E
@@ -187,14 +200,20 @@ sequenceDiagram
   S->>LS: persist programs
   S->>B: rebuild rules
   activate B
-  B-->>S: rules rebuilt
+  B-->>S: new rules active
   deactivate B
   S-->>E: program updated
   deactivate S
   E-->>U: card updates
   deactivate E
 
-  Note over B,U: The next message uses the new logic.
+  T->>B: sends the same message
+  activate B
+  B->>B: new rules run
+  B-->>T: new reply
+  deactivate B
+
+  Note over B: New rules are active.
 ```
 
 ## Design decisions
