@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import {
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -21,6 +22,7 @@ interface FlowInspectorProps {
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
   onUpdate: (next: Flow) => void;
+  onDelete?: () => void;
 }
 
 // The four flow node types, keyed by the kind of panel they render.
@@ -53,6 +55,7 @@ export const FlowInspector = ({
   selectedNodeId,
   selectedEdgeId,
   onUpdate,
+  onDelete,
 }: FlowInspectorProps) => {
   const selectedNode = selectedNodeId
     ? flow.nodes.find((n) => n.id === selectedNodeId) ?? null
@@ -92,6 +95,21 @@ export const FlowInspector = ({
       }
     />
   );
+
+  const DeleteButton = ({ label }: { label: string }) =>
+    onDelete ? (
+      <Button
+        data-testid="flow-inspector-delete"
+        variant="outlined"
+        color="error"
+        size="small"
+        fullWidth
+        sx={{ mt: 1.5 }}
+        onClick={onDelete}
+      >
+        {label}
+      </Button>
+    ) : null;
 
   if (selectedNode) {
     if (selectedNode.type === "transform") {
@@ -170,6 +188,7 @@ export const FlowInspector = ({
               onChange={setTransformField("pattern")}
             />
           )}
+          <DeleteButton label="Delete node" />
         </Paper>
       );
     }
@@ -224,6 +243,7 @@ export const FlowInspector = ({
             value={trigger.value}
             onChange={setTriggerValue}
           />
+          <DeleteButton label="Delete node" />
         </Paper>
       );
     }
@@ -252,6 +272,7 @@ export const FlowInspector = ({
             value={replies.join("\n")}
             onChange={(e) => updateReplies(e.target.value)}
           />
+          <DeleteButton label="Delete node" />
         </Paper>
       );
     }
@@ -263,6 +284,7 @@ export const FlowInspector = ({
           Start Node
         </Typography>
         <LabelField label="Node label" value={selectedNode.data.label} />
+        <DeleteButton label="Delete node" />
       </Paper>
     );
   }
@@ -283,6 +305,7 @@ export const FlowInspector = ({
       <Typography variant="body2" data-testid="flow-inspector-edge-caption">
         {caption}
       </Typography>
+      <DeleteButton label="Delete edge" />
     </Paper>
   );
 };

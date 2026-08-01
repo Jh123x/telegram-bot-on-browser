@@ -50,7 +50,8 @@ const renderInspector = (
   flow: Flow,
   selectedNodeId: string | null,
   selectedEdgeId: string | null,
-  onUpdate = () => {}
+  onUpdate = () => {},
+  onDelete = () => {}
 ) =>
   renderWithProviders(
     <FlowInspector
@@ -58,6 +59,7 @@ const renderInspector = (
       selectedNodeId={selectedNodeId}
       selectedEdgeId={selectedEdgeId}
       onUpdate={onUpdate}
+      onDelete={onDelete}
     />
   );
 
@@ -318,4 +320,31 @@ test("does not scroll the panel when selection is cleared", () => {
   );
 
   expect(scrollSpy).toHaveBeenCalledTimes(1);
+});
+
+// ----- Delete button -----
+
+test("does not render a delete button when nothing is selected", () => {
+  renderInspector(makeFlow(), null, null);
+  expect(screen.queryByTestId("flow-inspector-delete")).toBeNull();
+});
+
+test("renders a delete button for a selected node and invokes onDelete", () => {
+  const onDelete = jest.fn();
+  renderInspector(makeFlow(), "condition1", null, () => {}, onDelete);
+
+  const button = screen.getByTestId("flow-inspector-delete");
+  expect(button.textContent).toContain("Delete node");
+  fireEvent.click(button);
+  expect(onDelete).toHaveBeenCalledTimes(1);
+});
+
+test("renders a delete button for a selected edge and invokes onDelete", () => {
+  const onDelete = jest.fn();
+  renderInspector(makeFlow(), null, "e_if", () => {}, onDelete);
+
+  const button = screen.getByTestId("flow-inspector-delete");
+  expect(button.textContent).toContain("Delete edge");
+  fireEvent.click(button);
+  expect(onDelete).toHaveBeenCalledTimes(1);
 });

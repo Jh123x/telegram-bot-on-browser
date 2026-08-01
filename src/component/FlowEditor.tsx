@@ -19,6 +19,8 @@ import {
   createFlowNode,
   dropNodeDimensionChanges,
   flowEdgeLabel,
+  removeFlowEdge,
+  removeFlowNode,
   validateFlow,
 } from "../logic/flow.ts";
 import { generateId } from "../logic/flow.ts";
@@ -195,6 +197,23 @@ const EditorCanvas = ({
     event.dataTransfer.dropEffect = "move";
   };
 
+  // Deletes the currently selected node (and its connected edges) or edge.
+  // Mirrors the canvas Delete-key semantics; used by the inspector's Delete
+  // button so deletion is discoverable without knowing the shortcut.
+  const handleDelete = () => {
+    const current = flowRef.current;
+    if (current.id === "") return;
+    let next: Flow | null = null;
+    if (selectedNodeId) {
+      next = removeFlowNode(current, selectedNodeId);
+      setSelectedNodeId(null);
+    } else if (selectedEdgeId) {
+      next = removeFlowEdge(current, selectedEdgeId);
+      setSelectedEdgeId(null);
+    }
+    if (next) persistFlow(next);
+  };
+
   return (
     <Box
       data-testid="flow-canvas"
@@ -257,6 +276,7 @@ const EditorCanvas = ({
           selectedNodeId={selectedNodeId}
           selectedEdgeId={selectedEdgeId}
           onUpdate={persistFlow}
+          onDelete={handleDelete}
         />
       </Box>
     </Box>

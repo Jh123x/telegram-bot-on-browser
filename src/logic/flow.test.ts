@@ -9,6 +9,8 @@ import {
   flowFromSample,
   generateId,
   interpolate,
+  removeFlowEdge,
+  removeFlowNode,
   validateFlow,
   TRIGGER_TYPES,
   TRIGGER_LABELS,
@@ -714,5 +716,53 @@ describe("flowFromSample", () => {
 
   test("the created flow validates cleanly", () => {
     expect(validateFlow(flowFromSample(sample))).toEqual([]);
+  });
+});
+
+describe("removeFlowNode / removeFlowEdge", () => {
+  const flow: Flow = {
+    id: "f1",
+    name: "Flow",
+    startNodeId: "start",
+    nodes: [
+      { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+      { id: "cond", type: "condition", position: { x: 100, y: 0 }, data: { label: "Cond", trigger: { type: "contains", value: "hi" } } },
+      { id: "send", type: "send", position: { x: 200, y: 0 }, data: { label: "Send", replies: ["ok"] } },
+    ],
+    edges: [
+      { id: "e1", source: "start", target: "cond" },
+      { id: "e2", source: "cond", target: "send", sourceHandle: "if" },
+      { id: "e3", source: "cond", target: "send", sourceHandle: "else" },
+    ],
+  };
+
+  test("removes a node and every edge connected to it", () => {
+    const next = removeFlowNode(flow, "cond");
+    expect(next.nodes.map((n) => n.id)).toEqual(["start", "send"]);
+    expect(next.edges).toEqual([]);
+    expect(next.startNodeId).toBe("start");
+  });
+
+  test("clears startNodeId when the start node is removed", () => {
+    const next = removeFlowNode(flow, "start");
+    expect(next.nodes.map((n) => n.id)).toEqual(["cond", "send"]);
+    expect(next.startNodeId).toBe("");
+  });
+
+  test("keeps the flow unchanged when the node does not exist", () => {
+    const next = removeFlowNode(flow, "missing");
+    expect(next.nodes).toHaveLength(3);
+    expect(next.edges).toHaveLength(3);
+  });
+
+  test("removes a single edge by id", () => {
+    const next = removeFlowEdge(flow, "e2");
+    expect(next.edges.map((e) => e.id)).toEqual(["e1", "e3"]);
+    expect(next.nodes).toHaveLength(3);
+  });
+
+  test("keeps the flow unchanged when the edge does not exist", () => {
+    const next = removeFlowEdge(flow, "missing");
+    expect(next.edges).toHaveLength(3);
   });
 });
