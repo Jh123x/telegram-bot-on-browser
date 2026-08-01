@@ -22,6 +22,8 @@ import {
   removeFlowEdge,
   removeFlowNode,
   validateFlow,
+  ALL_NODE_TYPES,
+  nodeCategory,
 } from "../logic/flow.ts";
 import { generateId } from "../logic/flow.ts";
 import { addFlow, setFlows, updateFlow } from "../redux/botSlice.ts";
@@ -33,17 +35,24 @@ import {
   TransformNode,
   ConditionNode,
   SendNode,
+  RandomNode,
 } from "./flowNodes.tsx";
 
 // Canvas node renderers keyed by the FlowNodeType. Passed to <ReactFlow> so
 // each flow node renders as its dedicated MUI card. Must be module-level (a
 // stable object identity) so React Flow does not remount nodes on re-render.
-const nodeTypes = {
+// Transform/condition types share one renderer each — the concrete type
+// arrives via React Flow's `type` prop.
+const nodeTypes: Record<string, React.ComponentType<any>> = {
   start: StartNode,
-  transform: TransformNode,
-  condition: ConditionNode,
   send: SendNode,
+  random: RandomNode,
 };
+ALL_NODE_TYPES.forEach((type) => {
+  const category = nodeCategory(type);
+  if (category === "transform") nodeTypes[type] = TransformNode;
+  if (category === "condition") nodeTypes[type] = ConditionNode;
+});
 
 const EditorCanvas = ({ flow }: { flow: Flow }) => {
   const dispatch = useDispatch();
@@ -184,7 +193,7 @@ const EditorCanvas = ({ flow }: { flow: Flow }) => {
   const onDrop = (event) => {
     event.preventDefault();
     const type = event.dataTransfer.getData("application/reactflow");
-    if (type !== "start" && type !== "transform" && type !== "condition" && type !== "send") return;
+    if (!ALL_NODE_TYPES.includes(type)) return;
     const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
     const node = createFlowNode(type, { x: position.x, y: position.y });
     // If no flow exists (the EmptyFlow placeholder is shown), create one

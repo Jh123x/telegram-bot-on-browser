@@ -31,9 +31,22 @@ const sectionHeader = {
 
 const sectionCaption = { color: "text.secondary", pl: 2 } as const;
 
-const FLOW_NODE_TYPES = ["start", "transform", "condition", "send"];
-
-const TRANSFORM_TYPES = ["lowercase", "uppercase", "trim", "replace", "extractRegex"];
+const FLOW_NODE_TYPES = [
+  "start",
+  "lowercase",
+  "uppercase",
+  "trim",
+  "replace",
+  "extractRegex",
+  "equals",
+  "contains",
+  "startsWith",
+  "endsWith",
+  "notEquals",
+  "notContains",
+  "send",
+  "random",
+];
 
 const isValidFlowNode = (n: unknown): boolean => {
   if (!isRecord(n)) return false;
@@ -49,23 +62,17 @@ const isValidFlowNode = (n: unknown): boolean => {
   }
   // Per-type data checks: optional fields must have the right shape when
   // present (mirrors what the editor/runtime actually reads).
-  if (data.transform !== undefined) {
-    if (
-      !isRecord(data.transform) ||
-      typeof data.transform.type !== "string" ||
-      !TRANSFORM_TYPES.includes(data.transform.type)
-    ) {
-      return false;
-    }
+  if (data.value !== undefined && typeof data.value !== "string") {
+    return false;
   }
-  if (data.trigger !== undefined) {
-    if (
-      !isRecord(data.trigger) ||
-      typeof data.trigger.type !== "string" ||
-      typeof data.trigger.value !== "string"
-    ) {
-      return false;
-    }
+  if (data.find !== undefined && typeof data.find !== "string") {
+    return false;
+  }
+  if (data.replacement !== undefined && typeof data.replacement !== "string") {
+    return false;
+  }
+  if (data.pattern !== undefined && typeof data.pattern !== "string") {
+    return false;
   }
   if (data.replies !== undefined && !Array.isArray(data.replies)) {
     return false;
