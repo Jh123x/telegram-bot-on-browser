@@ -287,3 +287,85 @@ test("switching back to live mode sends for real again", () => {
 
   expect(spy).toHaveBeenCalledWith(42, "hi");
 });
+
+test("test mode simulates without a real user via a Test User conversation", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Greet",
+          trigger: { type: "equals", value: "/start" },
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "Welcome!",
+              value2: "",
+              fallback: "",
+            },
+          ],
+        },
+      ],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  // No real users yet, so the composer starts disabled in live mode.
+  expect(screen.getByRole("textbox")).toBeDisabled();
+
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+
+  // Test mode unlocks the composer without a real user.
+  const textbox = screen.getByRole("textbox");
+  expect(textbox).not.toBeDisabled();
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  expect(screen.getByText("Welcome!")).toBeTruthy();
+  expect(screen.getByRole("button", { name: /Test User/ })).toBeTruthy();
+  expect(screen.getByText(/Test User ·/)).toBeTruthy();
+});
+
+test("switching off test mode removes the virtual Test User and disables the composer", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Greet",
+          trigger: { type: "equals", value: "/start" },
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "Welcome!",
+              value2: "",
+              fallback: "",
+            },
+          ],
+        },
+      ],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+  fireEvent.change(screen.getByRole("textbox"), { target: { value: "/start" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  expect(screen.getByRole("button", { name: /Test User/ })).toBeTruthy();
+
+  fireEvent.click(screen.getByRole("button", { name: "Test" }));
+
+  expect(screen.queryByRole("button", { name: /Test User/ })).toBeNull();
+  expect(screen.getByRole("textbox")).toBeDisabled();
+});

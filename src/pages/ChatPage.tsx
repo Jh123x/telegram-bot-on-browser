@@ -39,6 +39,9 @@ const deriveUsersFromResponses = (responses: Response[]): User[] => {
 
 const timeLabel = (timestamp: number) => new Date(timestamp).toLocaleTimeString();
 
+// Virtual conversation used by test mode when there are no real users yet.
+const TEST_USER: User = { Username: "Test User", UserID: -1 };
+
 export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const dispatch = useDispatch();
   const storeUsers = useSelector<BotWithConfig, User[]>((state) => state.bot.users);
@@ -50,8 +53,10 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const [testMode, setTestMode] = useState<boolean>(false);
   const [simulated, setSimulated] = useState<DisplayItem[]>([]);
 
-  const userList: User[] =
-    storeUsers.length > 0 ? storeUsers : deriveUsersFromResponses(responses);
+  const userList: User[] = [
+    ...(storeUsers.length > 0 ? storeUsers : deriveUsersFromResponses(responses)),
+    ...(testMode ? [TEST_USER] : []),
+  ];
 
   const selectedUser = userList.find((user) => user.UserID === selectedUserID) ?? null;
 
@@ -69,8 +74,11 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
   const simulate = () => {
     const text = message.trim();
-    if (text === "" || selectedUserID === null) return;
+    if (text === "") return;
 
+    // Without a real user selected, simulate against the virtual Test User.
+    const targetID = selectedUserID ?? TEST_USER.UserID;
+    const targetName = selectedUser?.Username ?? TEST_USER.Username;
     const now = Date.now();
     const newItems: DisplayItem[] = [
       {
@@ -78,8 +86,8 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         kind: "message",
         time: now,
         response: {
-          FromUser: selectedUser?.Username ?? "User",
-          UserID: selectedUserID,
+          FromUser: targetName,
+          UserID: targetID,
           Message: text,
           TimeStamp: now,
           fromBot: false,
@@ -118,7 +126,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
             time: Date.now(),
             response: {
               FromUser: "Bot",
-              UserID: selectedUserID,
+              UserID: targetID,
               Message: reply,
               TimeStamp: Date.now(),
               fromBot: true,
@@ -130,6 +138,8 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
 
     setSimulated((prev) => [...prev, ...newItems]);
     setMessage("");
+    // Make the simulated conversation visible when nothing was selected.
+    if (selectedUserID === null) setSelectedUserID(TEST_USER.UserID);
   };
 
   const send = () => {
@@ -290,7 +300,13 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
           <ToggleButton
             value="test"
             selected={testMode}
-            onChange={() => setTestMode((m) => !m)}
+            onChange={() => {
+              const next = !testMode;
+              setTestMode(next);
+              if (!next && selectedUserID === TEST_USER.UserID) {
+                setSelectedUserID(null);
+              }
+            }}
             size="small"
             color="primary"
             sx={{ textTransform: "none", whiteSpace: "nowrap" }}
@@ -302,7 +318,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
             size="small"
             placeholder={testMode ? "Type a message to simulate…" : "Type your message…"}
             value={message}
-            disabled={selectedUserID === null}
+            disabled={selectedUserID === null && !testMode}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") send();
@@ -310,7 +326,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
           />
           <Button
             variant="contained"
-            disabled={selectedUserID === null}
+            disabled={selectedUserID === null && !testMode}
             onClick={send}
           >
             {testMode ? "Simulate" : "Send"}
