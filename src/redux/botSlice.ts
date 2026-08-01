@@ -24,15 +24,6 @@ export const botSlice = createSlice({
     setPrograms: (state, action: { payload: Program[], type: string }) => {
       state.programs = action.payload;
     },
-    addProgram: (state, action: { payload: Program, type: string }) => {
-      state.programs = [...state.programs, action.payload];
-    },
-    updateProgram: (state, action: { payload: Program, type: string }) => {
-      state.programs = state.programs.map((program) => program.id === action.payload.id ? action.payload : program);
-    },
-    removeProgram: (state, action: { payload: string, type: string }) => {
-      state.programs = state.programs.filter((program) => program.id !== action.payload);
-    },
     setFlows: (state, action: { payload: Flow[], type: string }) => {
       state.flows = action.payload;
     },
@@ -74,4 +65,4 @@ export const botSlice = createSlice({
   },
 });
 
-export const { setToken, setPrograms, addProgram, updateProgram, removeProgram, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;
+export const { setToken, setPrograms, setFlows, addFlow, updateFlow, removeFlow, addResponse, addUser, setUsers, setResponse, setSelectedUserId, setAutoStart, setHydrated, resetAll } = botSlice.actions;

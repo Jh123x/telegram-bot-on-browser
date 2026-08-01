@@ -1,10 +1,6 @@
 import {
-  ActionType,
   Block,
-  BlockCategory,
-  LogicType,
   Program,
-  TransformType,
   Trigger,
   TriggerType,
 } from "../interfaces/program.ts";
@@ -17,60 +13,6 @@ export const TRIGGER_TYPES: TriggerType[] = [
   "notEquals",
   "notContains",
 ];
-export const LOGIC_TYPES: LogicType[] = [
-  "lengthGreater",
-  "lengthLess",
-  "matchesRegex",
-  "lengthEquals",
-  "isNumber",
-  "equals",
-  "contains",
-  "startsWith",
-  "endsWith",
-  "notEquals",
-  "notContains",
-  "notStartsWith",
-  "notEndsWith",
-  "notLengthGreater",
-  "notLengthLess",
-  "notLengthEquals",
-  "notMatchesRegex",
-  "notIsNumber",
-];
-export const TRANSFORM_TYPES: TransformType[] = [
-  "uppercase",
-  "lowercase",
-  "trim",
-  "replace",
-  "concat",
-  "capitalize",
-  "titleCase",
-  "reverse",
-  "remove",
-];
-export const ACTION_TYPES: ActionType[] = ["reply", "random", "echo"];
-
-// Logic kinds whose validation requires a numeric block value.
-const REQUIRES_NUMERIC = new Set<LogicType>([
-  "lengthGreater",
-  "lengthLess",
-  "lengthEquals",
-  "notLengthGreater",
-  "notLengthLess",
-  "notLengthEquals",
-]);
-
-// Logic kinds whose validation requires a non-empty text block value.
-const REQUIRES_TEXT = new Set<LogicType>([
-  "equals",
-  "contains",
-  "startsWith",
-  "endsWith",
-  "notEquals",
-  "notContains",
-  "notStartsWith",
-  "notEndsWith",
-]);
 
 export const TRIGGER_LABELS: Record<TriggerType, string> = {
   equals: "message equals",
@@ -81,106 +23,6 @@ export const TRIGGER_LABELS: Record<TriggerType, string> = {
   notContains: "message does not contain",
 };
 
-export const LOGIC_LABELS: Record<LogicType, string> = {
-  lengthGreater: "message length is greater than",
-  lengthLess: "message length is less than",
-  matchesRegex: "message matches regex",
-  lengthEquals: "message length equals",
-  isNumber: "message is a number",
-  equals: "message equals",
-  contains: "message contains",
-  startsWith: "message starts with",
-  endsWith: "message ends with",
-  notEquals: "message does not equal",
-  notContains: "message does not contain",
-  notStartsWith: "message does not start with",
-  notEndsWith: "message does not end with",
-  notLengthGreater: "message length is not greater than",
-  notLengthLess: "message length is not less than",
-  notLengthEquals: "message length does not equal",
-  notMatchesRegex: "message does not match regex",
-  notIsNumber: "message is not a number",
-};
-
-export const TRANSFORM_LABELS: Record<TransformType, string> = {
-  uppercase: "make uppercase",
-  lowercase: "make lowercase",
-  trim: "trim whitespace",
-  replace: "replace text",
-  concat: "concat text",
-  capitalize: "capitalize first letter",
-  titleCase: "capitalize each word",
-  reverse: "reverse text",
-  remove: "remove text",
-};
-
-export const ACTION_LABELS: Record<ActionType, string> = {
-  reply: "reply with text",
-  random: "reply random choice",
-  echo: "echo the current message",
-};
-
-export const BLOCK_CATEGORY_LABELS: Record<BlockCategory, string> = {
-  logic: "Logic",
-  transform: "Transform",
-  action: "Action",
-};
-
-// Plain, human-readable descriptions of what each block type does. Used by
-// the palette as an informational reference (blocks are added via card
-// buttons, so the palette no longer renders draggable elements).
-export const BLOCK_DESCRIPTIONS: {
-  trigger: Record<TriggerType, string>;
-  logic: Record<LogicType, string>;
-  transform: Record<TransformType, string>;
-  action: Record<ActionType, string>;
-} = {
-  trigger: {
-    equals: "Runs when the message is exactly the trigger value.",
-    contains: "Runs when the message includes the trigger value.",
-    startsWith: "Runs when the message begins with the trigger value.",
-    endsWith: "Runs when the message ends with the trigger value.",
-    notEquals: "Runs when the message is not exactly the trigger value.",
-    notContains: "Runs when the message does not include the trigger value.",
-  },
-  logic: {
-    lengthGreater: "Passes when the message is longer than the number.",
-    lengthLess: "Passes when the message is shorter than the number.",
-    matchesRegex: "Passes when the message matches the regular expression.",
-    lengthEquals: "Passes when the message length equals the number.",
-    isNumber: "Passes when the message is a number.",
-    equals: "Passes when the message is exactly the value.",
-    contains: "Passes when the message includes the value.",
-    startsWith: "Passes when the message begins with the value.",
-    endsWith: "Passes when the message ends with the value.",
-    notEquals: "Passes when the message is not exactly the value.",
-    notContains: "Passes when the message does not include the value.",
-    notStartsWith: "Passes when the message does not begin with the value.",
-    notEndsWith: "Passes when the message does not end with the value.",
-    notLengthGreater: "Passes when the message is not longer than the number.",
-    notLengthLess: "Passes when the message is not shorter than the number.",
-    notLengthEquals: "Passes when the message length does not equal the number.",
-    notMatchesRegex: "Passes when the message does not match the regular expression.",
-    notIsNumber: "Passes when the message is not a number.",
-  },
-  transform: {
-    uppercase: "Changes the message to UPPERCASE.",
-    lowercase: "Changes the message to lowercase.",
-    trim: "Removes spaces at the start and end.",
-    replace: "Replaces matching text with new text.",
-    concat: "Adds text before or after the message.",
-    capitalize: "Capitalizes the first letter.",
-    titleCase: "Capitalizes the first letter of each word.",
-    reverse: "Reverses the text.",
-    remove: "Removes matching text.",
-  },
-  action: {
-    reply: "Sends a fixed reply.",
-    random: "Picks one reply from a list.",
-    echo: "Sends the message as it is now.",
-  },
-};
-
 export function generateId(): string {
   if (
     typeof crypto !== "undefined" &&
@@ -189,29 +31,6 @@ export function generateId(): string {
     return crypto.randomUUID();
   }
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
-export function createBlock(
-  category: BlockCategory,
-  kind: LogicType | TransformType | ActionType
-): Block {
-  return {
-    id: generateId(),
-    category,
-    kind,
-    value: "",
-    value2: "",
-    fallback: "",
-  };
-}
-
-export function createProgram(name = "New Program"): Program {
-  return {
-    id: generateId(),
-    name,
-    trigger: { type: "equals", value: "" },
-    blocks: [],
-  };
 }
 
 export function matchTrigger(trigger: Trigger, message: string): boolean {
@@ -297,66 +116,6 @@ function interpolateOptions(
     .map((line: string) => line.trim())
     .filter((line: string) => line.length > 0)
     .map((line: string) => interpolate(line, variables));
-}
-
-// Pure preview of the value that would flow out of a transform node. Used by
-// the visual data-flow pipeline. Non-transform blocks (and replace with an
-// empty find) pass the input through unchanged.
-export function transformPreview(
-  block: Block,
-  input: string = "Hello World"
-): string {
-  if (block.category !== "transform") return input;
-  if (block.kind === "replace" && block.value.trim() === "") return input;
-  return applyTransform(block, input);
-}
-
-// A hint describing what value/label flows out of a node in the pipeline.
-export type NodeHint =
-  | { category: "transform"; text: string; outputVar?: string }
-  | { category: "logic"; fallback: string }
-  | { category: "action"; text: string };
-
-// Pure preview of the data-flow pipeline using the default "Hello World" user
-// message. Returns a hint describing what flows out of each node, plus the
-// value that flowed into each node (used for the echo preview).
-export function computeFlowPreview(
-  blocks: Block[]
-): { hints: Map<string, NodeHint>; flowingByBlock: Map<string, string> } {
-  const hints = new Map<string, NodeHint>();
-  const flowingByBlock = new Map<string, string>();
-  let flowing = "Hello World";
-  for (const b of blocks) {
-    flowingByBlock.set(b.id, flowing);
-    if (b.category === "transform") {
-      flowing = transformPreview(b, flowing);
-      hints.set(b.id, {
-        category: "transform",
-        text: flowing,
-        outputVar: b.outputVar,
-      });
-    } else if (b.category === "logic") {
-      hints.set(b.id, { category: "logic", fallback: b.fallback });
-    } else {
-      let text: string;
-      if (b.kind === "reply") {
-        text = `reply: ${b.value || "(empty)"}`;
-      } else if (b.kind === "random") {
-        const opts = b.value
-          .split("\n")
-          .map((s: string) => s.trim())
-          .filter((s: string) => s.length > 0);
-        text =
-          opts.length > 0
-            ? `random: ${opts.map((o) => `"${o}"`).join(", ")}`
-            : "random: (no options)";
-      } else {
-        text = `echo: ${flowing}`;
-      }
-      hints.set(b.id, { category: "action", text });
-    }
-  }
-  return { hints, flowingByBlock };
 }
 
 export function checkLogic(block: Block, message: string): boolean {
@@ -506,88 +265,4 @@ export function findMatchingProgram(
   message: string
 ): Program | undefined {
   return programs.find((program) => matchTrigger(program.trigger, message));
-}
-
-export function validateProgram(program: Program): string[] {
-  const errors: string[] = [];
-  if (program.name.trim() === "") errors.push("Program name is required");
-  if (program.trigger.value.trim() === "")
-    errors.push("Trigger value is required");
-  if (program.blocks.length === 0) errors.push("Add at least one block");
-  for (const block of program.blocks) {
-    if (block.category === "logic") {
-      if (
-        block.kind === "matchesRegex" ||
-        block.kind === "notMatchesRegex"
-      ) {
-        try {
-          new RegExp(block.value);
-        } catch {
-          errors.push("Logic block needs a valid regex");
-        }
-      } else if (REQUIRES_NUMERIC.has(block.kind)) {
-        if (!Number.isFinite(Number(block.value)))
-          errors.push("Logic block needs a number");
-      } else if (REQUIRES_TEXT.has(block.kind)) {
-        if (block.value.trim() === "")
-          errors.push("Logic block needs text to compare");
-      }
-    } else if (block.category === "transform") {
-      if (block.kind === "replace" && block.value.trim() === "")
-        errors.push("Replace block needs text to find");
-      if (block.kind === "remove" && block.value.trim() === "")
-        errors.push("Remove block needs text to remove");
-      if (
-        block.kind === "concat" &&
-        block.value.trim() === "" &&
-        block.value2.trim() === ""
-      )
-        errors.push("Concat block needs text to append or prepend");
-      if (block.outputVar && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(block.outputVar))
-        errors.push("Variable name must be letters, numbers or underscores");
-    } else {
-      // action
-      if (
-        (block.kind === "reply" || block.kind === "random") &&
-        block.value.trim() === ""
-      )
-        errors.push("Reply actions need text");
-    }
-  }
-  return errors;
-}
-
-// Pure helper: swaps a block with its immediate neighbor (up for -1, down for
-// +1). Returns a new array, or the input reference when the block is missing
-// or the target index would be out of bounds.
-export function moveBlock(
-  blocks: Block[],
-  blockId: string,
-  direction: -1 | 1
-): Block[] {
-  const index = blocks.findIndex((b) => b.id === blockId);
-  if (index === -1) return blocks;
-  const target = index + direction;
-  if (target < 0 || target >= blocks.length) return blocks;
-  const next = blocks.slice();
-  [next[index], next[target]] = [next[target], next[index]];
-  return next;
-}
-
-// Pure helper: removes a block from its current position and re-inserts it at
-// the requested index (clamped to valid bounds). Returns a new array, or the
-// input reference when the block is missing or already at the target index.
-export function moveBlockToIndex(
-  blocks: Block[],
-  blockId: string,
-  targetIndex: number
-): Block[] {
-  const index = blocks.findIndex((b) => b.id === blockId);
-  if (index === -1) return blocks;
-  const target = Math.max(0, Math.min(targetIndex, blocks.length - 1));
-  if (target === index) return blocks;
-  const next = blocks.slice();
-  const [block] = next.splice(index, 1);
-  next.splice(target, 0, block);
-  return next;
 }

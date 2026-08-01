@@ -34,10 +34,3 @@ export const theme = createTheme({
     },
   },
 });
-
-export const BLOCK_COLORS: Record<string, { main: string; bg: string }> = {
-  trigger: { main: "#60a5fa", bg: "#172554" },
-  logic: { main: "#fbbf24", bg: "#451a03" },
-  transform: { main: "#a78bfa", bg: "#2e1065" },
-  action: { main: "#34d399", bg: "#064e3b" },
-};
