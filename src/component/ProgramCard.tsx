@@ -563,8 +563,8 @@ export const ProgramCard = ({
         <Typography sx={{ mb: 1 }}>Then</Typography>
         {current.blocks.length === 0 ? (
           <Typography variant="body2" sx={{ mb: 1 }}>
-            No blocks yet — drag a logic, transform or action block here or
-            click add below.
+            No blocks yet — use the buttons below to add logic, transform and
+            action blocks.
           </Typography>
         ) : (
           <Box data-testid={`pipeline-${current.id}`} sx={{ mb: 1 }}>

@@ -182,3 +182,10 @@ test("mentions the Only Numbers sample", () => {
 
   expect(screen.getAllByText(/Only Numbers/i).length).toBeGreaterThan(0);
 });
+
+test("getting started points to the card buttons instead of dragging", () => {
+  render(<DocsPage />);
+
+  expect(screen.getAllByText(/buttons on each program card/i).length).toBeGreaterThan(0);
+  expect(screen.queryByText(/drag blocks/i)).toBeNull();
+});

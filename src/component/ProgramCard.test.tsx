@@ -638,3 +638,19 @@ test("capitalize/titleCase/reverse transform blocks render (no value needed) and
     unmount();
   }
 });
+
+test("empty program card points to the add buttons instead of dragging", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [],
+  };
+  renderCard(p, 0, 1);
+
+  expect(
+    screen.getByText(/No blocks yet — use the buttons below to add/i)
+  ).toBeTruthy();
+  expect(screen.queryByText(/drag/i)).toBeNull();
+  expect(screen.getByRole("button", { name: "Add logic" })).toBeTruthy();
+});

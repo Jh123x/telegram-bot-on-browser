@@ -150,7 +150,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           >
             Programs tab
           </Link>{" "}
-          and drag blocks from the palette onto a card. Or click to add them.
+          and add blocks with the buttons on each program card.
         </Typography>
       </li>
       <li>
