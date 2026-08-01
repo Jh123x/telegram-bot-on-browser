@@ -5,6 +5,7 @@ import {
   FlowNode,
   FlowNodeType,
 } from "../interfaces/flow.ts";
+import type { FlowSample } from "./flowSamples.ts";
 
 export function flowEdgeLabel(trigger: {
   type: FlowEdgeTriggerType;
@@ -137,4 +138,36 @@ export function validateFlow(flow: Flow): string[] {
   }
 
   return errors;
+}
+
+// Deep-copies a sample's flow with FRESH ids for the flow, every node, and
+// every edge so loading a sample twice creates two independent flows. The
+// startNodeId is remapped to the freshly generated start node.
+export function flowFromSample(sample: FlowSample): Flow {
+  const nodes = sample.flow.nodes.map((node) => ({
+    ...node,
+    id: generateId(),
+    position: { ...node.position },
+    data: { label: node.data.label, replies: [...node.data.replies] },
+  }));
+  const oldToNew = new Map<string, string>();
+  sample.flow.nodes.forEach((node, i) => {
+    oldToNew.set(node.id, nodes[i].id);
+  });
+  const edges = sample.flow.edges.map((edge) => ({
+    id: generateId(),
+    source: oldToNew.get(edge.source) ?? edge.source,
+    target: oldToNew.get(edge.target) ?? edge.target,
+    data: {
+      trigger: { ...edge.data.trigger },
+    },
+  }));
+  const startNode = nodes.find((node) => node.type === "start");
+  return {
+    id: generateId(),
+    name: sample.name,
+    startNodeId: startNode ? startNode.id : "",
+    nodes,
+    edges,
+  };
 }

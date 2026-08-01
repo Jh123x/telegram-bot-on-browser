@@ -4,6 +4,7 @@ import {
   executeFlow,
   flowEdgeLabel,
   FlowRuntime,
+  flowFromSample,
   matchFlowTrigger,
   validateFlow,
 } from "./flow.ts";
@@ -646,5 +647,99 @@ describe("validateFlow", () => {
     expect(errors).toContain("Flow name is required");
     expect(errors).toContain("Flow must have a start node");
     expect(errors).toHaveLength(2);
+  });
+});
+
+describe("flowFromSample", () => {
+  const startNode: Flow["nodes"][number] = {
+    id: "node-start",
+    type: "start",
+    position: { x: 0, y: 0 },
+    data: { label: "Start", replies: [] },
+  };
+  const stateNode: Flow["nodes"][number] = {
+    id: "node-a",
+    type: "state",
+    position: { x: 120, y: 80 },
+    data: { label: "A", replies: ["hi", "hello"] },
+  };
+  const edge: Flow["edges"][number] = {
+    id: "edge-1",
+    source: "node-start",
+    target: "node-a",
+    data: { trigger: { type: "equals", value: "/hi" } },
+  };
+  const sample = {
+    name: "Welcome Flow",
+    flow: {
+      id: "flow-sample",
+      name: "Welcome Flow",
+      startNodeId: "node-start",
+      nodes: [startNode, stateNode],
+      edges: [edge],
+    },
+  };
+
+  test("copies the name, structure, replies, and triggers", () => {
+    const created = flowFromSample(sample);
+    expect(created.name).toBe("Welcome Flow");
+    expect(created.startNodeId).toBeTruthy();
+    expect(created.nodes).toHaveLength(2);
+    expect(created.nodes.map((n) => n.data)).toEqual([
+      { label: "Start", replies: [] },
+      { label: "A", replies: ["hi", "hello"] },
+    ]);
+    expect(created.nodes.map((n) => n.position)).toEqual([
+      { x: 0, y: 0 },
+      { x: 120, y: 80 },
+    ]);
+    expect(created.edges).toHaveLength(1);
+    expect(created.edges[0].data).toEqual({
+      trigger: { type: "equals", value: "/hi" },
+    });
+    // startNodeId points at the fresh start node.
+    const start = created.nodes.find((n) => n.type === "start")!;
+    expect(created.startNodeId).toBe(start.id);
+  });
+
+  test("generates fresh ids so loading a sample twice creates independent flows", () => {
+    const first = flowFromSample(sample);
+    const second = flowFromSample(sample);
+
+    // Flow ids differ from the source and from each other.
+    expect(first.id).not.toBe(sample.flow.id);
+    expect(first.id).not.toBe(second.id);
+    // Node ids differ from the source.
+    first.nodes.forEach((n, i) => {
+      expect(n.id).not.toBe(sample.flow.nodes[i].id);
+    });
+    // Two loads produce distinct node ids.
+    first.nodes.forEach((n, i) => {
+      expect(n.id).not.toBe(second.nodes[i].id);
+    });
+    // Edge ids differ from the source.
+    first.edges.forEach((e, i) => {
+      expect(e.id).not.toBe(sample.flow.edges[i].id);
+    });
+    expect(first.edges[0].id).not.toBe(second.edges[0].id);
+    // Edges reference the copied (fresh) node ids.
+    first.edges.forEach((e) => {
+      const ids = first.nodes.map((n) => n.id);
+      expect(ids).toContain(e.source);
+      expect(ids).toContain(e.target);
+    });
+  });
+
+  test("does not mutate the source sample flow", () => {
+    const copy = flowFromSample(sample);
+    expect(copy.nodes[0].id).not.toBe(sample.flow.nodes[0].id);
+    expect(sample.flow.nodes[0].data).toEqual({
+      label: "Start",
+      replies: [],
+    });
+  });
+
+  test("the created flow validates cleanly", () => {
+    expect(validateFlow(flowFromSample(sample))).toEqual([]);
   });
 });
