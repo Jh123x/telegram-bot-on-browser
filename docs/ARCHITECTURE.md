@@ -101,7 +101,7 @@ A **flow** is a visual state machine: a graph of **states** connected by
 
 ```mermaid
 flowchart TD
-  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start|state, label, replies]
+  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start or state, label, replies]
   F --> FE[FlowEdge<br/>id, source, target, trigger]
 ```
 
@@ -236,7 +236,7 @@ The flow types live in `src/interfaces/flow.ts`:
 
 ```mermaid
 flowchart TD
-  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start|state, label, replies]
+  F[Flow<br/>id, name, startNodeId] --> FN[FlowNode<br/>id, type: start or state, label, replies]
   F --> FE[FlowEdge<br/>id, source, target, trigger]
 ```
 
