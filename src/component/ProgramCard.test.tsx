@@ -455,3 +455,46 @@ test("echo block shows a live preview of the message it will echo", () => {
   // The flowing value after the uppercase transform is HELLO WORLD.
   expect(screen.getByText(/Echoes: "HELLO WORLD"/)).toBeTruthy();
 });
+
+test("variable name field shows a tooltip explaining how to use variables", async () => {
+  const p = makeProgram();
+  p.blocks = [
+    {
+      id: "b1",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+    },
+  ];
+  renderCard(p, 0, 1);
+
+  fireEvent.mouseOver(screen.getByLabelText("Variable name (optional)"));
+
+  const tooltip = await screen.findByRole("tooltip");
+  expect(tooltip.textContent).toContain("{name}");
+  expect(tooltip.textContent).toContain("{prev}");
+});
+
+test("transform hint chip shows a tooltip when a variable is bound", async () => {
+  const p = makeProgram();
+  p.blocks = [
+    {
+      id: "b1",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+      outputVar: "shouted",
+    },
+  ];
+  renderCard(p, 0, 1);
+
+  const chip = screen.getByTestId("value-hint-b1").firstElementChild!;
+  fireEvent.mouseOver(chip);
+
+  const tooltip = await screen.findByRole("tooltip");
+  expect(tooltip.textContent).toContain("{shouted}");
+});

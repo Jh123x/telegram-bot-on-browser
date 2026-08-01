@@ -7,6 +7,7 @@ import {
   Paper,
   Select,
   TextField,
+  Tooltip,
   Typography,
   Box,
 } from "@mui/material";
@@ -125,7 +126,7 @@ const HintChip = ({ hint }: { hint: NodeHint }) => {
       hint.outputVar && hint.outputVar !== ""
         ? `{${hint.outputVar}} = ${hint.text}`
         : hint.text;
-    return (
+    const chip = (
       <Chip
         size="small"
         label={label}
@@ -136,6 +137,17 @@ const HintChip = ({ hint }: { hint: NodeHint }) => {
         }}
       />
     );
+    if (hint.outputVar && hint.outputVar !== "") {
+      return (
+        <Tooltip
+          title={`Saved as {${hint.outputVar}}. Use {${hint.outputVar}} in any later reply, random option, or fallback.`}
+          enterDelay={0}
+        >
+          {chip}
+        </Tooltip>
+      );
+    }
+    return chip;
   }
   if (hint.category === "logic") {
     const label = hint.fallback ? `else → ${hint.fallback}` : "else → silent";
@@ -218,12 +230,21 @@ const BlockRow = ({
     }
     if (block.category === "transform") {
       const variableField = (
-        <TextField
-          size="small"
-          label="Variable name (optional)"
-          value={block.outputVar ?? ""}
-          onChange={(e) => onChange(block.id, { outputVar: e.target.value })}
-        />
+        <Tooltip
+          title={
+            "Save this block's output as a variable. Use {name} in any later " +
+            'reply, random option, or fallback — e.g. "You said: {name}". ' +
+            "{prev} always means the current message."
+          }
+          enterDelay={0}
+        >
+          <TextField
+            size="small"
+            label="Variable name (optional)"
+            value={block.outputVar ?? ""}
+            onChange={(e) => onChange(block.id, { outputVar: e.target.value })}
+          />
+        </Tooltip>
       );
       if (block.kind === "replace") {
         return (
