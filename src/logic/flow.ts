@@ -43,3 +43,22 @@ export function createFlow(name = "New Flow"): Flow {
     edges: [],
   };
 }
+
+export function executeFlow(
+  flow: Flow,
+  message: string,
+  currentNodeId: string
+): { replies: string[]; nextNodeId: string } | undefined {
+  const currentNode = flow.nodes.find((n) => n.id === currentNodeId);
+  if (!currentNode) return undefined;
+  for (const edge of flow.edges) {
+    // Only consider transitions leaving the current node.
+    if (edge.source !== currentNodeId) continue;
+    if (!matchFlowTrigger(edge.data.trigger, message)) continue;
+    // Defensive: skip edges whose target node is missing and keep scanning.
+    const target = flow.nodes.find((n) => n.id === edge.target);
+    if (!target) continue;
+    return { replies: target.data.replies, nextNodeId: edge.target };
+  }
+  return undefined;
+}
