@@ -191,3 +191,25 @@ test("no longer documents the old block editor", () => {
   expect(screen.queryByText(/Shout/i)).toBeNull();
   expect(screen.queryByText(/Only Numbers/i)).toBeNull();
 });
+
+test("in-body tab links call onNavigate", () => {
+  const onNavigate = jest.fn();
+  render(<DocsPage onNavigate={onNavigate} />);
+
+  // Getting Started section links.
+  fireEvent.click(screen.getByRole("button", { name: "Settings tab" }));
+  expect(onNavigate).toHaveBeenLastCalledWith("settings");
+
+  fireEvent.click(screen.getByRole("button", { name: "Flow tab" }));
+  expect(onNavigate).toHaveBeenLastCalledWith("flow");
+
+  // "Chat tab" also appears in the troubleshooting section, so grab the first.
+  const chatLinks = screen.getAllByRole("button", { name: "Chat tab" });
+  expect(chatLinks.length).toBeGreaterThan(0);
+  fireEvent.click(chatLinks[0]);
+  expect(onNavigate).toHaveBeenLastCalledWith("chat");
+
+  // The troubleshooting section's chat link also navigates.
+  fireEvent.click(chatLinks[chatLinks.length - 1]);
+  expect(onNavigate).toHaveBeenCalledTimes(4);
+});

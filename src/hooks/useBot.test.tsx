@@ -645,3 +645,80 @@ test("auto-starts exactly once under StrictMode", () => {
   expect(result.current.started).toBe(true);
   expect(instances.length).toBe(2);
 });
+
+test("auto-started bot dispatches responses and users when an update arrives after hydration", async () => {
+  const store = setupStore({
+    bot: {
+      token: "",
+      flows: [helloFlow],
+      response: [],
+      users: [],
+      autoStart: true,
+      hydrated: false,
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  // Simulate hydration completing: token first, then auto-start + hydration.
+  act(() => {
+    store.dispatch(setToken("TOKEN"));
+    store.dispatch(setAutoStart(true));
+    store.dispatch(setHydrated(true));
+  });
+
+  expect(result.current.started).toBe(true);
+  expect(instances.length).toBe(2);
+  const poll = instances[0];
+  const send = instances[1];
+
+  // Posting an update through the auto-started poll worker must route through
+  // the auto-start path's responseSender callbacks (dispatch addResponse for
+  // the user message AND addUser), then the reply sender (addResponse from
+  // the bot).
+  await act(async () => {
+    await poll.onmessage!({ data: [1234, "alice", 42, "/hello"] });
+  });
+
+  expect(send.postMessage).toHaveBeenCalledWith([
+    "https://api.telegram.org/botTOKEN/sendMessage",
+    "hi",
+    42,
+  ]);
+  expect(store.getState().bot.response).toEqual([
+    { FromUser: "alice", UserID: 42, Message: "/hello", TimeStamp: 1234000 },
+    expect.objectContaining({ FromUser: "Bot", UserID: 42, Message: "hi", fromBot: true }),
+  ]);
+  expect(store.getState().bot.users).toEqual([{ Username: "alice", UserID: 42 }]);
+});
+
+test("auto-started bot dispatches a user message even when no flow matches", async () => {
+  const store = setupStore({
+    bot: {
+      token: "",
+      flows: [helloFlow],
+      response: [],
+      users: [],
+      autoStart: true,
+      hydrated: false,
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    store.dispatch(setToken("TOKEN"));
+    store.dispatch(setAutoStart(true));
+    store.dispatch(setHydrated(true));
+  });
+
+  const poll = instances[0];
+  // "hello" does not match the /hello flow and has no else edge → no reply,
+  // but the user message must still be recorded via the auto-start callbacks.
+  await act(async () => {
+    await poll.onmessage!({ data: [1, "bob", 7, "hello"] });
+  });
+
+  expect(store.getState().bot.response).toEqual([
+    { FromUser: "bob", UserID: 7, Message: "hello", TimeStamp: 1000 },
+  ]);
+  expect(store.getState().bot.users).toEqual([{ Username: "bob", UserID: 7 }]);
+});

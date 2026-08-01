@@ -699,3 +699,200 @@ test("import rejects an edge carrying legacy trigger data and changes nothing", 
   );
   expect(store.getState().bot.flows).toEqual([validFlow]);
 });
+
+test("Import settings button opens the hidden file input", () => {
+  const clickSpy = jest
+    .spyOn(HTMLInputElement.prototype, "click")
+    .mockImplementation(() => {});
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: "Import settings" }));
+
+  expect(clickSpy).toHaveBeenCalledTimes(1);
+});
+
+// Builds a settings file whose single flow is invalid in the given way and
+// returns the error caption asserted by the caller.
+const importBadFlow = async (flow: unknown) => {
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [flow],
+        autoStart: false,
+      }),
+    ],
+    "bad.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  return store;
+};
+
+const baseInvalidFlow = (nodePatch: Record<string, unknown>) => ({
+  id: "f-bad",
+  name: "Bad",
+  startNodeId: "n1",
+  nodes: [
+    {
+      id: "n1",
+      type: "start",
+      position: { x: 0, y: 0 },
+      data: { label: "Start" },
+    },
+    {
+      id: "n2",
+      type: "contains",
+      position: { x: 120, y: 0 },
+      data: { label: "Check", value: "hi", ...nodePatch },
+    },
+  ],
+  edges: [{ id: "e1", source: "n1", target: "n2" }],
+});
+
+test("import rejects a condition node whose value is not a string", async () => {
+  const store = await importBadFlow(baseInvalidFlow({ value: 42 }));
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});
+
+test("import rejects a node whose find is not a string", async () => {
+  const flow = {
+    ...baseInvalidFlow({}),
+    nodes: [
+      {
+        id: "n1",
+        type: "start",
+        position: { x: 0, y: 0 },
+        data: { label: "Start" },
+      },
+      {
+        id: "n2",
+        type: "replace",
+        position: { x: 120, y: 0 },
+        data: { label: "Swap", find: 123 },
+      },
+    ],
+  };
+  const store = await importBadFlow(flow);
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});
+
+test("import rejects a node whose replacement is not a string", async () => {
+  const flow = {
+    ...baseInvalidFlow({}),
+    nodes: [
+      {
+        id: "n1",
+        type: "start",
+        position: { x: 0, y: 0 },
+        data: { label: "Start" },
+      },
+      {
+        id: "n2",
+        type: "replace",
+        position: { x: 120, y: 0 },
+        data: { label: "Swap", replacement: null },
+      },
+    ],
+  };
+  const store = await importBadFlow(flow);
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});
+
+test("import rejects a node whose pattern is not a string", async () => {
+  const flow = {
+    ...baseInvalidFlow({}),
+    nodes: [
+      {
+        id: "n1",
+        type: "start",
+        position: { x: 0, y: 0 },
+        data: { label: "Start" },
+      },
+      {
+        id: "n2",
+        type: "extractRegex",
+        position: { x: 120, y: 0 },
+        data: { label: "Extract", pattern: ["x"] },
+      },
+    ],
+  };
+  const store = await importBadFlow(flow);
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});
+
+test("import rejects a node whose replies is not an array", async () => {
+  const flow = {
+    ...baseInvalidFlow({}),
+    nodes: [
+      {
+        id: "n1",
+        type: "start",
+        position: { x: 0, y: 0 },
+        data: { label: "Start" },
+      },
+      {
+        id: "n2",
+        type: "send",
+        position: { x: 120, y: 0 },
+        data: { label: "Say", replies: "hi" },
+      },
+    ],
+  };
+  const store = await importBadFlow(flow);
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});
+
+test("import rejects a node whose replies array contains a non-string", async () => {
+  const flow = {
+    ...baseInvalidFlow({}),
+    nodes: [
+      {
+        id: "n1",
+        type: "start",
+        position: { x: 0, y: 0 },
+        data: { label: "Start" },
+      },
+      {
+        id: "n2",
+        type: "send",
+        position: { x: 120, y: 0 },
+        data: { label: "Say", replies: ["ok", 42] },
+      },
+    ],
+  };
+  const store = await importBadFlow(flow);
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+});

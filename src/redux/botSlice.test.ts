@@ -179,3 +179,70 @@ test("updateFlow with unknown id leaves state unchanged", () => {
   store.dispatch(botSlice.actions.updateFlow(makeFlow({ id: "unknown" })));
   expect(store.getState().bot.flows).toEqual(flows);
 });
+
+test("setToken stores the token", () => {
+  const store = setupStore();
+  expect(store.getState().bot.token).toBe("");
+
+  store.dispatch(botSlice.actions.setToken("abc:secret"));
+  expect(store.getState().bot.token).toBe("abc:secret");
+
+  store.dispatch(botSlice.actions.setToken("xyz:other"));
+  expect(store.getState().bot.token).toBe("xyz:other");
+});
+
+test("addUser appends a user when the pair does not already exist", () => {
+  const store = setupStore();
+  store.dispatch(botSlice.actions.addUser({ Username: "alice", UserID: 42 }));
+  store.dispatch(botSlice.actions.addUser({ Username: "carol", UserID: 9 }));
+  expect(store.getState().bot.users).toEqual([
+    { Username: "alice", UserID: 42 },
+    { Username: "carol", UserID: 9 },
+  ]);
+});
+
+test("addUser skips a user when both UserID and Username already exist", () => {
+  const store = setupStore();
+  store.dispatch(botSlice.actions.addUser({ Username: "alice", UserID: 42 }));
+  // Same pair again must be ignored.
+  store.dispatch(botSlice.actions.addUser({ Username: "alice", UserID: 42 }));
+  // Same UserID with a different Username is treated as a distinct user.
+  store.dispatch(botSlice.actions.addUser({ Username: "a.l.i.c.e", UserID: 42 }));
+  expect(store.getState().bot.users).toEqual([
+    { Username: "alice", UserID: 42 },
+    { Username: "a.l.i.c.e", UserID: 42 },
+  ]);
+});
+
+test("addResponse appends responses in order", () => {
+  const store = setupStore();
+  store.dispatch(
+    botSlice.actions.addResponse({ FromUser: "alice", UserID: 42, Message: "first", TimeStamp: 1 })
+  );
+  store.dispatch(
+    botSlice.actions.addResponse({ FromUser: "bot", UserID: 42, Message: "second", TimeStamp: 2, fromBot: true })
+  );
+  expect(store.getState().bot.response).toEqual([
+    { FromUser: "alice", UserID: 42, Message: "first", TimeStamp: 1 },
+    { FromUser: "bot", UserID: 42, Message: "second", TimeStamp: 2, fromBot: true },
+  ]);
+});
+
+test("resetAll returns fresh arrays (no aliasing of prior state)", () => {
+  const store = setupStore();
+  store.dispatch(botSlice.actions.setFlows([makeFlow()]));
+  store.dispatch(
+    botSlice.actions.setResponse([{ FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 1 }])
+  );
+  store.dispatch(botSlice.actions.setUsers([{ Username: "alice", UserID: 42 }]));
+
+  const before = store.getState().bot;
+  store.dispatch(botSlice.actions.resetAll());
+  const after = store.getState().bot;
+
+  expect(after).toEqual(defaultBotState);
+  // The arrays must be distinct references, not the pre-reset lists.
+  expect(after.flows).not.toBe(before.flows);
+  expect(after.response).not.toBe(before.response);
+  expect(after.users).not.toBe(before.users);
+});

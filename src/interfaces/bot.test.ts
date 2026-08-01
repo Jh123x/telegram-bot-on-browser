@@ -262,3 +262,54 @@ test("start() passes chatID from the worker payload to the matching rule's callb
 
   expect(bot.send_worker!.postMessage).toHaveBeenCalledWith([SEND_URL, "user:555", 555]);
 });
+
+test("full onmessage flow: responseSender, send_worker post, and replySender all fire", async () => {
+  const bot = createBot();
+  bot.addRule((m) => m === "/hello", (m) => ["a", "b"]);
+  const responseSender = jest.fn();
+  const replySender = jest.fn();
+  bot.start(responseSender, replySender);
+
+  await bot.poll_worker!.onmessage!({
+    data: [1720000000, "alice", 123, "/hello"],
+  });
+
+  // 1) The raw update is surfaced through responseSender.
+  expect(responseSender).toHaveBeenCalledTimes(1);
+  expect(responseSender).toHaveBeenCalledWith(
+    1720000000 * 1000,
+    "alice",
+    123,
+    "/hello"
+  );
+
+  // 2) Each reply is posted to send_worker.
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledTimes(2);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(1, [
+    SEND_URL,
+    "a",
+    123,
+  ]);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(2, [
+    SEND_URL,
+    "b",
+    123,
+  ]);
+
+  // 3) replySender is invoked for every reply.
+  expect(replySender).toHaveBeenCalledTimes(2);
+  expect(replySender).toHaveBeenNthCalledWith(
+    1,
+    expect.any(Number),
+    "alice",
+    123,
+    "a"
+  );
+  expect(replySender).toHaveBeenNthCalledWith(
+    2,
+    expect.any(Number),
+    "alice",
+    123,
+    "b"
+  );
+});

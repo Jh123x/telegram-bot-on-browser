@@ -58,6 +58,25 @@ test("TransformNode renders the replace summary with find and replacement", () =
   expect(queryByText("lowercase")).toBeNull();
 });
 
+test("TransformNode renders the trim summary", () => {
+  const { getByText, getAllByText } = render(
+    <TransformNode {...makeNodeProps({ label: "Pad" }, "trim")} />
+  );
+
+  expect(getByText("Pad")).toBeTruthy();
+  // Badge + summary caption both read "trim".
+  expect(getAllByText("trim").length).toBeGreaterThan(0);
+});
+
+test("TransformNode falls back to a generic summary for an unknown type", () => {
+  const { getByText } = render(
+    <TransformNode {...makeNodeProps({ label: "Mystery" }, "unknown" as any)} />
+  );
+
+  expect(getByText("Mystery")).toBeTruthy();
+  expect(getByText("transform")).toBeTruthy();
+});
+
 test("TransformNode falls back to a bare replace label when find is empty", () => {
   const { getAllByText } = render(
     <TransformNode

@@ -152,6 +152,45 @@ test("editing the Find field dispatches onUpdate with the flat data", () => {
   );
 });
 
+test("a replace node without find/provided values shows empty Find/Replacement fields", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "re1",
+        type: "replace",
+        position: { x: 0, y: 0 },
+        data: { label: "Swap" },
+      },
+    ],
+  });
+  renderInspector(flow, "re1", null);
+
+  expect((screen.getByLabelText("Find") as HTMLInputElement).value).toBe("");
+  expect(
+    (screen.getByLabelText("Replacement") as HTMLInputElement).value
+  ).toBe("");
+});
+
+test("editing the Replacement field dispatches onUpdate", () => {
+  const onUpdate = jest.fn();
+  renderInspector(makeFlow(), "replace1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Replacement"), {
+    target: { value: "z" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "replace1",
+          data: expect.objectContaining({ find: "a", replacement: "z" }),
+        }),
+      ]),
+    })
+  );
+});
+
 test("extract regex transform reveals the Pattern field", () => {
   const flow = makeFlow({
     nodes: [
@@ -167,6 +206,36 @@ test("extract regex transform reveals the Pattern field", () => {
   expect(screen.getByLabelText("Pattern")).toBeTruthy();
   expect(screen.queryByLabelText("Find")).toBeNull();
   expect(screen.queryByLabelText("Replacement")).toBeNull();
+});
+
+test("editing the Pattern field dispatches onUpdate", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "re1",
+        type: "extractRegex",
+        position: { x: 0, y: 0 },
+        data: { label: "Grab", pattern: "\\d+" },
+      },
+    ],
+  });
+  const onUpdate = jest.fn();
+  renderInspector(flow, "re1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Pattern"), {
+    target: { value: "[a-z]+" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "re1",
+          data: expect.objectContaining({ pattern: "[a-z]+" }),
+        }),
+      ]),
+    })
+  );
 });
 
 // ----- Condition node -----
@@ -200,6 +269,26 @@ test("editing the condition trigger value dispatches onUpdate", () => {
   );
 });
 
+test("editing the condition node label dispatches onUpdate", () => {
+  const onUpdate = jest.fn();
+  renderInspector(makeFlow(), "condition1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Node label"), {
+    target: { value: "Renamed cond" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "condition1",
+          data: expect.objectContaining({ label: "Renamed cond", value: "hi" }),
+        }),
+      ]),
+    })
+  );
+});
+
 // ----- Send node -----
 
 test("send panel shows the label and replies multiline", () => {
@@ -222,6 +311,26 @@ test("editing replies splits the textarea on newlines", () => {
         expect.objectContaining({
           id: "send1",
           data: expect.objectContaining({ replies: ["First", "Second", "Third"] }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("editing the send node label dispatches onUpdate", () => {
+  const onUpdate = jest.fn();
+  renderInspector(makeFlow(), "send1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Node label"), {
+    target: { value: "Renamed send" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "send1",
+          data: expect.objectContaining({ label: "Renamed send" }),
         }),
       ]),
     })

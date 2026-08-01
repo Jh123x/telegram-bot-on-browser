@@ -581,3 +581,76 @@ test("import chat with a wrong-shape file shows an error and changes nothing", a
   expect(store.getState().bot.users).toEqual(usersBefore);
   expect(store.getState().bot.response).toEqual(responseBefore);
 });
+
+test("Import chat button opens the hidden file input", () => {
+  const clickSpy = jest
+    .spyOn(HTMLInputElement.prototype, "click")
+    .mockImplementation(() => {});
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, {
+    store: convoStore(),
+  });
+
+  fireEvent.click(screen.getByRole("button", { name: "Import chat" }));
+
+  expect(clickSpy).toHaveBeenCalledTimes(1);
+});
+
+test("Enter key in the composer triggers a simulated reply in Test User mode", () => {
+  const store = welcomeFlowStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  // Test User is auto-selected by default -> composer uses Simulate.
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.keyDown(textbox, { key: "Enter" });
+
+  // The flow matched and produced replies in the feed.
+  expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
+  expect(screen.getByText(/Matched flow: Welcome Flow/)).toBeTruthy();
+});
+
+test("non-Enter keys in the composer do not trigger a reply", () => {
+  const store = welcomeFlowStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.keyDown(textbox, { key: "A" });
+
+  // No simulate happened because the key is not Enter.
+  expect(screen.queryByText(/Matched flow: Welcome Flow/)).toBeNull();
+});
+
+test("a flow that matches but produces no replies shows the silent note", () => {
+  // start -> send node with no replies. The flow consumes the message and
+  // runs to completion but yields [].
+  const emptyFlow = (() => {
+    const f = createFlow("Empty");
+    const start = createFlowNode("start", { x: 0, y: 0 });
+    const send = createFlowNode("send", { x: 120, y: 0 });
+    send.data.replies = [];
+    f.startNodeId = start.id;
+    f.nodes = [start, send];
+    f.edges = [{ id: "e1", source: start.id, target: send.id }];
+    return f;
+  })();
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      flows: [emptyFlow],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "hello" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  // Matched-flow note + the "no reply" silent note.
+  expect(screen.getByText(/Matched flow: Empty/)).toBeTruthy();
+  expect(screen.getByText("The flow matched but produced no reply.")).toBeTruthy();
+});
