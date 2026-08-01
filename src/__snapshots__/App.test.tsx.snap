@@ -626,18 +626,38 @@ Object {
               data-testid="test-chat"
               style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
             >
-              <h6
-                class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
-              >
-                Test Chat
-              </h6>
-              <span
-                class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
-              >
-                Type a message to see how the whole bot responds. The first matching program replies.
-              </span>
               <div
-                class="MuiBox-root css-1oig7ou"
+                class="MuiBox-root css-1yu55u1"
+              >
+                <div
+                  class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1y6aw9e-MuiAvatar-root"
+                >
+                  🤖
+                </div>
+                <div
+                  class="MuiBox-root css-1rr4qq7"
+                >
+                  <h6
+                    class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
+                  >
+                    Test Chat
+                  </h6>
+                  <span
+                    class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                  >
+                    Simulated bot — the first matching program replies.
+                  </span>
+                </div>
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-10q6f53-MuiButtonBase-root-MuiButton-root"
+                  tabindex="0"
+                  type="button"
+                >
+                  Clear
+                </button>
+              </div>
+              <div
+                class="MuiBox-root css-1yqr7zp"
               >
                 <div />
               </div>
@@ -650,8 +670,8 @@ Object {
                   <label
                     class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined css-14gb61y-MuiFormLabel-root-MuiInputLabel-root"
                     data-shrink="false"
-                    for="_r_f_"
-                    id="_r_f_-label"
+                    for="_r_g_"
+                    id="_r_g_-label"
                   >
                     Message
                   </label>
@@ -661,7 +681,7 @@ Object {
                     <input
                       aria-invalid="false"
                       class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
-                      id="_r_f_"
+                      id="_r_g_"
                       type="text"
                       value=""
                     />
@@ -685,13 +705,6 @@ Object {
                   type="button"
                 >
                   Send
-                </button>
-                <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-10q6f53-MuiButtonBase-root-MuiButton-root"
-                  tabindex="0"
-                  type="button"
-                >
-                  Clear
                 </button>
               </div>
             </div>
@@ -1342,18 +1355,38 @@ Object {
             data-testid="test-chat"
             style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
           >
-            <h6
-              class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
-            >
-              Test Chat
-            </h6>
-            <span
-              class="MuiTypography-root MuiTypography-caption css-1ub6eyz-MuiTypography-root"
-            >
-              Type a message to see how the whole bot responds. The first matching program replies.
-            </span>
             <div
-              class="MuiBox-root css-1oig7ou"
+              class="MuiBox-root css-1yu55u1"
+            >
+              <div
+                class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1y6aw9e-MuiAvatar-root"
+              >
+                🤖
+              </div>
+              <div
+                class="MuiBox-root css-1rr4qq7"
+              >
+                <h6
+                  class="MuiTypography-root MuiTypography-h6 css-1giu2ag-MuiTypography-root"
+                >
+                  Test Chat
+                </h6>
+                <span
+                  class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
+                >
+                  Simulated bot — the first matching program replies.
+                </span>
+              </div>
+              <button
+                class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-10q6f53-MuiButtonBase-root-MuiButton-root"
+                tabindex="0"
+                type="button"
+              >
+                Clear
+              </button>
+            </div>
+            <div
+              class="MuiBox-root css-1yqr7zp"
             >
               <div />
             </div>
@@ -1366,8 +1399,8 @@ Object {
                 <label
                   class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeSmall MuiInputLabel-outlined css-14gb61y-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="false"
-                  for="_r_f_"
-                  id="_r_f_-label"
+                  for="_r_g_"
+                  id="_r_g_-label"
                 >
                   Message
                 </label>
@@ -1377,7 +1410,7 @@ Object {
                   <input
                     aria-invalid="false"
                     class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
-                    id="_r_f_"
+                    id="_r_g_"
                     type="text"
                     value=""
                   />
@@ -1401,13 +1434,6 @@ Object {
                 type="button"
               >
                 Send
-              </button>
-              <button
-                class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-10q6f53-MuiButtonBase-root-MuiButton-root"
-                tabindex="0"
-                type="button"
-              >
-                Clear
               </button>
             </div>
           </div>

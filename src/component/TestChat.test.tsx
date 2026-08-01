@@ -1,6 +1,6 @@
 import { test, expect } from "@jest/globals";
 import React from "react";
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, within } from "@testing-library/react";
 import { TestChat } from "./TestChat.tsx";
 import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { Program } from "../interfaces/program.ts";
@@ -163,4 +163,38 @@ test("Clear empties the conversation", () => {
 
   fireEvent.click(screen.getByRole("button", { name: "Clear" }));
   expect(screen.queryByText("Welcome!")).toBeNull();
+});
+
+test("renders a chat header with a bot avatar and clear button", () => {
+  renderWithProviders(<TestChat />, { store: makeStore([]) });
+
+  expect(
+    screen.getByText("Simulated bot — the first matching program replies.")
+  ).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Clear" })).toBeTruthy();
+});
+
+test("user and bot messages show sender labels and timestamps", () => {
+  const program: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [replyBlock("b1", "Welcome!")],
+  };
+  renderWithProviders(<TestChat />, { store: makeStore([program]) });
+
+  fireEvent.change(screen.getByLabelText("Message"), {
+    target: { value: "/start" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Send" }));
+
+  const userMsg = screen.getByTestId("test-chat-user-msg");
+  expect(within(userMsg).getByText("You")).toBeTruthy();
+  const userTime = within(userMsg).getByTestId("test-chat-time");
+  expect(userTime.textContent?.trim()).not.toBe("");
+
+  const botMsg = screen.getByTestId("test-chat-bot-msg");
+  expect(within(botMsg).getByText("Bot")).toBeTruthy();
+  const botTime = within(botMsg).getByTestId("test-chat-time");
+  expect(botTime.textContent?.trim()).not.toBe("");
 });
