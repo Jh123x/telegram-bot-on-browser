@@ -6,12 +6,27 @@ export type FlowTriggerType =
   | "notEquals"
   | "notContains";
 
-export type FlowNodeType = "start" | "state";
+export type FlowNodeType = "start" | "transform" | "condition" | "send";
+
+export type TransformType =
+  | "lowercase"
+  | "uppercase"
+  | "trim"
+  | "replace"
+  | "extractRegex";
+
+export interface TransformData {
+  type: TransformType;
+  find: string; // used by "replace"
+  replacement: string; // used by "replace"
+  pattern: string; // used by "extractRegex"
+}
 
 export interface FlowNodeData {
   label: string;
-  // Messages sent to the user when this state is entered. One message per line.
-  replies: string[];
+  replies?: string[]; // send nodes
+  transform?: TransformData; // transform nodes
+  trigger?: { type: FlowTriggerType; value: string }; // condition nodes
 }
 
 export interface FlowNode {
@@ -21,19 +36,11 @@ export interface FlowNode {
   data: FlowNodeData;
 }
 
-// Uses the locally-defined FlowTriggerType (equals/contains/startsWith/
-// endsWith/notEquals/notContains) plus "fallback" = matches any message.
-export type FlowEdgeTriggerType = FlowTriggerType | "fallback";
-
-export interface FlowEdgeData {
-  trigger: { type: FlowEdgeTriggerType; value: string };
-}
-
 export interface FlowEdge {
   id: string;
   source: string;
   target: string;
-  data: FlowEdgeData;
+  sourceHandle?: "if" | "else"; // condition-node outputs only
 }
 
 export interface Flow {

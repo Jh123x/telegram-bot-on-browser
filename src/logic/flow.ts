@@ -1,9 +1,8 @@
 import {
   Flow,
-  FlowEdgeTriggerType,
-  FlowNode,
   FlowNodeType,
   FlowTriggerType,
+  TransformData,
 } from "../interfaces/flow.ts";
 import type { FlowSample } from "./flowSamples.ts";
 
@@ -36,8 +35,8 @@ export function generateId(): string {
 }
 
 // Replaces every {key} token in the template with variables[key] when present.
-// Tokens with no matching key are left as-is (including "{prev}" if it is not
-// in the map). An empty template returns an empty string.
+// Tokens with no matching key are left as-is. An empty template returns an
+// empty string.
 export function interpolate(
   template: string,
   variables: Record<string, string>
@@ -50,7 +49,7 @@ export function interpolate(
   );
 }
 
-function matchTrigger(
+export function matchTrigger(
   trigger: { type: FlowTriggerType; value: string },
   message: string
 ): boolean {
@@ -72,20 +71,41 @@ function matchTrigger(
   }
 }
 
-export function flowEdgeLabel(trigger: {
-  type: FlowEdgeTriggerType;
-  value: string;
-}): string {
-  if (trigger.type === "fallback") return "any other message";
-  return `${TRIGGER_LABELS[trigger.type]} "${trigger.value}"`;
+// Applies a transform to a message. An undefined transform (or a transform
+// that cannot apply, e.g. an invalid extractRegex pattern) leaves the message
+// effectively unmodified/empty per the transform's contract.
+export function applyTransform(
+  transform: TransformData | undefined,
+  message: string
+): string {
+  if (!transform) return message;
+  switch (transform.type) {
+    case "lowercase":
+      return message.toLowerCase();
+    case "uppercase":
+      return message.toUpperCase();
+    case "trim":
+      return message.trim();
+    case "replace":
+      if (transform.find === "") return message;
+      return message.split(transform.find).join(transform.replacement);
+    case "extractRegex":
+      try {
+        const m = message.match(new RegExp(transform.pattern));
+        return m ? m[0] : "";
+      } catch {
+        return "";
+      }
+    default:
+      return message;
+  }
 }
 
-export function matchFlowTrigger(
-  trigger: { type: FlowEdgeTriggerType; value: string },
-  message: string
-): boolean {
-  if (trigger.type === "fallback") return true;
-  return matchTrigger(trigger, message);
+// Labels a condition edge by its source handle. Edges without a handle
+// (start/transform/plain connections) carry no label.
+export function flowEdgeLabel(sourceHandle: "if" | "else" | undefined): string | undefined {
+  if (sourceHandle === "if" || sourceHandle === "else") return sourceHandle;
+  return undefined;
 }
 
 // React Flow fires "dimensions" changes after measuring nodes. Applying them
@@ -102,13 +122,31 @@ export function dropNodeDimensionChanges<T extends { type: string }>(
 export function createFlowNode(
   type: FlowNodeType,
   position?: { x: number; y: number }
-): FlowNode {
-  return {
+): Flow["nodes"][number] {
+  const base = {
     id: generateId(),
     type,
     position: position ?? { x: 0, y: 0 },
-    data: { label: type === "start" ? "Start" : "New State", replies: [] },
   };
+  switch (type) {
+    case "start":
+      return { ...base, data: { label: "Start" } };
+    case "transform":
+      return {
+        ...base,
+        data: {
+          label: "New Transform",
+          transform: { type: "lowercase", find: "", replacement: "", pattern: "" },
+        },
+      };
+    case "condition":
+      return {
+        ...base,
+        data: { label: "New Condition", trigger: { type: "contains", value: "" } },
+      };
+    case "send":
+      return { ...base, data: { label: "New Send", replies: [] } };
+  }
 }
 
 export function createFlow(name = "New Flow"): Flow {
@@ -121,58 +159,100 @@ export function createFlow(name = "New Flow"): Flow {
   };
 }
 
+// Walks the flow graph starting at flow.startNodeId, applying transforms and
+// evaluating conditions, until a send node is reached. Returns the send
+// node's replies interpolated with the (possibly transformed) message, or
+// undefined if the walk cannot reach a send node (dead end, cycle, missing
+// start, missing branch edge).
 export function executeFlow(
   flow: Flow,
-  message: string,
-  currentNodeId: string
-): { replies: string[]; nextNodeId: string } | undefined {
-  const currentNode = flow.nodes.find((n) => n.id === currentNodeId);
-  if (!currentNode) return undefined;
+  message: string
+): string[] | undefined {
+  if (flow.startNodeId === "") return undefined;
+
+  const nodesById = new Map(flow.nodes.map((n) => [n.id, n]));
+  let current = nodesById.get(flow.startNodeId);
+  if (!current) return undefined;
+
+  const edgesOut = new Map<string, Flow["edges"]>();
   for (const edge of flow.edges) {
-    // Only consider transitions leaving the current node.
-    if (edge.source !== currentNodeId) continue;
-    if (!matchFlowTrigger(edge.data.trigger, message)) continue;
-    // Defensive: skip edges whose target node is missing and keep scanning.
-    const target = flow.nodes.find((n) => n.id === edge.target);
-    if (!target) continue;
-    // Copy so callers cannot mutate the flow's stored node data.
-    return { replies: [...target.data.replies], nextNodeId: edge.target };
+    const list = edgesOut.get(edge.source) ?? [];
+    list.push(edge);
+    edgesOut.set(edge.source, list);
   }
+
+  let currentMessage = message;
+  const visited = new Set<string>();
+
+  while (current) {
+    if (visited.has(current.id)) return undefined; // cycle guard
+    visited.add(current.id);
+
+    switch (current.type) {
+      case "start": {
+        const outgoing = edgesOut.get(current.id) ?? [];
+        if (outgoing.length === 0) return undefined;
+        const next = nodesById.get(outgoing[0].target);
+        if (!next) return undefined;
+        // start transitions are unconditional; follow the first outgoing edge
+        const chain = new Set(visited);
+        chain.add(current.id);
+        current = next;
+        continue;
+      }
+      case "transform": {
+        currentMessage = applyTransform(current.data.transform, currentMessage);
+        const outgoing = edgesOut.get(current.id) ?? [];
+        if (outgoing.length === 0) return undefined;
+        const next = nodesById.get(outgoing[0].target);
+        if (!next) return undefined;
+        current = next;
+        continue;
+      }
+      case "condition": {
+        const trigger = current.data.trigger;
+        if (!trigger) return undefined;
+        const matched = matchTrigger(trigger, currentMessage);
+        const handle = matched ? "if" : "else";
+        const outgoing = edgesOut.get(current.id) ?? [];
+        const branch = outgoing.find((e) => e.sourceHandle === handle);
+        if (!branch) return undefined;
+        const next = nodesById.get(branch.target);
+        if (!next) return undefined;
+        current = next;
+        continue;
+      }
+      case "send": {
+        return (current.data.replies ?? []).map((reply) =>
+          interpolate(reply, { msg: currentMessage })
+        );
+      }
+    }
+  }
+
   return undefined;
 }
 
-// Tracks the current node per chat user so conversation state persists across
-// messages. User id maps to the node id they are currently in.
+// Thin stateless wrapper around executeFlow. Keeps the handleMessage(userId,
+// message) signature for callers; userId is ignored because every message is
+// evaluated from the flow's start node.
 export class FlowRuntime {
-  private currentNodes = new Map<number, string>();
-
   constructor(private flow: Flow) {}
 
-  // Clears the stored state for a single user, sending them back to the start.
-  reset(userId: number): void {
-    this.currentNodes.delete(userId);
-  }
+  // No-op: execution is stateless, so there is no per-user state to clear.
+  reset(_userId: number): void {}
 
-  // Evaluates a message from the user's current node (or the start node for a
-  // brand-new user). On a matched transition the user's state always advances
-  // to the target node; the return value distinguishes matched from unmatched:
-  //   - undefined  -> no transition matched, the user's state is unchanged
-  //   - []         -> a transition matched but the target state has no replies
-  //   - string     -> a matched transition whose target state has a single reply
-  //   - string[]   -> a matched transition whose target state has several replies
-  // Returning [] (rather than undefined) for matched-but-silent transitions lets
-  // callers stop their rule chain: the message WAS consumed by this flow even
-  // though it produced no reply, so no other flow should pick it up.
+  // Evaluates the message from the start node every time.
+  //   - undefined  -> no send node reached (caller falls through to next rule)
+  //   - []         -> a send node was reached but has empty replies (consumed)
+  //   - string     -> a send node reached with a single reply
+  //   - string[]   -> a send node reached with several replies
   handleMessage(
-    userId: number,
+    _userId: number,
     message: string
   ): string | string[] | undefined {
-    const current = this.currentNodes.get(userId) ?? this.flow.startNodeId;
-    const step = executeFlow(this.flow, message, current);
-    if (!step) return undefined;
-    this.currentNodes.set(userId, step.nextNodeId);
-    // Replies may reference the raw message via {msg}.
-    const replies = step.replies.map((reply) => interpolate(reply, { msg: message }));
+    const replies = executeFlow(this.flow, message);
+    if (replies === undefined) return undefined;
     if (replies.length === 0) return [];
     if (replies.length === 1) return replies[0];
     return replies;
@@ -223,19 +303,47 @@ export function validateFlow(flow: Flow): string[] {
     }
   }
 
-  // A source node may only have one fallback edge: the first one in edge-order
-  // always matches, so any additional fallbacks are unreachable dead branches.
-  const fallbackCounts = new Map<string, number>();
-  for (const edge of flow.edges) {
-    if (edge.data.trigger.type === "fallback") {
-      fallbackCounts.set(edge.source, (fallbackCounts.get(edge.source) ?? 0) + 1);
+  // A start or transform node has exactly one deterministic output; any extra
+  // outgoing edges are unreachable dead branches.
+  for (const node of flow.nodes) {
+    if (node.type === "start" || node.type === "transform") {
+      const outgoing = flow.edges.filter((e) => e.source === node.id);
+      if (outgoing.length > 1) {
+        errors.push(
+          `Node ${node.id} has multiple outgoing edges; only the first is reachable`
+        );
+      }
     }
   }
-  for (const [source, count] of fallbackCounts) {
-    if (count > 1) {
-      errors.push(
-        `Node ${source} has multiple fallback edges; only the first is reachable`
-      );
+
+  // A condition node has exactly one if branch and one else branch.
+  for (const node of flow.nodes) {
+    if (node.type === "condition") {
+      const outgoing = flow.edges.filter((e) => e.source === node.id);
+      const ifCount = outgoing.filter((e) => e.sourceHandle === "if").length;
+      const elseCount = outgoing.filter((e) => e.sourceHandle === "else").length;
+      if (ifCount > 1) {
+        errors.push(
+          `Node ${node.id} has multiple if edges; only the first is reachable`
+        );
+      }
+      if (elseCount > 1) {
+        errors.push(
+          `Node ${node.id} has multiple else edges; only the first is reachable`
+        );
+      }
+    }
+  }
+
+  // A send node is terminal and cannot lead anywhere.
+  for (const node of flow.nodes) {
+    if (node.type === "send") {
+      const outgoing = flow.edges.filter((e) => e.source === node.id);
+      if (outgoing.length > 0) {
+        errors.push(
+          `Node ${node.id} is a send node and cannot have outgoing edges`
+        );
+      }
     }
   }
 
@@ -251,15 +359,24 @@ export function validateFlow(flow: Flow): string[] {
 }
 
 // Deep-copies a sample's flow with FRESH ids for the flow, every node, and
-// every edge so loading a sample twice creates two independent flows. The
-// startNodeId is remapped to the freshly generated start node.
+// every edge so loading a sample twice creates two independent flows. Node
+// data (label, replies, transform, trigger) and edge sourceHandle are
+// deep-copied too. The startNodeId is remapped to the freshly generated start
+// node.
 export function flowFromSample(sample: FlowSample): Flow {
-  const nodes = sample.flow.nodes.map((node) => ({
-    ...node,
-    id: generateId(),
-    position: { ...node.position },
-    data: { label: node.data.label, replies: [...node.data.replies] },
-  }));
+  const nodes = sample.flow.nodes.map((node) => {
+    const data: Flow["nodes"][number]["data"] = { label: node.data.label };
+    if (node.data.replies !== undefined) data.replies = [...node.data.replies];
+    if (node.data.transform !== undefined)
+      data.transform = { ...node.data.transform };
+    if (node.data.trigger !== undefined) data.trigger = { ...node.data.trigger };
+    return {
+      ...node,
+      id: generateId(),
+      position: { ...node.position },
+      data,
+    };
+  });
   const oldToNew = new Map<string, string>();
   sample.flow.nodes.forEach((node, i) => {
     oldToNew.set(node.id, nodes[i].id);
@@ -268,9 +385,7 @@ export function flowFromSample(sample: FlowSample): Flow {
     id: generateId(),
     source: oldToNew.get(edge.source) ?? edge.source,
     target: oldToNew.get(edge.target) ?? edge.target,
-    data: {
-      trigger: { ...edge.data.trigger },
-    },
+    sourceHandle: edge.sourceHandle ?? undefined,
   }));
   const startNode = nodes.find((node) => node.type === "start");
   return {
