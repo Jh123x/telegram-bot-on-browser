@@ -16,6 +16,7 @@ export interface Block {
   value: string;
   value2: string;
   fallback: string;
+  outputVar?: string;
 }
 
 export interface Program {

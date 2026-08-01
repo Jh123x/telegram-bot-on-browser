@@ -39,6 +39,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
         {[
           { label: "Getting Started", href: "#getting-started" },
           { label: "How Programs Work", href: "#how-programs-work" },
+          { label: "Variables", href: "#variables" },
           { label: "Blocks", href: "#blocks" },
           { label: "Samples", href: "#samples" },
           { label: "Tips", href: "#tips" },
@@ -196,6 +197,28 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
     </Typography>
     <pre data-testid="code-sample-pipeline" style={codeStyle}>
       {`message -> trigger -> logic -> transform -> action -> reply`}
+    </pre>
+
+    <Typography variant="h4" id="variables" sx={{ mt: 3 }}>
+      Variables
+    </Typography>
+    <Typography variant="body1" sx={{ mt: 1 }}>
+      Every transform node can save its output to a variable. In any reply,
+      fallback, or random option you can reference the value with{" "}
+      {"{prev}"} — the message as it flows through the pipeline — or with the
+      name you gave the transform. Give a transform a variable name like{" "}
+      {"shouted"} and then use {"{shouted}"} inside a reply to insert the
+      transformed text anywhere in the message.
+    </Typography>
+    <Typography variant="body1" sx={{ mt: 2 }}>
+      {"{prev}"} always refers to the current flowing value before the reply,
+      while a named variable remembers the output of a specific transform node.
+      Tokens that do not match a variable are left exactly as typed.
+    </Typography>
+    <pre data-testid="code-sample-variables" style={codeStyle}>
+      {`trigger: message contains "shout"
+transform: make uppercase  → save as {shouted}
+action: reply "You shouted: {shouted}!"`}
     </pre>
 
     <Typography variant="h4" id="blocks" sx={{ mt: 3 }}>

@@ -17,7 +17,7 @@ test("renders all sample names", () => {
     screen.getByText("Click a sample to add it as a program.")
   ).toBeInTheDocument();
 
-  for (const name of ["Welcome", "Coin Flip", "Help", "Echo Clean", "Shout", "Short Replies"]) {
+  for (const name of ["Welcome", "Coin Flip", "Help", "Echo Clean", "Shout", "Shout Back", "Short Replies"]) {
     expect(screen.getByRole("button", { name })).toBeInTheDocument();
   }
 });

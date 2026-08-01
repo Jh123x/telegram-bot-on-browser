@@ -448,3 +448,47 @@ test("trigger node shows a user message input port and label", () => {
   expect(screen.getByTestId("trigger-input-p1")).toBeTruthy();
   expect(within(screen.getByTestId("trigger-zone-p1")).getByText("message")).toBeTruthy();
 });
+
+test("transform block renders a Variable name (optional) field", () => {
+  renderCard(getTransformProgram(), 0, 1);
+  const field = screen.getByLabelText("Variable name (optional)") as HTMLInputElement;
+  expect(field).toBeTruthy();
+  expect(field.value).toBe("");
+});
+
+test("typing into the Variable name field updates outputVar in the store", () => {
+  const { store } = renderCard(getTransformProgram(), 0, 1);
+  fireEvent.change(screen.getByLabelText("Variable name (optional)"), {
+    target: { value: "shouted" },
+  });
+  expect(store.getState().bot.programs[0].blocks[0].outputVar).toBe("shouted");
+});
+
+test("value hint chip shows the variable binding when outputVar is set", () => {
+  const p = getTransformProgram();
+  p.blocks[0].outputVar = "shouted";
+  renderCard(p, 0, 1);
+  expect(screen.getByText("{shouted} = HELLO WORLD")).toBeTruthy();
+});
+
+test("replace block also renders the Variable name (optional) field", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "transform",
+        kind: "replace",
+        value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  renderCard(p, 0, 1);
+  expect(screen.getByLabelText("Variable name (optional)")).toBeTruthy();
+  expect(screen.getByLabelText("Find")).toBeTruthy();
+  expect(screen.getByLabelText("Replace with")).toBeTruthy();
+});

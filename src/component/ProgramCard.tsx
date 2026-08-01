@@ -58,7 +58,7 @@ interface ProgramCardProps {
 
 // A hint describing what value/label flows out of a node in the pipeline.
 type NodeHint =
-  | { category: "transform"; text: string }
+  | { category: "transform"; text: string; outputVar?: string }
   | { category: "logic"; fallback: string }
   | { category: "action"; text: string };
 
@@ -120,10 +120,14 @@ const Connector = ({ color }: { color: string }) => (
 // Small chip showing the flowing value / gate / reply shape for a node.
 const HintChip = ({ hint }: { hint: NodeHint }) => {
   if (hint.category === "transform") {
+    const label =
+      hint.outputVar && hint.outputVar !== ""
+        ? `{${hint.outputVar}} = ${hint.text}`
+        : hint.text;
     return (
       <Chip
         size="small"
-        label={hint.text}
+        label={label}
         sx={{
           bgcolor: BLOCK_COLORS.transform.bg,
           color: BLOCK_COLORS.transform.main,
@@ -211,6 +215,14 @@ const BlockRow = ({
       );
     }
     if (block.category === "transform") {
+      const variableField = (
+        <TextField
+          size="small"
+          label="Variable name (optional)"
+          value={block.outputVar ?? ""}
+          onChange={(e) => onChange(block.id, { outputVar: e.target.value })}
+        />
+      );
       if (block.kind === "replace") {
         return (
           <>
@@ -226,10 +238,16 @@ const BlockRow = ({
               value={block.value2}
               onChange={(e) => onChange(block.id, { value2: e.target.value })}
             />
+            {variableField}
           </>
         );
       }
-      return <Typography variant="body2">(no value needed)</Typography>;
+      return (
+        <>
+          <Typography variant="body2">(no value needed)</Typography>
+          {variableField}
+        </>
+      );
     }
     // action
     if (block.kind === "reply") {
@@ -359,7 +377,11 @@ export const ProgramCard = ({
   for (const b of current.blocks) {
     if (b.category === "transform") {
       flowing = transformPreview(b, flowing);
-      hints.set(b.id, { category: "transform", text: flowing });
+      hints.set(b.id, {
+        category: "transform",
+        text: flowing,
+        outputVar: b.outputVar,
+      });
     } else if (b.category === "logic") {
       hints.set(b.id, { category: "logic", fallback: b.fallback });
     } else {

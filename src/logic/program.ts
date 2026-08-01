@@ -110,6 +110,21 @@ export function applyTransform(block: Block, data: string): string {
   }
 }
 
+// Replaces every {key} token in the template with variables[key] when present.
+// Tokens with no matching key are left as-is (including "{prev}" if it is not
+// in the map). An empty template returns an empty string.
+export function interpolate(
+  template: string,
+  variables: Record<string, string>
+): string {
+  if (template === "") return "";
+  return template.replace(/\{([^}]+)\}/g, (match, key: string) =>
+    Object.prototype.hasOwnProperty.call(variables, key)
+      ? variables[key]
+      : match
+  );
+}
+
 // Pure preview of the value that would flow out of a transform node. Used by
 // the visual data-flow pipeline. Non-transform blocks (and replace with an
 // empty find) pass the input through unchanged.
@@ -151,26 +166,35 @@ export function executeBlocks(
   random: () => number = Math.random
 ): string[] {
   let data = message;
+  const variables: Record<string, string> = {};
   const replies: string[] = [];
   for (const block of blocks) {
     if (block.category === "logic") {
       if (!checkLogic(block, message)) {
-        if (block.fallback !== "") replies.push(block.fallback);
+        if (block.fallback !== "") {
+          replies.push(
+            interpolate(block.fallback, { prev: data, ...variables })
+          );
+        }
         break;
       }
     } else if (block.category === "transform") {
       data = applyTransform(block, data);
+      if (block.outputVar && block.outputVar !== "") {
+        variables[block.outputVar] = data;
+      }
     } else {
       // action
       switch (block.kind) {
         case "reply":
-          replies.push(block.value);
+          replies.push(interpolate(block.value, { prev: data, ...variables }));
           break;
         case "random": {
           const options = block.value
             .split("\n")
             .map((line) => line.trim())
-            .filter((line) => line.length > 0);
+            .filter((line) => line.length > 0)
+            .map((line) => interpolate(line, { prev: data, ...variables }));
           const choice = randomChoice(options, random);
           if (choice !== undefined) replies.push(choice);
           break;
@@ -224,6 +248,8 @@ export function validateProgram(program: Program): string[] {
     } else if (block.category === "transform") {
       if (block.kind === "replace" && block.value.trim() === "")
         errors.push("Replace block needs text to find");
+      if (block.outputVar && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(block.outputVar))
+        errors.push("Variable name must be letters, numbers or underscores");
     } else {
       // action
       if (

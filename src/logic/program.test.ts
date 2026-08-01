@@ -16,6 +16,7 @@ import {
   createProgram,
   createBlock,
   generateId,
+  interpolate,
 } from "../logic/program";
 import { SAMPLE_PROGRAMS, programFromSample } from "../logic/samples";
 import { test, expect } from "@jest/globals";
@@ -424,5 +425,176 @@ describe("Short Replies sample program", () => {
 
   test("does not trigger on a plain message without the /short prefix", () => {
     expect(executeProgram(shortProgram(), "plain message")).toEqual([]);
+  });
+});
+
+describe("interpolate", () => {
+  test("replaces known keys with their variable values", () => {
+    expect(interpolate("Hello {name}!", { name: "World" })).toBe(
+      "Hello World!"
+    );
+  });
+
+  test("leaves tokens with no matching key as-is", () => {
+    expect(interpolate("Hello {unknown}!", {})).toBe("Hello {unknown}!");
+  });
+
+  test("handles {prev} via the variables map", () => {
+    expect(interpolate("echo: {prev}", { prev: "HELLO" })).toBe(
+      "echo: HELLO"
+    );
+  });
+
+  test("leaves {prev} as-is when not in the variables map", () => {
+    expect(interpolate("echo: {prev}", {})).toBe("echo: {prev}");
+  });
+
+  test("replaces multiple distinct tokens in one pass", () => {
+    expect(
+      interpolate("{a}-{b}-{a}", { a: "x", b: "y" })
+    ).toBe("x-y-x");
+  });
+
+  test("empty template returns empty string", () => {
+    expect(interpolate("", {})).toBe("");
+  });
+});
+
+describe("executeBlocks with variables", () => {
+  test("transform with outputVar then reply interpolates the stored value", () => {
+    const blocks: Block[] = [
+      {
+        id: "t1",
+        category: "transform",
+        kind: "uppercase",
+        value: "",
+        value2: "",
+        fallback: "",
+        outputVar: "shouted",
+      },
+      actionBlock("reply", "You shouted: {shouted}!"),
+    ];
+    expect(executeBlocks(blocks, "hi there")).toEqual([
+      "You shouted: HI THERE!",
+    ]);
+  });
+
+  test("reply uses {prev} for the flowing value", () => {
+    const blocks: Block[] = [
+      transformBlock("uppercase"),
+      actionBlock("reply", "echo: {prev}"),
+    ];
+    expect(executeBlocks(blocks, "hello world")).toEqual([
+      "echo: HELLO WORLD",
+    ]);
+  });
+
+  test("fallback interpolation uses {prev}", () => {
+    const blocks: Block[] = [
+      logicBlock("lengthLess", "3", "too long: {prev}"),
+    ];
+    expect(executeBlocks(blocks, "this is very long")).toEqual([
+      "too long: this is very long",
+    ]);
+  });
+
+  test("random options interpolate per line after trimming and filtering", () => {
+    const blocks: Block[] = [
+      {
+        id: "t1",
+        category: "transform",
+        kind: "uppercase",
+        value: "",
+        value2: "",
+        fallback: "",
+        outputVar: "shouted",
+      },
+      actionBlock("random", "you said {shouted}\nyou said silent"),
+    ];
+    expect(executeBlocks(blocks, "hi", () => 0)).toEqual([
+      "you said HI",
+    ]);
+    expect(executeBlocks(blocks, "hi", () => 0.99)).toEqual([
+      "you said silent",
+    ]);
+  });
+
+  test("echo stays the raw flowing value (not wrapped in a token)", () => {
+    const blocks: Block[] = [
+      transformBlock("uppercase"),
+      actionBlock("echo"),
+    ];
+    expect(executeBlocks(blocks, "hi")).toEqual(["HI"]);
+  });
+
+  test("behaves identically when no outputVar or tokens are used", () => {
+    const blocks: Block[] = [
+      transformBlock("uppercase"),
+      actionBlock("reply", "plain"),
+    ];
+    expect(executeBlocks(blocks, "hi")).toEqual(["plain"]);
+  });
+});
+
+describe("validateProgram outputVar", () => {
+  const baseProgram = (): Program => ({
+    id: "p1",
+    name: "My Program",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [actionBlock("reply", "hi")],
+  });
+
+  test("accepts a valid variable name", () => {
+    const program = baseProgram();
+    program.blocks.push({
+      id: "t1",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+      outputVar: "myVar",
+    });
+    expect(validateProgram(program)).not.toContain(
+      "Variable name must be letters, numbers or underscores"
+    );
+  });
+
+  test("rejects a variable name with spaces", () => {
+    const program = baseProgram();
+    program.blocks.push({
+      id: "t1",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+      outputVar: "my var",
+    });
+    expect(validateProgram(program)).toContain(
+      "Variable name must be letters, numbers or underscores"
+    );
+  });
+
+  test("rejects a variable name starting with a digit", () => {
+    const program = baseProgram();
+    program.blocks.push({
+      id: "t1",
+      category: "transform",
+      kind: "uppercase",
+      value: "",
+      value2: "",
+      fallback: "",
+      outputVar: "1shout",
+    });
+    expect(validateProgram(program)).toContain(
+      "Variable name must be letters, numbers or underscores"
+    );
+  });
+
+  test("accepts an empty (unset) variable name", () => {
+    const program = baseProgram();
+    program.blocks.push(transformBlock("uppercase"));
+    expect(validateProgram(program)).toEqual([]);
   });
 });

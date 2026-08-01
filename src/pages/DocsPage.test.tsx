@@ -17,6 +17,7 @@ test("renders all section headings", () => {
   const headings = [
     "Getting Started",
     "How Programs Work",
+    "Variables",
     "Blocks",
     "Samples",
     "Tips",
@@ -55,6 +56,7 @@ test("renders a table of contents with anchor links for every section", () => {
   const tocLinks = [
     { name: "Getting Started", href: "#getting-started" },
     { name: "How Programs Work", href: "#how-programs-work" },
+    { name: "Variables", href: "#variables" },
     { name: "Blocks", href: "#blocks" },
     { name: "Samples", href: "#samples" },
     { name: "Tips", href: "#tips" },
@@ -134,4 +136,16 @@ test("renders styled <pre> code sample blocks with expected content", () => {
   expect(pipeline.textContent).toContain("message");
   expect(pipeline.textContent).toContain("action");
   expect(pipeline.textContent).toContain("reply");
+});
+
+test("renders a variables code sample describing {prev} and named variables", () => {
+  render(<DocsPage />);
+
+  const variables = screen.getByTestId("code-sample-variables");
+  expect(variables).toBeTruthy();
+  expect(variables).toHaveProperty("tagName", "PRE");
+  expect(variables.textContent).toContain("shout");
+  expect(variables.textContent).toContain("uppercase");
+  expect(variables.textContent).toContain("{shouted}");
+  expect(variables.textContent).toContain("You shouted: {shouted}!");
 });

@@ -11,6 +11,7 @@ export interface ProgramSample {
     value: string;
     value2: string;
     fallback: string;
+    outputVar?: string;
   }[];
 }
 
@@ -96,6 +97,29 @@ export const SAMPLE_PROGRAMS: ProgramSample[] = [
         category: "action",
         kind: "echo",
         value: "",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  },
+  {
+    name: "Shout Back",
+    trigger: { type: "contains", value: "shout" },
+    blocks: [
+      {
+        id: "sample-shout-back",
+        category: "transform",
+        kind: "uppercase",
+        value: "",
+        value2: "",
+        fallback: "",
+        outputVar: "shouted",
+      },
+      {
+        id: "sample-shout-back-2",
+        category: "action",
+        kind: "reply",
+        value: "You shouted: {shouted}!",
         value2: "",
         fallback: "",
       },
