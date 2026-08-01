@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
+import { MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
 import { TRIGGER_TYPES, TRIGGER_LABELS } from "../logic/program.ts";
 import { Flow, FlowEdgeTriggerType } from "../interfaces/flow.ts";
 
