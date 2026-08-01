@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addResponse,
@@ -23,7 +23,9 @@ import {
 import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig, Response, User } from "../redux/types.ts";
 import { Program } from "../interfaces/program.ts";
+import { Flow } from "../interfaces/flow.ts";
 import { executeProgram, findMatchingProgram } from "../logic/program.ts";
+import { FlowRuntime } from "../logic/flow.ts";
 
 type DisplayItem =
   | { id: string; kind: "message"; time: number; response: Response }
@@ -46,11 +48,18 @@ const timeLabel = (timestamp: number) => new Date(timestamp).toLocaleTimeString(
 // Virtual conversation used by test mode when there are no real users yet.
 const TEST_USER: User = { Username: "Test User", UserID: -1 };
 
+// Stable empty array so the flows selector never returns a fresh reference
+// (a new [] each render would warn and cause unnecessary rerenders).
+const EMPTY_FLOWS: Flow[] = [];
+
 export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const dispatch = useDispatch();
   const storeUsers = useSelector<BotWithConfig, User[]>((state) => state.bot.users);
   const responses = useSelector<BotWithConfig, Response[]>((state) => state.bot.response);
   const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
+  const flows = useSelector<BotWithConfig, Flow[]>(
+    (state) => state.bot.flows ?? EMPTY_FLOWS
+  );
   const selectedUserId = useSelector<BotWithConfig, number | null>(
     (state) => state.bot.selectedUserId ?? null
   );
@@ -62,6 +71,16 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     text: string;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Per-flow runtimes that track the Test User's position so the preview is
+  // stateful, exactly like the production runtime. Rebuilt whenever the flow
+  // definitions change (fresh FlowRuntime per rebuild matches useBot).
+  const flowRuntimesRef = useRef<Map<string, FlowRuntime>>(new Map());
+  useEffect(() => {
+    const next = new Map<string, FlowRuntime>();
+    flows.forEach((flow) => next.set(flow.id, new FlowRuntime(flow)));
+    flowRuntimesRef.current = next;
+  }, [flows]);
 
   const realUsers: User[] =
     storeUsers.length > 0 ? storeUsers : deriveUsersFromResponses(responses);
@@ -109,14 +128,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     ];
 
     const program = findMatchingProgram(programs, text);
-    if (!program) {
-      newItems.push({
-        id: `sim-${now}-${i++}`,
-        kind: "note",
-        time: nextTime(),
-        text: "No program matched this message — the bot would stay silent.",
-      });
-    } else {
+    if (program) {
       newItems.push({
         id: `sim-${now}-${i++}`,
         kind: "note",
@@ -133,6 +145,65 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
         });
       } else {
         replies.forEach((reply) => {
+          const t = nextTime();
+          newItems.push({
+            id: `sim-${now}-${i++}`,
+            kind: "message",
+            time: t,
+            response: {
+              FromUser: "Bot",
+              UserID: TEST_USER.UserID,
+              Message: reply,
+              TimeStamp: t,
+              fromBot: true,
+            },
+          });
+        });
+      }
+      setSimulated((prev) => [...prev, ...newItems]);
+      setMessage("");
+      return;
+    }
+
+    // No program matched: give flows a chance. First flow whose current state
+    // has a matching transition wins — the same per-user path production uses
+    // (FlowRuntime keyed by user id, here the Test User).
+    let matchedFlow: Flow | undefined;
+    let flowReplies: string[] = [];
+    for (const flow of flows) {
+      const runtime = flowRuntimesRef.current.get(flow.id);
+      if (!runtime) continue;
+      const result = runtime.handleMessage(TEST_USER.UserID, text);
+      if (result !== undefined) {
+        matchedFlow = flow;
+        flowReplies = Array.isArray(result) ? result : [result];
+        break;
+      }
+    }
+
+    if (!matchedFlow) {
+      newItems.push({
+        id: `sim-${now}-${i++}`,
+        kind: "note",
+        time: nextTime(),
+        text: "No program matched this message — the bot would stay silent.",
+      });
+    } else {
+      newItems.push({
+        id: `sim-${now}-${i++}`,
+        kind: "note",
+        time: nextTime(),
+        text: `Matched flow: ${matchedFlow.name}`,
+      });
+      if (flowReplies.length === 0) {
+        newItems.push({
+          id: `sim-${now}-${i++}`,
+          kind: "note",
+          time: nextTime(),
+          text: "The flow matched but produced no reply.",
+        });
+      } else {
+        flowReplies.forEach((reply) => {
           const t = nextTime();
           newItems.push({
             id: `sim-${now}-${i++}`,

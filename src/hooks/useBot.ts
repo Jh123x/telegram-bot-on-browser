@@ -7,6 +7,10 @@ import { FlowRuntime } from "../logic/flow.ts";
 import { Flow } from "../interfaces/flow.ts";
 import { addResponse, addUser } from "../redux/botSlice.ts";
 
+// Stable empty array so the flows selector never returns a fresh reference
+// (a new [] each render would warn and cause unnecessary rerenders).
+const EMPTY_FLOWS: Flow[] = [];
+
 export const useBot = () => {
   const dispatch = useDispatch();
   const [bot, setBot] = useState<BrowserBot>();
@@ -17,7 +21,9 @@ export const useBot = () => {
   const botRef = useRef<BrowserBot>();
   const token = useSelector<BotWithConfig, string>((state) => state.bot.token);
   const programs = useSelector<BotWithConfig, Program[]>((state) => state.bot.programs);
-  const flows = useSelector<BotWithConfig, Flow[]>((state) => state.bot.flows ?? []);
+  const flows = useSelector<BotWithConfig, Flow[]>(
+    (state) => state.bot.flows ?? EMPTY_FLOWS
+  );
   const autoStart = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.autoStart ?? false
   );

@@ -5,6 +5,7 @@ import { act } from "@testing-library/react";
 import { generateDefaultState, renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { ChatPage } from "./ChatPage.tsx";
 import { BrowserBot } from "../interfaces/bot";
+import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
 
 beforeEach(() => {
   (global as any).Worker = class {
@@ -255,6 +256,106 @@ test("Test User with no matching program shows the silent note", () => {
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
 
   expect(screen.getByText(/No program matched/)).toBeTruthy();
+});
+
+const flowStore = () =>
+  setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      response: [],
+      users: [],
+    },
+  });
+
+test("Test User preview responds to flows, sharing the production per-user path", () => {
+  const store = flowStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+
+  // First message enters the flow: start -> question.
+  fireEvent.change(textbox, { target: { value: "hi" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+  expect(screen.getByText("What is 2 + 2?")).toBeTruthy();
+  // One simulation → one matched-flow note.
+  expect(screen.getAllByText(/Matched flow: Quiz Flow/)).toHaveLength(1);
+
+  // Correct answer advances the Test User's flow state.
+  fireEvent.change(textbox, { target: { value: "4" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+  expect(screen.getByText("Correct! 🎉")).toBeTruthy();
+  // Two simulations → two matched-flow notes (one per message).
+  expect(screen.getAllByText(/Matched flow: Quiz Flow/)).toHaveLength(2);
+});
+
+test("Test User preview with no flow response shows the silent note", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [],
+      flows: [SAMPLE_FLOWS[1].flow], // Echo Flow
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "hello" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+  // First message: start -> menu.
+  expect(screen.getByText("Say /echo <something> to hear it back.")).toBeTruthy();
+
+  // Second unmatched message from the menu triggers no transition.
+  fireEvent.change(textbox, { target: { value: "hello" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+  expect(screen.getByText(/No program matched/)).toBeTruthy();
+});
+
+test("Test User preview: a matched program wins over a flow", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      programs: [
+        {
+          id: "p1",
+          name: "Greet",
+          trigger: { type: "equals", value: "/start" },
+          blocks: [
+            {
+              id: "b1",
+              category: "action",
+              kind: "reply",
+              value: "Welcome!",
+              value2: "",
+              fallback: "",
+            },
+          ],
+        },
+      ],
+      flows: [SAMPLE_FLOWS[2].flow], // Quiz Flow
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  // Programs run first in the preview, mirroring the production rule order, so
+  // the greeting wins and the flow never advances.
+  expect(screen.getByText("Welcome!")).toBeTruthy();
+  expect(screen.queryByText("What is 2 + 2?")).toBeNull();
 });
 
 test("Test User simulated messages do not touch the store", () => {
