@@ -230,21 +230,24 @@ action: reply "You shouted: {shouted}!"`}
       <li>
         <Typography component="span">
           Triggers — decide when the program runs. Use message equals, message
-          contains, message starts with, or message ends with a value.
+          contains, message starts with, or message ends with a value. Negated
+          triggers run when the message does not equal or does not contain a
+          value.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          Logic — gates. Check message length or match a regex. If the check
-          fails, the program stops. It sends the &quot;Else reply&quot; text
-          if that is set.
+          Logic — gates. Check message length, check if the message is a
+          number, or match a regex. If the check fails, the program stops. It
+          sends the &quot;Else reply&quot; text if that is set.
         </Typography>
       </li>
       <li>
         <Typography component="span">
           Transform — change the message as it flows. Make uppercase, make
-          lowercase, trim, replace, or concat (prepend/append) text. Echo
-          replies return the transformed message.
+          lowercase, capitalize the first letter, capitalize each word,
+          reverse, trim, remove, replace, or concat (prepend/append) text.
+          Echo replies return the transformed message.
         </Typography>
       </li>
       <li>
@@ -296,6 +299,26 @@ action: reply "You shouted: {shouted}!"`}
       <li>
         <Typography component="span">
           Short Replies — rejects messages over 10 characters on /short.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          Only Numbers — rejects non-numbers on /num.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          Title Case — capitalizes each word on /title.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          Palindrome — reverses the text on /reverse.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          Capitalize — capitalizes the first letter on /cap.
         </Typography>
       </li>
     </Box>

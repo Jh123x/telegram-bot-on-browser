@@ -166,3 +166,19 @@ test("mentions concat and trim in the transform docs", () => {
   expect(screen.getAllByText(/concat/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/trim/i).length).toBeGreaterThan(0);
 });
+
+test("documents the new negated, logic, and transform operations", () => {
+  render(<DocsPage />);
+
+  expect(screen.getAllByText(/does not equal/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/does not contain/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/is a number/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/reverse/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/capitalize each word/i).length).toBeGreaterThan(0);
+});
+
+test("mentions the Only Numbers sample", () => {
+  render(<DocsPage />);
+
+  expect(screen.getAllByText(/Only Numbers/i).length).toBeGreaterThan(0);
+});
