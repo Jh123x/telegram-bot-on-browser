@@ -4,7 +4,7 @@ import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig } from "../redux/types.ts";
 import { FlowRuntime } from "../logic/flow.ts";
 import { Flow } from "../interfaces/flow.ts";
-import { addResponse, addUser } from "../redux/botSlice.ts";
+import { addResponse, addUser, defaultBotState } from "../redux/botSlice.ts";
 
 // Stable empty array so the flows selector never returns a fresh reference
 // (a new [] each render would warn and cause unnecessary rerenders).
@@ -25,6 +25,12 @@ export const useBot = () => {
   const autoStart = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.autoStart ?? false
   );
+  const pollRate = useSelector<BotWithConfig, number>(
+    (state) => state.bot.pollRate ?? defaultBotState.pollRate
+  );
+  // Poll rate is stored in seconds; the bot's poll worker expects
+  // milliseconds.
+  const pollRateMs = pollRate * 1000;
   const autoStartedRef = useRef(false);
 
   const hydrated = useSelector<BotWithConfig, boolean>(
@@ -91,10 +97,11 @@ export const useBot = () => {
         dispatch(
           addResponse({ FromUser: "Bot", UserID: id, Message: reply, TimeStamp: date, fromBot: true })
         );
-      }
+      },
+      pollRateMs
     );
     setStarted(true);
-  }, [bot, token, dispatch]);
+  }, [bot, token, dispatch, pollRateMs]);
 
   const start = () => {
     if (!bot || started) return;
@@ -107,7 +114,8 @@ export const useBot = () => {
         dispatch(
           addResponse({ FromUser: "Bot", UserID: id, Message: reply, TimeStamp: date, fromBot: true })
         );
-      }
+      },
+      pollRateMs
     );
     setStarted(true);
   };

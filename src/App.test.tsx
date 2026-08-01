@@ -159,6 +159,33 @@ test("hydrates autoStart from localStorage on mount", () => {
   expect(store.getState().bot.autoStart).toBe(true);
 });
 
+test("hydrates pollRate from localStorage on mount", () => {
+  localStorage.setItem("pollRate", "2");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  expect(store.getState().bot.pollRate).toBe(2);
+});
+
+test("ignores a corrupt pollRate in localStorage and keeps the default", () => {
+  localStorage.setItem("pollRate", "not-a-number");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  expect(store.getState().bot.pollRate).toBe(5);
+});
+
+test("ignores a non-positive pollRate in localStorage and keeps the default", () => {
+  localStorage.setItem("pollRate", "0");
+
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  expect(store.getState().bot.pollRate).toBe(5);
+});
+
 test("does not crash and keeps flows empty when flows JSON is corrupt", () => {
   localStorage.setItem("flows", "{bad json");
 

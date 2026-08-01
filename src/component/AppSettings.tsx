@@ -3,19 +3,22 @@ import {
   List,
   ListItem,
   ListItemText,
+  TextField,
   Typography,
   Stack,
   Paper,
   Switch,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BotWithConfig } from "../redux/types.ts";
 import { Flow } from "../interfaces/flow.ts";
 import {
+  defaultBotState,
   resetAll,
   setAutoStart,
   setFlows,
+  setPollRate,
   setToken,
 } from "../redux/botSlice.ts";
 
@@ -121,19 +124,42 @@ export const AppSettings = () => {
   const autoStart = useSelector<BotWithConfig, boolean>(
     (state) => state.bot.autoStart ?? false
   );
+  const pollRate = useSelector<BotWithConfig, number>(
+    (state) => state.bot.pollRate ?? defaultBotState.pollRate
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<{
     kind: "success" | "error";
     text: string;
   } | null>(null);
 
+  // Hydrate the poll rate from localStorage on mount so the settings page
+  // (and the bot, when it reads the store) reflects the saved preference.
+  useEffect(() => {
+    const stored = localStorage.getItem("pollRate");
+    if (stored === null) return;
+    const seconds = Number(stored);
+    if (Number.isFinite(seconds) && seconds > 0) {
+      dispatch(setPollRate(seconds));
+    }
+  }, [dispatch]);
+
   const handleAutoStartChange = (checked: boolean) => {
     dispatch(setAutoStart(checked));
     localStorage.setItem("autoStart", String(checked));
   };
 
+  const handlePollRateChange = (value: string) => {
+    const seconds = Number(value);
+    // Ignore empty input and anything that is not a positive number so the
+    // store never holds an invalid poll rate.
+    if (!Number.isFinite(seconds) || seconds <= 0) return;
+    dispatch(setPollRate(seconds));
+    localStorage.setItem("pollRate", String(seconds));
+  };
+
   const handleExport = () => {
-    const data = { version: 1, token, flows, autoStart };
+    const data = { version: 1, token, flows, autoStart, pollRate };
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
@@ -178,12 +204,25 @@ export const AppSettings = () => {
           return;
         }
         const importedFlows = parsed.flows ?? [];
+        // pollRate is OPTIONAL for backward compatibility with old export
+        // files; when absent OR not a valid positive number we reset it to
+        // the default (mirrors the flows behavior above: importing an old
+        // file applies defaults). A negative/zero rate would make the poll
+        // worker spin in a tight loop, so it is rejected like a missing key.
+        const importedPollRate =
+          typeof parsed.pollRate === "number" &&
+          Number.isFinite(parsed.pollRate) &&
+          parsed.pollRate > 0
+            ? parsed.pollRate
+            : defaultBotState.pollRate;
         dispatch(setToken(parsed.token));
         dispatch(setFlows(importedFlows));
         dispatch(setAutoStart(parsed.autoStart === true));
+        dispatch(setPollRate(importedPollRate));
         localStorage.setItem("token", parsed.token);
         localStorage.setItem("flows", JSON.stringify(importedFlows));
         localStorage.setItem("autoStart", String(parsed.autoStart === true));
+        localStorage.setItem("pollRate", String(importedPollRate));
         setImportStatus({ kind: "success", text: "Settings imported." });
       } catch {
         setImportStatus({
@@ -207,6 +246,7 @@ export const AppSettings = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("flows");
     localStorage.removeItem("autoStart");
+    localStorage.removeItem("pollRate");
   };
 
   return (
@@ -239,6 +279,30 @@ export const AppSettings = () => {
                 </Typography>
               }
               secondary="Starts the bot automatically when the page loads."
+            />
+          </ListItem>
+          <ListItem
+            sx={{ py: 1.5, px: 2, borderBottom: 1, borderColor: "divider" }}
+          >
+            <ListItemText
+              primary={
+                <Typography component="h3" sx={{ fontSize: 17, fontWeight: 600 }}>
+                  Poll rate (seconds)
+                </Typography>
+              }
+              secondary="How often the bot checks Telegram for new messages."
+            />
+            <TextField
+              type="number"
+              size="small"
+              inputProps={{
+                min: 1,
+                step: 1,
+                "aria-label": "Poll rate in seconds",
+              }}
+              value={pollRate}
+              onChange={(e) => handlePollRateChange(e.target.value)}
+              sx={{ width: 90 }}
             />
           </ListItem>
         </List>

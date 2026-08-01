@@ -4,7 +4,7 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { useBot } from "./useBot.ts";
 import { setupStore } from "../redux/testUtils.tsx";
-import { setAutoStart, setHydrated, setToken } from "../redux/botSlice.ts";
+import { setAutoStart, setHydrated, setPollRate, setToken } from "../redux/botSlice.ts";
 import { SAMPLE_FLOWS } from "../logic/flowSamples.ts";
 import { createFlow, createFlowNode } from "../logic/flow.ts";
 
@@ -97,10 +97,11 @@ test("start() creates two workers, sets started=true, and dispatches responses/u
   const poll = instances[0];
   const send = instances[1];
 
-  // poll_worker.postMessage called with the getUpdates URL.
-  expect(poll.postMessage).toHaveBeenCalledWith(
-    "https://api.telegram.org/botTOKEN/getUpdates"
-  );
+  // poll_worker.postMessage called with the getUpdates URL and default poll rate.
+  expect(poll.postMessage).toHaveBeenCalledWith({
+    url: "https://api.telegram.org/botTOKEN/getUpdates",
+    pollRateMs: 5000,
+  });
 
   await act(async () => {
     await poll.onmessage!({ data: [1234, "alice", 42, "/hello"] });
@@ -155,6 +156,22 @@ test("start() dispatches bot replies with fromBot=true and FromUser='Bot'", asyn
     fromBot: true,
   });
   expect(responses[1].TimeStamp).toEqual(expect.any(Number));
+});
+
+test("start() passes the configured poll rate from the store to the poll worker", () => {
+  const store = setupStore({
+    bot: { token: "TOKEN", response: [], users: [], pollRate: 2 },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+
+  expect(instances[0].postMessage).toHaveBeenCalledWith({
+    url: "https://api.telegram.org/botTOKEN/getUpdates",
+    pollRateMs: 2000,
+  });
 });
 
 test("start() when already started does nothing", () => {
@@ -462,9 +479,73 @@ test("auto-starts the bot instance with the hydrated token, not the stale one", 
   expect(instances.length).toBe(2);
   // The poll worker must be talking to /botTOKEN/getUpdates, proving the
   // empty-token instance was NOT the one auto-started.
-  expect(instances[0].postMessage).toHaveBeenCalledWith(
-    "https://api.telegram.org/botTOKEN/getUpdates"
-  );
+  expect(instances[0].postMessage).toHaveBeenCalledWith({
+    url: "https://api.telegram.org/botTOKEN/getUpdates",
+    pollRateMs: 5000,
+  });
+});
+
+test("auto-start uses the configured poll rate from the store", () => {
+  const store = setupStore({
+    bot: {
+      token: "",
+      response: [],
+      users: [],
+      autoStart: true,
+      hydrated: false,
+      pollRate: 5,
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  // Hydration in two separate renders: token first, then completion + a
+  // poll-rate change. The auto-start effect must re-run when the poll rate
+  // changes (it is one of its dependencies) and start with the new value.
+  act(() => {
+    store.dispatch(setToken("TOKEN"));
+  });
+  act(() => {
+    store.dispatch(setHydrated(true));
+    store.dispatch(setPollRate(2));
+  });
+
+  expect(result.current.started).toBe(true);
+  expect(instances[0].postMessage).toHaveBeenCalledWith({
+    url: "https://api.telegram.org/botTOKEN/getUpdates",
+    pollRateMs: 2000,
+  });
+});
+
+test("a poll rate change after auto-start does not restart the bot", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      response: [],
+      users: [],
+      autoStart: true,
+      hydrated: true,
+      pollRate: 5,
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  expect(result.current.started).toBe(true);
+  expect(instances.length).toBe(2);
+  expect(instances[0].postMessage).toHaveBeenCalledWith({
+    url: "https://api.telegram.org/botTOKEN/getUpdates",
+    pollRateMs: 5000,
+  });
+
+  // Changing the rate mid-session updates the store but must NOT spawn a
+  // second worker pair or restart the running bot (load-only semantics,
+  // same as the auto-start decision).
+  act(() => {
+    store.dispatch(setPollRate(2));
+  });
+
+  expect(result.current.started).toBe(true);
+  expect(instances.length).toBe(2);
+  expect(instances[0].postMessage).toHaveBeenCalledTimes(1);
 });
 
 test("does not auto-start when the token is added after load", () => {

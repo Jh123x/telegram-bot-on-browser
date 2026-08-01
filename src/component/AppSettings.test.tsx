@@ -107,6 +107,26 @@ test("toggling auto start dispatches setAutoStart and persists to localStorage",
   expect(localStorage.getItem("autoStart")).toBe("true");
 });
 
+test("renders a poll rate input showing the stored value in seconds", () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  const input = screen.getByLabelText(/poll rate/i);
+  expect(input).toHaveValue(5);
+});
+
+test("changing poll rate dispatches setPollRate and persists to localStorage", () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  fireEvent.change(screen.getByLabelText(/poll rate/i), {
+    target: { value: "2" },
+  });
+
+  expect(store.getState().bot.pollRate).toBe(2);
+  expect(localStorage.getItem("pollRate")).toBe("2");
+});
+
 test("coffee link points to buymeacoffee.com/jh123x and opens in a new tab", () => {
   const store = setupStore(seedState);
   renderWithProviders(<AppSettings />, { store });
@@ -139,6 +159,7 @@ test("export settings downloads a JSON file with the current settings", async ()
     token: "abc:TOKEN",
     flows: [validFlow],
     autoStart: false,
+    pollRate: 5,
   });
   expect(clickSpy).toHaveBeenCalledTimes(1);
   expect((URL as any).revokeObjectURL).toHaveBeenCalledWith("blob:mock");
@@ -173,6 +194,98 @@ test("import settings applies token, resets flows to empty and applies autoStart
   expect(store.getState().bot.autoStart).toBe(true);
   expect(localStorage.getItem("token")).toBe("imp-token");
   expect(localStorage.getItem("autoStart")).toBe("true");
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+});
+
+test("import settings restores pollRate when present in the file", async () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        pollRate: 3,
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(store.getState().bot.pollRate).toBe(3);
+  expect(localStorage.getItem("pollRate")).toBe("3");
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+});
+
+test("import settings without pollRate keeps the default", async () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        autoStart: false,
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  expect(store.getState().bot.pollRate).toBe(5);
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+});
+
+test("import settings with an invalid pollRate falls back to the default", async () => {
+  const store = setupStore(seedState);
+  renderWithProviders(<AppSettings />, { store });
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        pollRate: -3,
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  // A negative/zero rate would make the poll worker spin in a tight loop
+  // (setTimeout with <= 0 fires immediately), so invalid numbers must be
+  // rejected the same way as a missing pollRate.
+  expect(store.getState().bot.pollRate).toBe(5);
+  expect(localStorage.getItem("pollRate")).toBe("5");
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Settings imported."
   );
@@ -228,9 +341,11 @@ test("reset to default clears the store and localStorage after confirm", () => {
   localStorage.setItem("token", "abc:TOKEN");
   localStorage.setItem("flows", JSON.stringify([validFlow]));
   localStorage.setItem("autoStart", "false");
+  localStorage.setItem("pollRate", "3");
   renderWithProviders(<AppSettings />, { store });
 
   expect(store.getState().bot.flows).toEqual([validFlow]);
+  expect(store.getState().bot.pollRate).toBe(3);
 
   jest.spyOn(window, "confirm").mockReturnValue(true);
 
@@ -240,6 +355,7 @@ test("reset to default clears the store and localStorage after confirm", () => {
   expect(localStorage.getItem("token")).toBeNull();
   expect(localStorage.getItem("flows")).toBeNull();
   expect(localStorage.getItem("autoStart")).toBeNull();
+  expect(localStorage.getItem("pollRate")).toBeNull();
 });
 
 test("reset to default does nothing when confirm is declined", () => {

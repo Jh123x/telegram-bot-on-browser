@@ -10,7 +10,7 @@ import { DocsPage } from "./pages/DocsPage.tsx";
 import { FlowsPage } from "./pages/FlowsPage.tsx";
 import { useBot } from "./hooks/useBot.ts";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken, setAutoStart, setHydrated, setFlows, addFlow } from "./redux/botSlice.ts";
+import { setToken, setAutoStart, setHydrated, setFlows, setPollRate, addFlow } from "./redux/botSlice.ts";
 import { useEffect, useRef } from "react";
 import React from "react";
 import { flowFromSample } from "./logic/flow.ts";
@@ -82,6 +82,13 @@ export const App = () => {
     }
     const autoStart = localStorage.getItem("autoStart");
     if (autoStart !== null) dispatch(setAutoStart(autoStart === "true"));
+    const pollRate = localStorage.getItem("pollRate");
+    if (pollRate !== null) {
+      const seconds = Number(pollRate);
+      if (Number.isFinite(seconds) && seconds > 0) {
+        dispatch(setPollRate(seconds));
+      }
+    }
     // Hydration is complete whether or not localStorage had values. Auto-start
     // decisions are made at exactly this point (load-only semantics).
     dispatch(setHydrated(true));
