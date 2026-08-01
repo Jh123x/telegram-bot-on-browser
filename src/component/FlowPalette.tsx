@@ -16,7 +16,7 @@ interface FlowPaletteProps {
 export const FlowPalette = ({ onPick }: FlowPaletteProps) => (
   <Paper
     data-testid="flow-palette"
-    sx={{ p: 2, width: 160, flexShrink: 0, height: "100%" }}
+    sx={{ p: 2, width: 160, flexShrink: 0 }}
   >
     <Typography variant="subtitle2">Palette</Typography>
     <Typography variant="caption" sx={{ color: "text.secondary" }}>
