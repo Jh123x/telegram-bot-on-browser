@@ -129,6 +129,42 @@ test("composer is disabled until a user is selected, then sends to the selected 
   expect(screen.getByRole("textbox")).toHaveValue("");
 });
 
+test("sending a message dispatches a fromBot response for the selected user into the store", () => {
+  const store = convoStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("123:TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "hello" } });
+  fireEvent.click(screen.getByRole("button", { name: "Send" }));
+
+  const responses = store.getState().bot.response;
+  expect(
+    responses.some(
+      (r) =>
+        r.Message === "hello" &&
+        r.fromBot === true &&
+        r.UserID === 42 &&
+        r.FromUser === "Bot"
+    )
+  ).toBe(true);
+});
+
+test("a manually sent message appears in the conversation feed as a Bot bubble", () => {
+  renderWithProviders(<ChatPage bot={new BrowserBot("123:TOKEN")} />, {
+    store: convoStore(),
+  });
+
+  fireEvent.click(screen.getByRole("button", { name: /alice/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "hello" } });
+  fireEvent.click(screen.getByRole("button", { name: "Send" }));
+
+  expect(screen.getByText("hello")).toBeTruthy();
+});
+
 test("composer does nothing when no bot is provided", () => {
   const store = convoStore();
   renderWithProviders(<ChatPage />, { store });

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addResponse } from "../redux/botSlice.ts";
 import {
   Avatar,
   Box,
@@ -32,6 +33,7 @@ const deriveUsersFromResponses = (responses: Response[]): User[] => {
 const timeLabel = (timestamp: number) => new Date(timestamp).toLocaleTimeString();
 
 export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
+  const dispatch = useDispatch();
   const storeUsers = useSelector<BotWithConfig, User[]>((state) => state.bot.users);
   const responses = useSelector<BotWithConfig, Response[]>((state) => state.bot.response);
 
@@ -50,6 +52,15 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
   const send = () => {
     if (selectedUserID === null || !bot || message.trim() === "") return;
     bot.sendMessage(selectedUserID, message);
+    dispatch(
+      addResponse({
+        FromUser: "Bot",
+        UserID: selectedUserID,
+        Message: message,
+        TimeStamp: Date.now(),
+        fromBot: true,
+      })
+    );
     setMessage("");
   };
 
