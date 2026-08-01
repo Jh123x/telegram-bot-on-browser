@@ -3,26 +3,61 @@
 ![Npm CI](https://github.com/jh123x/telegram-bot-on-browser/actions/workflows/node.js.yml/badge.svg "NPM CI")
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1a82dc34-1aa2-4058-bda6-27d03486aa9f/deploy-status)](https://app.netlify.com/sites/zesty-brigadeiros-e31668/deploys "Deploy Status")
 
-This is a bot that runs in the browser. It uses the [Telegram Bot API](https://core.telegram.org/bots/api) to communicate with the Telegram servers.
+A Telegram bot that runs entirely in your browser. It talks to the
+[Telegram Bot API](https://core.telegram.org/bots/api) directly from the page.
+No server, no backend, no deployment.
 
-You can visit the site [here](https://telebot.jh123x.com/ "Telegram Bot on Browser").
+You can visit the live site here: <https://telebot.jh123x.com/>
 
-## Features
+## What you can do
 
-1. Drag-and-drop programming: build bot reply logic with trigger, logic, transform and action blocks.
-2. No server required. (Runs in the browser directly)
-3. Sample programs to get started (welcome, coin flip, echo, shout, and more).
+- Build bot reply logic with a drag-and-drop style block editor.
+- Test your bot in a built-in chat before you start it.
+- Run the bot from the Chat tab and talk to real Telegram users.
 
-## Tech Stack:
+## Quick start
+
+1. Create a bot with [@BotFather](https://t.me/BotFather) on Telegram.
+   Copy the token it gives you.
+2. Open the **Settings** tab and paste the token. It is stored only in your
+   browser's localStorage.
+3. Open the **Programs** tab and build a program, or click a sample to load
+   one (Welcome, Coin Flip, Shout, Only Numbers, and more).
+4. Open the **Chat** tab and press **Start** in the header. The bot starts
+   polling Telegram.
+5. Use **Test User** in the Chat tab to preview replies without sending
+   anything to Telegram.
+
+## Documentation
+
+- [Features](docs/FEATURES.md) — what the website does and how to use it.
+- [Architecture](docs/ARCHITECTURE.md) — how the website works under the hood.
+
+## Tech stack
 
 1. React
-2. Redux
+2. Redux (Redux Toolkit)
+3. Material UI
+4. TypeScript
 
-## To do:
+## Project layout
+
+```
+src/
+  component/   UI building blocks (program cards, chat, editor)
+  hooks/       React hooks (bot lifecycle)
+  interfaces/  TypeScript types
+  logic/       Pure bot logic (triggers, transforms, execution)
+  pages/       Page views (Programs, Chat, Settings, Docs)
+  redux/       Redux store and slices
+docs/          Feature and architecture documentation
+```
+
+## To do
 
 - [x] Build a minimal UI
 - [x] Send replies from bots
 - [x] Receive chats from users
 - [x] Send custom chat to users
 - [x] Process user-made commands on the website
-- [ ] Export file as an express telegram bot application
+- [ ] Export a program as an Express Telegram bot application
