@@ -275,6 +275,43 @@ test("Else reply fallback field updates fallback", () => {
   expect(store.getState().bot.programs[0].blocks[0].fallback).toBe("Too long");
 });
 
+test("reply Response field is a multiline textarea", () => {
+  const { store } = renderCard(makeProgram(), 0, 1);
+  expect(screen.getByLabelText("Response").tagName).toBe("TEXTAREA");
+});
+
+test("typing a multi-line reply preserves newlines in the store", () => {
+  const { store } = renderCard(makeProgram(), 0, 1);
+  const textarea = screen.getByLabelText("Response");
+  fireEvent.change(textarea, { target: { value: "line one\nline two" } });
+  expect(store.getState().bot.programs[0].blocks[0].value).toBe(
+    "line one\nline two"
+  );
+});
+
+test("logic Else reply field is a multiline textarea and preserves newlines", () => {
+  const p: Program = {
+    id: "p1",
+    name: "Greet",
+    trigger: { type: "equals", value: "/start" },
+    blocks: [
+      {
+        id: "b1",
+        category: "logic",
+        kind: "lengthLess",
+        value: "5",
+        value2: "",
+        fallback: "",
+      },
+    ],
+  };
+  const { store } = renderCard(p, 0, 1);
+  const fallbackField = screen.getByLabelText("Else reply (optional)");
+  expect(fallbackField.tagName).toBe("TEXTAREA");
+  fireEvent.change(fallbackField, { target: { value: "no\nway" } });
+  expect(store.getState().bot.programs[0].blocks[0].fallback).toBe("no\nway");
+});
+
 test("replace block shows Find and Replace with fields and both update value and value2", () => {
   const p: Program = {
     id: "p1",

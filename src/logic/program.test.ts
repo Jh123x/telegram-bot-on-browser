@@ -441,6 +441,12 @@ describe("executeBlocks", () => {
     expect(executeBlocks(blocks, "msg")).toEqual(["one", "msg", "three"]);
   });
 
+  test("reply action preserves newlines in the sent message", () => {
+    expect(executeBlocks([actionBlock("reply", "Hello\nWorld")], "anything")).toEqual([
+      "Hello\nWorld",
+    ]);
+  });
+
   test("random with injected random 0 picks first", () => {
     const blocks: Block[] = [actionBlock("random", "first\nsecond\nthird")];
     expect(executeBlocks(blocks, "msg", () => 0)).toEqual(["first"]);

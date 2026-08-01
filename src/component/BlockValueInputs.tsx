@@ -49,6 +49,10 @@ export const BlockValueInputs = ({
           label="Else reply (optional)"
           value={block.fallback}
           onChange={(e) => onChange(block.id, { fallback: e.target.value })}
+          multiline
+          minRows={2}
+          maxRows={4}
+          sx={{ minWidth: 260 }}
         />
       </>
     );
@@ -137,6 +141,10 @@ export const BlockValueInputs = ({
         label="Response"
         value={block.value}
         onChange={(e) => onChange(block.id, { value: e.target.value })}
+        multiline
+        minRows={2}
+        maxRows={4}
+        sx={{ minWidth: 260 }}
       />
     );
   }
