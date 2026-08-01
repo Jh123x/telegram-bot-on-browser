@@ -195,8 +195,6 @@ export function executeFlow(
         const next = nodesById.get(outgoing[0].target);
         if (!next) return undefined;
         // start transitions are unconditional; follow the first outgoing edge
-        const chain = new Set(visited);
-        chain.add(current.id);
         current = next;
         continue;
       }
