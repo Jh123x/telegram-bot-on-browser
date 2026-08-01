@@ -1,6 +1,6 @@
 import { test, expect } from "@jest/globals";
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within, fireEvent } from "@testing-library/react";
 import { ProgramPalette } from "./ProgramPalette";
 
 test("renders the Blocks heading and reference caption", () => {
@@ -108,4 +108,67 @@ test("descriptions use the palette-description testids per category and type", (
 test("renders no draggable elements", () => {
   render(<ProgramPalette />);
   expect(document.querySelectorAll('[draggable="true"]')).toHaveLength(0);
+});
+
+test("renders one table per section with Block Type and Description headers", () => {
+  render(<ProgramPalette />);
+
+  expect(screen.getAllByRole("columnheader", { name: "Block Type" })).toHaveLength(4);
+  expect(screen.getAllByRole("columnheader", { name: "Description" })).toHaveLength(4);
+  expect(screen.getByTestId("palette-table-trigger")).toBeInTheDocument();
+  expect(screen.getByTestId("palette-table-logic")).toBeInTheDocument();
+  expect(screen.getByTestId("palette-table-transform")).toBeInTheDocument();
+  expect(screen.getByTestId("palette-table-action")).toBeInTheDocument();
+});
+
+test("each table has the right number of rows", () => {
+  render(<ProgramPalette />);
+
+  const expected = [
+    ["palette-table-trigger", 6],
+    ["palette-table-logic", 5],
+    ["palette-table-transform", 9],
+    ["palette-table-action", 3],
+  ] as const;
+  for (const [testId, count] of expected) {
+    // +1 to account for the header row.
+    expect(within(screen.getByTestId(testId)).getAllByRole("row")).toHaveLength(
+      count + 1
+    );
+  }
+});
+
+test("starts expanded with a hide toggle", () => {
+  render(<ProgramPalette />);
+
+  const toggle = screen.getByRole("button", { name: "Hide block reference" });
+  expect(toggle).toHaveAttribute("aria-expanded", "true");
+  expect(screen.getByTestId("palette-description-trigger-equals")).toBeVisible();
+});
+
+test("clicking the toggle collapses the reference", () => {
+  render(<ProgramPalette />);
+
+  const toggle = screen.getByRole("button", { name: "Hide block reference" });
+  fireEvent.click(toggle);
+
+  expect(screen.getByRole("button", { name: "Show block reference" })).toHaveAttribute(
+    "aria-expanded",
+    "false"
+  );
+  expect(screen.getByTestId("palette-collapse")).toHaveStyle({ height: "0px" });
+});
+
+test("toggling back open shows the reference again", () => {
+  render(<ProgramPalette />);
+
+  const toggle = screen.getByRole("button", { name: "Hide block reference" });
+  fireEvent.click(toggle);
+  fireEvent.click(screen.getByRole("button", { name: "Show block reference" }));
+
+  expect(screen.getByRole("button", { name: "Hide block reference" })).toHaveAttribute(
+    "aria-expanded",
+    "true"
+  );
+  expect(screen.getByTestId("palette-description-trigger-equals")).toBeVisible();
 });
