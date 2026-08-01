@@ -34,3 +34,19 @@ export const theme = createTheme({
     },
   },
 });
+
+export const GRAPH_COLORS = {
+  node: {
+    start: { accent: "#7c3aed", bg: "rgba(124, 58, 237, 0.08)" },
+    transform: { accent: "#38bdf8", bg: "rgba(56, 189, 248, 0.08)" },
+    condition: { accent: "#fbbf24", bg: "rgba(251, 191, 36, 0.08)" },
+    send: { accent: "#34d399", bg: "rgba(52, 211, 153, 0.08)" },
+  },
+  edge: { if: "#22c55e", else: "#ef4444", plain: "#6b7280" },
+} as const;
+
+export function edgeColorFor(sourceHandle: "if" | "else" | undefined): string {
+  if (sourceHandle === "if") return GRAPH_COLORS.edge.if;
+  if (sourceHandle === "else") return GRAPH_COLORS.edge.else;
+  return GRAPH_COLORS.edge.plain;
+}

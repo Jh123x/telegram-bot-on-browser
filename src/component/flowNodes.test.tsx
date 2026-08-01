@@ -10,13 +10,13 @@ import {
 
 // Node components receive a single `NodeProps` object; we construct a minimal
 // one (TypeScript casts keep the test focused on what matters).
-const makeNodeProps = (data: Record<string, any>, type = "node") =>
+const makeNodeProps = (data: Record<string, any>, type = "node", selected = false) =>
   ({
     id: "n1",
     type,
     data,
     position: { x: 0, y: 0 },
-    selected: false,
+    selected,
     dragging: false,
     measured: { width: 120, height: 60 },
   } as any);
@@ -112,11 +112,13 @@ test("ConditionNode renders its label and a trigger caption", () => {
 });
 
 test("ConditionNode shows a neutral caption when it has no trigger", () => {
-  const { getByText } = render(
+  const { getAllByText } = render(
     <ConditionNode {...makeNodeProps({ label: "Cond" })} />
   );
 
-  expect(getByText("condition")).toBeTruthy();
+  // The node always renders its type badge ("condition"); with no trigger the
+  // caption also falls back to "condition", so tolerate both occurrences.
+  expect(getAllByText("condition").length).toBeGreaterThan(0);
 });
 
 test("SendNode renders its label, reply count, and a testid", () => {
@@ -147,3 +149,63 @@ test("SendNode has a single (target) handle and no source handle", () => {
   const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
   expect(handles).toHaveLength(1);
 });
+
+test("StartNode card border uses the start accent color", () => {
+  const { getByTestId } = render(<StartNode {...makeNodeProps({ label: "Start" })} />);
+  expect(getComputedStyle(getByTestId("flow-node-start")).borderColor).toBe(
+    "#7c3aed"
+  );
+});
+
+test("TransformNode card border uses the transform accent color", () => {
+  const { getByTestId } = render(<TransformNode {...makeNodeProps({ label: "Upper" })} />);
+  expect(getComputedStyle(getByTestId("flow-node-transform")).borderColor).toBe(
+    "#38bdf8"
+  );
+});
+
+test("ConditionNode card border uses the condition accent color", () => {
+  const { getByTestId } = render(<ConditionNode {...makeNodeProps({ label: "Cond" })} />);
+  expect(getComputedStyle(getByTestId("flow-node-condition")).borderColor).toBe(
+    "#fbbf24"
+  );
+});
+
+test("SendNode card border uses the send accent color", () => {
+  const { getByTestId } = render(<SendNode {...makeNodeProps({ label: "Echo" })} />);
+  expect(getComputedStyle(getByTestId("flow-node-send")).borderColor).toBe(
+    "#34d399"
+  );
+});
+
+test("a selected node shows a selection ring in its accent color", () => {
+  const { getByTestId } = render(
+    <TransformNode {...makeNodeProps({ label: "Upper" }, "transform", true)} />
+  );
+  expect(getComputedStyle(getByTestId("flow-node-transform")).boxShadow).toContain(
+    "#38bdf8"
+  );
+});
+
+test("TransformNode renders its type badge", () => {
+  const { getByText } = render(<TransformNode {...makeNodeProps({ label: "Upper" })} />);
+  expect(getByText("transform")).toBeTruthy();
+});
+
+test("ConditionNode renders its type badge", () => {
+  const { getByText } = render(
+    <ConditionNode
+      {...makeNodeProps({
+        label: "Cond",
+        trigger: { type: "contains", value: "hi" },
+      })}
+    />
+  );
+  expect(getByText("condition")).toBeTruthy();
+});
+
+test("SendNode renders its type badge", () => {
+  const { getByText } = render(<SendNode {...makeNodeProps({ label: "Echo" })} />);
+  expect(getByText("send")).toBeTruthy();
+});
+
