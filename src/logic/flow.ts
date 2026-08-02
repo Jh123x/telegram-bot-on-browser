@@ -34,6 +34,7 @@ export const TRANSFORM_TYPES: TransformNodeType[] = [
   "trim",
   "replace",
   "extractRegex",
+  "randomNumber",
 ];
 
 export const SEND_TYPES: SendNodeType[] = ["send", "random", "poll"];
@@ -183,6 +184,21 @@ export function applyTransform(
       } catch {
         return "";
       }
+    case "randomNumber": {
+      const min = Number(data.min);
+      const max = Number(data.max);
+      if (
+        data.min === undefined ||
+        data.max === undefined ||
+        !Number.isFinite(min) ||
+        !Number.isFinite(max) ||
+        min > max
+      ) {
+        return message;
+      }
+      const roll = Math.floor(Math.random() * (max - min + 1)) + min;
+      return String(roll);
+    }
     default:
       return message;
   }
@@ -262,6 +278,11 @@ export function createFlowNode(
       };
     case "extractRegex":
       return { ...base, data: { label: "Extract Regex", pattern: "" } };
+    case "randomNumber":
+      return {
+        ...base,
+        data: { label: "Random Number", min: "1", max: "6" },
+      };
     case "equals":
     case "notEquals":
     case "startsWith":
@@ -516,6 +537,8 @@ export function flowFromSample(sample: FlowSample): Flow {
     if (node.data.replacement !== undefined)
       data.replacement = node.data.replacement;
     if (node.data.pattern !== undefined) data.pattern = node.data.pattern;
+    if (node.data.min !== undefined) data.min = node.data.min;
+    if (node.data.max !== undefined) data.max = node.data.max;
     if (node.data.replies !== undefined) data.replies = [...node.data.replies];
     return {
       ...node,

@@ -76,13 +76,14 @@ describe("TRIGGER_TYPES / TRIGGER_LABELS", () => {
 });
 
 describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
-  test("exposes the five concrete transform types", () => {
+  test("exposes the six concrete transform types", () => {
     expect(TRANSFORM_TYPES).toEqual([
       "lowercase",
       "uppercase",
       "trim",
       "replace",
       "extractRegex",
+      "randomNumber",
     ]);
   });
 
@@ -249,6 +250,57 @@ describe("applyTransform", () => {
       applyTransform("extractRegex", { label: "E", pattern: "(" }, "abc")
     ).toBe("");
   });
+
+  test("randomNumber returns the min value when Math.random is 0", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    expect(
+      applyTransform("randomNumber", { label: "R", min: "1", max: "6" }, "anything")
+    ).toBe("1");
+  });
+
+  test("randomNumber returns the max value when Math.random is near 1", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
+    expect(
+      applyTransform("randomNumber", { label: "R", min: "1", max: "6" }, "anything")
+    ).toBe("6");
+  });
+
+  test("randomNumber picks an inclusive value inside the range", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.4);
+    // floor(0.4 * 6) + 1 = 3
+    expect(
+      applyTransform("randomNumber", { label: "R", min: "1", max: "6" }, "x")
+    ).toBe("3");
+  });
+
+  test("randomNumber honors a custom min/max range", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    expect(
+      applyTransform("randomNumber", { label: "R", min: "10", max: "12" }, "x")
+    ).toBe("10");
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
+    expect(
+      applyTransform("randomNumber", { label: "R", min: "10", max: "12" }, "x")
+    ).toBe("12");
+  });
+
+  test("randomNumber leaves the message unchanged when min/max are missing", () => {
+    expect(
+      applyTransform("randomNumber", { label: "R" }, "keep me")
+    ).toBe("keep me");
+  });
+
+  test("randomNumber leaves the message unchanged when min/max are not numbers", () => {
+    expect(
+      applyTransform("randomNumber", { label: "R", min: "a", max: "b" }, "keep me")
+    ).toBe("keep me");
+  });
+
+  test("randomNumber leaves the message unchanged when min exceeds max", () => {
+    expect(
+      applyTransform("randomNumber", { label: "R", min: "6", max: "1" }, "keep me")
+    ).toBe("keep me");
+  });
 });
 
 describe("createFlowNode", () => {
@@ -304,6 +356,12 @@ describe("createFlowNode", () => {
     const node = createFlowNode("random");
     expect(node.type).toBe("random");
     expect(node.data).toEqual({ label: "Random", replies: [] });
+  });
+
+  test("randomNumber node gets default min and max bounds", () => {
+    const node = createFlowNode("randomNumber");
+    expect(node.type).toBe("randomNumber");
+    expect(node.data).toEqual({ label: "Random Number", min: "1", max: "6" });
   });
 
   test("poll node gets only a Poll label (no replies field)", () => {
@@ -914,6 +972,12 @@ describe("flowFromSample", () => {
     position: { x: 240, y: 0 },
     data: { label: "T", find: "a", replacement: "o" },
   };
+  const randomNumberNode: Flow["nodes"][number] = {
+    id: "node-rn",
+    type: "randomNumber",
+    position: { x: 360, y: 0 },
+    data: { label: "R", min: "1", max: "20" },
+  };
   const conditionNode: Flow["nodes"][number] = {
     id: "node-c",
     type: "contains",
@@ -939,12 +1003,13 @@ describe("flowFromSample", () => {
       id: "flow-sample",
       name: "Greeting Check",
       startNodeId: "node-start",
-      nodes: [startNode, transformNode, conditionNode, ifSend, elseSend],
+      nodes: [startNode, transformNode, randomNumberNode, conditionNode, ifSend, elseSend],
       edges: [
         { id: "edge-1", source: "node-start", target: "node-tx" },
-        { id: "edge-2", source: "node-tx", target: "node-c" },
-        { id: "edge-3", source: "node-c", target: "node-if", sourceHandle: "if" as const },
-        { id: "edge-4", source: "node-c", target: "node-else", sourceHandle: "else" as const },
+        { id: "edge-2", source: "node-tx", target: "node-rn" },
+        { id: "edge-3", source: "node-rn", target: "node-c" },
+        { id: "edge-4", source: "node-c", target: "node-if", sourceHandle: "if" as const },
+        { id: "edge-5", source: "node-c", target: "node-else", sourceHandle: "else" as const },
       ],
     },
   };
@@ -955,12 +1020,13 @@ describe("flowFromSample", () => {
     expect(created.nodes.map((n) => n.data)).toEqual([
       { label: "Start" },
       { label: "T", find: "a", replacement: "o" },
+      { label: "R", min: "1", max: "20" },
       { label: "C", value: "hi" },
       { label: "If", replies: ["Hello! 👋"] },
       { label: "Else", replies: ["Say hi!"] },
     ]);
-    expect(created.edges[2].sourceHandle).toBe("if");
-    expect(created.edges[3].sourceHandle).toBe("else");
+    expect(created.edges[3].sourceHandle).toBe("if");
+    expect(created.edges[4].sourceHandle).toBe("else");
     // plain edges keep no sourceHandle
     expect(created.edges[0].sourceHandle).toBeUndefined();
   });
@@ -996,15 +1062,20 @@ describe("flowFromSample", () => {
     createdTx.data.find = "Z";
     createdTx.data.replacement = "Q";
 
+    const createdRn = created.nodes.find((n) => n.type === "randomNumber")!;
+    createdRn.data.min = "99";
+    createdRn.data.max = "100";
+
     const createdCond = created.nodes.find((n) => n.type === "contains")!;
     createdCond.data.value = "changed";
 
     const createdIf = created.nodes.find((n) => n.id === created.nodes.find((nn) => nn.type === "send" && (nn.data.replies?.[0] === "Hello! 👋"))!.id)!;
     createdIf.data.replies!.push("mutated");
 
-    // Source transform/trigger/replies unaffected.
+    // Source transform/randomNumber/trigger/replies unaffected.
     expect(sample.flow.nodes[1].data).toEqual({ label: "T", find: "a", replacement: "o" });
-    expect(sample.flow.nodes[2].data).toEqual({ label: "C", value: "hi" });
+    expect(sample.flow.nodes[2].data).toEqual({ label: "R", min: "1", max: "20" });
+    expect(sample.flow.nodes[3].data).toEqual({ label: "C", value: "hi" });
     const srcIf = sample.flow.nodes.find((n) => n.type === "send")!;
     expect(srcIf.data.replies).toEqual(["Hello! 👋"]);
     // The created flow still validates cleanly.

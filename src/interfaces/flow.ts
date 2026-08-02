@@ -11,7 +11,8 @@ export type TransformNodeType =
   | "uppercase"
   | "trim"
   | "replace"
-  | "extractRegex";
+  | "extractRegex"
+  | "randomNumber";
 
 export type SendNodeType = "send" | "random" | "poll";
 
@@ -39,6 +40,8 @@ export interface FlowNodeData {
   find?: string; // "replace" transform: text to find
   replacement?: string; // "replace" transform: replacement text
   pattern?: string; // "extractRegex" transform: regex pattern
+  min?: string; // "randomNumber" transform: inclusive lower bound
+  max?: string; // "randomNumber" transform: inclusive upper bound
   replies?: string[]; // "send" / "random" nodes: one message per line
 }
 

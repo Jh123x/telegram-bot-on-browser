@@ -53,14 +53,16 @@ function sendNode(
   return node;
 }
 
-function randomNode(
+function randomNumberNode(
   label: string,
-  replies: string[],
+  min: string,
+  max: string,
   position: { x: number; y: number }
 ): FlowNode {
-  const node = createFlowNode("random", position);
+  const node = createFlowNode("randomNumber", position);
   node.data.label = label;
-  node.data.replies = [...replies];
+  node.data.min = min;
+  node.data.max = max;
   return node;
 }
 
@@ -75,8 +77,9 @@ function edge(source: string, target: string, sourceHandle?: "if" | "else"): Flo
 }
 
 // A chain of startsWith conditions: each checks the /dice command plus one
-// D&D die type, and its if branch rolls that die with a random node holding
-// the die's number list. The final else explains the valid dice.
+// D&D die type. Its if branch rolls that die with a dedicated randomNumber
+// node (min 1, max = the die's sides), then a plain send node formats the
+// result. The final else explains the valid dice.
 const DICE_TYPES: { die: string; sides: number }[] = [
   { die: "d4", sides: 4 },
   { die: "d6", sides: 6 },
@@ -105,13 +108,21 @@ function diceBotFlow(): Flow {
       x: 720,
       y: -300 + index * 100,
     });
-    const roll = randomNode(
+    const roll = randomNumberNode(
       `Roll ${die}`,
-      Array.from({ length: sides }, (_, i) => String(i + 1)),
+      "1",
+      String(sides),
       { x: 960, y: -300 + index * 100 }
     );
-    flow.nodes.push(cond, roll);
-    flow.edges.push(edge(cond.id, roll.id, "if"));
+    const reply = sendNode(`Send ${die}`, [`🎲 ${die}: {msg}`], {
+      x: 1200,
+      y: -300 + index * 100,
+    });
+    flow.nodes.push(cond, roll, reply);
+    flow.edges.push(
+      edge(cond.id, roll.id, "if"),
+      edge(roll.id, reply.id)
+    );
     // The gate's if branch feeds the first dice condition; every later
     // condition hangs off the previous condition's else branch.
     if (index === 0) {
@@ -125,7 +136,7 @@ function diceBotFlow(): Flow {
   const usage = sendNode(
     "Usage",
     ["Please use /dice d4, d6, d8, d10, d12, d20 or d100"],
-    { x: 960, y: 420 }
+    { x: 1200, y: 420 }
   );
   flow.nodes.push(usage);
   flow.edges.push(edge(previousCondition.id, usage.id, "else"));

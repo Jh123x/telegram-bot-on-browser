@@ -33,31 +33,31 @@ describe("Dice Bot execution", () => {
   it("rolls a d4 between 1 and 4", () => {
     const rt = new FlowRuntime(DICE.flow);
     vi.spyOn(Math, "random").mockReturnValue(0);
-    expect(rt.handleMessage(1, "/dice d4")).toBe("1");
+    expect(rt.handleMessage(1, "/dice d4")).toBe("🎲 d4: 1");
     vi.spyOn(Math, "random").mockReturnValue(0.999);
-    expect(rt.handleMessage(1, "/dice d4")).toBe("4");
+    expect(rt.handleMessage(1, "/dice d4")).toBe("🎲 d4: 4");
   });
 
   it("rolls a d20 between 1 and 20", () => {
     const rt = new FlowRuntime(DICE.flow);
     vi.spyOn(Math, "random").mockReturnValue(0);
-    expect(rt.handleMessage(1, "/dice d20")).toBe("1");
+    expect(rt.handleMessage(1, "/dice d20")).toBe("🎲 d20: 1");
     vi.spyOn(Math, "random").mockReturnValue(0.999);
-    expect(rt.handleMessage(1, "/dice d20")).toBe("20");
+    expect(rt.handleMessage(1, "/dice d20")).toBe("🎲 d20: 20");
   });
 
   it("rolls a d100 between 1 and 100", () => {
     const rt = new FlowRuntime(DICE.flow);
     vi.spyOn(Math, "random").mockReturnValue(0);
-    expect(rt.handleMessage(1, "/dice d100")).toBe("1");
+    expect(rt.handleMessage(1, "/dice d100")).toBe("🎲 d100: 1");
     vi.spyOn(Math, "random").mockReturnValue(0.999);
-    expect(rt.handleMessage(1, "/dice d100")).toBe("100");
+    expect(rt.handleMessage(1, "/dice d100")).toBe("🎲 d100: 100");
   });
 
   it("handles uppercase dice commands via the lowercase transform", () => {
     const rt = new FlowRuntime(DICE.flow);
     vi.spyOn(Math, "random").mockReturnValue(0);
-    expect(rt.handleMessage(1, "/DICE D20")).toBe("1");
+    expect(rt.handleMessage(1, "/DICE D20")).toBe("🎲 d20: 1");
   });
 
   it("replies with the usage hint for an invalid dice type", () => {
