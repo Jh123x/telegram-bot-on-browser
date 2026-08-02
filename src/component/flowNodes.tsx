@@ -212,11 +212,15 @@ export const RandomNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
 // carries no replies of its own. Terminal: a single target handle, no source.
 export const PollNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
   const { accent, bg } = GRAPH_COLORS.node.send;
+  const pollType = data.pollType === "quiz" ? "quiz" : "poll";
+  const anonymity = data.isAnonymous === "false" ? "public" : "anonymous";
   return (
     <Box data-testid="flow-node-poll" sx={cardSx(accent, bg, selected)}>
       <CardLabel>{data.label}</CardLabel>
       <TypeBadge label="poll" color={accent} />
-      <CardCaption>sends a Telegram poll</CardCaption>
+      <CardCaption>
+        sends a {pollType}, {anonymity}
+      </CardCaption>
       <Handle type="target" position={Position.Left} style={{ background: accent }} />
     </Box>
   );

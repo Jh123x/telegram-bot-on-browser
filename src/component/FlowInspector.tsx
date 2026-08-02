@@ -1,5 +1,14 @@
 import React, { useEffect, useRef } from "react";
-import { Button, Paper, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  FormControlLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { nodeCategory } from "../logic/flow.ts";
 import {
   Flow,
@@ -222,6 +231,9 @@ export const FlowInspector = ({
 
     // send category (send / random)
     if (selectedNode.type === "poll") {
+      const pollType = selectedNode.data.pollType ?? "regular";
+      const isAnonymous = selectedNode.data.isAnonymous ?? "true";
+      const isQuiz = pollType === "quiz";
       return (
         <Paper ref={panelRef} sx={{ p: 1.5 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
@@ -237,6 +249,83 @@ export const FlowInspector = ({
           >
             Parses /poll &lt;title&gt; option1, option2, option3 from the message.
           </Typography>
+
+          <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 1.5, fontWeight: 600 }}>
+            Poll type
+          </Typography>
+          <Select
+            size="small"
+            fullWidth
+            value={pollType}
+            onChange={(e) => setNodeData({ pollType: e.target.value })}
+            sx={{ mt: 0.5 }}
+            inputProps={{ "aria-label": "Poll type" }}
+          >
+            <MenuItem value="regular">Regular poll</MenuItem>
+            <MenuItem value="quiz">Quiz</MenuItem>
+          </Select>
+
+          <FormControlLabel
+            control={
+              <Switch
+                size="small"
+                checked={isAnonymous === "false"}
+                onChange={(e) =>
+                  setNodeData({ isAnonymous: e.target.checked ? "false" : "true" })
+                }
+              />
+            }
+            label="Public (not anonymous)"
+            sx={{ mt: 1 }}
+          />
+
+          {isQuiz ? (
+            <>
+              <TextField
+                label="Correct option (0-based)"
+                size="small"
+                fullWidth
+                sx={{ mt: 1 }}
+                value={selectedNode.data.correctOptionId ?? ""}
+                onChange={(e) => setNodeData({ correctOptionId: e.target.value })}
+              />
+              <TextField
+                label="Explanation (quiz)"
+                size="small"
+                fullWidth
+                multiline
+                minRows={2}
+                sx={{ mt: 1 }}
+                value={selectedNode.data.explanation ?? ""}
+                onChange={(e) => setNodeData({ explanation: e.target.value })}
+              />
+            </>
+          ) : (
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={selectedNode.data.allowsMultipleAnswers === "true"}
+                  onChange={(e) =>
+                    setNodeData({
+                      allowsMultipleAnswers: e.target.checked ? "true" : "false",
+                    })
+                  }
+                />
+              }
+              label="Allow multiple answers"
+              sx={{ mt: 1 }}
+            />
+          )}
+
+          <TextField
+            label="Open period (seconds, 5-600)"
+            size="small"
+            fullWidth
+            sx={{ mt: 1 }}
+            value={selectedNode.data.openPeriod ?? ""}
+            onChange={(e) => setNodeData({ openPeriod: e.target.value })}
+          />
           {onDelete && <DeleteButton label="Delete node" onDelete={onDelete} />}
         </Paper>
       );

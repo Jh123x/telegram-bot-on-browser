@@ -1,5 +1,5 @@
 import { test, expect, vi } from "vitest";
-import React from "react";
+import React, { useState } from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { FlowInspector } from "./FlowInspector.tsx";
 import { renderWithProviders } from "../redux/testUtils.tsx";
@@ -77,6 +77,23 @@ const renderInspector = (
       onDelete={onDelete}
     />
   );
+
+// Stateful harness: re-renders the inspector with the updated flow so
+// conditional fields (quiz-only controls) appear after a Select change.
+const PollHarness = ({ onUpdate }: { onUpdate: (f: Flow) => void }) => {
+  const [f, setF] = useState(makeFlow());
+  return (
+    <FlowInspector
+      flow={f}
+      selectedNodeId="poll1"
+      selectedEdgeId={null}
+      onUpdate={(next) => {
+        setF(next);
+        onUpdate(next);
+      }}
+    />
+  );
+};
 
 test("shows a hint when nothing is selected", () => {
   renderInspector(makeFlow(), null, null);
@@ -443,6 +460,96 @@ test("poll panel shows the label and a format caption, with no replies field", (
   // Poll data has no replies field, so no replies textarea is shown.
   expect(screen.queryByLabelText(/replies/i)).toBeNull();
   expect(screen.queryByLabelText(/options/i)).toBeNull();
+});
+
+test("poll panel defaults to a regular anonymous poll with multiple-answers off", () => {
+  renderInspector(makeFlow(), "poll1", null);
+  expect(screen.getByLabelText("Poll type")).toHaveTextContent("Regular poll");
+  expect(screen.getByText("Allow multiple answers")).toBeTruthy();
+  // Regular polls do not show quiz-only fields.
+  expect(screen.queryByLabelText(/correct option/i)).toBeNull();
+  expect(screen.queryByLabelText(/explanation/i)).toBeNull();
+});
+
+test("switching the poll type to quiz reveals the quiz-only fields", async () => {
+  renderWithProviders(<PollHarness onUpdate={() => {}} />);
+  fireEvent.mouseDown(screen.getByLabelText("Poll type"));
+  const quiz = await screen.findByRole("option", { name: "Quiz" });
+  fireEvent.click(quiz);
+  expect(screen.getByLabelText("Correct option (0-based)")).toBeTruthy();
+  expect(screen.getByLabelText("Explanation (quiz)")).toBeTruthy();
+  expect(screen.queryByText("Allow multiple answers")).toBeNull();
+});
+
+test("editing poll config fields dispatches onUpdate", async () => {
+  const onUpdate = vi.fn();
+  renderWithProviders(<PollHarness onUpdate={onUpdate} />);
+
+  fireEvent.mouseDown(screen.getByLabelText("Poll type"));
+  const quiz = await screen.findByRole("option", { name: "Quiz" });
+  fireEvent.click(quiz);
+
+  fireEvent.change(screen.getByLabelText("Correct option (0-based)"), {
+    target: { value: "1" },
+  });
+  fireEvent.change(screen.getByLabelText("Explanation (quiz)"), {
+    target: { value: "It is B" },
+  });
+  fireEvent.change(screen.getByLabelText("Open period (seconds, 5-600)"), {
+    target: { value: "60" },
+  });
+
+  expect(onUpdate).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "poll1",
+          data: expect.objectContaining({
+            pollType: "quiz",
+            correctOptionId: "1",
+            explanation: "It is B",
+            openPeriod: "60",
+          }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("toggling the anonymous switch dispatches isAnonymous", () => {
+  const onUpdate = vi.fn();
+  renderWithProviders(<PollHarness onUpdate={onUpdate} />);
+
+  fireEvent.click(screen.getByRole("switch", { name: /Public \(not anonymous\)/ }));
+
+  expect(onUpdate).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "poll1",
+          data: expect.objectContaining({ isAnonymous: "false" }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("toggling multiple answers dispatches allowsMultipleAnswers", () => {
+  const onUpdate = vi.fn();
+  renderWithProviders(<PollHarness onUpdate={onUpdate} />);
+
+  fireEvent.click(screen.getByRole("switch", { name: "Allow multiple answers" }));
+
+  expect(onUpdate).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "poll1",
+          data: expect.objectContaining({ allowsMultipleAnswers: "true" }),
+        }),
+      ]),
+    })
+  );
 });
 
 test("editing the poll node label dispatches onUpdate", () => {

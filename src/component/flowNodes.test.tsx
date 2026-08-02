@@ -199,7 +199,17 @@ test("PollNode shows a caption describing the poll", () => {
     <PollNode {...makeNodeProps({ label: "Pick" })} />
   );
 
-  expect(getByText(/sends a telegram poll/i)).toBeTruthy();
+  expect(getByText(/sends a poll, anonymous/i)).toBeTruthy();
+});
+
+test("PollNode caption reflects quiz and public configuration", () => {
+  const { getByText } = render(
+    <PollNode
+      {...makeNodeProps({ label: "Pick", pollType: "quiz", isAnonymous: "false" })}
+    />
+  );
+
+  expect(getByText(/sends a quiz, public/i)).toBeTruthy();
 });
 
 test("PollNode has a single (target) handle and no source handle", () => {

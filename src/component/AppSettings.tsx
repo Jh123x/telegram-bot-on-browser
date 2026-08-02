@@ -82,6 +82,30 @@ const isValidFlowNode = (n: unknown): boolean => {
   if (data.max !== undefined && typeof data.max !== "string") {
     return false;
   }
+  if (data.pollType !== undefined && typeof data.pollType !== "string") {
+    return false;
+  }
+  if (data.isAnonymous !== undefined && typeof data.isAnonymous !== "string") {
+    return false;
+  }
+  if (
+    data.allowsMultipleAnswers !== undefined &&
+    typeof data.allowsMultipleAnswers !== "string"
+  ) {
+    return false;
+  }
+  if (
+    data.correctOptionId !== undefined &&
+    typeof data.correctOptionId !== "string"
+  ) {
+    return false;
+  }
+  if (data.explanation !== undefined && typeof data.explanation !== "string") {
+    return false;
+  }
+  if (data.openPeriod !== undefined && typeof data.openPeriod !== "string") {
+    return false;
+  }
   if (
     data.replies !== undefined &&
     (!Array.isArray(data.replies) ||
