@@ -1,5 +1,23 @@
 import React, { useState } from "react";
 import { Box, Paper, TextField, Typography } from "@mui/material";
+import {
+  PlayArrow,
+  ArrowDownward,
+  ArrowUpward,
+  TextFields,
+  FindReplace,
+  ManageSearch,
+  Numbers,
+  HorizontalRule,
+  ShortText,
+  CallMade,
+  CallReceived,
+  Close,
+  Block,
+  Send,
+  Casino,
+  Poll,
+} from "@mui/icons-material";
 import type { FlowNodeCategory, FlowNodeType } from "../interfaces/flow.ts";
 import {
   ALL_NODE_TYPES,
@@ -19,6 +37,26 @@ const CATEGORY_LABELS: Record<FlowNodeCategory, string> = {
   transform: "Transform",
   condition: "Condition",
   send: "Send",
+};
+
+// Per-node-type accent icon chip so palette items scan faster than plain dots.
+const NODE_ICONS: Record<FlowNodeType, React.ComponentType<any>> = {
+  start: PlayArrow,
+  lowercase: ArrowDownward,
+  uppercase: ArrowUpward,
+  trim: TextFields,
+  replace: FindReplace,
+  extractRegex: ManageSearch,
+  randomNumber: Numbers,
+  equals: HorizontalRule,
+  contains: ShortText,
+  startsWith: CallMade,
+  endsWith: CallReceived,
+  notEquals: Close,
+  notContains: Block,
+  send: Send,
+  random: Casino,
+  poll: Poll,
 };
 
 interface FlowPaletteProps {
@@ -83,6 +121,8 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
 
             {items.map((type) => {
               const accent = GRAPH_COLORS.node[cat].accent;
+              const bg = GRAPH_COLORS.node[cat].bg;
+              const Icon = NODE_ICONS[type];
               return (
                 <Box
                   key={type}
@@ -117,16 +157,21 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
                   }}
                 >
                   <Box
-                    data-testid={`palette-dot-${type}`}
+                    data-testid={`palette-icon-${type}`}
                     sx={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: "50%",
-                      bgcolor: accent,
-                      mt: 0.5,
+                      width: 28,
+                      height: 28,
+                      borderRadius: 1.5,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: bg,
+                      color: accent,
                       flexShrink: 0,
                     }}
-                  />
+                  >
+                    {Icon && <Icon sx={{ fontSize: 18 }} />}
+                  </Box>
                   <Box>
                     <Typography
                       variant="body2"

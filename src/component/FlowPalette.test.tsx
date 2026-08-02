@@ -127,22 +127,24 @@ test("pressing Space on a palette item invokes onPick (and prevents scroll)", ()
   expect(onPick).toHaveBeenCalledWith("send");
 });
 
-test("palette items preview their node accent color as a dot", () => {
+test("palette items preview their node accent color as an icon chip", () => {
   render(<FlowPalette />);
 
-  // Start dot is violet.
-  const startDot = screen.getByTestId("palette-dot-start");
-  expect(getComputedStyle(startDot).backgroundColor).toBe("rgb(124, 58, 237)");
+  // Start icon is violet and renders as an inline SVG.
+  const startIcon = screen.getByTestId("palette-icon-start");
+  expect(getComputedStyle(startIcon).color).toBe("rgb(124, 58, 237)");
+  expect(startIcon.querySelector("svg")).toBeTruthy();
 
-  // Condition items are amber; transform dot is sky blue.
-  const conditionDot = screen.getByTestId("palette-dot-uppercase");
-  expect(getComputedStyle(conditionDot).backgroundColor).toBe("rgb(56, 189, 248)");
+  // Transform icon is sky blue.
+  const upperIcon = screen.getByTestId("palette-icon-uppercase");
+  expect(getComputedStyle(upperIcon).color).toBe("rgb(56, 189, 248)");
 
   // Send items share the green accent.
-  const randomDot = screen.getByTestId("palette-dot-random");
-  expect(getComputedStyle(randomDot).backgroundColor).toBe("rgb(52, 211, 153)");
-  const pollDot = screen.getByTestId("palette-dot-poll");
-  expect(getComputedStyle(pollDot).backgroundColor).toBe("rgb(52, 211, 153)");
+  const randomIcon = screen.getByTestId("palette-icon-random");
+  expect(getComputedStyle(randomIcon).color).toBe("rgb(52, 211, 153)");
+  const pollIcon = screen.getByTestId("palette-icon-poll");
+  expect(getComputedStyle(pollIcon).color).toBe("rgb(52, 211, 153)");
+  expect(pollIcon.querySelector("svg")).toBeTruthy();
 });
 
 test("filtering narrows the item list and hides empty group headers", () => {
