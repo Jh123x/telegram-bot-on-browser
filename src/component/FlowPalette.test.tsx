@@ -1,7 +1,9 @@
 import { test, expect, afterEach, vi } from "vitest";
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { ThemeProvider } from "@mui/material/styles";
 import { FlowPalette } from "./FlowPalette.tsx";
+import { theme } from "../theme.ts";
 
 // jest-dom's DOM nodes need no real DataTransfer; a lightweight stub is enough
 // to verify the palette puts the node type on the "application/reactflow" key.
@@ -188,4 +190,18 @@ test("palette items are accessible with descriptive labels and tabIndex 0", () =
   );
   expect(screen.getByTestId("palette-item-start").getAttribute("tabindex")).toBe("0");
   expect(screen.getByTestId("palette-item-lowercase").getAttribute("tabindex")).toBe("0");
+});
+
+test("palette item card colors come from theme tokens (divider border, paper background)", () => {
+  // Contract pin for the theme-token refactor: the item card must resolve the
+  // dark theme's divider (#3a3a3c) and paper (#1c1c1e) colors via sx tokens.
+  render(
+    <ThemeProvider theme={theme}>
+      <FlowPalette />
+    </ThemeProvider>
+  );
+
+  const item = screen.getByTestId("palette-item-start");
+  expect(getComputedStyle(item).borderTopColor).toBe("rgb(58, 58, 60)");
+  expect(getComputedStyle(item).backgroundColor).toBe("rgb(28, 28, 30)");
 });

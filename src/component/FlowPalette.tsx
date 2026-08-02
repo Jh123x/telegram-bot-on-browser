@@ -149,9 +149,10 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
                     display: "flex",
                     alignItems: "flex-start",
                     gap: 1,
-                    border: "1px solid #3a3a3c",
+                    border: "1px solid",
+                    borderColor: "divider",
                     borderRadius: 2,
-                    bgcolor: "#1c1c1e",
+                    bgcolor: "background.paper",
                     cursor: "grab",
                     "&:hover": { borderColor: accent },
                   }}
@@ -175,14 +176,14 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
                   <Box>
                     <Typography
                       variant="body2"
-                      sx={{ fontWeight: 600, fontSize: 13, color: "#f2f2f7" }}
+                      sx={{ fontWeight: 600, fontSize: 13, color: "text.primary" }}
                     >
                       {NODE_LABELS[type]}
                     </Typography>
                     <Typography
                       variant="caption"
                       data-testid={`palette-desc-${type}`}
-                      sx={{ display: "block", color: "#8e8e93" }}
+                      sx={{ display: "block", color: "text.secondary" }}
                     >
                       {NODE_DESCRIPTIONS[type]}
                     </Typography>
@@ -194,7 +195,7 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
         ))}
 
         {groups.length === 0 && (
-          <Typography variant="caption" sx={{ color: "#8e8e93", mt: 1 }}>
+          <Typography variant="caption" sx={{ color: "text.secondary", mt: 1 }}>
             No nodes match "{filter}".
           </Typography>
         )}
