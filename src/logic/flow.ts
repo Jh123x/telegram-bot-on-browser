@@ -46,6 +46,49 @@ export const ALL_NODE_TYPES: FlowNodeType[] = [
   ...SEND_TYPES,
 ];
 
+// Display names for every concrete node type, used by the node palette.
+// Record<FlowNodeType, string> forces a new node type to get a label here
+// (and in NODE_DESCRIPTIONS) before it can be added anywhere else.
+export const NODE_LABELS: Record<FlowNodeType, string> = {
+  start: "Start",
+  lowercase: "Lowercase",
+  uppercase: "Uppercase",
+  trim: "Trim",
+  replace: "Replace",
+  extractRegex: "Extract Regex",
+  randomNumber: "Random Number",
+  equals: "Equals",
+  contains: "Contains",
+  startsWith: "Starts With",
+  endsWith: "Ends With",
+  notEquals: "Not Equals",
+  notContains: "Not Contains",
+  send: "Send",
+  random: "Random",
+  poll: "Poll",
+};
+
+// One-line plain-English descriptions for every concrete node type, used by
+// the node palette. See NODE_LABELS for the same exhaustiveness guarantee.
+export const NODE_DESCRIPTIONS: Record<FlowNodeType, string> = {
+  start: "Flow entry point.",
+  lowercase: "Make text lowercase.",
+  uppercase: "Make text uppercase.",
+  trim: "Remove surrounding spaces.",
+  replace: "Find and replace text.",
+  extractRegex: "Keep text matching a pattern.",
+  randomNumber: "Replace with a random number.",
+  equals: "Message equals the value.",
+  contains: "Message contains the value.",
+  startsWith: "Message starts with the value.",
+  endsWith: "Message ends with the value.",
+  notEquals: "Message is not equal to the value.",
+  notContains: "Message does not contain the value.",
+  send: "Send one or more messages.",
+  random: "Send one random option.",
+  poll: "Send a Telegram poll.",
+};
+
 // Maps a concrete node type to its category. Start is its own category; every
 // transform/trigger/send type maps to its respective group.
 export function nodeCategory(type: FlowNodeType): FlowNodeCategory {
@@ -272,14 +315,15 @@ export function removeFlowEdge(flow: Flow, edgeId: string): Flow {
   return { ...flow, edges: flow.edges.filter((e) => e.id !== edgeId) };
 }
 
-// Humanized condition-node default labels.
+// Default on-canvas label for a condition node. Delegates to NODE_LABELS so
+// the palette and the canvas stay in lockstep.
 const CONDITION_DEFAULT_LABELS: Record<FlowTriggerType, string> = {
-  equals: "Equals",
-  notEquals: "Not Equals",
-  startsWith: "Starts With",
-  endsWith: "Ends With",
-  contains: "Contains",
-  notContains: "Not Contains",
+  equals: NODE_LABELS.equals,
+  notEquals: NODE_LABELS.notEquals,
+  startsWith: NODE_LABELS.startsWith,
+  endsWith: NODE_LABELS.endsWith,
+  contains: NODE_LABELS.contains,
+  notContains: NODE_LABELS.notContains,
 };
 
 export function createFlowNode(
@@ -293,24 +337,24 @@ export function createFlowNode(
   };
   switch (type) {
     case "start":
-      return { ...base, data: { label: "Start" } };
+      return { ...base, data: { label: NODE_LABELS.start } };
     case "lowercase":
-      return { ...base, data: { label: "Lowercase" } };
+      return { ...base, data: { label: NODE_LABELS.lowercase } };
     case "uppercase":
-      return { ...base, data: { label: "Uppercase" } };
+      return { ...base, data: { label: NODE_LABELS.uppercase } };
     case "trim":
-      return { ...base, data: { label: "Trim" } };
+      return { ...base, data: { label: NODE_LABELS.trim } };
     case "replace":
       return {
         ...base,
-        data: { label: "Replace", find: "", replacement: "" },
+        data: { label: NODE_LABELS.replace, find: "", replacement: "" },
       };
     case "extractRegex":
-      return { ...base, data: { label: "Extract Regex", pattern: "" } };
+      return { ...base, data: { label: NODE_LABELS.extractRegex, pattern: "" } };
     case "randomNumber":
       return {
         ...base,
-        data: { label: "Random Number", min: "1", max: "6" },
+        data: { label: NODE_LABELS.randomNumber, min: "1", max: "6" },
       };
     case "equals":
     case "notEquals":
@@ -325,12 +369,12 @@ export function createFlowNode(
     case "send":
       return { ...base, data: { label: "New Send", replies: [] } };
     case "random":
-      return { ...base, data: { label: "Random", replies: [] } };
+      return { ...base, data: { label: NODE_LABELS.random, replies: [] } };
     case "poll":
       return {
         ...base,
         data: {
-          label: "Poll",
+          label: NODE_LABELS.poll,
           pollType: "regular",
           isAnonymous: "true",
           allowsMultipleAnswers: "false",
