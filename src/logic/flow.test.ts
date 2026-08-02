@@ -22,6 +22,8 @@ import {
   applyPollConfig,
   parsePoll,
   pollDisplay,
+  NODE_LABELS,
+  NODE_DESCRIPTIONS,
 } from "./flow.ts";
 import { Flow, PollReply } from "../interfaces/flow.ts";
 import { vi } from "vitest";
@@ -116,6 +118,53 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
     expect(nodeCategory("send")).toBe("send");
     expect(nodeCategory("random")).toBe("send");
     expect(nodeCategory("poll")).toBe("send");
+  });
+});
+
+describe("NODE_LABELS / NODE_DESCRIPTIONS", () => {
+  test("covers every node type with non-empty labels and descriptions", () => {
+    ALL_NODE_TYPES.forEach((type) => {
+      expect(NODE_LABELS[type]).toBeTruthy();
+      expect(typeof NODE_LABELS[type]).toBe("string");
+      expect(NODE_LABELS[type].length).toBeGreaterThan(0);
+    });
+    ALL_NODE_TYPES.forEach((type) => {
+      expect(NODE_DESCRIPTIONS[type]).toBeTruthy();
+      expect(typeof NODE_DESCRIPTIONS[type]).toBe("string");
+      expect(NODE_DESCRIPTIONS[type].length).toBeGreaterThan(0);
+    });
+  });
+
+  test("exposes exact display labels for representative types", () => {
+    expect(NODE_LABELS.start).toBe("Start");
+    expect(NODE_LABELS.extractRegex).toBe("Extract Regex");
+    expect(NODE_LABELS.randomNumber).toBe("Random Number");
+    expect(NODE_LABELS.notContains).toBe("Not Contains");
+    expect(NODE_LABELS.poll).toBe("Poll");
+  });
+
+  test("exposes exact one-line descriptions for representative types", () => {
+    expect(NODE_DESCRIPTIONS.start).toBe("Flow entry point.");
+    expect(NODE_DESCRIPTIONS.extractRegex).toBe(
+      "Keep text matching a pattern."
+    );
+    expect(NODE_DESCRIPTIONS.randomNumber).toBe(
+      "Replace with a random number."
+    );
+    expect(NODE_DESCRIPTIONS.notContains).toBe(
+      "Message does not contain the value."
+    );
+    expect(NODE_DESCRIPTIONS.poll).toBe("Send a Telegram poll.");
+  });
+
+  test("createFlowNode labels every type except send from NODE_LABELS", () => {
+    ALL_NODE_TYPES.forEach((type) => {
+      if (type === "send") {
+        expect(createFlowNode(type).data.label).toBe("New Send");
+      } else {
+        expect(createFlowNode(type).data.label).toBe(NODE_LABELS[type]);
+      }
+    });
   });
 });
 

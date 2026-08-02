@@ -21,7 +21,7 @@ export const FlowSamples = ({ onLoaded }: FlowSamplesProps) => {
   };
 
   return (
-    <Paper data-testid="flow-samples" sx={{ p: 2, width: 160, flexShrink: 0 }}>
+    <Paper data-testid="flow-samples" sx={{ p: 2, width: 200, flexShrink: 0 }}>
       <Typography variant="subtitle2">Samples</Typography>
       <Typography variant="caption" sx={{ color: "text.secondary" }}>
         Load a pre-built flow.

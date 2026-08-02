@@ -123,10 +123,10 @@ exports[`renders app correctly 1`] = `
               class="MuiBox-root css-b8qrnr"
             >
               <div
-                class="MuiBox-root css-yd8sa2"
+                class="MuiBox-root css-xywm95"
               >
                 <div
-                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ugxiov-MuiPaper-root"
+                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1pjgae1-MuiPaper-root"
                   data-testid="flow-palette"
                   style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                 >
@@ -138,64 +138,729 @@ exports[`renders app correctly 1`] = `
                   <span
                     class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
                   >
-                    Pick a category, then a node to add.
+                    All nodes, grouped by category.
                   </span>
                   <div
-                    class="MuiBox-root css-4a9pb7"
+                    class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cevzt1-MuiFormControl-root-MuiTextField-root"
+                    data-testid="palette-filter"
                   >
                     <div
-                      aria-pressed="true"
-                      class="MuiBox-root css-kpxwbr"
-                      data-testid="palette-category-start"
-                      role="button"
-                      tabindex="0"
+                      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall css-1ha4r6h-MuiInputBase-root-MuiOutlinedInput-root"
                     >
-                      Start
-                    </div>
-                    <div
-                      aria-pressed="false"
-                      class="MuiBox-root css-13wc7gt"
-                      data-testid="palette-category-transform"
-                      role="button"
-                      tabindex="0"
-                    >
-                      Transform
-                    </div>
-                    <div
-                      aria-pressed="false"
-                      class="MuiBox-root css-13wc7gt"
-                      data-testid="palette-category-condition"
-                      role="button"
-                      tabindex="0"
-                    >
-                      Condition
-                    </div>
-                    <div
-                      aria-pressed="false"
-                      class="MuiBox-root css-13wc7gt"
-                      data-testid="palette-category-send"
-                      role="button"
-                      tabindex="0"
-                    >
-                      Send
+                      <input
+                        aria-invalid="false"
+                        class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
+                        id="_r_3_"
+                        placeholder="Filter nodes…"
+                        type="text"
+                        value=""
+                      />
+                      <fieldset
+                        aria-hidden="true"
+                        class="MuiOutlinedInput-notchedOutline css-vy4cj6-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                      >
+                        <legend
+                          class="css-1nf2c5d-MuiNotchedOutlined-root"
+                        >
+                          <span
+                            aria-hidden="true"
+                            class="notranslate"
+                          >
+                            ​
+                          </span>
+                        </legend>
+                      </fieldset>
                     </div>
                   </div>
                   <div
-                    aria-label="Add Start node"
-                    class="MuiBox-root css-184x01f"
-                    data-testid="palette-item-start"
-                    draggable="true"
-                    role="button"
+                    class="MuiBox-root css-1oxzrvl"
+                    data-testid="palette-list"
                   >
                     <div
-                      class="MuiBox-root css-1kuk0im"
-                      data-testid="palette-dot-start"
-                    />
-                    Start
+                      class="MuiBox-root css-0"
+                    >
+                      <span
+                        class="MuiTypography-root MuiTypography-overline css-15eh799-MuiTypography-root"
+                        data-testid="palette-group-start"
+                      >
+                        Start
+                      </span>
+                      <div
+                        aria-label="Add Start node"
+                        class="MuiBox-root css-1khlk1l"
+                        data-testid="palette-item-start"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-sb0ec9"
+                          data-testid="palette-icon-start"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="PlayArrowIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M8 5v14l11-7z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Start
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-start"
+                          >
+                            Flow entry point.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="MuiBox-root css-0"
+                    >
+                      <span
+                        class="MuiTypography-root MuiTypography-overline css-ew2t7n-MuiTypography-root"
+                        data-testid="palette-group-transform"
+                      >
+                        Transform
+                      </span>
+                      <div
+                        aria-label="Add Lowercase node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-lowercase"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-lowercase"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="ArrowDownwardIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Lowercase
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-lowercase"
+                          >
+                            Make text lowercase.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Uppercase node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-uppercase"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-uppercase"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="ArrowUpwardIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="m4 12 1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Uppercase
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-uppercase"
+                          >
+                            Make text uppercase.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Trim node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-trim"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-trim"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="TextFieldsIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M2.5 4v3h5v12h3V7h5V4zm19 5h-9v3h3v7h3v-7h3z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Trim
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-trim"
+                          >
+                            Remove surrounding spaces.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Replace node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-replace"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-replace"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="FindReplaceIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M11 6c1.38 0 2.63.56 3.54 1.46L12 10h6V4l-2.05 2.05C14.68 4.78 12.93 4 11 4c-3.53 0-6.43 2.61-6.92 6H6.1c.46-2.28 2.48-4 4.9-4m5.64 9.14c.66-.9 1.12-1.97 1.28-3.14H15.9c-.46 2.28-2.48 4-4.9 4-1.38 0-2.63-.56-3.54-1.46L10 12H4v6l2.05-2.05C7.32 17.22 9.07 18 11 18c1.55 0 2.98-.51 4.14-1.36L20 21.49 21.49 20z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Replace
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-replace"
+                          >
+                            Find and replace text.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Extract Regex node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-extractRegex"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-extractRegex"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="ManageSearchIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M7 9H2V7h5zm0 3H2v2h5zm13.59 7-3.83-3.83c-.8.52-1.74.83-2.76.83-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5c0 1.02-.31 1.96-.83 2.75L22 17.59zM17 11c0-1.65-1.35-3-3-3s-3 1.35-3 3 1.35 3 3 3 3-1.35 3-3M2 19h10v-2H2z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Extract Regex
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-extractRegex"
+                          >
+                            Keep text matching a pattern.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Random Number node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-randomNumber"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-randomNumber"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="NumbersIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="m20.5 10 .5-2h-4l1-4h-2l-1 4h-4l1-4h-2L9 8H5l-.5 2h4l-1 4h-4L3 16h4l-1 4h2l1-4h4l-1 4h2l1-4h4l.5-2h-4l1-4zm-7 4h-4l1-4h4z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Random Number
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-randomNumber"
+                          >
+                            Replace with a random number.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="MuiBox-root css-0"
+                    >
+                      <span
+                        class="MuiTypography-root MuiTypography-overline css-pz2dns-MuiTypography-root"
+                        data-testid="palette-group-condition"
+                      >
+                        Condition
+                      </span>
+                      <div
+                        aria-label="Add Equals node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-equals"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-equals"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="HorizontalRuleIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M4 11h16v2H4z"
+                              fill-rule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Equals
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-equals"
+                          >
+                            Message equals the value.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Contains node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-contains"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-contains"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="ShortTextIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M4 9h16v2H4zm0 4h10v2H4z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Contains
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-contains"
+                          >
+                            Message contains the value.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Starts With node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-startsWith"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-startsWith"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="CallMadeIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Starts With
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-startsWith"
+                          >
+                            Message starts with the value.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Ends With node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-endsWith"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-endsWith"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="CallReceivedIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M20 5.41 18.59 4 7 15.59V9H5v10h10v-2H8.41z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Ends With
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-endsWith"
+                          >
+                            Message ends with the value.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Not Equals node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-notEquals"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-notEquals"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="CloseIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Not Equals
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-notEquals"
+                          >
+                            Message is not equal to the value.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Not Contains node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-notContains"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-notContains"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="BlockIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2M4 12c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9C4.63 15.55 4 13.85 4 12m8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1C19.37 8.45 20 10.15 20 12c0 4.42-3.58 8-8 8"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Not Contains
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-notContains"
+                          >
+                            Message does not contain the value.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="MuiBox-root css-0"
+                    >
+                      <span
+                        class="MuiTypography-root MuiTypography-overline css-o0zehk-MuiTypography-root"
+                        data-testid="palette-group-send"
+                      >
+                        Send
+                      </span>
+                      <div
+                        aria-label="Add Send node"
+                        class="MuiBox-root css-4oc8ue"
+                        data-testid="palette-item-send"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-15uwx91"
+                          data-testid="palette-icon-send"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="SendIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Send
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-send"
+                          >
+                            Send one or more messages.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Random node"
+                        class="MuiBox-root css-4oc8ue"
+                        data-testid="palette-item-random"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-15uwx91"
+                          data-testid="palette-icon-random"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="CasinoIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18m0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Random
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-random"
+                          >
+                            Send one random option.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Poll node"
+                        class="MuiBox-root css-4oc8ue"
+                        data-testid="palette-item-poll"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-15uwx91"
+                          data-testid="palette-icon-poll"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="PollIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M9 17H7v-7h2zm4 0h-2V7h2zm4 0h-2v-4h2z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          >
+                            Poll
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            data-testid="palette-desc-poll"
+                          >
+                            Send a Telegram poll.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
-                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ugxiov-MuiPaper-root"
+                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-194tfke-MuiPaper-root"
                   data-testid="flow-samples"
                   style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                 >
@@ -419,10 +1084,10 @@ exports[`renders app correctly 1`] = `
             class="MuiBox-root css-b8qrnr"
           >
             <div
-              class="MuiBox-root css-yd8sa2"
+              class="MuiBox-root css-xywm95"
             >
               <div
-                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ugxiov-MuiPaper-root"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1pjgae1-MuiPaper-root"
                 data-testid="flow-palette"
                 style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >
@@ -434,64 +1099,729 @@ exports[`renders app correctly 1`] = `
                 <span
                   class="MuiTypography-root MuiTypography-caption css-9h45x9-MuiTypography-root"
                 >
-                  Pick a category, then a node to add.
+                  All nodes, grouped by category.
                 </span>
                 <div
-                  class="MuiBox-root css-4a9pb7"
+                  class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cevzt1-MuiFormControl-root-MuiTextField-root"
+                  data-testid="palette-filter"
                 >
                   <div
-                    aria-pressed="true"
-                    class="MuiBox-root css-kpxwbr"
-                    data-testid="palette-category-start"
-                    role="button"
-                    tabindex="0"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-sizeSmall css-1ha4r6h-MuiInputBase-root-MuiOutlinedInput-root"
                   >
-                    Start
-                  </div>
-                  <div
-                    aria-pressed="false"
-                    class="MuiBox-root css-13wc7gt"
-                    data-testid="palette-category-transform"
-                    role="button"
-                    tabindex="0"
-                  >
-                    Transform
-                  </div>
-                  <div
-                    aria-pressed="false"
-                    class="MuiBox-root css-13wc7gt"
-                    data-testid="palette-category-condition"
-                    role="button"
-                    tabindex="0"
-                  >
-                    Condition
-                  </div>
-                  <div
-                    aria-pressed="false"
-                    class="MuiBox-root css-13wc7gt"
-                    data-testid="palette-category-send"
-                    role="button"
-                    tabindex="0"
-                  >
-                    Send
+                    <input
+                      aria-invalid="false"
+                      class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
+                      id="_r_3_"
+                      placeholder="Filter nodes…"
+                      type="text"
+                      value=""
+                    />
+                    <fieldset
+                      aria-hidden="true"
+                      class="MuiOutlinedInput-notchedOutline css-vy4cj6-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
+                    >
+                      <legend
+                        class="css-1nf2c5d-MuiNotchedOutlined-root"
+                      >
+                        <span
+                          aria-hidden="true"
+                          class="notranslate"
+                        >
+                          ​
+                        </span>
+                      </legend>
+                    </fieldset>
                   </div>
                 </div>
                 <div
-                  aria-label="Add Start node"
-                  class="MuiBox-root css-184x01f"
-                  data-testid="palette-item-start"
-                  draggable="true"
-                  role="button"
+                  class="MuiBox-root css-1oxzrvl"
+                  data-testid="palette-list"
                 >
                   <div
-                    class="MuiBox-root css-1kuk0im"
-                    data-testid="palette-dot-start"
-                  />
-                  Start
+                    class="MuiBox-root css-0"
+                  >
+                    <span
+                      class="MuiTypography-root MuiTypography-overline css-15eh799-MuiTypography-root"
+                      data-testid="palette-group-start"
+                    >
+                      Start
+                    </span>
+                    <div
+                      aria-label="Add Start node"
+                      class="MuiBox-root css-1khlk1l"
+                      data-testid="palette-item-start"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-sb0ec9"
+                        data-testid="palette-icon-start"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="PlayArrowIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M8 5v14l11-7z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Start
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-start"
+                        >
+                          Flow entry point.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiBox-root css-0"
+                  >
+                    <span
+                      class="MuiTypography-root MuiTypography-overline css-ew2t7n-MuiTypography-root"
+                      data-testid="palette-group-transform"
+                    >
+                      Transform
+                    </span>
+                    <div
+                      aria-label="Add Lowercase node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-lowercase"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-lowercase"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="ArrowDownwardIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Lowercase
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-lowercase"
+                        >
+                          Make text lowercase.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Uppercase node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-uppercase"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-uppercase"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="ArrowUpwardIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="m4 12 1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Uppercase
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-uppercase"
+                        >
+                          Make text uppercase.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Trim node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-trim"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-trim"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="TextFieldsIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M2.5 4v3h5v12h3V7h5V4zm19 5h-9v3h3v7h3v-7h3z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Trim
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-trim"
+                        >
+                          Remove surrounding spaces.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Replace node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-replace"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-replace"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="FindReplaceIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M11 6c1.38 0 2.63.56 3.54 1.46L12 10h6V4l-2.05 2.05C14.68 4.78 12.93 4 11 4c-3.53 0-6.43 2.61-6.92 6H6.1c.46-2.28 2.48-4 4.9-4m5.64 9.14c.66-.9 1.12-1.97 1.28-3.14H15.9c-.46 2.28-2.48 4-4.9 4-1.38 0-2.63-.56-3.54-1.46L10 12H4v6l2.05-2.05C7.32 17.22 9.07 18 11 18c1.55 0 2.98-.51 4.14-1.36L20 21.49 21.49 20z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Replace
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-replace"
+                        >
+                          Find and replace text.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Extract Regex node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-extractRegex"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-extractRegex"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="ManageSearchIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M7 9H2V7h5zm0 3H2v2h5zm13.59 7-3.83-3.83c-.8.52-1.74.83-2.76.83-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5c0 1.02-.31 1.96-.83 2.75L22 17.59zM17 11c0-1.65-1.35-3-3-3s-3 1.35-3 3 1.35 3 3 3 3-1.35 3-3M2 19h10v-2H2z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Extract Regex
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-extractRegex"
+                        >
+                          Keep text matching a pattern.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Random Number node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-randomNumber"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-randomNumber"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="NumbersIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="m20.5 10 .5-2h-4l1-4h-2l-1 4h-4l1-4h-2L9 8H5l-.5 2h4l-1 4h-4L3 16h4l-1 4h2l1-4h4l-1 4h2l1-4h4l.5-2h-4l1-4zm-7 4h-4l1-4h4z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Random Number
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-randomNumber"
+                        >
+                          Replace with a random number.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiBox-root css-0"
+                  >
+                    <span
+                      class="MuiTypography-root MuiTypography-overline css-pz2dns-MuiTypography-root"
+                      data-testid="palette-group-condition"
+                    >
+                      Condition
+                    </span>
+                    <div
+                      aria-label="Add Equals node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-equals"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-equals"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="HorizontalRuleIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M4 11h16v2H4z"
+                            fill-rule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Equals
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-equals"
+                        >
+                          Message equals the value.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Contains node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-contains"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-contains"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="ShortTextIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M4 9h16v2H4zm0 4h10v2H4z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Contains
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-contains"
+                        >
+                          Message contains the value.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Starts With node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-startsWith"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-startsWith"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="CallMadeIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Starts With
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-startsWith"
+                        >
+                          Message starts with the value.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Ends With node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-endsWith"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-endsWith"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="CallReceivedIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M20 5.41 18.59 4 7 15.59V9H5v10h10v-2H8.41z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Ends With
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-endsWith"
+                        >
+                          Message ends with the value.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Not Equals node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-notEquals"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-notEquals"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="CloseIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Not Equals
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-notEquals"
+                        >
+                          Message is not equal to the value.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Not Contains node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-notContains"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-notContains"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="BlockIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2M4 12c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9C4.63 15.55 4 13.85 4 12m8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1C19.37 8.45 20 10.15 20 12c0 4.42-3.58 8-8 8"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Not Contains
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-notContains"
+                        >
+                          Message does not contain the value.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiBox-root css-0"
+                  >
+                    <span
+                      class="MuiTypography-root MuiTypography-overline css-o0zehk-MuiTypography-root"
+                      data-testid="palette-group-send"
+                    >
+                      Send
+                    </span>
+                    <div
+                      aria-label="Add Send node"
+                      class="MuiBox-root css-4oc8ue"
+                      data-testid="palette-item-send"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-15uwx91"
+                        data-testid="palette-icon-send"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="SendIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Send
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-send"
+                        >
+                          Send one or more messages.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Random node"
+                      class="MuiBox-root css-4oc8ue"
+                      data-testid="palette-item-random"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-15uwx91"
+                        data-testid="palette-icon-random"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="CasinoIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18m0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Random
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-random"
+                        >
+                          Send one random option.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Poll node"
+                      class="MuiBox-root css-4oc8ue"
+                      data-testid="palette-item-poll"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-15uwx91"
+                        data-testid="palette-icon-poll"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="PollIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M9 17H7v-7h2zm4 0h-2V7h2zm4 0h-2v-4h2z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                        >
+                          Poll
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          data-testid="palette-desc-poll"
+                        >
+                          Send a Telegram poll.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div
-                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1ugxiov-MuiPaper-root"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-194tfke-MuiPaper-root"
                 data-testid="flow-samples"
                 style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >

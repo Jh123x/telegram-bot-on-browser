@@ -56,11 +56,21 @@ ALL_NODE_TYPES.forEach((type) => {
   if (category === "condition") nodeTypes[type] = ConditionNode;
 });
 
-const EditorCanvas = ({ flow }: { flow: Flow }) => {
+const EditorCanvas = ({
+  flow,
+  selectedNodeId,
+  selectedEdgeId,
+  onSelectNode,
+  onSelectEdge,
+}: {
+  flow: Flow;
+  selectedNodeId: string | null;
+  selectedEdgeId: string | null;
+  onSelectNode: (id: string | null) => void;
+  onSelectEdge: (id: string | null) => void;
+}) => {
   const dispatch = useDispatch();
   const { screenToFlowPosition } = useReactFlow();
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
 
   // Mirrors the latest `flow` prop so the change/connect handlers never read a
   // stale closure. React Flow can deliver several change events before the
@@ -226,10 +236,10 @@ const EditorCanvas = ({ flow }: { flow: Flow }) => {
     let next: Flow | null = null;
     if (selectedNodeId) {
       next = removeFlowNode(current, selectedNodeId);
-      setSelectedNodeId(null);
+      onSelectNode(null);
     } else if (selectedEdgeId) {
       next = removeFlowEdge(current, selectedEdgeId);
-      setSelectedEdgeId(null);
+      onSelectEdge(null);
     }
     if (next) persistFlow(next);
   };
@@ -265,16 +275,16 @@ const EditorCanvas = ({ flow }: { flow: Flow }) => {
           onDrop={onDrop}
           onDragOver={onDragOver}
           onNodeClick={(_, node) => {
-            setSelectedNodeId(node.id);
-            setSelectedEdgeId(null);
+            onSelectNode(node.id);
+            onSelectEdge(null);
           }}
           onPaneClick={() => {
-            setSelectedNodeId(null);
-            setSelectedEdgeId(null);
+            onSelectNode(null);
+            onSelectEdge(null);
           }}
           onEdgeClick={(_, edge) => {
-            setSelectedEdgeId(edge.id);
-            setSelectedNodeId(null);
+            onSelectEdge(edge.id);
+            onSelectNode(null);
           }}
           fitView
         >
@@ -318,6 +328,11 @@ export const FlowEditor = () => {
   // no creating/deleting flows — samples and drops just replace or fill it.
   const flow = flows[0] ?? null;
 
+  // Selection state is lifted here so palette picks can auto-select the freshly
+  // added node (and clear any edge selection), opening the inspector on it.
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+
   // Persist flow edits to localStorage on every change. Guard: the first
   // effect run (including StrictMode's simulated remount) establishes a
   // baseline and never writes, so we do not clobber saved flows before App
@@ -336,6 +351,10 @@ export const FlowEditor = () => {
 
   const handlePalettePick = (type: FlowNodeType) => {
     const node = createFlowNode(type, { x: 120, y: 80 });
+    // Auto-select the freshly added node so the inspector opens on it
+    // immediately (and clear any lingering edge selection).
+    setSelectedNodeId(node.id);
+    setSelectedEdgeId(null);
     // No flow yet: create one containing the picked node, mirroring the
     // onDrop empty-case (createFlow + addFlow).
     if (flow === null) {
@@ -384,7 +403,7 @@ export const FlowEditor = () => {
       </Typography>
 
       <Box sx={{ display: "flex", gap: 2, flex: 1, minHeight: 0 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minHeight: 0 }}>
           <FlowPalette onPick={handlePalettePick} />
           <FlowSamples onLoaded={handleSampleLoaded} />
         </Box>
@@ -413,7 +432,13 @@ export const FlowEditor = () => {
           )}
 
           <ReactFlowProvider>
-            <EditorCanvas flow={flow ?? EmptyFlow} />
+            <EditorCanvas
+              flow={flow ?? EmptyFlow}
+              selectedNodeId={selectedNodeId}
+              selectedEdgeId={selectedEdgeId}
+              onSelectNode={setSelectedNodeId}
+              onSelectEdge={setSelectedEdgeId}
+            />
           </ReactFlowProvider>
 
           {flow === null && (
