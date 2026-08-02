@@ -205,3 +205,18 @@ test("palette item card colors come from theme tokens (divider border, paper bac
   expect(getComputedStyle(item).borderTopColor).toBe("rgb(58, 58, 60)");
   expect(getComputedStyle(item).backgroundColor).toBe("rgb(28, 28, 30)");
 });
+
+test("palette fills the column height and scrolls internally", () => {
+  render(<FlowPalette />);
+
+  // The palette must grow to fill the left column (same height as the canvas
+  // section) and must be allowed to shrink below its content height —
+  // flexShrink: 0 would overflow instead of scrolling.
+  const paper = screen.getByTestId("flow-palette");
+  expect(getComputedStyle(paper).flexGrow).toBe("1");
+  expect(getComputedStyle(paper).flexShrink).toBe("1");
+
+  // The item list scrolls internally when content exceeds the palette height.
+  const list = screen.getByTestId("palette-list");
+  expect(getComputedStyle(list).overflowY).toBe("auto");
+});

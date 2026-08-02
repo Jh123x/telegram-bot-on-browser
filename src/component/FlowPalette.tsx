@@ -83,7 +83,7 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
       sx={{
         p: 2,
         width: 200,
-        flexShrink: 0,
+        flex: 1,
         display: "flex",
         flexDirection: "column",
         minHeight: 0,
@@ -104,7 +104,7 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
         sx={{ mt: 1 }}
       />
 
-      <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", mt: 0.5 }}>
+      <Box data-testid="palette-list" sx={{ flex: 1, minHeight: 0, overflowY: "auto", mt: 0.5 }}>
         {groups.map(({ cat, items }) => (
           <Box key={cat}>
             <Typography
