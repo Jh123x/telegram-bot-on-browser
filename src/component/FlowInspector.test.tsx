@@ -46,6 +46,12 @@ const makeFlow = (overrides: Partial<Flow> = {}): Flow => ({
       position: { x: 400, y: 0 },
       data: { label: "Flip", replies: ["Heads", "Tails"] },
     },
+    {
+      id: "poll1",
+      type: "poll",
+      position: { x: 440, y: 0 },
+      data: { label: "Pick" },
+    },
   ],
   edges: [
     { id: "e_if", source: "condition1", target: "send1", sourceHandle: "if" },
@@ -360,6 +366,40 @@ test("editing random options splits the textarea on newlines", () => {
         expect.objectContaining({
           id: "random1",
           data: expect.objectContaining({ replies: ["Heads", "Tails", "Maybe"] }),
+        }),
+      ]),
+    })
+  );
+});
+
+// ----- Poll node -----
+
+test("poll panel shows the label and a format caption, with no replies field", () => {
+  renderInspector(makeFlow(), "poll1", null);
+  expect(screen.getByText("Poll Node")).toBeTruthy();
+  expect(screen.getByLabelText("Node label")).toBeTruthy();
+  expect(
+    screen.getByText(/Parses \/poll <title> option1, option2, option3 from the message/i)
+  ).toBeTruthy();
+  // Poll data has no replies field, so no replies textarea is shown.
+  expect(screen.queryByLabelText(/replies/i)).toBeNull();
+  expect(screen.queryByLabelText(/options/i)).toBeNull();
+});
+
+test("editing the poll node label dispatches onUpdate", () => {
+  const onUpdate = vi.fn();
+  renderInspector(makeFlow(), "poll1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Node label"), {
+    target: { value: "Renamed poll" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "poll1",
+          data: expect.objectContaining({ label: "Renamed poll" }),
         }),
       ]),
     })

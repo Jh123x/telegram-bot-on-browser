@@ -71,13 +71,14 @@ test("selecting the condition category reveals the six trigger nodes", () => {
   );
 });
 
-test("selecting the send category reveals send and random nodes", () => {
+test("selecting the send category reveals send, random and poll nodes", () => {
   render(<FlowPalette />);
 
   fireEvent.click(screen.getByTestId("palette-category-send"));
 
   expect(screen.getByTestId("palette-item-send")).toBeTruthy();
   expect(screen.getByTestId("palette-item-random")).toBeTruthy();
+  expect(screen.getByTestId("palette-item-poll")).toBeTruthy();
 });
 
 test("dragstart on each visible palette item sets the reactflow payload to its type", () => {
@@ -116,6 +117,16 @@ test("clicking a palette item invokes onPick with its node type", () => {
   fireEvent.click(screen.getByTestId("palette-item-random"));
   expect(onPick).toHaveBeenCalledWith("random");
   expect(onPick).toHaveBeenCalledTimes(2);
+});
+
+test("picking the poll item invokes onPick with poll", () => {
+  const onPick = vi.fn();
+  render(<FlowPalette onPick={onPick} />);
+
+  fireEvent.click(screen.getByTestId("palette-category-send"));
+  fireEvent.click(screen.getByTestId("palette-item-poll"));
+
+  expect(onPick).toHaveBeenCalledWith("poll");
 });
 
 test("pressing Enter on a palette item invokes onPick with its node type", () => {
@@ -159,6 +170,10 @@ test("palette items preview their node accent color as a dot", () => {
   fireEvent.click(screen.getByTestId("palette-category-send"));
   const randomDot = screen.getByTestId("palette-dot-random");
   expect(getComputedStyle(randomDot).backgroundColor).toBe("rgb(52, 211, 153)");
+
+  // The poll item shares the send accent color.
+  const pollDot = screen.getByTestId("palette-dot-poll");
+  expect(getComputedStyle(pollDot).backgroundColor).toBe("rgb(52, 211, 153)");
 });
 
 test("category selectors are keyboard-accessible with aria-pressed", () => {

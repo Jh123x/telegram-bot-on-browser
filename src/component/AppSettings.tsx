@@ -46,6 +46,7 @@ const FLOW_NODE_TYPES = [
   "notContains",
   "send",
   "random",
+  "poll",
 ];
 
 const isValidFlowNode = (n: unknown): boolean => {

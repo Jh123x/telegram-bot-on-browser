@@ -7,6 +7,7 @@ import {
   ConditionNode,
   SendNode,
   RandomNode,
+  PollNode,
 } from "./flowNodes.tsx";
 
 // Node components receive a single `NodeProps` object; we construct a minimal
@@ -173,6 +174,33 @@ test("RandomNode shows no replies when the list is empty", () => {
   expect(getByText("no replies")).toBeTruthy();
 });
 
+test("PollNode renders its label, poll badge, and a testid", () => {
+  const { getByTestId, getByText } = render(
+    <PollNode {...makeNodeProps({ label: "Pick" })} />
+  );
+
+  expect(getByTestId("flow-node-poll")).toBeTruthy();
+  expect(getByText("Pick")).toBeTruthy();
+  expect(getByText("poll")).toBeTruthy();
+});
+
+test("PollNode shows a caption describing the poll", () => {
+  const { getByText } = render(
+    <PollNode {...makeNodeProps({ label: "Pick" })} />
+  );
+
+  expect(getByText(/sends a telegram poll/i)).toBeTruthy();
+});
+
+test("PollNode has a single (target) handle and no source handle", () => {
+  const { container } = render(
+    <PollNode {...makeNodeProps({ label: "Pick" })} />
+  );
+
+  const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
+  expect(handles).toHaveLength(1);
+});
+
 test("SendNode has a single (target) handle and no source handle", () => {
   const { container } = render(
     <SendNode {...makeNodeProps({ label: "Echo", replies: ["hi"] })} />
@@ -215,6 +243,13 @@ test("ConditionNode card border uses the condition accent color", () => {
 test("SendNode card border uses the send accent color", () => {
   const { getByTestId } = render(<SendNode {...makeNodeProps({ label: "Echo" })} />);
   expect(getComputedStyle(getByTestId("flow-node-send")).borderColor).toBe(
+    "rgb(52, 211, 153)"
+  );
+});
+
+test("PollNode card border uses the send accent color", () => {
+  const { getByTestId } = render(<PollNode {...makeNodeProps({ label: "Pick" })} />);
+  expect(getComputedStyle(getByTestId("flow-node-poll")).borderColor).toBe(
     "rgb(52, 211, 153)"
   );
 });

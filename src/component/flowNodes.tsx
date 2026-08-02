@@ -204,3 +204,18 @@ export const RandomNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
     </Box>
   );
 };
+
+// A PollNode sends a Telegram poll. The poll question/options are parsed from
+// the incoming `/poll <title> option1, option2, ...` message, so the node
+// carries no replies of its own. Terminal: a single target handle, no source.
+export const PollNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+  const { accent, bg } = GRAPH_COLORS.node.send;
+  return (
+    <Box data-testid="flow-node-poll" sx={cardSx(accent, bg, selected)}>
+      <CardLabel>{data.label}</CardLabel>
+      <TypeBadge label="poll" color={accent} />
+      <CardCaption>sends a Telegram poll</CardCaption>
+      <Handle type="target" position={Position.Left} style={{ background: accent }} />
+    </Box>
+  );
+};

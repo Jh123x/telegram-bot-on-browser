@@ -42,6 +42,12 @@ const validFlow = {
       position: { x: 600, y: 120 },
       data: { label: "Nudge", replies: ["Say hi!"] },
     },
+    {
+      id: "n6",
+      type: "poll",
+      position: { x: 600, y: 240 },
+      data: { label: "Pick" },
+    },
   ],
   edges: [
     { id: "e1", source: "n1", target: "n2" },

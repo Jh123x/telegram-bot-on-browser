@@ -198,6 +198,27 @@ export const FlowInspector = ({
     }
 
     // send category (send / random)
+    if (selectedNode.type === "poll") {
+      return (
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Poll Node
+          </Typography>
+          <LabelField
+            value={selectedNode.data.label}
+            onChange={(label) => setNodeData({ label })}
+          />
+          <Typography
+            variant="caption"
+            sx={{ color: "text.secondary", display: "block", mt: 1 }}
+          >
+            Parses /poll &lt;title&gt; option1, option2, option3 from the message.
+          </Typography>
+          {onDelete && <DeleteButton label="Delete node" onDelete={onDelete} />}
+        </Paper>
+      );
+    }
+
     const isRandom = selectedNode.type === "random";
     const replies = selectedNode.data.replies ?? [];
     return (

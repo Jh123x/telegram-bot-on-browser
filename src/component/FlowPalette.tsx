@@ -33,6 +33,7 @@ const CATEGORY_ITEMS: Record<FlowNodeCategory, PaletteItem[]> = {
   send: [
     { type: "send", label: "Send", accent: GRAPH_COLORS.node.send.accent },
     { type: "random", label: "Random", accent: GRAPH_COLORS.node.send.accent },
+    { type: "poll", label: "Poll", accent: GRAPH_COLORS.node.send.accent },
   ],
 };
 

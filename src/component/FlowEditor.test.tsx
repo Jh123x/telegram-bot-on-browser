@@ -8,7 +8,7 @@ import { Flow } from "../interfaces/flow.ts";
 
 // Node types the editor now understands, one per category (the palette is
 // two-level: pick a category, then a concrete node type).
-const TYPES = ["start", "lowercase", "equals", "send", "random"] as const;
+const TYPES = ["start", "lowercase", "equals", "send", "random", "poll"] as const;
 
 // The palette shows the start category by default; other categories must be
 // selected before their items become visible.
@@ -21,7 +21,7 @@ const openPaletteItem = (type: string) => {
     fireEvent.click(screen.getByTestId("palette-item-start"));
     return;
   }
-  if (type === "send" || type === "random") {
+  if (type === "send" || type === "random" || type === "poll") {
     selectCategory("send");
   } else if (
     type === "lowercase" ||
@@ -145,11 +145,11 @@ test("loading a sample replaces the current flow (never appends)", () => {
   const store = makeStore([flow]);
   renderWithProviders(<FlowEditor />, { store });
 
-  fireEvent.click(screen.getByTestId("flow-sample-Welcome Flow"));
+  fireEvent.click(screen.getByTestId("flow-sample-Dice Bot"));
 
   const flows = store.getState().bot.flows;
   expect(flows).toHaveLength(1);
-  expect(flows[0].name).toBe("Welcome Flow");
+  expect(flows[0].name).toBe("Dice Bot");
   expect(flows[0].id).not.toBe("existing");
   expect(flows[0].nodes.length).toBeGreaterThan(0);
 });
@@ -158,11 +158,11 @@ test("loading a sample when no flow exists creates the single flow", () => {
   const store = makeStore();
   renderWithProviders(<FlowEditor />, { store });
 
-  fireEvent.click(screen.getByTestId("flow-sample-Welcome Flow"));
+  fireEvent.click(screen.getByTestId("flow-sample-Dice Bot"));
 
   const flows = store.getState().bot.flows;
   expect(flows).toHaveLength(1);
-  expect(flows[0].name).toBe("Welcome Flow");
+  expect(flows[0].name).toBe("Dice Bot");
 });
 
 test("clicking each palette item adds the right node type to the selected flow", () => {
