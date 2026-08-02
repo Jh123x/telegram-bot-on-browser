@@ -2,6 +2,45 @@
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom/vitest";
 
+// Node 22.4+ ships experimental webstorage globals (localStorage/sessionStorage)
+// that warn "not available because --localstorage-file was not provided" and
+// return undefined. On Node 24/26 they shadow jsdom's implementation in vitest
+// workers, so every test touching localStorage crashes. Install a deterministic
+// in-memory shim so tests are independent of the runtime's webstorage mode.
+if (typeof localStorage === "undefined" || localStorage === null) {
+  const createMemoryStorage = (): Storage => {
+    let data = new Map<string, string>();
+    return {
+      get length() {
+        return data.size;
+      },
+      clear: () => {
+        data = new Map<string, string>();
+      },
+      getItem: (key: string) => data.get(key) ?? null,
+      key: (index: number) => Array.from(data.keys())[index] ?? null,
+      removeItem: (key: string) => {
+        data.delete(key);
+      },
+      setItem: (key: string, value: string) => {
+        data.set(key, String(value));
+      },
+    } as Storage;
+  };
+  Object.defineProperty(globalThis, "localStorage", {
+    value: createMemoryStorage(),
+    configurable: true,
+    writable: true,
+  });
+  if (typeof window !== "undefined") {
+    Object.defineProperty(window, "localStorage", {
+      value: (globalThis as { localStorage: Storage }).localStorage,
+      configurable: true,
+      writable: true,
+    });
+  }
+}
+
 // Makes @xyflow/react testable in jsdom. React Flow's real components need
 // ResizeObserver, DOMMatrix, real layout math and a canvas — none of which
 // jsdom provides. The FlowEditor/flowNodes tests assert the *application*

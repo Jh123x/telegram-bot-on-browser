@@ -18,10 +18,9 @@ jobs:
 
     strategy:
       matrix:
-        # Vite 8 requires Node ^20.19.0 || >=22.12.0; undici 8 (via jsdom 30)
-        # requires >=22.19.0, so Node 22+ is the floor for the whole tree.
+        # Project targets the current Node LTS (24.x); engines enforces the
+        # jsdom 30 floor (^24.15.0) on the 24 line.
         node-version: 
-          - 22.x
           - 24.x
 
     steps:
