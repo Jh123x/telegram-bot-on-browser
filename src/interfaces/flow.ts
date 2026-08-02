@@ -13,7 +13,7 @@ export type TransformNodeType =
   | "replace"
   | "extractRegex";
 
-export type SendNodeType = "send" | "random";
+export type SendNodeType = "send" | "random" | "poll";
 
 // Every concrete node type. The category is derived via nodeCategory() in
 // logic/flow.ts; the type itself IS the operation (no per-node type selectors).
@@ -24,6 +24,14 @@ export type FlowNodeType =
   | SendNodeType;
 
 export type FlowNodeCategory = "start" | "transform" | "condition" | "send";
+
+// A structured poll reply produced by a "poll" send node. The runtime turns
+// this into a real Telegram sendPoll call.
+export interface PollReply {
+  kind: "poll";
+  question: string;
+  options: string[];
+}
 
 export interface FlowNodeData {
   label: string;

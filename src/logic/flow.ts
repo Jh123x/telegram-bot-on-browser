@@ -4,6 +4,7 @@ import {
   FlowNodeData,
   FlowNodeType,
   FlowTriggerType,
+  PollReply,
   SendNodeType,
   TransformNodeType,
 } from "../interfaces/flow.ts";
@@ -35,7 +36,7 @@ export const TRANSFORM_TYPES: TransformNodeType[] = [
   "extractRegex",
 ];
 
-export const SEND_TYPES: SendNodeType[] = ["send", "random"];
+export const SEND_TYPES: SendNodeType[] = ["send", "random", "poll"];
 
 export const ALL_NODE_TYPES: FlowNodeType[] = [
   "start",
@@ -83,6 +84,51 @@ export function interpolate(
 // level so loop closures never capture loop-scoped variables (no-loop-func).
 function interpolateReplies(replies: string[], message: string): string[] {
   return replies.map((reply) => interpolate(reply, { msg: message }));
+}
+
+// Usage hint shown when a /poll command is malformed. Kept byte-identical to
+// the hint inlined in the Poll Bot sample.
+export const POLL_USAGE_HINT = "Please use /poll <title> option1, option2, option3";
+
+// Usage hint shown when a /dice roll is malformed. Kept byte-identical to the
+// hint inlined in the Dice Bot sample.
+export const DICE_USAGE_HINT = "Please use /dice d4, d6, d8, d10, d12, d20 or d100";
+
+// Parses a "/poll ..." message into a structured PollReply. The convention is
+// "<title> option1, ..." where the FIRST part holds the title and the first
+// option separated by a space; the remaining comma-separated parts are extra
+// options. Returns POLL_USAGE_HINT when the message cannot form a valid poll
+// (fewer than 2 options or more than 10).
+export function parsePoll(message: string): PollReply | string {
+  const body = message.trim().replace(/^\/poll\s*/i, "").trim();
+  const parts = body
+    .split(",")
+    .map((p) => p.trim())
+    .filter((p) => p !== "");
+  if (parts.length < 2) return POLL_USAGE_HINT;
+
+  let question = parts[0];
+  let firstOption: string | undefined;
+  const firstSpace = parts[0].lastIndexOf(" ");
+  if (firstSpace !== -1) {
+    question = parts[0].slice(0, firstSpace).trim();
+    firstOption = parts[0].slice(firstSpace + 1).trim();
+  }
+
+  const options = [firstOption, ...parts.slice(1)].filter(
+    (o): o is string => o !== undefined && o !== ""
+  );
+
+  if (question === "") return POLL_USAGE_HINT;
+  if (options.length < 2 || options.length > 10) return POLL_USAGE_HINT;
+
+  return { kind: "poll", question, options };
+}
+
+// Formats a poll for the local chat log (Telegram gets the real poll via
+// sendPoll; this is just the human-readable echo).
+export function pollDisplay(poll: PollReply): string {
+  return `📊 Poll: ${poll.question}\n${poll.options.map((o) => `• ${o}`).join("\n")}`;
 }
 
 // Evaluates a trigger against a message. equals/notEquals trim both sides;
@@ -230,6 +276,8 @@ export function createFlowNode(
       return { ...base, data: { label: "New Send", replies: [] } };
     case "random":
       return { ...base, data: { label: "Random", replies: [] } };
+    case "poll":
+      return { ...base, data: { label: "Poll" } };
   }
 }
 
@@ -251,7 +299,7 @@ export function createFlow(name = "New Flow"): Flow {
 export function executeFlow(
   flow: Flow,
   message: string
-): string[] | undefined {
+): (string | PollReply)[] | undefined {
   if (flow.startNodeId === "") return undefined;
 
   const nodesById = new Map(flow.nodes.map((n) => [n.id, n]));
@@ -314,7 +362,10 @@ export function executeFlow(
       continue;
     }
 
-    // send category (send / random)
+    // send category (send / random / poll)
+    if (current.type === "poll") {
+      return [parsePoll(currentMessage)];
+    }
     const replies = interpolateReplies(
       current.data.replies ?? [],
       currentMessage
@@ -338,12 +389,13 @@ export class FlowRuntime {
   // Evaluates the message from the start node every time.
   //   - undefined  -> no send node reached (caller falls through to next rule)
   //   - []         -> a send node was reached but has empty replies (consumed)
-  //   - string     -> a send node reached with a single reply
+  //   - string     -> a send node reached with a single string reply
+  //   - PollReply  -> a poll node reached with a single parsed poll
   //   - string[]   -> a send node reached with several replies
   handleMessage(
     _userId: number,
     message: string
-  ): string | string[] | undefined {
+  ): string | string[] | PollReply | undefined {
     const replies = executeFlow(this.flow, message);
     if (replies === undefined) return undefined;
     if (replies.length === 0) return [];

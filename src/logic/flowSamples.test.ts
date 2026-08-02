@@ -1,25 +1,21 @@
-import { FlowRuntime, validateFlow } from "./flow.ts";
+import { FlowRuntime, validateFlow, POLL_USAGE_HINT, DICE_USAGE_HINT } from "./flow.ts";
 import { FlowSample, SAMPLE_FLOWS } from "./flowSamples.ts";
+import { vi } from "vitest";
 
 // SAMPLE_FLOWS is guaranteed to be in this exact order (see the
-// "three samples with unique names and order" test below).
-const WELCOME = SAMPLE_FLOWS[0];
-const UPPERCASE = SAMPLE_FLOWS[1];
-const GREETING = SAMPLE_FLOWS[2];
+// "two samples with unique names and order" test below).
+const DICE = SAMPLE_FLOWS[0];
+const POLL = SAMPLE_FLOWS[1];
 
 describe("SAMPLE_FLOWS", () => {
-  it("has three samples with unique names", () => {
-    expect(SAMPLE_FLOWS).toHaveLength(3);
+  it("has two samples with unique names", () => {
+    expect(SAMPLE_FLOWS).toHaveLength(2);
     const names = SAMPLE_FLOWS.map((s) => s.name);
-    expect(new Set(names).size).toBe(3);
+    expect(new Set(names).size).toBe(2);
   });
 
   it("contains the expected samples in order", () => {
-    expect(SAMPLE_FLOWS.map((s) => s.name)).toEqual([
-      "Welcome Flow",
-      "Uppercase Echo",
-      "Greeting Check",
-    ]);
+    expect(SAMPLE_FLOWS.map((s) => s.name)).toEqual(["Dice Bot", "Poll Bot"]);
   });
 });
 
@@ -29,28 +25,83 @@ describe.each(SAMPLE_FLOWS)("$name", (sample: FlowSample) => {
   });
 });
 
-describe("Welcome Flow execution", () => {
-  it("answers any message with both replies", () => {
-    const rt = new FlowRuntime(WELCOME.flow);
-    const expected = ["Welcome! I'm a browser bot 🤖", "Try /echo or say hi."];
-    expect(rt.handleMessage(1, "hello there")).toEqual(expected);
-    // Stateless: a different brand-new user routes to the same send node.
-    expect(rt.handleMessage(2, "hi")).toEqual(expected);
+describe("Dice Bot execution", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("rolls a d4 between 1 and 4", () => {
+    const rt = new FlowRuntime(DICE.flow);
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    expect(rt.handleMessage(1, "/dice d4")).toBe("1");
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
+    expect(rt.handleMessage(1, "/dice d4")).toBe("4");
+  });
+
+  it("rolls a d20 between 1 and 20", () => {
+    const rt = new FlowRuntime(DICE.flow);
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    expect(rt.handleMessage(1, "/dice d20")).toBe("1");
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
+    expect(rt.handleMessage(1, "/dice d20")).toBe("20");
+  });
+
+  it("rolls a d100 between 1 and 100", () => {
+    const rt = new FlowRuntime(DICE.flow);
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    expect(rt.handleMessage(1, "/dice d100")).toBe("1");
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
+    expect(rt.handleMessage(1, "/dice d100")).toBe("100");
+  });
+
+  it("handles uppercase dice commands via the lowercase transform", () => {
+    const rt = new FlowRuntime(DICE.flow);
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    expect(rt.handleMessage(1, "/DICE D20")).toBe("1");
+  });
+
+  it("replies with the usage hint for an invalid dice type", () => {
+    const rt = new FlowRuntime(DICE.flow);
+    expect(rt.handleMessage(1, "/dice banana")).toBe(DICE_USAGE_HINT);
+  });
+
+  it("replies with the usage hint for a bare /dice command", () => {
+    const rt = new FlowRuntime(DICE.flow);
+    expect(rt.handleMessage(1, "/dice")).toBe(DICE_USAGE_HINT);
+  });
+
+  it("stays silent for messages that do not start with /dice", () => {
+    const rt = new FlowRuntime(DICE.flow);
+    expect(rt.handleMessage(1, "hello")).toBeUndefined();
   });
 });
 
-describe("Uppercase Echo execution", () => {
-  it("transforms the message to uppercase before interpolating {msg}", () => {
-    const rt = new FlowRuntime(UPPERCASE.flow);
-    expect(rt.handleMessage(1, "hello")).toBe("You said: HELLO");
-    expect(rt.handleMessage(1, "hi there")).toBe("You said: HI THERE");
+describe("Poll Bot execution", () => {
+  it("creates a poll from a title plus comma-separated options", () => {
+    const rt = new FlowRuntime(POLL.flow);
+    expect(rt.handleMessage(1, "/poll What is your favorite color? red, blue, green")).toEqual({
+      kind: "poll",
+      question: "What is your favorite color?",
+      options: ["red", "blue", "green"],
+    });
   });
-});
 
-describe("Greeting Check execution", () => {
-  it("replies Hello when the message contains hi, else Say hi", () => {
-    const rt = new FlowRuntime(GREETING.flow);
-    expect(rt.handleMessage(1, "hi")).toBe("Hello! 👋");
-    expect(rt.handleMessage(1, "hey")).toBe("Say hi!");
+  it("treats a space-separated first option as part of the first part", () => {
+    const rt = new FlowRuntime(POLL.flow);
+    expect(rt.handleMessage(1, "/poll Title opt1, opt2")).toEqual({
+      kind: "poll",
+      question: "Title",
+      options: ["opt1", "opt2"],
+    });
+  });
+
+  it("replies with the usage hint when there are not enough options", () => {
+    const rt = new FlowRuntime(POLL.flow);
+    expect(rt.handleMessage(1, "/poll Title")).toBe(POLL_USAGE_HINT);
+  });
+
+  it("stays silent for messages that do not start with /poll", () => {
+    const rt = new FlowRuntime(POLL.flow);
+    expect(rt.handleMessage(1, "hello")).toBeUndefined();
   });
 });

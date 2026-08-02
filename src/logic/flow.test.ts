@@ -18,6 +18,9 @@ import {
   TRANSFORM_TYPES,
   TRIGGER_TYPES,
   TRIGGER_LABELS,
+  POLL_USAGE_HINT,
+  parsePoll,
+  pollDisplay,
 } from "./flow.ts";
 import { Flow } from "../interfaces/flow.ts";
 import { vi } from "vitest";
@@ -90,6 +93,7 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
       ...TRIGGER_TYPES,
       "send",
       "random",
+      "poll",
     ]);
     expect(new Set(ALL_NODE_TYPES).size).toBe(ALL_NODE_TYPES.length);
   });
@@ -106,9 +110,10 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
     TRIGGER_TYPES.forEach((t) => expect(nodeCategory(t)).toBe("condition"));
   });
 
-  test("send and random map to the send category", () => {
+  test("send, random, and poll map to the send category", () => {
     expect(nodeCategory("send")).toBe("send");
     expect(nodeCategory("random")).toBe("send");
+    expect(nodeCategory("poll")).toBe("send");
   });
 });
 
@@ -299,6 +304,12 @@ describe("createFlowNode", () => {
     const node = createFlowNode("random");
     expect(node.type).toBe("random");
     expect(node.data).toEqual({ label: "Random", replies: [] });
+  });
+
+  test("poll node gets only a Poll label (no replies field)", () => {
+    const node = createFlowNode("poll");
+    expect(node.type).toBe("poll");
+    expect(node.data).toEqual({ label: "Poll" });
   });
 
   test("honors a provided position", () => {
@@ -514,6 +525,91 @@ describe("executeFlow (random node)", () => {
   });
 });
 
+describe("parsePoll", () => {
+  test("parses '<title> option1, option2, option3' splitting at the last space", () => {
+    expect(
+      parsePoll("/poll What is your favorite color? red, blue, green")
+    ).toEqual({
+      kind: "poll",
+      question: "What is your favorite color?",
+      options: ["red", "blue", "green"],
+    });
+  });
+
+  test("parses 'Title opt1, opt2' with the title as the question", () => {
+    expect(parsePoll("/poll Title opt1, opt2")).toEqual({
+      kind: "poll",
+      question: "Title",
+      options: ["opt1", "opt2"],
+    });
+  });
+
+  test("a poll with no options returns the usage hint", () => {
+    expect(parsePoll("/poll Title")).toBe(POLL_USAGE_HINT);
+    expect(parsePoll("/poll")).toBe(POLL_USAGE_HINT);
+  });
+
+  test("a poll with a single option (options below 2) returns the usage hint", () => {
+    expect(parsePoll("/poll opt1, opt2")).toBe(POLL_USAGE_HINT);
+  });
+
+  test("an 11-option poll returns the usage hint", () => {
+    const opts = Array.from({ length: 11 }, (_, i) => `o${i + 1}`).join(", ");
+    expect(parsePoll(`/poll Title ${opts}`)).toBe(POLL_USAGE_HINT);
+  });
+
+  test("a 10-option poll is accepted", () => {
+    const opts = Array.from({ length: 10 }, (_, i) => `o${i + 1}`).join(", ");
+    const result = parsePoll(`/poll Title ${opts}`);
+    expect(result).not.toBe(POLL_USAGE_HINT);
+    if (result !== POLL_USAGE_HINT) {
+      expect(result.options).toHaveLength(10);
+    }
+  });
+
+  test("strips surrounding whitespace and ignores empty option entries", () => {
+    const parsed = parsePoll("/poll  Title  opt1 , , opt2 ");
+    expect(parsed).toEqual({ kind: "poll", question: "Title", options: ["opt1", "opt2"] });
+  });
+});
+
+describe("pollDisplay", () => {
+  test("formats a local chat-log representation of the poll", () => {
+    expect(
+      pollDisplay({
+        kind: "poll",
+        question: "What is your favorite color?",
+        options: ["red", "blue", "green"],
+      })
+    ).toBe("📊 Poll: What is your favorite color?\n• red\n• blue\n• green");
+  });
+});
+
+describe("executeFlow (poll node)", () => {
+  function pollFlow(): Flow {
+    return {
+      id: "f1",
+      name: "Poll",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "poll", type: "poll", position: { x: 240, y: 0 }, data: { label: "Poll" } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "poll" }],
+    };
+  }
+
+  test("returns the parsed poll reply for a well-formed /poll command", () => {
+    expect(executeFlow(pollFlow(), "/poll Color red, blue")).toEqual([
+      { kind: "poll", question: "Color", options: ["red", "blue"] },
+    ]);
+  });
+
+  test("returns the usage hint for a malformed /poll command", () => {
+    expect(executeFlow(pollFlow(), "/poll Color")).toEqual([POLL_USAGE_HINT]);
+  });
+});
+
 describe("FlowRuntime (stateless)", () => {
   function welcomeFlow(): Flow {
     return {
@@ -594,6 +690,24 @@ describe("FlowRuntime (stateless)", () => {
     });
     expect(rt.handleMessage(1, "a")).toBe("Only");
   });
+
+  test("a single poll reply is returned directly as a PollReply object", () => {
+    const rt = new FlowRuntime({
+      id: "f1",
+      name: "Poll",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        { id: "poll", type: "poll", position: { x: 240, y: 0 }, data: { label: "Poll" } },
+      ],
+      edges: [{ id: "e1", source: "start", target: "poll" }],
+    });
+    expect(rt.handleMessage(1, "/poll Color red, blue")).toEqual({
+      kind: "poll",
+      question: "Color",
+      options: ["red", "blue"],
+    });
+  });
 });
 
 describe("validateFlow", () => {
@@ -614,6 +728,12 @@ describe("validateFlow", () => {
     type: "random",
     position: { x: 0, y: 0 },
     data: { label: "Rand", replies: ["a", "b"] },
+  };
+  const pollNode: Flow["nodes"][number] = {
+    id: "poll",
+    type: "poll",
+    position: { x: 0, y: 0 },
+    data: { label: "Poll" },
   };
   const transformNode: Flow["nodes"][number] = {
     id: "tx",
@@ -765,6 +885,18 @@ describe("validateFlow", () => {
     ];
     expect(validateFlow(flow)).toContain(
       "Node rand is a send node and cannot have outgoing edges"
+    );
+  });
+
+  test("poll node with an outgoing edge is rejected", () => {
+    const flow = validFlow();
+    flow.nodes = [startNode, pollNode, transformNode];
+    flow.edges = [
+      { id: "e1", source: "start", target: "poll" },
+      { id: "e2", source: "poll", target: "tx" },
+    ];
+    expect(validateFlow(flow)).toContain(
+      "Node poll is a send node and cannot have outgoing edges"
     );
   });
 });
