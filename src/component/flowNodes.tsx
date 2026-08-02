@@ -91,6 +91,8 @@ export function transformSummary(
         : "replace";
     case "extractRegex":
       return "extract regex";
+    case "randomNumber":
+      return data.min && data.max ? `random ${data.min}–${data.max}` : "random number";
     default:
       return "transform";
   }

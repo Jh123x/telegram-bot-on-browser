@@ -47,15 +47,16 @@ test("shows the start category items by default", () => {
   expect(screen.queryByTestId("palette-item-random")).toBeNull();
 });
 
-test("selecting the transform category reveals the five transform nodes", () => {
+test("selecting the transform category reveals the six transform nodes", () => {
   render(<FlowPalette />);
 
   fireEvent.click(screen.getByTestId("palette-category-transform"));
 
-  ["lowercase", "uppercase", "trim", "replace", "extractRegex"].forEach((type) => {
+  ["lowercase", "uppercase", "trim", "replace", "extractRegex", "randomNumber"].forEach((type) => {
     const item = screen.getByTestId(`palette-item-${type}`);
     expect(item).toHaveAttribute("draggable", "true");
   });
+  expect(screen.getByText("Random Number")).toBeTruthy();
   expect(screen.queryByTestId("palette-item-start")).toBeNull();
 });
 

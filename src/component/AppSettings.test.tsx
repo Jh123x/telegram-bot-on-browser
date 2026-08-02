@@ -48,6 +48,12 @@ const validFlow = {
       position: { x: 600, y: 240 },
       data: { label: "Pick" },
     },
+    {
+      id: "n7",
+      type: "randomNumber",
+      position: { x: 600, y: 360 },
+      data: { label: "Roll", min: "1", max: "20" },
+    },
   ],
   edges: [
     { id: "e1", source: "n1", target: "n2" },

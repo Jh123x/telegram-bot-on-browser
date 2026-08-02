@@ -22,7 +22,12 @@ const CATEGORY_ITEMS: Record<FlowNodeCategory, PaletteItem[]> = {
   ],
   transform: TRANSFORM_TYPES.map((type) => ({
     type,
-    label: type === "extractRegex" ? "Extract Regex" : type.charAt(0).toUpperCase() + type.slice(1),
+    label:
+      type === "extractRegex"
+        ? "Extract Regex"
+        : type === "randomNumber"
+        ? "Random Number"
+        : type.charAt(0).toUpperCase() + type.slice(1),
     accent: GRAPH_COLORS.node.transform.accent,
   })),
   condition: TRIGGER_TYPES.map((type) => ({

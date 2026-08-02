@@ -38,6 +38,7 @@ const FLOW_NODE_TYPES = [
   "trim",
   "replace",
   "extractRegex",
+  "randomNumber",
   "equals",
   "contains",
   "startsWith",
@@ -73,6 +74,12 @@ const isValidFlowNode = (n: unknown): boolean => {
     return false;
   }
   if (data.pattern !== undefined && typeof data.pattern !== "string") {
+    return false;
+  }
+  if (data.min !== undefined && typeof data.min !== "string") {
+    return false;
+  }
+  if (data.max !== undefined && typeof data.max !== "string") {
     return false;
   }
   if (

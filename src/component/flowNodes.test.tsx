@@ -99,6 +99,16 @@ test("TransformNode renders the extract regex summary", () => {
   expect(getByText("extract regex")).toBeTruthy();
 });
 
+test("TransformNode renders the random number summary with its range", () => {
+  const { getByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Roll", min: "1", max: "20" }, "randomNumber")}
+    />
+  );
+
+  expect(getByText("random 1–20")).toBeTruthy();
+});
+
 test("TransformNode shows a lowercase badge for the lowercase type", () => {
   const { getAllByText } = render(
     <TransformNode {...makeNodeProps({ label: "Noop" }, "lowercase")} />

@@ -165,6 +165,29 @@ export const FlowInspector = ({
               onChange={(e) => setNodeData({ pattern: e.target.value })}
             />
           )}
+          {type === "randomNumber" && (
+            <>
+              <TextField
+                label="Min"
+                size="small"
+                fullWidth
+                sx={{ mt: 1 }}
+                value={selectedNode.data.min ?? ""}
+                onChange={(e) => setNodeData({ min: e.target.value })}
+              />
+              <TextField
+                label="Max"
+                size="small"
+                fullWidth
+                sx={{ mt: 1 }}
+                value={selectedNode.data.max ?? ""}
+                onChange={(e) => setNodeData({ max: e.target.value })}
+              />
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
+                Picks a random whole number between Min and Max (inclusive).
+              </Typography>
+            </>
+          )}
           {onDelete && <DeleteButton label="Delete node" onDelete={onDelete} />}
         </Paper>
       );

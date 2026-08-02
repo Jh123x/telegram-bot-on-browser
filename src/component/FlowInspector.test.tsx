@@ -244,6 +244,65 @@ test("editing the Pattern field dispatches onUpdate", () => {
   );
 });
 
+test("random number transform reveals Min and Max fields with a hint", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "rn1",
+        type: "randomNumber",
+        position: { x: 0, y: 0 },
+        data: { label: "Roll", min: "1", max: "20" },
+      },
+    ],
+  });
+  renderInspector(flow, "rn1", null);
+  expect(screen.getByLabelText("Min")).toHaveValue("1");
+  expect(screen.getByLabelText("Max")).toHaveValue("20");
+  expect(screen.getByText("Picks a random whole number between Min and Max (inclusive).")).toBeTruthy();
+  expect(screen.queryByLabelText("Pattern")).toBeNull();
+});
+
+test("editing Min and Max dispatches onUpdate", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "rn1",
+        type: "randomNumber",
+        position: { x: 0, y: 0 },
+        data: { label: "Roll", min: "1", max: "6" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "rn1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Min"), { target: { value: "2" } });
+
+  expect(onUpdate).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "rn1",
+          data: expect.objectContaining({ min: "2" }),
+        }),
+      ]),
+    })
+  );
+
+  fireEvent.change(screen.getByLabelText("Max"), { target: { value: "12" } });
+
+  expect(onUpdate).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "rn1",
+          data: expect.objectContaining({ max: "12" }),
+        }),
+      ]),
+    })
+  );
+});
+
 // ----- Condition node -----
 
 test("condition panel shows label, type caption, and trigger value field", () => {
