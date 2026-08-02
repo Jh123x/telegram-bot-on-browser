@@ -18,10 +18,11 @@ jobs:
 
     strategy:
       matrix:
-        # Vite 8 requires Node ^20.19.0 || >=22.12.0 (see engines in node_modules/vite)
+        # Vite 8 requires Node ^20.19.0 || >=22.12.0; undici 8 (via jsdom 30)
+        # requires >=22.19.0, so Node 22+ is the floor for the whole tree.
         node-version: 
-          - 20.x
           - 22.x
+          - 24.x
 
     steps:
     - uses: actions/checkout@v4

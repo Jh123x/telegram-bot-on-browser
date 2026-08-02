@@ -1,7 +1,6 @@
 import { test, expect, vi } from "vitest";
 import React from "react";
-import { fireEvent, screen } from "@testing-library/react";
-import { act } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { generateDefaultState, renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { ChatPage } from "./ChatPage.tsx";
 import { BrowserBot } from "../interfaces/bot";
@@ -521,9 +520,12 @@ test("import chat replaces the store's users and responses", async () => {
   fireEvent.change(screen.getByTestId("import-chat-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("chat-import-status").textContent).not.toBe("")
+  );
 
   expect(store.getState().bot.users).toEqual([
     { Username: "carol", UserID: 9 },
@@ -548,9 +550,9 @@ test("import chat with a non-JSON file shows an error and changes nothing", asyn
   fireEvent.change(screen.getByTestId("import-chat-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  await waitFor(() =>
+    expect(screen.getByTestId("chat-import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("chat-import-status").textContent).toContain(
     "Could not import chat: invalid file."
@@ -571,9 +573,9 @@ test("import chat with a wrong-shape file shows an error and changes nothing", a
   fireEvent.change(screen.getByTestId("import-chat-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  await waitFor(() =>
+    expect(screen.getByTestId("chat-import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("chat-import-status").textContent).toContain(
     "Could not import chat: invalid file."

@@ -1,7 +1,6 @@
 import { test, expect, vi } from "vitest";
 import React from "react";
-import { fireEvent, screen } from "@testing-library/react";
-import { act } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { defaultBotState } from "../redux/botSlice.ts";
 import { AppSettings } from "./AppSettings.tsx";
@@ -182,9 +181,12 @@ test("import settings applies token, resets flows to empty and applies autoStart
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(store.getState().bot.token).toBe("imp-token");
   // An empty flows list imports as empty.
@@ -217,9 +219,12 @@ test("import settings collapses multiple flows to the first one", async () => {
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   const flows = store.getState().bot.flows;
   expect(flows).toHaveLength(1);
@@ -250,9 +255,12 @@ test("import settings restores pollRate when present in the file", async () => {
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(store.getState().bot.pollRate).toBe(3);
   expect(localStorage.getItem("pollRate")).toBe("3");
@@ -281,9 +289,12 @@ test("import settings without pollRate keeps the default", async () => {
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(store.getState().bot.pollRate).toBe(5);
   expect(screen.getByTestId("import-status").textContent).toContain(
@@ -311,9 +322,12 @@ test("import settings with an invalid pollRate falls back to the default", async
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   // A negative/zero rate would make the poll worker spin in a tight loop
   // (setTimeout with <= 0 fires immediately), so invalid numbers must be
@@ -336,9 +350,12 @@ test("import with an invalid file shows an error and changes nothing", async () 
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Could not import settings"
@@ -359,9 +376,12 @@ test("import with a valid-JSON-but-wrong-shape file shows an error and changes n
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Could not import settings"
@@ -433,9 +453,12 @@ test("import settings restores flows into the store and localStorage", async () 
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(store.getState().bot.flows).toEqual([validFlow]);
   expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
@@ -465,9 +488,12 @@ test("importing a file without flows shows an error and changes nothing", async 
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   // flows is required — a file without it is rejected, nothing changes.
   expect(store.getState().bot.token).toBe("abc:TOKEN");
@@ -500,9 +526,12 @@ test("import with an invalid flows array shows an error and changes nothing", as
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Could not import settings"
@@ -551,9 +580,12 @@ test("import rejects a flow whose node is missing data.label and changes nothing
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Could not import settings"
@@ -586,9 +618,12 @@ test("import accepts a new-model flow with transform/condition/send nodes and tr
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Settings imported."
@@ -640,9 +675,12 @@ test("import rejects a flow containing a legacy state node and changes nothing",
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Could not import settings"
@@ -690,9 +728,12 @@ test("import rejects an edge carrying legacy trigger data and changes nothing", 
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("import-status").textContent).toContain(
     "Could not import settings"
@@ -736,9 +777,12 @@ const importBadFlow = async (flow: unknown) => {
   fireEvent.change(screen.getByTestId("import-settings-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
 
   return store;
 };
