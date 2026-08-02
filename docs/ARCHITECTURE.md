@@ -72,7 +72,9 @@ Key functions:
   replace, extractRegex) to the message.
 - `executeFlow` — walks the graph from the start node, applying transforms,
   evaluating conditions, and returning the replies of the first send node
-  reached (or `undefined` when no send node is reached).
+  reached (or `undefined` when no send node is reached). A poll node returns
+  a `PollReply` (`{ kind: "poll", question, options }`) which the transport
+  layer turns into a Telegram `sendPoll` call.
 - `FlowRuntime` — stateless wrapper around `executeFlow`; every message is
   evaluated from the flow's start node (send nodes are terminal).
 - `validateFlow` — structural validation of a flow.
@@ -83,7 +85,8 @@ Key functions:
 `BrowserBot` wraps the Telegram Bot API. It creates two Web Workers:
 
 - **poll worker** — polls `getUpdates` for new messages.
-- **send worker** — sends messages with `sendMessage`.
+- **send worker** — sends replies with `sendMessage` (text) or `sendPoll`
+  (poll payloads from a poll node).
 
 The app registers one rule per flow:
 
@@ -111,9 +114,10 @@ flowchart TD
 When a message arrives, the engine walks the graph from the start node.
 **Transform** nodes rewrite the message before passing it on; **Condition**
 nodes evaluate it and follow their **if** or **else** edge; **Send** nodes
-return their replies (with `{msg}` interpolated to the current message) and
-**Random** nodes return one random reply line. The walk is stateless — every
-message starts from the start node.
+return their replies (with `{msg}` interpolated to the current message),
+**Random** nodes return one random reply line, and **Poll** nodes parse the
+message as `/poll <title> option1, option2, ...` into a `PollReply`. The walk
+is stateless — every message starts from the start node.
 
 ## Incoming message flow
 
@@ -255,7 +259,9 @@ flowchart TD
     `endsWith`, `notEquals`, `notContains`. The type is the matcher; the node
     carries only `data.value` (the text to match).
   - Send category (1 input, no output, terminal) — `send` returns every line
-    of `data.replies`; `random` returns exactly ONE of them, chosen at random.
+    of `data.replies`; `random` returns exactly ONE of them, chosen at random;
+    `poll` parses the message as `/poll <title> option1, option2, ...` into a
+    `PollReply` (the transport layer sends it via `sendPoll`).
 - **FlowEdge** — a connection from `source` to `target`. Edges carry no
   trigger data; a condition's branch is recorded in `sourceHandle` (`"if"` /
   `"else"`). `nodeCategory(type)` maps any concrete node type back to its
@@ -272,7 +278,10 @@ The pure engine lives in `src/logic/flow.ts` (no React or Redux):
   visited-set cycle guard. Transform nodes rewrite the message; condition
   nodes follow the `if` edge when their matcher passes and the `else` edge
   otherwise; a send node's replies are returned (with `{msg}` interpolated to
-  the current message), while a random node returns one interpolated line.
+  the current message), while a random node returns one interpolated line and
+  a poll node returns `parsePoll(message)` — a `PollReply` when the message
+  forms a valid `/poll <title> option1, option2, ...` command, otherwise a
+  usage-hint string.
   Returns `undefined` when the walk cannot reach a send node (dead end,
   cycle, missing branch).
 - `FlowRuntime` — stateless wrapper around `executeFlow`. `handleMessage`
@@ -322,8 +331,8 @@ to the default (5 seconds).
 The **Flow** tab uses React Flow (`@xyflow/react` v12). The `FlowsPage`
 renders `FlowEditor`, which wraps the canvas in a `<ReactFlowProvider>` with a
 palette, toolbar, samples, and inspector. Custom MUI node components
-(`StartNode`, `TransformNode`, `ConditionNode`, `SendNode`) preserve the
-app's design language. Nodes are added by dragging from the palette (HTML5
+(`StartNode`, `TransformNode`, `ConditionNode`, `SendNode`, `RandomNode`,
+`PollNode`) preserve the app's design language. Nodes are added by dragging from the palette (HTML5
 drag-and-drop using the `application/reactflow` MIME type) and dropped onto
 the canvas at the pointer position. Connecting nodes creates a plain edge; a
 condition's outgoing edges record `sourceHandle` (`"if"`/`"else"`) and are

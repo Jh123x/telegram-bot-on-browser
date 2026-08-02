@@ -22,8 +22,8 @@ import {
 } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig, Response, User } from "../redux/types.ts";
-import { Flow } from "../interfaces/flow.ts";
-import { FlowRuntime } from "../logic/flow.ts";
+import { Flow, PollReply } from "../interfaces/flow.ts";
+import { FlowRuntime, pollDisplay } from "../logic/flow.ts";
 
 type DisplayItem =
   | { id: string; kind: "message"; time: number; response: Response }
@@ -125,7 +125,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     // transition wins — the same per-user path production uses (FlowRuntime
     // keyed by user id, here the Test User).
     let matchedFlow: Flow | undefined;
-    let flowReplies: string[] = [];
+    let flowReplies: (string | PollReply)[] = [];
     for (const flow of flows) {
       const runtime = flowRuntimesRef.current.get(flow.id);
       if (!runtime) continue;
@@ -168,7 +168,9 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
             response: {
               FromUser: "Bot",
               UserID: TEST_USER.UserID,
-              Message: reply,
+              // Poll replies render as a formatted human-readable echo in the
+              // log bubble; plain strings use the message as-is.
+              Message: typeof reply === "string" ? reply : pollDisplay(reply),
               TimeStamp: t,
               fromBot: true,
             },

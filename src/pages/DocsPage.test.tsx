@@ -156,9 +156,8 @@ test("documents stateless evaluation and {msg} interpolation", () => {
 test("documents the built-in flow samples", () => {
   render(<DocsPage />);
 
-  expect(screen.getAllByText(/Welcome Flow/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Uppercase Echo/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Greeting Check/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Dice Bot/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Poll Bot/i).length).toBeGreaterThan(0);
   expect(screen.queryByText(/Quiz Flow/i)).toBeNull();
 });
 

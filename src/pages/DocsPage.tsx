@@ -147,7 +147,7 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
             Flow tab
           </Link>{" "}
           and build a flow: drag Start, Transform, Condition and Send nodes
-          from the palette onto the canvas and connect them. The Welcome
+          from the palette onto the canvas and connect them. The Dice Bot
           sample loads on first visit.
         </Typography>
       </li>
@@ -208,6 +208,13 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
         <Typography component="span">
           <strong>Send</strong> — replies with one message per line and ends
           the flow (it has no output).
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Poll</strong> — parses the message as a{" "}
+          <code>/poll</code> command and sends a Telegram poll with a question
+          and options (it has no output).
         </Typography>
       </li>
     </Box>
@@ -293,21 +300,16 @@ replies:
     <Box component="ul" sx={{ mt: 1, pl: 3 }}>
       <li>
         <Typography component="span">
-          <strong>Welcome Flow</strong> greets every user.
+          <strong>Dice Bot</strong> rolls a D&amp;D die:{" "}
+          <code>/dice d4</code> through <code>/dice d100</code> choose a random
+          number from that die&apos;s number list.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          <strong>Uppercase Echo</strong> transforms the message to uppercase
-          and echoes it back.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          <strong>Greeting Check</strong> replies{" "}
-          {"\"Hello! 👋\""} when the message contains{" "}
-          {"\"hi\""}, otherwise says{" "}
-          {"\"Say hi!\""}.
+          <strong>Poll Bot</strong> turns{" "}
+          <code>/poll &lt;title&gt; option1, option2, option3</code> into a
+          Telegram poll.
         </Typography>
       </li>
     </Box>

@@ -9,7 +9,7 @@ canvas and connected by edges. Every user message starts at the **Start**
 node, flows through the graph, and ends at a **Send** node whose replies go
 back to the user.
 
-![Flow editor with the Greeting Check sample](screenshots/flow-editor.png)
+![Flow editor](screenshots/flow-editor.png)
 
 ### Building a flow
 
@@ -31,6 +31,8 @@ it in the inspector panel.
   the flow for this message.
 - **Random** — 1 input, no output (terminal). Sends exactly ONE of its
   option lines, chosen at random.
+- **Poll** — 1 input, no output (terminal). Parses the message as
+  `/poll <title> option1, option2, option3` and sends a Telegram poll.
 
 ### Condition matchers
 
@@ -69,11 +71,11 @@ stays silent.
 
 Open the **Flow** tab and click a sample to load it:
 
-- **Welcome Flow** — greets every user.
-- **Uppercase Echo** — transforms the message to uppercase, then echoes it
-  back with "You said:".
-- **Greeting Check** — replies "Hello! 👋" when the message contains "hi",
-  otherwise says "Say hi!".
+- **Dice Bot** — `/dice d4`, `/dice d6`, `/dice d8`, `/dice d10`,
+  `/dice d12`, `/dice d20` or `/dice d100` rolls that D&D die: a chain of
+  conditions picks the die, and a random node returns one of its numbers.
+- **Poll Bot** — `/poll <title> option1, option2, option3` creates a Telegram
+  poll with the given question and options.
 
 ### Persistence
 

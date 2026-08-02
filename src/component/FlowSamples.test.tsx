@@ -20,7 +20,7 @@ test("renders all sample flow names", () => {
 });
 
 test("clicking a sample calls onLoaded with a fresh-id copy", () => {
-  const sample = SAMPLE_FLOWS[2]; // "Greeting Check" (a condition/if-else flow)
+  const sample = SAMPLE_FLOWS[1]; // "Poll Bot" (a condition/if flow)
   const onLoaded = vi.fn();
   renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store: makeStore() });
 
@@ -45,12 +45,18 @@ test("clicking a sample preserves the branch handles in the loaded flow", () => 
   const onLoaded = vi.fn();
   renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store: makeStore() });
 
-  fireEvent.click(screen.getByText("Welcome Flow"));
+  fireEvent.click(screen.getByText("Dice Bot"));
 
   const flow = onLoaded.mock.calls[0][0];
-  // Welcome Flow is start -> send: one plain (no sourceHandle) edge.
-  expect(flow.edges).toHaveLength(1);
-  expect(flow.edges[0].sourceHandle).toBeUndefined();
+  // Dice Bot has plain edges (start -> lowercase -> gate) plus condition
+  // edges that carry an "if" sourceHandle (the gate's first dice branch).
+  expect(flow.edges.length).toBeGreaterThan(2);
+  // A plain edge (no sourceHandle) is preserved.
+  const plainEdge = flow.edges.find((e: { sourceHandle?: string }) => e.sourceHandle == null);
+  expect(plainEdge).toBeTruthy();
+  // An "if" branch edge (gate condition -> first dice condition) survives.
+  const ifEdge = flow.edges.find((e: { sourceHandle?: string }) => e.sourceHandle === "if");
+  expect(ifEdge).toBeTruthy();
 });
 
 test("onLoaded receives the prepared flow", () => {
@@ -58,8 +64,8 @@ test("onLoaded receives the prepared flow", () => {
   const store = makeStore();
   renderWithProviders(<FlowSamples onLoaded={onLoaded} />, { store });
 
-  fireEvent.click(screen.getByText("Welcome Flow"));
+  fireEvent.click(screen.getByText("Dice Bot"));
 
   expect(onLoaded).toHaveBeenCalledTimes(1);
-  expect(onLoaded.mock.calls[0][0].name).toBe("Welcome Flow");
+  expect(onLoaded.mock.calls[0][0].name).toBe("Dice Bot");
 });

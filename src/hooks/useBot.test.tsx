@@ -235,11 +235,36 @@ test("changing the token while running stops the old bot and resets started", ()
   expect(result.current.bot?.token).toBe("NEW_TOKEN");
 });
 
+// A greeting flow: a message containing "hi" gets a greeting; anything else
+// is told to say hi. Replaces the old Greeting Check sample fixture so the
+// if/else assertions stay identical without depending on the samples list.
+const greetingFlow = (() => {
+  const f = createFlow("Greeting");
+  const start = createFlowNode("start", { x: 0, y: 0 });
+  const check = createFlowNode("contains", { x: 120, y: 0 });
+  check.data.value = "hi";
+  check.data.label = "Contains hi";
+  const greet = createFlowNode("send", { x: 240, y: 0 });
+  greet.data.label = "Greet";
+  greet.data.replies = ["Hello! 👋"];
+  const nudge = createFlowNode("send", { x: 120, y: 140 });
+  nudge.data.label = "Nudge";
+  nudge.data.replies = ["Say hi!"];
+  f.startNodeId = start.id;
+  f.nodes = [start, check, greet, nudge];
+  f.edges = [
+    { id: "e1", source: start.id, target: check.id },
+    { id: "e2", source: check.id, target: greet.id, sourceHandle: "if" },
+    { id: "e3", source: check.id, target: nudge.id, sourceHandle: "else" },
+  ];
+  return f;
+})();
+
 test("flows from the store are registered as rules and respond via the worker", async () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[2].flow], // Greeting Check
+      flows: [greetingFlow],
       response: [],
       users: [],
     },
@@ -285,7 +310,7 @@ test("a silent flow falls through to the next flow (multi-flow rules)", async ()
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [silentFlow, SAMPLE_FLOWS[2].flow], // Silent, then Greeting Check
+      flows: [silentFlow, greetingFlow], // Silent, then Greeting
       response: [],
       users: [],
     },
@@ -313,7 +338,7 @@ test("flows are stateless: every message re-runs from the start node", async () 
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[2].flow], // Greeting Check
+      flows: [greetingFlow],
       response: [],
       users: [],
     },
@@ -364,6 +389,36 @@ test("flows are stateless: every message re-runs from the start node", async () 
       .map((call: [string, string, number]) => call[0][1]);
   expect(messagesByUser(42)).toEqual(["Hello! 👋", "Hello! 👋"]);
   expect(messagesByUser(7)).toEqual(["Say hi!"]);
+});
+
+test("a flow with a poll node posts a structured payload to sendPoll", async () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      flows: [SAMPLE_FLOWS[1].flow], // Poll Bot
+      response: [],
+      users: [],
+    },
+  });
+  const { result } = renderHook(() => useBot(), { wrapper: wrapper(store) });
+
+  act(() => {
+    result.current.start();
+  });
+  const poll = instances[0];
+  const send = instances[1];
+
+  await act(async () => {
+    await poll.onmessage!({ data: [1, "alice", 42, "/poll Color red, blue"] });
+  });
+
+  // The poll goes to the sendPoll endpoint with a structured {question,
+  // options} payload, not a sendMessage text call.
+  expect(send.postMessage).toHaveBeenCalledWith([
+    "https://api.telegram.org/botTOKEN/sendPoll",
+    { question: "Color", options: ["red", "blue"] },
+    42,
+  ]);
 });
 
 test("a flow with no matching transition sends no reply", async () => {

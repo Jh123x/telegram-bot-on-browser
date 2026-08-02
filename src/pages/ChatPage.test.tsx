@@ -187,26 +187,26 @@ test("chat panel fills the available page height", () => {
   expect(panel).toHaveStyle({ flexGrow: "1" });
 });
 
-const welcomeFlowStore = () =>
+const pollFlowStore = () =>
   setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[0].flow], // Welcome Flow
+      flows: [SAMPLE_FLOWS[1].flow], // Poll Bot
       response: [{ FromUser: "alice", UserID: 42, Message: "hi", TimeStamp: 1000 }],
       users: [{ Username: "alice", UserID: 42 }],
     },
   });
 
 test("renders a Test User conversation in the sidebar like any other user", () => {
-  const store = welcomeFlowStore();
+  const store = pollFlowStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
   expect(screen.getByRole("button", { name: /alice/ })).toBeTruthy();
   expect(screen.getByRole("button", { name: /Test User/ })).toBeTruthy();
 });
 
-test("selecting the Test User simulates replies as bubbles without sending to Telegram", () => {
-  const store = welcomeFlowStore();
+test("selecting the Test User simulates a poll reply as a bubble without sending to Telegram", () => {
+  const store = pollFlowStore();
   const bot = new BrowserBot("123:TOKEN");
   const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
@@ -215,15 +215,15 @@ test("selecting the Test User simulates replies as bubbles without sending to Te
 
   const textbox = screen.getByRole("textbox");
   expect(textbox).not.toBeDisabled();
-  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.change(textbox, { target: { value: "/poll Favorite color red, blue, green" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
 
-  // Nothing is sent to Telegram, but the flow's replies show in the feed.
+  // Nothing is sent to Telegram, but the flow's poll shows in the feed as a
+  // formatted human-readable echo.
   expect(spy).not.toHaveBeenCalled();
-  expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
-  expect(screen.getByText("Try /echo or say hi.")).toBeTruthy();
-  expect(screen.getByText(/Matched flow: Welcome Flow/)).toBeTruthy();
-  expect(screen.getByText("/start")).toBeTruthy();
+  expect(screen.getByText(/📊 Poll: Favorite color/)).toBeTruthy();
+  expect(screen.getByText(/Matched flow: Poll Bot/)).toBeTruthy();
+  expect(screen.getByText("/poll Favorite color red, blue, green")).toBeTruthy();
   expect(screen.getByText(/Test User ·/)).toBeTruthy();
 });
 
@@ -244,7 +244,7 @@ const flowStore = () =>
   setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[2].flow], // Greeting Check
+      flows: [SAMPLE_FLOWS[1].flow], // Poll Bot
       response: [],
       users: [],
     },
@@ -258,20 +258,46 @@ test("Test User preview responds to flows, sharing the production per-user path"
 
   const textbox = screen.getByRole("textbox");
 
-  // "hi" contains "hi", so the condition takes the if branch → greeting.
-  fireEvent.change(textbox, { target: { value: "hi" } });
+  // A valid /poll message takes the if branch through the poll node, so the
+  // reply is a formatted poll bubble in the feed.
+  fireEvent.change(textbox, { target: { value: "/poll Color red, blue" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-  expect(screen.getByText("Hello! 👋")).toBeTruthy();
+  expect(screen.getByText(/📊 Poll: Color/)).toBeTruthy();
   // One simulation → one matched-flow note.
-  expect(screen.getAllByText(/Matched flow: Greeting Check/)).toHaveLength(1);
+  expect(screen.getAllByText(/Matched flow: Poll Bot/)).toHaveLength(1);
 
-  // The runtime is stateless, so a non-matching message re-runs from the
-  // start node and takes the else branch.
-  fireEvent.change(textbox, { target: { value: "hey" } });
+  // The runtime is stateless, so a second /poll re-runs from the start node
+  // and produces another poll.
+  fireEvent.change(textbox, { target: { value: "/poll Food pasta, pizza" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
-  expect(screen.getByText("Say hi!")).toBeTruthy();
+  expect(screen.getByText(/📊 Poll: Food/)).toBeTruthy();
   // Two simulations → two matched-flow notes (one per message).
-  expect(screen.getAllByText(/Matched flow: Greeting Check/)).toHaveLength(2);
+  expect(screen.getAllByText(/Matched flow: Poll Bot/)).toHaveLength(2);
+});
+
+test("a valid /poll message renders the poll display text in a bot bubble", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      flows: [SAMPLE_FLOWS[1].flow], // Poll Bot
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, {
+    target: { value: "/poll Lunch sandwich, salad" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  // The bot bubble renders the formatted poll echo with the question and each
+  // option (whitespace is normalized, so assert on the leading text).
+  expect(screen.getByText(/📊 Poll: Lunch/)).toBeTruthy();
+  expect(screen.getByText(/Matched flow: Poll Bot/)).toBeTruthy();
 });
 
 test("Test User preview with no flow response shows the silent note", () => {
@@ -329,7 +355,7 @@ test("Test User works with no real users and never sends to Telegram", () => {
   const store = setupStore({
     bot: {
       token: "TOKEN",
-      flows: [SAMPLE_FLOWS[0].flow], // Welcome Flow
+      flows: [SAMPLE_FLOWS[1].flow], // Poll Bot
       response: [],
       users: [],
     },
@@ -347,10 +373,10 @@ test("Test User works with no real users and never sends to Telegram", () => {
 
   const textbox = screen.getByRole("textbox");
   expect(textbox).not.toBeDisabled();
-  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.change(textbox, { target: { value: "/poll Color red, blue" } });
   fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
 
-  expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
+  expect(screen.getByText(/📊 Poll: Color/)).toBeTruthy();
   expect(spy).not.toHaveBeenCalled();
 });
 
@@ -598,29 +624,29 @@ test("Import chat button opens the hidden file input", () => {
 });
 
 test("Enter key in the composer triggers a simulated reply in Test User mode", () => {
-  const store = welcomeFlowStore();
+  const store = pollFlowStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
   // Test User is auto-selected by default -> composer uses Simulate.
   const textbox = screen.getByRole("textbox");
-  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.change(textbox, { target: { value: "/poll Color red, blue" } });
   fireEvent.keyDown(textbox, { key: "Enter" });
 
-  // The flow matched and produced replies in the feed.
-  expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
-  expect(screen.getByText(/Matched flow: Welcome Flow/)).toBeTruthy();
+  // The flow matched and produced a poll reply in the feed.
+  expect(screen.getByText(/📊 Poll: Color/)).toBeTruthy();
+  expect(screen.getByText(/Matched flow: Poll Bot/)).toBeTruthy();
 });
 
 test("non-Enter keys in the composer do not trigger a reply", () => {
-  const store = welcomeFlowStore();
+  const store = pollFlowStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
 
   const textbox = screen.getByRole("textbox");
-  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.change(textbox, { target: { value: "/poll Color red, blue" } });
   fireEvent.keyDown(textbox, { key: "A" });
 
   // No simulate happened because the key is not Enter.
-  expect(screen.queryByText(/Matched flow: Welcome Flow/)).toBeNull();
+  expect(screen.queryByText(/Matched flow: Poll Bot/)).toBeNull();
 });
 
 test("a flow that matches but produces no replies shows the silent note", () => {
