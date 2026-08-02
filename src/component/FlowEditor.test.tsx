@@ -6,34 +6,13 @@ import { renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { BotWithConfig } from "../redux/types.ts";
 import { Flow } from "../interfaces/flow.ts";
 
-// Node types the editor now understands, one per category (the palette is
-// two-level: pick a category, then a concrete node type).
+// Node types the editor now understands, one per category (the palette shows
+// every node type at once in a flat, grouped list).
 const TYPES = ["start", "lowercase", "equals", "send", "random", "poll"] as const;
 
-// The palette shows the start category by default; other categories must be
-// selected before their items become visible.
-const selectCategory = (cat: string) => {
-  fireEvent.click(screen.getByTestId(`palette-category-${cat}`));
-};
-
+// The palette shows every node type at once (flat, grouped list), so an item
+// is clicked directly — no category selection step is needed.
 const openPaletteItem = (type: string) => {
-  if (type === "start") {
-    fireEvent.click(screen.getByTestId("palette-item-start"));
-    return;
-  }
-  if (type === "send" || type === "random" || type === "poll") {
-    selectCategory("send");
-  } else if (
-    type === "lowercase" ||
-    type === "uppercase" ||
-    type === "trim" ||
-    type === "replace" ||
-    type === "extractRegex"
-  ) {
-    selectCategory("transform");
-  } else {
-    selectCategory("condition");
-  }
   fireEvent.click(screen.getByTestId(`palette-item-${type}`));
 };
 
@@ -187,7 +166,6 @@ test("clicking a palette item with no flow creates a flow containing the node", 
   const store = makeStore();
   renderWithProviders(<FlowEditor />, { store });
 
-  selectCategory("send");
   fireEvent.click(screen.getByTestId("palette-item-send"));
 
   const storeFlows = store.getState().bot.flows;
@@ -226,7 +204,6 @@ test("persists flow changes to localStorage after the initial render", () => {
 
   expect(localStorage.getItem("flows")).toBeNull();
 
-  selectCategory("transform");
   fireEvent.click(screen.getByTestId("palette-item-lowercase"));
 
   const stored = JSON.parse(localStorage.getItem("flows")!);

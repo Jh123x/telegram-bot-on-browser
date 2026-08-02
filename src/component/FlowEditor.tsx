@@ -384,7 +384,7 @@ export const FlowEditor = () => {
       </Typography>
 
       <Box sx={{ display: "flex", gap: 2, flex: 1, minHeight: 0 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, minHeight: 0 }}>
           <FlowPalette onPick={handlePalettePick} />
           <FlowSamples onLoaded={handleSampleLoaded} />
         </Box>
