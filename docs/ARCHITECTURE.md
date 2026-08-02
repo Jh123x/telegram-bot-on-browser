@@ -69,7 +69,7 @@ dependencies, which makes it easy to test in isolation.
 Key functions:
 
 - `applyTransform` — applies a transform (lowercase, uppercase, trim,
-  replace, extractRegex) to the message.
+  replace, extractRegex, randomNumber) to the message.
 - `executeFlow` — walks the graph from the start node, applying transforms,
   evaluating conditions, and returning the replies of the first send node
   reached (or `undefined` when no send node is reached). A poll node returns
@@ -253,8 +253,10 @@ flowchart TD
 - **FlowNode** — the `type` IS the operation (no per-node type selectors):
   - `start` — the entry marker; carries `data.label`.
   - Transforms (1 input, 1 output) — `lowercase`, `uppercase`, `trim`,
-    `replace`, `extractRegex`. `replace` uses `data.find` +
-    `data.replacement`; `extractRegex` uses `data.pattern`.
+    `replace`, `extractRegex`, `randomNumber`. `replace` uses `data.find` +
+    `data.replacement`; `extractRegex` uses `data.pattern`; `randomNumber`
+    uses `data.min` + `data.max` (inclusive bounds) and replaces the message
+    with a random whole number in that range.
   - Conditions (1 input, 2 outputs) — `equals`, `contains`, `startsWith`,
     `endsWith`, `notEquals`, `notContains`. The type is the matcher; the node
     carries only `data.value` (the text to match).
@@ -273,7 +275,8 @@ flowchart TD
 The pure engine lives in `src/logic/flow.ts` (no React or Redux):
 
 - `applyTransform(type, data, message)` — applies a concrete transform
-  (lowercase, uppercase, trim, replace, extractRegex) to the message.
+  (lowercase, uppercase, trim, replace, extractRegex, randomNumber) to the
+  message.
 - `executeFlow(flow, message)` — walks the graph from `startNodeId` with a
   visited-set cycle guard. Transform nodes rewrite the message; condition
   nodes follow the `if` edge when their matcher passes and the `else` edge

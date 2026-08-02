@@ -31,6 +31,8 @@ it in the inspector panel.
   the flow for this message.
 - **Random** — 1 input, no output (terminal). Sends exactly ONE of its
   option lines, chosen at random.
+- **Random Number** — 1 input, 1 output (transform). Replaces the message
+  with a random whole number between its Min and Max values (inclusive).
 - **Poll** — 1 input, no output (terminal). Parses the message as
   `/poll <title> option1, option2, option3` and sends a Telegram poll.
 
@@ -73,7 +75,8 @@ Open the **Flow** tab and click a sample to load it:
 
 - **Dice Bot** — `/dice d4`, `/dice d6`, `/dice d8`, `/dice d10`,
   `/dice d12`, `/dice d20` or `/dice d100` rolls that D&D die: a chain of
-  conditions picks the die, and a random node returns one of its numbers.
+  conditions picks the die, a Random Number node rolls between 1 and the
+  die's sides, and a send node formats the result.
 - **Poll Bot** — `/poll <title> option1, option2, option3` creates a Telegram
   poll with the given question and options.
 

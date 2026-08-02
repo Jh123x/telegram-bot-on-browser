@@ -194,7 +194,8 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
       <li>
         <Typography component="span">
           <strong>Transform</strong> — rewrites the message (lowercase,
-          uppercase, trim, replace text, extract regex) before passing it on.
+          uppercase, trim, replace text, extract regex, random number) before
+          passing it on.
         </Typography>
       </li>
       <li>
@@ -301,8 +302,9 @@ replies:
       <li>
         <Typography component="span">
           <strong>Dice Bot</strong> rolls a D&amp;D die:{" "}
-          <code>/dice d4</code> through <code>/dice d100</code> choose a random
-          number from that die&apos;s number list.
+          <code>/dice d4</code> through <code>/dice d100</code> feed a{" "}
+          <strong>Random Number</strong> node (min 1, max = the die&apos;s
+          sides) and send the result.
         </Typography>
       </li>
       <li>
