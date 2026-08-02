@@ -1,6 +1,9 @@
+import { PollReply } from "./flow.ts";
+import { pollDisplay } from "../logic/flow.ts";
+
 export interface BotRule {
   matcher: (message: string, userId?: number) => boolean;
-  callback: (message: string, userId?: number) => string | string[];
+  callback: (message: string, userId?: number) => string | string[] | PollReply;
 }
 
 // Debug logging is gated to non-production builds so verbose call tracing is
@@ -25,7 +28,7 @@ export class BrowserBot {
 
   addRule(
     matcher: (message: string, userId?: number) => boolean,
-    callback: (message: string, userId?: number) => string | string[]
+    callback: (message: string, userId?: number) => string | string[] | PollReply
   ) {
     this.rules.push({ matcher, callback });
   }
@@ -34,7 +37,7 @@ export class BrowserBot {
     this.rules = [];
   }
 
-  handleMessage(message: string, userId?: number): string | string[] | undefined {
+  handleMessage(message: string, userId?: number): string | string[] | PollReply | undefined {
     for (const rule of this.rules) {
       if (!rule.matcher(message, userId)) continue;
       // A matching rule may decline to respond (e.g. a flow with no matching
@@ -64,12 +67,27 @@ export class BrowserBot {
         return;
       }
 
-      const responses = Array.isArray(response) ? response : [response];
+      const responses: (string | PollReply)[] = Array.isArray(response)
+        ? response
+        : [response];
       debug(`[Main] Sending ${responses}`);
       for (const reply of responses) {
-        this.send_worker!.postMessage([`${this.url}/sendMessage`, reply, chatID]);
-        if (replySender !== undefined) {
-          replySender(Date.now(), username, chatID, reply);
+        // Poll replies go through the sendPoll endpoint with a structured
+        // payload; plain strings are regular sendMessage text.
+        if (typeof reply === "string") {
+          this.send_worker!.postMessage([`${this.url}/sendMessage`, reply, chatID]);
+          if (replySender !== undefined) {
+            replySender(Date.now(), username, chatID, reply);
+          }
+        } else {
+          this.send_worker!.postMessage([
+            `${this.url}/sendPoll`,
+            { question: reply.question, options: reply.options },
+            chatID,
+          ]);
+          if (replySender !== undefined) {
+            replySender(Date.now(), username, chatID, pollDisplay(reply));
+          }
         }
       }
     };

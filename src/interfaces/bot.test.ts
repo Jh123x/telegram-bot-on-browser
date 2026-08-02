@@ -19,6 +19,7 @@ const instances: MockWorker[] = [];
 const TOKEN = "123456:TEST-TOKEN";
 const POLL_URL = `https://api.telegram.org/bot${TOKEN}/getUpdates`;
 const SEND_URL = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+const SEND_POLL_URL = `https://api.telegram.org/bot${TOKEN}/sendPoll`;
 
 function createBot() {
   instances.length = 0;
@@ -181,6 +182,45 @@ test("no matching rule -> send_worker.postMessage not called", async () => {
   await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/nope"] });
 
   expect(bot.send_worker!.postMessage).not.toHaveBeenCalled();
+});
+
+test("a rule callback returning a PollReply posts to sendPoll and calls replySender with the poll display", async () => {
+  const bot = createBot();
+  bot.addRule((m) => m === "/poll", () => ({
+    kind: "poll",
+    question: "Favorite color",
+    options: ["red", "blue", "green"],
+  }));
+  const replySender = vi.fn();
+  bot.start(() => {}, replySender);
+
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/poll"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledTimes(1);
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledWith([
+    SEND_POLL_URL,
+    { question: "Favorite color", options: ["red", "blue", "green"] },
+    123,
+  ]);
+  expect(replySender).toHaveBeenCalledTimes(1);
+  expect(replySender).toHaveBeenCalledWith(
+    expect.any(Number),
+    "alice",
+    123,
+    "📊 Poll: Favorite color\n• red\n• blue\n• green"
+  );
+});
+
+test("mixed string and PollReply responses post to sendMessage and sendPoll respectively", async () => {
+  const bot = createBot();
+  bot.addRule(() => true, () => ["plain text", { kind: "poll", question: "Q", options: ["a", "b"] }]);
+  bot.start(() => {});
+
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/mix"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledTimes(2);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(1, [SEND_URL, "plain text", 123]);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(2, [SEND_POLL_URL, { question: "Q", options: ["a", "b"] }, 123]);
 });
 
 test("stop() terminates both workers and clears them", () => {
