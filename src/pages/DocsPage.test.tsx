@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { DocsPage } from "./DocsPage.tsx";
@@ -110,7 +110,7 @@ test("renders external resource links with correct URLs", () => {
 });
 
 test("calls onNavigate when clicking an in-app tab link", () => {
-  const onNavigate = jest.fn();
+  const onNavigate = vi.fn();
   render(<DocsPage onNavigate={onNavigate} />);
 
   fireEvent.click(screen.getByRole("button", { name: "Open the Settings tab" }));
@@ -190,4 +190,26 @@ test("no longer documents the old block editor", () => {
   expect(screen.queryByText(/Coin Flip/i)).toBeNull();
   expect(screen.queryByText(/Shout/i)).toBeNull();
   expect(screen.queryByText(/Only Numbers/i)).toBeNull();
+});
+
+test("in-body tab links call onNavigate", () => {
+  const onNavigate = vi.fn();
+  render(<DocsPage onNavigate={onNavigate} />);
+
+  // Getting Started section links.
+  fireEvent.click(screen.getByRole("button", { name: "Settings tab" }));
+  expect(onNavigate).toHaveBeenLastCalledWith("settings");
+
+  fireEvent.click(screen.getByRole("button", { name: "Flow tab" }));
+  expect(onNavigate).toHaveBeenLastCalledWith("flow");
+
+  // "Chat tab" also appears in the troubleshooting section, so grab the first.
+  const chatLinks = screen.getAllByRole("button", { name: "Chat tab" });
+  expect(chatLinks.length).toBeGreaterThan(0);
+  fireEvent.click(chatLinks[0]);
+  expect(onNavigate).toHaveBeenLastCalledWith("chat");
+
+  // The troubleshooting section's chat link also navigates.
+  fireEvent.click(chatLinks[chatLinks.length - 1]);
+  expect(onNavigate).toHaveBeenCalledTimes(4);
 });

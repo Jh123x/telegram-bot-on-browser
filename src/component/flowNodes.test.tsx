@@ -1,4 +1,4 @@
-import { test, expect, afterEach } from "@jest/globals";
+import { test, expect, afterEach } from "vitest";
 import React from "react";
 import { render } from "@testing-library/react";
 import {
@@ -56,6 +56,25 @@ test("TransformNode renders the replace summary with find and replacement", () =
 
   expect(getByText('replace "a" → "b"')).toBeTruthy();
   expect(queryByText("lowercase")).toBeNull();
+});
+
+test("TransformNode renders the trim summary", () => {
+  const { getByText, getAllByText } = render(
+    <TransformNode {...makeNodeProps({ label: "Pad" }, "trim")} />
+  );
+
+  expect(getByText("Pad")).toBeTruthy();
+  // Badge + summary caption both read "trim".
+  expect(getAllByText("trim").length).toBeGreaterThan(0);
+});
+
+test("TransformNode falls back to a generic summary for an unknown type", () => {
+  const { getByText } = render(
+    <TransformNode {...makeNodeProps({ label: "Mystery" }, "unknown" as any)} />
+  );
+
+  expect(getByText("Mystery")).toBeTruthy();
+  expect(getByText("transform")).toBeTruthy();
 });
 
 test("TransformNode falls back to a bare replace label when find is empty", () => {
@@ -175,28 +194,28 @@ test("RandomNode has a single (target) handle and no source handle", () => {
 test("StartNode card border uses the start accent color", () => {
   const { getByTestId } = render(<StartNode {...makeNodeProps({ label: "Start" })} />);
   expect(getComputedStyle(getByTestId("flow-node-start")).borderColor).toBe(
-    "#7c3aed"
+    "rgb(124, 58, 237)"
   );
 });
 
 test("TransformNode card border uses the transform accent color", () => {
   const { getByTestId } = render(<TransformNode {...makeNodeProps({ label: "Upper" }, "uppercase")} />);
   expect(getComputedStyle(getByTestId("flow-node-transform")).borderColor).toBe(
-    "#38bdf8"
+    "rgb(56, 189, 248)"
   );
 });
 
 test("ConditionNode card border uses the condition accent color", () => {
   const { getByTestId } = render(<ConditionNode {...makeNodeProps({ label: "Cond" }, "contains")} />);
   expect(getComputedStyle(getByTestId("flow-node-condition")).borderColor).toBe(
-    "#fbbf24"
+    "rgb(251, 191, 36)"
   );
 });
 
 test("SendNode card border uses the send accent color", () => {
   const { getByTestId } = render(<SendNode {...makeNodeProps({ label: "Echo" })} />);
   expect(getComputedStyle(getByTestId("flow-node-send")).borderColor).toBe(
-    "#34d399"
+    "rgb(52, 211, 153)"
   );
 });
 

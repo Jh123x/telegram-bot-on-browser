@@ -50,8 +50,8 @@ export class BrowserBot {
     replySender?: (date: number, user: string, id: number, message: string) => void,
     pollRateMs: number = 5000
   ) {
-    this.poll_worker = new Worker("poll_worker.js");
-    this.send_worker = new Worker("send_worker.js");
+    this.poll_worker = new Worker("/poll_worker.js");
+    this.send_worker = new Worker("/send_worker.js");
 
     this.poll_worker.onmessage = async (e) => {
       const [date, username, chatID, message] = e.data;

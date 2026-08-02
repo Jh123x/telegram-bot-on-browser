@@ -20,6 +20,7 @@ import {
   TRIGGER_LABELS,
 } from "./flow.ts";
 import { Flow } from "../interfaces/flow.ts";
+import { vi } from "vitest";
 
 describe("dropNodeDimensionChanges", () => {
   test("drops React Flow dimensions bookkeeping changes", () => {
@@ -490,21 +491,21 @@ describe("executeFlow (random node)", () => {
   }
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test("returns exactly ONE of the replies (first when random is 0)", () => {
-    jest.spyOn(Math, "random").mockReturnValue(0);
+    vi.spyOn(Math, "random").mockReturnValue(0);
     expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["A"]);
   });
 
   test("returns the last reply when random is near 1", () => {
-    jest.spyOn(Math, "random").mockReturnValue(0.999);
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
     expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["C"]);
   });
 
   test("interpolates {msg} in the picked reply", () => {
-    jest.spyOn(Math, "random").mockReturnValue(0.4);
+    vi.spyOn(Math, "random").mockReturnValue(0.4);
     expect(executeFlow(randomFlow(["{msg}", "fixed"]), "hello")).toEqual(["hello"]);
   });
 
@@ -683,6 +684,14 @@ describe("validateFlow", () => {
     const flow = validFlow();
     flow.edges = [{ id: "eBack", source: "send", target: "start" }];
     expect(validateFlow(flow)).toContain("Start node cannot have incoming edges");
+  });
+
+  test("startNodeId pointing at a different existing node is rejected", () => {
+    const flow = validFlow();
+    flow.startNodeId = "send"; // 'send' exists but is not the start node
+    expect(validateFlow(flow)).toContain(
+      "startNodeId must point to the start node"
+    );
   });
 
   test("start node with multiple outgoing edges is rejected", () => {
@@ -920,5 +929,73 @@ describe("removeFlowNode / removeFlowEdge", () => {
   test("keeps the flow unchanged when the edge does not exist", () => {
     const next = removeFlowEdge(flow, "missing");
     expect(next.edges).toHaveLength(3);
+  });
+});
+
+describe("generateId (crypto.randomUUID branch)", () => {
+  test("returns the uuid produced by crypto.randomUUID when available", () => {
+    // jsdom 30 exposes crypto as a getter-only global, so restore via
+    // defineProperty (plain assignment throws).
+    const original = Object.getOwnPropertyDescriptor(globalThis, "crypto");
+    Object.defineProperty(globalThis, "crypto", {
+      value: { randomUUID: () => "fixed-uuid" },
+      configurable: true,
+      writable: true,
+    });
+    try {
+      expect(generateId()).toBe("fixed-uuid");
+    } finally {
+      if (original) {
+        Object.defineProperty(globalThis, "crypto", original);
+      } else {
+        delete (globalThis as any).crypto;
+      }
+    }
+  });
+});
+
+describe("executeFlow (edge cases)", () => {
+  function startNode(): Flow["nodes"][number] {
+    return { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } };
+  }
+
+  function flow(
+    startNodeId: string,
+    nodes: Flow["nodes"],
+    edges: Flow["edges"]
+  ): Flow {
+    return { id: "f1", name: "Flow", startNodeId, nodes, edges };
+  }
+
+  test("start node with no outgoing edge returns undefined", () => {
+    const start = startNode();
+    expect(executeFlow(flow("start", [start], []), "hi")).toBeUndefined();
+  });
+
+  test("start node whose outgoing edge targets a missing node returns undefined", () => {
+    const start = startNode();
+    const f = flow("start", [start], [{ id: "e1", source: "start", target: "ghost" }]);
+    expect(executeFlow(f, "hi")).toBeUndefined();
+  });
+
+  test("transform node whose outgoing edge targets a missing node returns undefined", () => {
+    const start = startNode();
+    const tx = { id: "tx", type: "uppercase" as const, position: { x: 240, y: 0 }, data: { label: "T" } };
+    const f = flow("start", [start, tx], [
+      { id: "e1", source: "start", target: "tx" },
+      { id: "e2", source: "tx", target: "ghost" },
+    ]);
+    expect(executeFlow(f, "hi")).toBeUndefined();
+  });
+
+  test("matched condition with no if branch edge returns undefined", () => {
+    const start = startNode();
+    const cond = { id: "c", type: "contains" as const, position: { x: 240, y: 0 }, data: { label: "C", value: "hi" } };
+    const elseSend = { id: "else", type: "send" as const, position: { x: 480, y: 0 }, data: { label: "Else", replies: ["Say hi!"] } };
+    const f = flow("start", [start, cond, elseSend], [
+      { id: "e1", source: "start", target: "c" },
+      { id: "e2", source: "c", target: "else", sourceHandle: "else" },
+    ]);
+    expect(executeFlow(f, "hello hi there")).toBeUndefined();
   });
 });

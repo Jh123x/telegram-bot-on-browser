@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { TokenSaver } from "./TokenSaver";

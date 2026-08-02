@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Navbar, Page } from "./Navbar.tsx";
@@ -13,10 +13,10 @@ const renderNavbar = (
   }> = {}
 ) => {
   const page = props.page ?? "flow";
-  const onPageChange = props.onPageChange ?? jest.fn();
+  const onPageChange = props.onPageChange ?? vi.fn();
   const started = props.started ?? false;
-  const onStart = props.onStart ?? jest.fn();
-  const onStop = props.onStop ?? jest.fn();
+  const onStart = props.onStart ?? vi.fn();
+  const onStop = props.onStop ?? vi.fn();
   return {
     onPageChange,
     onStart,

@@ -1,4 +1,4 @@
-import { test, expect } from "@jest/globals";
+import { test, expect } from "vitest";
 import { GRAPH_COLORS, edgeColorFor } from "./theme.ts";
 
 test("GRAPH_COLORS.node has the four node types each with accent and bg tokens", () => {

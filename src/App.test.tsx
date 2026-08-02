@@ -4,7 +4,7 @@ import {
   setupStore,
 } from "./redux/testUtils.tsx";
 import App from "./App.tsx";
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 
@@ -14,9 +14,9 @@ beforeEach(() => {
   // `${Date.now()}-${Math.random()}` in jsdom 16 (no crypto.randomUUID), so
   // pin both to a fixed seed + monotonic sequence. This keeps the seeded
   // flow's data-testid (flow-item-<id>) stable across runs.
-  jest.spyOn(Date, "now").mockReturnValue(1700000000000);
+  vi.spyOn(Date, "now").mockReturnValue(1700000000000);
   let seq = 0;
-  jest.spyOn(Math, "random").mockImplementation(() => {
+  vi.spyOn(Math, "random").mockImplementation(() => {
     seq += 1;
     return (seq * 0.123456789) % 1;
   });
@@ -24,7 +24,7 @@ beforeEach(() => {
 
 afterEach(() => {
   localStorage.clear();
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test("renders app correctly", () => {

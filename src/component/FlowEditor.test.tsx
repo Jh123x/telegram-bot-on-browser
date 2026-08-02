@@ -1,4 +1,4 @@
-import { test, expect, afterEach } from "@jest/globals";
+import { test, expect, afterEach, vi } from "vitest";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { FlowEditor } from "./FlowEditor.tsx";
@@ -81,7 +81,7 @@ test("does not render flow management controls (single-flow app)", () => {
 });
 
 const createDataTransfer = (type: string) => ({
-  setData: jest.fn(),
+  setData: vi.fn(),
   getData: () => type,
   dropEffect: "move",
   effectAllowed: "move",
@@ -251,4 +251,55 @@ test("renders the inspector as a side panel beside the graph canvas", () => {
   // The inspector is a separate side panel, not a sibling of the canvas
   // viewport (i.e. it sits beside the graph, not below it).
   expect(panel.parentElement).not.toBe(mock!.parentElement);
+});
+
+test("dragOver sets the drop effect to move on the canvas", () => {
+  const store = makeStore([makeFlow("Existing")]);
+  const { container } = renderWithProviders(<FlowEditor />, { store });
+
+  const canvas = container.querySelector('[data-testid="reactflow-mock"]');
+  expect(canvas).not.toBeNull();
+
+  const dataTransfer = { dropEffect: "", setData: vi.fn() };
+  fireEvent.dragOver(canvas!, { dataTransfer });
+  expect(dataTransfer.dropEffect).toBe("move");
+});
+
+test("dropping an unknown node type adds no node", () => {
+  const flow = makeFlow("Existing");
+  const store = makeStore([flow]);
+  const { container } = renderWithProviders(<FlowEditor />, { store });
+
+  const canvas = container.querySelector('[data-testid="reactflow-mock"]');
+  expect(canvas).not.toBeNull();
+  fireEvent.drop(canvas!, {
+    dataTransfer: createDataTransfer("bogus"),
+    clientX: 100,
+    clientY: 100,
+  });
+
+  expect(store.getState().bot.flows[0].nodes).toHaveLength(0);
+});
+
+test("dropping a node when an empty flow placeholder is shown creates the flow", () => {
+  // A flow with id "" is the EmptyFlow placeholder. Dropping a node onto it
+  // must create a real flow containing that node via addFlow.
+  const store = makeStore([{ id: "", name: "", startNodeId: "", nodes: [], edges: [] }]);
+  const { container } = renderWithProviders(<FlowEditor />, { store });
+
+  const canvas = container.querySelector('[data-testid="reactflow-mock"]');
+  expect(canvas).not.toBeNull();
+  fireEvent.drop(canvas!, {
+    dataTransfer: createDataTransfer("send"),
+    clientX: 60,
+    clientY: 60,
+  });
+
+  const flows = store.getState().bot.flows;
+  // addFlow appends the created flow next to the placeholder.
+  expect(flows).toHaveLength(2);
+  const created = flows[1];
+  expect(created.id).not.toBe("");
+  expect(created.nodes).toHaveLength(1);
+  expect(created.nodes[0].type).toBe("send");
 });

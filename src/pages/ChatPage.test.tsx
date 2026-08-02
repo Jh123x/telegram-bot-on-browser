@@ -1,7 +1,6 @@
-import { test, expect } from "@jest/globals";
+import { test, expect, vi } from "vitest";
 import React from "react";
-import { fireEvent, screen } from "@testing-library/react";
-import { act } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { generateDefaultState, renderWithProviders, setupStore } from "../redux/testUtils.tsx";
 import { ChatPage } from "./ChatPage.tsx";
 import { BrowserBot } from "../interfaces/bot";
@@ -19,7 +18,7 @@ afterEach(() => {
   delete (global as any).Worker;
   (URL as any).createObjectURL = undefined;
   (URL as any).revokeObjectURL = undefined;
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 const convoStore = () =>
@@ -116,7 +115,7 @@ test("shows a no-messages state when the selected user has no messages", () => {
 
 test("composer starts enabled with the Test User simulated, then sends to a selected real user and clears the input", () => {
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store: convoStore() });
 
   // Nothing selected yet -> Test User is auto-selected, so the composer is
@@ -209,7 +208,7 @@ test("renders a Test User conversation in the sidebar like any other user", () =
 test("selecting the Test User simulates replies as bubbles without sending to Telegram", () => {
   const store = welcomeFlowStore();
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
   fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
@@ -336,7 +335,7 @@ test("Test User works with no real users and never sends to Telegram", () => {
     },
   });
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
   // With no real users, the Test User is auto-selected so the composer starts
@@ -358,7 +357,7 @@ test("Test User works with no real users and never sends to Telegram", () => {
 test("selecting a real user sends for real again", () => {
   const store = convoStore();
   const bot = new BrowserBot("123:TOKEN");
-  const spy = jest.spyOn(bot, "sendMessage");
+  const spy = vi.spyOn(bot, "sendMessage");
   renderWithProviders(<ChatPage bot={bot} />, { store });
 
   fireEvent.click(screen.getByRole("button", { name: /alice/ }));
@@ -447,14 +446,14 @@ test("renders Export chat and Import chat buttons", () => {
 });
 
 test("export chat downloads a JSON file with users and responses", async () => {
-  (URL as any).createObjectURL = jest.fn(() => "blob:mock");
-  (URL as any).revokeObjectURL = jest.fn();
-  const clickSpy = jest
+  (URL as any).createObjectURL = vi.fn(() => "blob:mock");
+  (URL as any).revokeObjectURL = vi.fn();
+  const clickSpy = vi
     .spyOn(HTMLAnchorElement.prototype, "click")
     .mockImplementation(() => {});
   let createdAnchor: HTMLAnchorElement | null = null;
   const originalCreateElement = document.createElement.bind(document);
-  jest.spyOn(document, "createElement").mockImplementation((tag: string) => {
+  vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
     const el = originalCreateElement(tag);
     if (tag === "a") createdAnchor = el as HTMLAnchorElement;
     return el;
@@ -521,9 +520,12 @@ test("import chat replaces the store's users and responses", async () => {
   fireEvent.change(screen.getByTestId("import-chat-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("chat-import-status").textContent).not.toBe("")
+  );
 
   expect(store.getState().bot.users).toEqual([
     { Username: "carol", UserID: 9 },
@@ -548,9 +550,9 @@ test("import chat with a non-JSON file shows an error and changes nothing", asyn
   fireEvent.change(screen.getByTestId("import-chat-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  await waitFor(() =>
+    expect(screen.getByTestId("chat-import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("chat-import-status").textContent).toContain(
     "Could not import chat: invalid file."
@@ -571,13 +573,86 @@ test("import chat with a wrong-shape file shows an error and changes nothing", a
   fireEvent.change(screen.getByTestId("import-chat-input"), {
     target: { files: [file] },
   });
-  await act(async () => {
-    await new Promise((r) => setTimeout(r, 10));
-  });
+  await waitFor(() =>
+    expect(screen.getByTestId("chat-import-status").textContent).not.toBe("")
+  );
 
   expect(screen.getByTestId("chat-import-status").textContent).toContain(
     "Could not import chat: invalid file."
   );
   expect(store.getState().bot.users).toEqual(usersBefore);
   expect(store.getState().bot.response).toEqual(responseBefore);
+});
+
+test("Import chat button opens the hidden file input", () => {
+  const clickSpy = vi
+    .spyOn(HTMLInputElement.prototype, "click")
+    .mockImplementation(() => {});
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, {
+    store: convoStore(),
+  });
+
+  fireEvent.click(screen.getByRole("button", { name: "Import chat" }));
+
+  expect(clickSpy).toHaveBeenCalledTimes(1);
+});
+
+test("Enter key in the composer triggers a simulated reply in Test User mode", () => {
+  const store = welcomeFlowStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  // Test User is auto-selected by default -> composer uses Simulate.
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.keyDown(textbox, { key: "Enter" });
+
+  // The flow matched and produced replies in the feed.
+  expect(screen.getByText("Welcome! I'm a browser bot 🤖")).toBeTruthy();
+  expect(screen.getByText(/Matched flow: Welcome Flow/)).toBeTruthy();
+});
+
+test("non-Enter keys in the composer do not trigger a reply", () => {
+  const store = welcomeFlowStore();
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/start" } });
+  fireEvent.keyDown(textbox, { key: "A" });
+
+  // No simulate happened because the key is not Enter.
+  expect(screen.queryByText(/Matched flow: Welcome Flow/)).toBeNull();
+});
+
+test("a flow that matches but produces no replies shows the silent note", () => {
+  // start -> send node with no replies. The flow consumes the message and
+  // runs to completion but yields [].
+  const emptyFlow = (() => {
+    const f = createFlow("Empty");
+    const start = createFlowNode("start", { x: 0, y: 0 });
+    const send = createFlowNode("send", { x: 120, y: 0 });
+    send.data.replies = [];
+    f.startNodeId = start.id;
+    f.nodes = [start, send];
+    f.edges = [{ id: "e1", source: start.id, target: send.id }];
+    return f;
+  })();
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      flows: [emptyFlow],
+      response: [],
+      users: [],
+    },
+  });
+  renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "hello" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  // Matched-flow note + the "no reply" silent note.
+  expect(screen.getByText(/Matched flow: Empty/)).toBeTruthy();
+  expect(screen.getByText("The flow matched but produced no reply.")).toBeTruthy();
 });

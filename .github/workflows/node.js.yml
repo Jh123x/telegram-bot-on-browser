@@ -18,14 +18,15 @@ jobs:
 
     strategy:
       matrix:
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/s
+        # Project targets the current Node LTS (24.x); engines enforces the
+        # jsdom 30 floor (^24.15.0) on the 24 line.
         node-version: 
-          - 18.x
+          - 24.x
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
