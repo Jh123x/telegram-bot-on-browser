@@ -3,6 +3,10 @@
 
 name: Node.js CI
 
+# Least-privilege token: read-only access to repo contents is all CI needs.
+permissions:
+  contents: read
+
 on:
   push:
     branches: 
