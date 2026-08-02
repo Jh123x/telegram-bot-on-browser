@@ -188,6 +188,30 @@ test("clicking a palette start item with no flow sets the start node", () => {
   expect(storeFlows[0].startNodeId).toBe(storeFlows[0].nodes[0].id);
 });
 
+test("picking a node from the palette selects it in the inspector", () => {
+  const flow = makeFlow("Existing");
+  const store = makeStore([flow]);
+  renderWithProviders(<FlowEditor />, { store });
+
+  openPaletteItem("lowercase");
+
+  // The inspector's label field shows the freshly added node's default label,
+  // proving the pick auto-selected it.
+  expect(screen.getByDisplayValue("Lowercase")).toBeTruthy();
+});
+
+test("picking another node from the palette switches the inspector to it", () => {
+  const flow = makeFlow("Existing");
+  const store = makeStore([flow]);
+  renderWithProviders(<FlowEditor />, { store });
+
+  openPaletteItem("lowercase");
+  expect(screen.getByDisplayValue("Lowercase")).toBeTruthy();
+
+  openPaletteItem("send");
+  expect(screen.getByDisplayValue("New Send")).toBeTruthy();
+});
+
 // NOTE: We cannot exercise onConnect directly from a test. The setupTests
 // @xyflow/react mock forwards handler props onto a plain <div>, but React
 // ignores unknown `on*` props on host elements ("Unknown event handler
