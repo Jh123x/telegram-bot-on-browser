@@ -85,13 +85,13 @@ test("switching tabs shows the right page", () => {
   expect(screen.getByTestId("flow-editor")).toBeTruthy();
 });
 
-test("seeds a Welcome sample flow on first visit so the graph is never empty", () => {
+test("seeds a Dice Bot sample flow on first visit so the graph is never empty", () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(<App />, { store });
 
   const flows = store.getState().bot.flows;
   expect(flows).toHaveLength(1);
-  expect(flows[0].name).toBe("Welcome Flow");
+  expect(flows[0].name).toBe("Dice Bot");
   expect(flows[0].nodes.length).toBeGreaterThan(0);
   expect(flows[0].startNodeId).not.toBe("");
   // The single flow is edited directly on the canvas — no rail, no name field.

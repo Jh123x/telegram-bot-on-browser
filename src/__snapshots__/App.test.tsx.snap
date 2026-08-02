@@ -214,27 +214,19 @@ exports[`renders app correctly 1`] = `
                   >
                     <button
                       class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Welcome Flow"
+                      data-testid="flow-sample-Dice Bot"
                       tabindex="0"
                       type="button"
                     >
-                      Welcome Flow
+                      Dice Bot
                     </button>
                     <button
                       class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Uppercase Echo"
+                      data-testid="flow-sample-Poll Bot"
                       tabindex="0"
                       type="button"
                     >
-                      Uppercase Echo
-                    </button>
-                    <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Greeting Check"
-                      tabindex="0"
-                      type="button"
-                    >
-                      Greeting Check
+                      Poll Bot
                     </button>
                   </div>
                 </div>
@@ -518,27 +510,19 @@ exports[`renders app correctly 1`] = `
                 >
                   <button
                     class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Welcome Flow"
+                    data-testid="flow-sample-Dice Bot"
                     tabindex="0"
                     type="button"
                   >
-                    Welcome Flow
+                    Dice Bot
                   </button>
                   <button
                     class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Uppercase Echo"
+                    data-testid="flow-sample-Poll Bot"
                     tabindex="0"
                     type="button"
                   >
-                    Uppercase Echo
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Greeting Check"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Greeting Check
+                    Poll Bot
                   </button>
                 </div>
               </div>
