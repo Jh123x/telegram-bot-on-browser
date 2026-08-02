@@ -311,7 +311,9 @@ replies:
         <Typography component="span">
           <strong>Poll Bot</strong> turns{" "}
           <code>/poll &lt;title&gt; option1, option2, option3</code> into a
-          Telegram poll.
+          Telegram poll. Configure the poll node to send a quiz, a public poll,
+          allow multiple answers, set the correct option and explanation, or
+          close it after a number of seconds.
         </Typography>
       </li>
     </Box>

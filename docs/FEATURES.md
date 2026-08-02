@@ -34,7 +34,10 @@ it in the inspector panel.
 - **Random Number** — 1 input, 1 output (transform). Replaces the message
   with a random whole number between its Min and Max values (inclusive).
 - **Poll** — 1 input, no output (terminal). Parses the message as
-  `/poll <title> option1, option2, option3` and sends a Telegram poll.
+  `/poll <title> option1, option2, option3` and sends a Telegram poll. The
+  node's inspector lets you pick the poll type (regular or quiz), anonymity,
+  multiple answers (regular only), the quiz's correct option and explanation,
+  and an optional close period (5-600 seconds).
 
 ### Condition matchers
 
@@ -78,7 +81,9 @@ Open the **Flow** tab and click a sample to load it:
   conditions picks the die, a Random Number node rolls between 1 and the
   die's sides, and a send node formats the result.
 - **Poll Bot** — `/poll <title> option1, option2, option3` creates a Telegram
-  poll with the given question and options.
+  poll with the given question and options. Use the poll node's inspector to
+  configure a quiz, anonymity, multiple answers, the correct option and
+  explanation, or a close period.
 
 ### Persistence
 

@@ -73,8 +73,9 @@ Key functions:
 - `executeFlow` — walks the graph from the start node, applying transforms,
   evaluating conditions, and returning the replies of the first send node
   reached (or `undefined` when no send node is reached). A poll node returns
-  a `PollReply` (`{ kind: "poll", question, options }`) which the transport
-  layer turns into a Telegram `sendPoll` call.
+  a `PollReply` (`{ kind: "poll", question, options, type?, isAnonymous?,
+  allowsMultipleAnswers?, correctOptionId?, explanation?, openPeriod? }`)
+  which the transport layer turns into a Telegram `sendPoll` call.
 - `FlowRuntime` — stateless wrapper around `executeFlow`; every message is
   evaluated from the flow's start node (send nodes are terminal).
 - `validateFlow` — structural validation of a flow.
@@ -263,7 +264,11 @@ flowchart TD
   - Send category (1 input, no output, terminal) — `send` returns every line
     of `data.replies`; `random` returns exactly ONE of them, chosen at random;
     `poll` parses the message as `/poll <title> option1, option2, ...` into a
-    `PollReply` (the transport layer sends it via `sendPoll`).
+    `PollReply` (the transport layer sends it via `sendPoll`). Poll config
+    fields live on the node's data (`pollType`, `isAnonymous`,
+    `allowsMultipleAnswers`, `correctOptionId`, `explanation`, `openPeriod`)
+    and are merged into the reply by `applyPollConfig`, omitting Telegram's
+    defaults.
 - **FlowEdge** — a connection from `source` to `target`. Edges carry no
   trigger data; a condition's branch is recorded in `sourceHandle` (`"if"` /
   `"else"`). `nodeCategory(type)` maps any concrete node type back to its
