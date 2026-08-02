@@ -27,11 +27,18 @@ export type FlowNodeType =
 export type FlowNodeCategory = "start" | "transform" | "condition" | "send";
 
 // A structured poll reply produced by a "poll" send node. The runtime turns
-// this into a real Telegram sendPoll call.
+// this into a real Telegram sendPoll call. The optional fields mirror the
+// Telegram Bot API sendPoll parameters (camelCase here, snake_case there).
 export interface PollReply {
   kind: "poll";
   question: string;
   options: string[];
+  type?: "regular" | "quiz"; // default "regular"
+  isAnonymous?: boolean; // default true
+  allowsMultipleAnswers?: boolean; // default false (regular polls only)
+  correctOptionId?: number; // quiz only: 0-based index of the correct option
+  explanation?: string; // quiz only: shown when the answer is wrong
+  openPeriod?: number; // seconds until the poll closes (5-600)
 }
 
 export interface FlowNodeData {
@@ -42,6 +49,12 @@ export interface FlowNodeData {
   pattern?: string; // "extractRegex" transform: regex pattern
   min?: string; // "randomNumber" transform: inclusive lower bound
   max?: string; // "randomNumber" transform: inclusive upper bound
+  pollType?: string; // "poll" node: "regular" | "quiz"
+  isAnonymous?: string; // "poll" node: "true" | "false"
+  allowsMultipleAnswers?: string; // "poll" node: "true" | "false"
+  correctOptionId?: string; // "poll" node (quiz): 0-based index of the correct option
+  explanation?: string; // "poll" node (quiz): text shown when the answer is wrong
+  openPeriod?: string; // "poll" node: seconds until the poll closes
   replies?: string[]; // "send" / "random" nodes: one message per line
 }
 

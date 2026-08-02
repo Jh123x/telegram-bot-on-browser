@@ -126,10 +126,39 @@ export function parsePoll(message: string): PollReply | string {
   return { kind: "poll", question, options };
 }
 
+// Merges a poll node's config data into a parsed PollReply. Values that match
+// Telegram's defaults are omitted so the API payload stays minimal; invalid
+// numbers (non-numeric, out of range) are ignored.
+export function applyPollConfig(
+  poll: PollReply,
+  data: FlowNodeData
+): PollReply {
+  const next: PollReply = { ...poll };
+  if (data.pollType === "quiz") next.type = "quiz";
+  if (data.isAnonymous === "false") next.isAnonymous = false;
+  if (data.allowsMultipleAnswers === "true") next.allowsMultipleAnswers = true;
+  if (data.correctOptionId !== undefined && data.correctOptionId !== "") {
+    const id = Number(data.correctOptionId);
+    if (Number.isInteger(id) && id >= 0) next.correctOptionId = id;
+  }
+  if (data.explanation !== undefined && data.explanation !== "") {
+    next.explanation = data.explanation;
+  }
+  if (data.openPeriod !== undefined && data.openPeriod !== "") {
+    const seconds = Number(data.openPeriod);
+    if (Number.isInteger(seconds) && seconds >= 5 && seconds <= 600) {
+      next.openPeriod = seconds;
+    }
+  }
+  return next;
+}
+
 // Formats a poll for the local chat log (Telegram gets the real poll via
-// sendPoll; this is just the human-readable echo).
+// sendPoll; this is just the human-readable echo). Quiz polls are labeled
+// as such so the preview matches what Telegram will show.
 export function pollDisplay(poll: PollReply): string {
-  return `📊 Poll: ${poll.question}\n${poll.options.map((o) => `• ${o}`).join("\n")}`;
+  const label = poll.type === "quiz" ? "📊 Quiz" : "📊 Poll";
+  return `${label}: ${poll.question}\n${poll.options.map((o) => `• ${o}`).join("\n")}`;
 }
 
 // Evaluates a trigger against a message. equals/notEquals trim both sides;
@@ -298,7 +327,15 @@ export function createFlowNode(
     case "random":
       return { ...base, data: { label: "Random", replies: [] } };
     case "poll":
-      return { ...base, data: { label: "Poll" } };
+      return {
+        ...base,
+        data: {
+          label: "Poll",
+          pollType: "regular",
+          isAnonymous: "true",
+          allowsMultipleAnswers: "false",
+        },
+      };
   }
 }
 
@@ -385,7 +422,9 @@ export function executeFlow(
 
     // send category (send / random / poll)
     if (current.type === "poll") {
-      return [parsePoll(currentMessage)];
+      const parsed = parsePoll(currentMessage);
+      if (typeof parsed === "string") return [parsed];
+      return [applyPollConfig(parsed, current.data)];
     }
     const replies = interpolateReplies(
       current.data.replies ?? [],
@@ -539,6 +578,14 @@ export function flowFromSample(sample: FlowSample): Flow {
     if (node.data.pattern !== undefined) data.pattern = node.data.pattern;
     if (node.data.min !== undefined) data.min = node.data.min;
     if (node.data.max !== undefined) data.max = node.data.max;
+    if (node.data.pollType !== undefined) data.pollType = node.data.pollType;
+    if (node.data.isAnonymous !== undefined) data.isAnonymous = node.data.isAnonymous;
+    if (node.data.allowsMultipleAnswers !== undefined)
+      data.allowsMultipleAnswers = node.data.allowsMultipleAnswers;
+    if (node.data.correctOptionId !== undefined)
+      data.correctOptionId = node.data.correctOptionId;
+    if (node.data.explanation !== undefined) data.explanation = node.data.explanation;
+    if (node.data.openPeriod !== undefined) data.openPeriod = node.data.openPeriod;
     if (node.data.replies !== undefined) data.replies = [...node.data.replies];
     return {
       ...node,

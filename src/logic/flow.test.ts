@@ -19,10 +19,11 @@ import {
   TRIGGER_TYPES,
   TRIGGER_LABELS,
   POLL_USAGE_HINT,
+  applyPollConfig,
   parsePoll,
   pollDisplay,
 } from "./flow.ts";
-import { Flow } from "../interfaces/flow.ts";
+import { Flow, PollReply } from "../interfaces/flow.ts";
 import { vi } from "vitest";
 
 describe("dropNodeDimensionChanges", () => {
@@ -364,10 +365,15 @@ describe("createFlowNode", () => {
     expect(node.data).toEqual({ label: "Random Number", min: "1", max: "6" });
   });
 
-  test("poll node gets only a Poll label (no replies field)", () => {
+  test("poll node gets default poll config and no replies field", () => {
     const node = createFlowNode("poll");
     expect(node.type).toBe("poll");
-    expect(node.data).toEqual({ label: "Poll" });
+    expect(node.data).toEqual({
+      label: "Poll",
+      pollType: "regular",
+      isAnonymous: "true",
+      allowsMultipleAnswers: "false",
+    });
   });
 
   test("honors a provided position", () => {
@@ -631,6 +637,70 @@ describe("parsePoll", () => {
   });
 });
 
+describe("applyPollConfig", () => {
+  const base: PollReply = { kind: "poll", question: "Q", options: ["a", "b"] };
+
+  test("leaves the base poll untouched when no config is set", () => {
+    expect(applyPollConfig(base, { label: "Poll" })).toEqual(base);
+  });
+
+  test("omits Telegram defaults (anonymous, regular, single answer)", () => {
+    expect(
+      applyPollConfig(base, {
+        label: "Poll",
+        pollType: "regular",
+        isAnonymous: "true",
+        allowsMultipleAnswers: "false",
+      })
+    ).toEqual(base);
+  });
+
+  test("includes quiz type, public, and multiple answers when configured", () => {
+    expect(
+      applyPollConfig(base, {
+        label: "Poll",
+        pollType: "quiz",
+        isAnonymous: "false",
+        allowsMultipleAnswers: "true",
+      })
+    ).toEqual({
+      kind: "poll",
+      question: "Q",
+      options: ["a", "b"],
+      type: "quiz",
+      isAnonymous: false,
+      allowsMultipleAnswers: true,
+    });
+  });
+
+  test("includes correctOptionId, explanation and openPeriod when set", () => {
+    expect(
+      applyPollConfig(base, {
+        label: "Poll",
+        correctOptionId: "1",
+        explanation: "It is A",
+        openPeriod: "30",
+      })
+    ).toEqual({
+      kind: "poll",
+      question: "Q",
+      options: ["a", "b"],
+      correctOptionId: 1,
+      explanation: "It is A",
+      openPeriod: 30,
+    });
+  });
+
+  test("ignores invalid correctOptionId and openPeriod", () => {
+    expect(
+      applyPollConfig(base, { label: "Poll", correctOptionId: "x", openPeriod: "0" })
+    ).toEqual(base);
+    expect(
+      applyPollConfig(base, { label: "Poll", correctOptionId: "-1", openPeriod: "9999" })
+    ).toEqual(base);
+  });
+});
+
 describe("pollDisplay", () => {
   test("formats a local chat-log representation of the poll", () => {
     expect(
@@ -640,6 +710,17 @@ describe("pollDisplay", () => {
         options: ["red", "blue", "green"],
       })
     ).toBe("📊 Poll: What is your favorite color?\n• red\n• blue\n• green");
+  });
+
+  test("labels quiz polls as a quiz", () => {
+    expect(
+      pollDisplay({
+        kind: "poll",
+        question: "Which one?",
+        options: ["a", "b"],
+        type: "quiz",
+      })
+    ).toBe("📊 Quiz: Which one?\n• a\n• b");
   });
 });
 
@@ -660,6 +741,45 @@ describe("executeFlow (poll node)", () => {
   test("returns the parsed poll reply for a well-formed /poll command", () => {
     expect(executeFlow(pollFlow(), "/poll Color red, blue")).toEqual([
       { kind: "poll", question: "Color", options: ["red", "blue"] },
+    ]);
+  });
+
+  test("applies the node's poll config to the parsed reply", () => {
+    const flow = {
+      id: "f1",
+      name: "Poll",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } },
+        {
+          id: "poll",
+          type: "poll" as const,
+          position: { x: 240, y: 0 },
+          data: {
+            label: "Poll",
+            pollType: "quiz",
+            isAnonymous: "false",
+            allowsMultipleAnswers: "true",
+            correctOptionId: "0",
+            explanation: "It is A",
+            openPeriod: "30",
+          },
+        },
+      ],
+      edges: [{ id: "e1", source: "start", target: "poll" }],
+    };
+    expect(executeFlow(flow, "/poll Color red, blue")).toEqual([
+      {
+        kind: "poll",
+        question: "Color",
+        options: ["red", "blue"],
+        type: "quiz",
+        isAnonymous: false,
+        allowsMultipleAnswers: true,
+        correctOptionId: 0,
+        explanation: "It is A",
+        openPeriod: 30,
+      },
     ]);
   });
 
@@ -996,6 +1116,20 @@ describe("flowFromSample", () => {
     position: { x: 720, y: 140 },
     data: { label: "Else", replies: ["Say hi!"] },
   };
+  const pollConfigNode: Flow["nodes"][number] = {
+    id: "node-poll",
+    type: "poll",
+    position: { x: 720, y: 280 },
+    data: {
+      label: "Pick",
+      pollType: "quiz",
+      isAnonymous: "false",
+      allowsMultipleAnswers: "true",
+      correctOptionId: "1",
+      explanation: "It is A",
+      openPeriod: "60",
+    },
+  };
 
   const sample = {
     name: "Greeting Check",
@@ -1003,7 +1137,7 @@ describe("flowFromSample", () => {
       id: "flow-sample",
       name: "Greeting Check",
       startNodeId: "node-start",
-      nodes: [startNode, transformNode, randomNumberNode, conditionNode, ifSend, elseSend],
+      nodes: [startNode, transformNode, randomNumberNode, conditionNode, ifSend, elseSend, pollConfigNode],
       edges: [
         { id: "edge-1", source: "node-start", target: "node-tx" },
         { id: "edge-2", source: "node-tx", target: "node-rn" },
@@ -1011,6 +1145,8 @@ describe("flowFromSample", () => {
         { id: "edge-4", source: "node-c", target: "node-if", sourceHandle: "if" as const },
         { id: "edge-5", source: "node-c", target: "node-else", sourceHandle: "else" as const },
       ],
+      // The poll node is intentionally disconnected in this fixture — it only
+      // exists to exercise flowFromSample's data-field copying.
     },
   };
 
@@ -1024,6 +1160,15 @@ describe("flowFromSample", () => {
       { label: "C", value: "hi" },
       { label: "If", replies: ["Hello! 👋"] },
       { label: "Else", replies: ["Say hi!"] },
+      {
+        label: "Pick",
+        pollType: "quiz",
+        isAnonymous: "false",
+        allowsMultipleAnswers: "true",
+        correctOptionId: "1",
+        explanation: "It is A",
+        openPeriod: "60",
+      },
     ]);
     expect(created.edges[3].sourceHandle).toBe("if");
     expect(created.edges[4].sourceHandle).toBe("else");

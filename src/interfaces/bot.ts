@@ -80,9 +80,10 @@ export class BrowserBot {
             replySender(Date.now(), username, chatID, reply);
           }
         } else {
+          const { kind: _kind, ...payload } = reply;
           this.send_worker!.postMessage([
             `${this.url}/sendPoll`,
-            { question: reply.question, options: reply.options },
+            payload,
             chatID,
           ]);
           if (replySender !== undefined) {

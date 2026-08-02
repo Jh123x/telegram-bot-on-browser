@@ -211,6 +211,39 @@ test("a rule callback returning a PollReply posts to sendPoll and calls replySen
   );
 });
 
+test("a PollReply with poll config forwards the config fields to sendPoll", async () => {
+  const bot = createBot();
+  bot.addRule((m) => m === "/poll", () => ({
+    kind: "poll",
+    question: "Quiz time",
+    options: ["a", "b"],
+    type: "quiz",
+    isAnonymous: false,
+    allowsMultipleAnswers: true,
+    correctOptionId: 1,
+    explanation: "It is A",
+    openPeriod: 60,
+  }));
+  bot.start(() => {});
+
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/poll"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledWith([
+    SEND_POLL_URL,
+    {
+      question: "Quiz time",
+      options: ["a", "b"],
+      type: "quiz",
+      isAnonymous: false,
+      allowsMultipleAnswers: true,
+      correctOptionId: 1,
+      explanation: "It is A",
+      openPeriod: 60,
+    },
+    123,
+  ]);
+});
+
 test("mixed string and PollReply responses post to sendMessage and sendPoll respectively", async () => {
   const bot = createBot();
   bot.addRule(() => true, () => ["plain text", { kind: "poll", question: "Q", options: ["a", "b"] }]);
