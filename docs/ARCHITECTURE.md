@@ -12,8 +12,8 @@ Workers so the UI never blocks.
 flowchart LR
   subgraph Browser
     UI[React UI<br/>Flow / Chat / Settings / Docs]
-    Store[(Redux Store<br/>token, flows, messages)]
-    Logic[Logic Engine<br/>matchFlowTrigger, executeFlow, FlowRuntime]
+    Store[(Redux Store<br/>token, flows, response)]
+    Logic[Logic Engine<br/>matchTrigger, executeFlow, FlowRuntime]
     Bot[BrowserBot<br/>rules + workers]
     Local[(localStorage<br/>token, flows, prefs)]
 
@@ -48,10 +48,10 @@ layer).
 
 ### State layer (Redux Toolkit)
 
-The store (`botSlice`) holds six things:
+The store (`botSlice`) holds eight things:
 
 - `token` — the Telegram bot token.
-- `flows` — the user's flows (optional field, defaults to an empty list).
+- `flows` — the user's flows (defaults to an empty list).
 - `response` — the message history shown in Chat.
 - `users` — the users that have messaged the bot.
 - `pollRate` — how often the bot polls Telegram for new messages, in
@@ -70,6 +70,8 @@ Key functions:
 
 - `applyTransform` — applies a transform (lowercase, uppercase, trim,
   replace, extractRegex, randomNumber) to the message.
+- `matchTrigger` — evaluates a condition matcher (equals, contains, …)
+  against the current message.
 - `executeFlow` — walks the graph from the start node, applying transforms,
   evaluating conditions, and returning the replies of the first send node
   reached (or `undefined` when no send node is reached). A poll node returns
@@ -323,8 +325,8 @@ Chat tab matches a live flow.
 
 ### Storage
 
-Flows live in the Redux `botSlice` under an optional `flows` field (empty by
-default, so existing saved state loads fine). The flows are persisted to
+Flows live in the Redux `botSlice` under a `flows` field (empty by default).
+The flows are persisted to
 `localStorage` under the `"flows"` key and are included in Settings
 export/import/reset alongside the token, the auto-start flag and the poll
 rate (`"autoStart"` and `"pollRate"` keys). On mount, `App` hydrates token,
@@ -338,14 +340,15 @@ to the default (5 seconds).
 
 The **Flow** tab uses React Flow (`@xyflow/react` v12). The `FlowsPage`
 renders `FlowEditor`, which wraps the canvas in a `<ReactFlowProvider>` with a
-palette, toolbar, samples, and inspector. Custom MUI node components
+palette, samples, and inspector (React Flow's built-in zoom controls appear on
+the canvas). Custom MUI node components
 (`StartNode`, `TransformNode`, `ConditionNode`, `SendNode`, `RandomNode`,
 `PollNode`) preserve the app's design language. Nodes are added by dragging from the palette (HTML5
 drag-and-drop using the `application/reactflow` MIME type) and dropped onto
 the canvas at the pointer position. Connecting nodes creates a plain edge; a
 condition's outgoing edges record `sourceHandle` (`"if"`/`"else"`) and are
-labeled on the canvas. Loading a sample dispatches `addFlow` with
-`flowFromSample` so ids are always fresh.
+labeled on the canvas. Loading a sample calls `onLoaded` with a `flowFromSample` copy and the editor
+replaces the current flow via `setFlows([loaded])` so ids are always fresh.
 
 ## Design decisions
 
