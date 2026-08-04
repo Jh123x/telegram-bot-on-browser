@@ -173,7 +173,7 @@ exports[`renders app correctly 1`] = `
                     </div>
                   </div>
                   <div
-                    class="MuiBox-root css-1oxzrvl"
+                    class="MuiBox-root css-1mi2k10"
                     data-testid="palette-list"
                   >
                     <div
@@ -1393,7 +1393,7 @@ exports[`renders app correctly 1`] = `
                   </div>
                 </div>
                 <div
-                  class="MuiBox-root css-1oxzrvl"
+                  class="MuiBox-root css-1mi2k10"
                   data-testid="palette-list"
                 >
                   <div
