@@ -14,9 +14,9 @@ You can visit the live site here: <https://telebot.jh123x.com/>
 - Build conversational bot logic as a visual graph on a canvas: drag **Start**,
   **Transform**, **Condition** and **Send** nodes from the palette, connect
   them with edges, and edit each node in the inspector.
-- Load sample flows (Dice Bot, Poll Bot) to see how flows
-  are built — a sample replaces your current flow. The app keeps a single flow
-  (no flow list, no naming, no deleting flows).
+- Load sample flows (Dice Bot, Poll Bot, Shout Bot, Quote Bot, Greeting Bot)
+  to see how flows are built — a sample replaces your current flow. The app
+  keeps a single flow (no flow list, no naming, no deleting flows).
 - Test your bot in a built-in chat before you start it.
 - Run the bot from the Chat tab and talk to real Telegram users.
 
@@ -28,7 +28,8 @@ You can visit the live site here: <https://telebot.jh123x.com/>
    browser's localStorage.
 3. Open the **Flow** tab. A Dice Bot sample is loaded on your first visit so the
    canvas is never empty — drag nodes from the palette onto the canvas and
-   connect them with edges, or load another sample (Dice Bot, Poll Bot).
+   connect them with edges, or load another sample (Dice Bot, Poll Bot, Shout
+   Bot, Quote Bot, Greeting Bot).
 4. Open the **Chat** tab and press **Start** in the header. The bot starts
    polling Telegram (every 5 seconds by default; adjust the **Poll rate** in
    Settings).

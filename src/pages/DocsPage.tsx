@@ -194,8 +194,8 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
       <li>
         <Typography component="span">
           <strong>Transform</strong> — rewrites the message (lowercase,
-          uppercase, trim, replace text, extract regex, random number) before
-          passing it on.
+          uppercase, trim, replace text, extract regex, random number, add
+          text before or after, template) before passing it on.
         </Typography>
       </li>
       <li>
@@ -265,7 +265,17 @@ replies:
       </li>
       <li>
         <Typography component="span">
-          message does not contain a value.
+          message does not contain a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          message does not start with a value,
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          message does not end with a value.
         </Typography>
       </li>
     </Box>
@@ -314,6 +324,30 @@ replies:
           Telegram poll. Configure the poll node to send a quiz, a public poll,
           allow multiple answers, set the correct option and explanation, or
           close it after a number of seconds.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Shout Bot</strong> shouts back:{" "}
+          <code>/shout hello</code> becomes <code>🎺 HELLO!</code> — it
+          uppercases the text and adds an exclamation mark with a{" "}
+          <strong>Concat Back</strong> node. A bare <code>/shout</code> shows
+          the usage hint.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Quote Bot</strong> wraps your words in quotes with a{" "}
+          <strong>Template</strong> node: <code>/quote hello</code> becomes{" "}
+          <code>💬 "hello"</code>.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Greeting Bot</strong> greets every non-command message
+          with a <strong>Concat Front</strong> prefix. Anything starting
+          with <code>/</code> is ignored, thanks to a{" "}
+          <strong>Not Starts With</strong> condition.
         </Typography>
       </li>
     </Box>

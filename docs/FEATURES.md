@@ -21,16 +21,16 @@ it in the inspector panel.
 - **Start** — the entry marker (exactly one per flow). It has a single
   output and no input.
 - **Transform** nodes — 1 input, 1 output. Each transform is its own node:
-  **lowercase**, **uppercase**, **trim**, **replace text**, or **extract
-  regex**. The transformed message is what downstream nodes see (both `{msg}`
-  interpolation and condition matching).
+  **lowercase**, **uppercase**, **trim**, **replace text**, **extract
+  regex**, **random number**, **concat front** (add text before the message),
+  **concat back** (add text after the message), or **template** (build text
+  from a template like `You said: {msg}`). The transformed message is what
+  downstream nodes see (both `{msg}` interpolation and condition matching).
 - **Condition** nodes — 1 input, 2 outputs. Each matcher is its own node
   (see below); the node only asks for the value to match. It follows the
   **if** edge when the message matches, the **else** edge otherwise.
 - **Send** — 1 input, no output (terminal). Sends its reply lines and ends
   the flow for this message.
-- **Random** — 1 input, no output (terminal). Sends exactly ONE of its
-  option lines, chosen at random.
 - **Random Number** — 1 input, 1 output (transform). Replaces the message
   with a random whole number between its Min and Max values (inclusive).
 - **Poll** — 1 input, no output (terminal). Parses the message as
@@ -48,17 +48,19 @@ A condition node's **if** branch is decided by its node type — one of:
 - **message starts with** a value,
 - **message ends with** a value,
 - **message does not equal** a value,
-- **message does not contain** a value.
+- **message does not contain** a value,
+- **message does not start with** a value,
+- **message does not end with** a value.
 
 The **else** edge catches everything the condition does not match. A
 condition without an else edge stays silent on non-matching messages.
 
 ### Send replies
 
-Each send node sends one message per line. A random node sends one of its
-lines, chosen at random. You can use `{msg}` in a reply to interpolate the
-current message — after any transforms, so an *uppercase* transform followed
-by a send that says `You said: {msg}` echoes the message in caps.
+Each send node sends one message per line. You can use `{msg}` in a reply to
+interpolate the current message — after any transforms, so an *uppercase*
+transform followed by a send that says `You said: {msg}` echoes the message
+in caps.
 
 ### Stateless evaluation
 
@@ -84,6 +86,14 @@ Open the **Flow** tab and click a sample to load it:
   poll with the given question and options. Use the poll node's inspector to
   configure a quiz, anonymity, multiple answers, the correct option and
   explanation, or a close period.
+- **Shout Bot** — `/shout hello` becomes `🎺 HELLO!`: a replace node strips
+  the command, an uppercase transform shouts, and a Concat Back node adds
+  the exclamation mark. A bare `/shout` shows the usage hint.
+- **Quote Bot** — `/quote hello` becomes `💬 "hello"` through a Template
+  node. A bare `/quote` shows the usage hint.
+- **Greeting Bot** — greets every non-command message with a Concat Front
+  prefix (`👋 You said: hello`). A Not Starts With condition ignores
+  commands, which start with `/`.
 
 ### Persistence
 
