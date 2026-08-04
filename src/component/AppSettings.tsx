@@ -39,15 +39,21 @@ const FLOW_NODE_TYPES = [
   "replace",
   "extractRegex",
   "randomNumber",
+  "concatFront",
+  "concatBack",
+  "template",
   "equals",
   "contains",
   "startsWith",
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
   "send",
-  "random",
   "poll",
+  "sendTo",
+  "question",
 ];
 
 const isValidFlowNode = (n: unknown): boolean => {
@@ -82,6 +88,12 @@ const isValidFlowNode = (n: unknown): boolean => {
   if (data.max !== undefined && typeof data.max !== "string") {
     return false;
   }
+  if (data.text !== undefined && typeof data.text !== "string") {
+    return false;
+  }
+  if (data.template !== undefined && typeof data.template !== "string") {
+    return false;
+  }
   if (data.pollType !== undefined && typeof data.pollType !== "string") {
     return false;
   }
@@ -104,6 +116,25 @@ const isValidFlowNode = (n: unknown): boolean => {
     return false;
   }
   if (data.openPeriod !== undefined && typeof data.openPeriod !== "string") {
+    return false;
+  }
+  if (data.confirm !== undefined && typeof data.confirm !== "string") {
+    return false;
+  }
+  if (data.prompt !== undefined && typeof data.prompt !== "string") {
+    return false;
+  }
+  if (data.correctReply !== undefined && typeof data.correctReply !== "string") {
+    return false;
+  }
+  if (data.wrongReply !== undefined && typeof data.wrongReply !== "string") {
+    return false;
+  }
+  if (
+    data.answers !== undefined &&
+    (!Array.isArray(data.answers) ||
+      !data.answers.every((r: unknown) => typeof r === "string"))
+  ) {
     return false;
   }
   if (

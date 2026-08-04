@@ -5,7 +5,9 @@ import {
   FlowNodeType,
   FlowTriggerType,
   PollReply,
+  QuestionReply,
   SendNodeType,
+  TargetedReply,
   TransformNodeType,
 } from "../interfaces/flow.ts";
 import type { FlowSample } from "./flowSamples.ts";
@@ -17,6 +19,8 @@ export const TRIGGER_TYPES: FlowTriggerType[] = [
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
 ];
 
 export const TRIGGER_LABELS: Record<FlowTriggerType, string> = {
@@ -26,6 +30,8 @@ export const TRIGGER_LABELS: Record<FlowTriggerType, string> = {
   endsWith: "message ends with",
   notEquals: "message does not equal",
   notContains: "message does not contain",
+  notStartsWith: "message does not start with",
+  notEndsWith: "message does not end with",
 };
 
 export const TRANSFORM_TYPES: TransformNodeType[] = [
@@ -35,9 +41,12 @@ export const TRANSFORM_TYPES: TransformNodeType[] = [
   "replace",
   "extractRegex",
   "randomNumber",
+  "concatFront",
+  "concatBack",
+  "template",
 ];
 
-export const SEND_TYPES: SendNodeType[] = ["send", "random", "poll"];
+export const SEND_TYPES: SendNodeType[] = ["send", "poll", "sendTo", "question"];
 
 export const ALL_NODE_TYPES: FlowNodeType[] = [
   "start",
@@ -57,15 +66,21 @@ export const NODE_LABELS: Record<FlowNodeType, string> = {
   replace: "Replace",
   extractRegex: "Extract Regex",
   randomNumber: "Random Number",
+  concatFront: "Concat Front",
+  concatBack: "Concat Back",
+  template: "Template",
   equals: "Equals",
   contains: "Contains",
   startsWith: "Starts With",
   endsWith: "Ends With",
   notEquals: "Not Equals",
   notContains: "Not Contains",
+  notStartsWith: "Not Starts With",
+  notEndsWith: "Not Ends With",
   send: "Send",
-  random: "Random",
   poll: "Poll",
+  sendTo: "Send To User",
+  question: "Question",
 };
 
 // One-line plain-English descriptions for every concrete node type, used by
@@ -78,15 +93,21 @@ export const NODE_DESCRIPTIONS: Record<FlowNodeType, string> = {
   replace: "Find and replace text.",
   extractRegex: "Keep text matching a pattern.",
   randomNumber: "Replace with a random number.",
+  concatFront: "Add text before the message.",
+  concatBack: "Add text after the message.",
+  template: "Build text from a template with {msg}.",
   equals: "Message equals the value.",
   contains: "Message contains the value.",
   startsWith: "Message starts with the value.",
   endsWith: "Message ends with the value.",
   notEquals: "Message is not equal to the value.",
   notContains: "Message does not contain the value.",
+  notStartsWith: "Message does not start with the value.",
+  notEndsWith: "Message does not end with the value.",
   send: "Send one or more messages.",
-  random: "Send one random option.",
   poll: "Send a Telegram poll.",
+  sendTo: "Send a message to the @mentioned user.",
+  question: "Ask a question and wait for the answer.",
 };
 
 // Maps a concrete node type to its category. Start is its own category; every
@@ -128,6 +149,21 @@ export function interpolate(
 // level so loop closures never capture loop-scoped variables (no-loop-func).
 function interpolateReplies(replies: string[], message: string): string[] {
   return replies.map((reply) => interpolate(reply, { msg: message }));
+}
+
+// Splits a message into its first @mention and the remaining text. Returns
+// undefined when the message has no @mention. The mention is the username
+// WITHOUT the @ (Telegram usernames are [A-Za-z0-9_]); the remainder is the
+// message with the mention removed, whitespace collapsed and trimmed.
+export function parseMention(
+  message: string
+): { to: string; text: string } | undefined {
+  const m = message.match(/@(\w+)/);
+  if (!m) return undefined;
+  return {
+    to: m[1],
+    text: message.replace(m[0], "").replace(/\s+/g, " ").trim(),
+  };
 }
 
 // Usage hint shown when a /poll command is malformed. Kept byte-identical to
@@ -224,6 +260,10 @@ export function matchTrigger(
       return message.trim() !== value.trim();
     case "notContains":
       return !message.includes(value);
+    case "notStartsWith":
+      return !message.startsWith(value);
+    case "notEndsWith":
+      return !message.endsWith(value);
     default:
       return false;
   }
@@ -271,6 +311,12 @@ export function applyTransform(
       const roll = Math.floor(Math.random() * (max - min + 1)) + min;
       return String(roll);
     }
+    case "concatFront":
+      return (data.text ?? "") === "" ? message : data.text + message;
+    case "concatBack":
+      return (data.text ?? "") === "" ? message : message + data.text;
+    case "template":
+      return interpolate(data.template ?? "", { msg: message });
     default:
       return message;
   }
@@ -324,6 +370,8 @@ const CONDITION_DEFAULT_LABELS: Record<FlowTriggerType, string> = {
   endsWith: NODE_LABELS.endsWith,
   contains: NODE_LABELS.contains,
   notContains: NODE_LABELS.notContains,
+  notStartsWith: NODE_LABELS.notStartsWith,
+  notEndsWith: NODE_LABELS.notEndsWith,
 };
 
 export function createFlowNode(
@@ -356,20 +404,55 @@ export function createFlowNode(
         ...base,
         data: { label: NODE_LABELS.randomNumber, min: "1", max: "6" },
       };
+    case "concatFront":
+      return {
+        ...base,
+        data: { label: NODE_LABELS.concatFront, text: "" },
+      };
+    case "concatBack":
+      return {
+        ...base,
+        data: { label: NODE_LABELS.concatBack, text: "" },
+      };
+    case "template":
+      return {
+        ...base,
+        data: { label: NODE_LABELS.template, template: "" },
+      };
     case "equals":
     case "notEquals":
     case "startsWith":
     case "endsWith":
     case "contains":
     case "notContains":
+    case "notStartsWith":
+    case "notEndsWith":
       return {
         ...base,
         data: { label: CONDITION_DEFAULT_LABELS[type], value: "" },
       };
     case "send":
       return { ...base, data: { label: "New Send", replies: [] } };
-    case "random":
-      return { ...base, data: { label: NODE_LABELS.random, replies: [] } };
+    case "sendTo":
+      return {
+        ...base,
+        data: {
+          label: NODE_LABELS.sendTo,
+          replies: [],
+          confirm: "Sent to @{to}",
+        },
+      };
+    case "question":
+      return {
+        ...base,
+        data: {
+          label: NODE_LABELS.question,
+          prompt: "",
+          answers: [],
+          correctReply: "✅ Correct!",
+          wrongReply: "❌ Wrong! The answer is {answer}.",
+        },
+      };
     case "poll":
       return {
         ...base,
@@ -401,7 +484,7 @@ export function createFlow(name = "New Flow"): Flow {
 export function executeFlow(
   flow: Flow,
   message: string
-): (string | PollReply)[] | undefined {
+): (string | PollReply | TargetedReply | QuestionReply)[] | undefined {
   if (flow.startNodeId === "") return undefined;
 
   const nodesById = new Map(flow.nodes.map((n) => [n.id, n]));
@@ -464,45 +547,136 @@ export function executeFlow(
       continue;
     }
 
-    // send category (send / random / poll)
+    // send category (send / poll / sendTo / question)
     if (current.type === "poll") {
       const parsed = parsePoll(currentMessage);
       if (typeof parsed === "string") return [parsed];
       return [applyPollConfig(parsed, current.data)];
     }
-    const replies = interpolateReplies(
+    if (current.type === "sendTo") {
+      // Target is the FIRST @mention in the current message. No mention →
+      // decline (undefined) so later rules/flows still get a chance.
+      const mention = parseMention(currentMessage);
+      if (!mention) return undefined;
+      const vars = { msg: mention.text, to: mention.to };
+      const forwarded = (current.data.replies ?? [])
+        .map((reply) => interpolate(reply, vars))
+        .filter((text) => text !== "");
+      const confirm = interpolate(
+        current.data.confirm ?? "Sent to @{to}",
+        vars
+      );
+      return [
+        {
+          kind: "sendTo",
+          to: mention.to,
+          texts: forwarded,
+          confirm,
+        },
+      ];
+    }
+    if (current.type === "question") {
+      const question: QuestionReply = {
+        kind: "question",
+        prompt: current.data.prompt ?? "",
+        answers: current.data.answers ?? [],
+        correctReply: current.data.correctReply ?? "✅ Correct!",
+        wrongReply: current.data.wrongReply ?? "❌ Wrong! The answer is {answer}.",
+      };
+      return [question];
+    }
+    return interpolateReplies(
       current.data.replies ?? [],
       currentMessage
     );
-    if (current.type === "random") {
-      if (replies.length === 0) return [];
-      return [replies[Math.floor(Math.random() * replies.length)]];
-    }
-    return replies;
   }
 
   return undefined;
 }
 
-// Thin stateless wrapper around executeFlow. Keeps the handleMessage(userId,
-// message) signature for callers; userId is ignored because every message is
-// evaluated from the flow's start node.
+// Per-user state stored by a question node: the accepted answers and the
+// reply templates used when the user answers.
+interface PendingQuestion {
+  answers: string[];
+  correctReply: string;
+  wrongReply: string;
+}
+
+// Evaluates a user's answer against a pending question. Any message counts as
+// an answer attempt; the state is cleared before returning so the next
+// message runs the flow from the start again. {answer} in the reply templates
+// is the FIRST accepted answer.
+function evaluateAnswer(
+  pending: PendingQuestion,
+  message: string
+): string {
+  const normalized = message.trim().toLowerCase();
+  const isCorrect = pending.answers.some(
+    (answer) => answer.trim().toLowerCase() === normalized
+  );
+  const answer = pending.answers[0] ?? "";
+  const template = isCorrect ? pending.correctReply : pending.wrongReply;
+  return interpolate(template, { answer });
+}
+
+// Wraps executeFlow with per-user state for question nodes. Unlike the
+// pre-2026-08-04 runtime, userId is NOT ignored: a user with a pending
+// question gets their next message evaluated against it instead of running
+// the flow again.
 export class FlowRuntime {
+  private pending = new Map<number, PendingQuestion>();
+
   constructor(private flow: Flow) {}
 
-  // Evaluates the message from the start node every time.
-  //   - undefined  -> no send node reached (caller falls through to next rule)
-  //   - []         -> a send node was reached but has empty replies (consumed)
-  //   - string     -> a send node reached with a single string reply
-  //   - PollReply  -> a poll node reached with a single parsed poll
-  //   - string[]   -> a send node reached with several replies
+  // Clears every user's pending question state (used by tests; editing a
+  // flow rebuilds the runtime, which resets state naturally).
+  reset() {
+    this.pending.clear();
+  }
+
+  // Evaluates the message for one user:
+  //   - a user with a pending question: their message is checked against the
+  //     answers and the result is returned (state cleared).
+  //   - otherwise the flow runs from the start node. A question node reached
+  //     during the walk registers pending state and returns its prompt as a
+  //     plain string reply.
+  //   - undefined -> no send node reached (caller falls through to next rule)
+  //   - []        -> a send node was reached but has empty replies (consumed)
+  //   - string    -> a single string reply
+  //   - PollReply -> a poll reply
+  //   - TargetedReply -> a sendTo reply (transport sends it to another user)
   handleMessage(
-    _userId: number,
+    userId: number,
     message: string
-  ): string | string[] | PollReply | undefined {
+  ): string | string[] | PollReply | TargetedReply | undefined {
+    const pending = this.pending.get(userId);
+    if (pending !== undefined) {
+      this.pending.delete(userId);
+      return evaluateAnswer(pending, message);
+    }
+
     const replies = executeFlow(this.flow, message);
     if (replies === undefined) return undefined;
     if (replies.length === 0) return [];
+
+    // A question node in the result registers per-user state; the transport
+    // only needs the prompt text (the answers are checked on the NEXT
+    // message, which never re-runs the flow).
+    const question = replies.find(
+      (reply): reply is QuestionReply => reply.kind === "question"
+    );
+    if (question !== undefined) {
+      this.pending.set(userId, {
+        answers: question.answers,
+        correctReply: question.correctReply,
+        wrongReply: question.wrongReply,
+      });
+      const replaced = replies.map((reply) =>
+        reply.kind === "question" ? reply.prompt : reply
+      );
+      return replaced.length === 1 ? replaced[0] : replaced;
+    }
+
     if (replies.length === 1) return replies[0];
     return replies;
   }
@@ -584,7 +758,7 @@ export function validateFlow(flow: Flow): string[] {
     }
   }
 
-  // A send node (send or random) is terminal and cannot lead anywhere.
+  // A send node (send or poll) is terminal and cannot lead anywhere.
   for (const node of flow.nodes) {
     if (nodeCategory(node.type) === "send") {
       const outgoing = flow.edges.filter((e) => e.source === node.id);
@@ -622,6 +796,14 @@ export function flowFromSample(sample: FlowSample): Flow {
     if (node.data.pattern !== undefined) data.pattern = node.data.pattern;
     if (node.data.min !== undefined) data.min = node.data.min;
     if (node.data.max !== undefined) data.max = node.data.max;
+    if (node.data.text !== undefined) data.text = node.data.text;
+    if (node.data.template !== undefined) data.template = node.data.template;
+    if (node.data.confirm !== undefined) data.confirm = node.data.confirm;
+    if (node.data.prompt !== undefined) data.prompt = node.data.prompt;
+    if (node.data.answers !== undefined) data.answers = [...node.data.answers];
+    if (node.data.correctReply !== undefined)
+      data.correctReply = node.data.correctReply;
+    if (node.data.wrongReply !== undefined) data.wrongReply = node.data.wrongReply;
     if (node.data.pollType !== undefined) data.pollType = node.data.pollType;
     if (node.data.isAnonymous !== undefined) data.isAnonymous = node.data.isAnonymous;
     if (node.data.allowsMultipleAnswers !== undefined)

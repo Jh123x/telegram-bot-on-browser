@@ -142,6 +142,8 @@ test("renders a condition matchers list without a fallback option", () => {
   expect(screen.getAllByText(/message equals a value/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/message does not equal/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/message does not contain/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/message does not start with/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/message does not end with/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/else edge/i).length).toBeGreaterThan(0);
   expect(screen.queryByText(/any other message/i)).toBeNull();
 });
@@ -158,6 +160,8 @@ test("documents the built-in flow samples", () => {
 
   expect(screen.getAllByText(/Dice Bot/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/Poll Bot/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Quiz Bot/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Anonymous Bot/i).length).toBeGreaterThan(0);
   expect(screen.queryByText(/Quiz Flow/i)).toBeNull();
 });
 
@@ -187,7 +191,7 @@ test("no longer documents the old block editor", () => {
   expect(screen.queryByRole("heading", { name: "How Programs Work" })).toBeNull();
   expect(screen.queryByRole("heading", { name: "Blocks" })).toBeNull();
   expect(screen.queryByText(/Coin Flip/i)).toBeNull();
-  expect(screen.queryByText(/Shout/i)).toBeNull();
+  expect(screen.queryByText(/Shout Back/i)).toBeNull();
   expect(screen.queryByText(/Only Numbers/i)).toBeNull();
 });
 

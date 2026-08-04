@@ -4,7 +4,9 @@ export type FlowTriggerType =
   | "startsWith"
   | "endsWith"
   | "notEquals"
-  | "notContains";
+  | "notContains"
+  | "notStartsWith"
+  | "notEndsWith";
 
 export type TransformNodeType =
   | "lowercase"
@@ -12,9 +14,12 @@ export type TransformNodeType =
   | "trim"
   | "replace"
   | "extractRegex"
-  | "randomNumber";
+  | "randomNumber"
+  | "concatFront"
+  | "concatBack"
+  | "template";
 
-export type SendNodeType = "send" | "random" | "poll";
+export type SendNodeType = "send" | "poll" | "sendTo" | "question";
 
 // Every concrete node type. The category is derived via nodeCategory() in
 // logic/flow.ts; the type itself IS the operation (no per-node type selectors).
@@ -41,6 +46,33 @@ export interface PollReply {
   openPeriod?: number; // seconds until the poll closes (5-600)
 }
 
+// A reply produced by a "sendTo" node: messages sent to a DIFFERENT user
+// than the one who triggered the flow. `to` is the target username (without
+// the @) parsed from the first @mention in the message; the transport layer
+// resolves it to a chat id and sends every `texts` entry there, so the
+// original sender is never revealed to the target. `confirm` is sent to the
+// ORIGINAL sender only when the forward succeeds (an unknown target replaces
+// it with a failure note).
+export interface TargetedReply {
+  kind: "sendTo";
+  to: string;
+  texts: string[];
+  confirm: string;
+}
+
+// A reply produced by a "question" node: the node asks `prompt` and the
+// runtime registers per-user pending state so the NEXT message from that
+// user is checked against `answers` (case-insensitive, trimmed) instead of
+// running the flow again. `{answer}` in correctReply/wrongReply is
+// interpolated with the FIRST accepted answer.
+export interface QuestionReply {
+  kind: "question";
+  prompt: string;
+  answers: string[];
+  correctReply: string;
+  wrongReply: string;
+}
+
 export interface FlowNodeData {
   label: string;
   value?: string; // condition nodes: the trigger value to match
@@ -49,13 +81,20 @@ export interface FlowNodeData {
   pattern?: string; // "extractRegex" transform: regex pattern
   min?: string; // "randomNumber" transform: inclusive lower bound
   max?: string; // "randomNumber" transform: inclusive upper bound
+  text?: string; // "concatFront" / "concatBack" transforms: text to add
+  template?: string; // "template" transform: f-string style template
+  confirm?: string; // "sendTo" node: confirmation sent to the original sender
+  prompt?: string; // "question" node: the question text
+  answers?: string[]; // "question" node: accepted answers (case-insensitive)
+  correctReply?: string; // "question" node: reply when the answer matches
+  wrongReply?: string; // "question" node: reply when the answer does not match
   pollType?: string; // "poll" node: "regular" | "quiz"
   isAnonymous?: string; // "poll" node: "true" | "false"
   allowsMultipleAnswers?: string; // "poll" node: "true" | "false"
   correctOptionId?: string; // "poll" node (quiz): 0-based index of the correct option
   explanation?: string; // "poll" node (quiz): text shown when the answer is wrong
   openPeriod?: string; // "poll" node: seconds until the poll closes
-  replies?: string[]; // "send" / "random" nodes: one message per line
+  replies?: string[]; // "send" / "sendTo" nodes: one message per line
 }
 
 export interface FlowNode {

@@ -21,16 +21,16 @@ it in the inspector panel.
 - **Start** — the entry marker (exactly one per flow). It has a single
   output and no input.
 - **Transform** nodes — 1 input, 1 output. Each transform is its own node:
-  **lowercase**, **uppercase**, **trim**, **replace text**, or **extract
-  regex**. The transformed message is what downstream nodes see (both `{msg}`
-  interpolation and condition matching).
+  **lowercase**, **uppercase**, **trim**, **replace text**, **extract
+  regex**, **random number**, **concat front** (add text before the message),
+  **concat back** (add text after the message), or **template** (build text
+  from a template like `You said: {msg}`). The transformed message is what
+  downstream nodes see (both `{msg}` interpolation and condition matching).
 - **Condition** nodes — 1 input, 2 outputs. Each matcher is its own node
   (see below); the node only asks for the value to match. It follows the
   **if** edge when the message matches, the **else** edge otherwise.
 - **Send** — 1 input, no output (terminal). Sends its reply lines and ends
   the flow for this message.
-- **Random** — 1 input, no output (terminal). Sends exactly ONE of its
-  option lines, chosen at random.
 - **Random Number** — 1 input, 1 output (transform). Replaces the message
   with a random whole number between its Min and Max values (inclusive).
 - **Poll** — 1 input, no output (terminal). Parses the message as
@@ -38,6 +38,17 @@ it in the inspector panel.
   node's inspector lets you pick the poll type (regular or quiz), anonymity,
   multiple answers (regular only), the quiz's correct option and explanation,
   and an optional close period (5-600 seconds).
+- **Send To User** — 1 input, no output (terminal). Sends its reply lines
+  to a *different* user: the first `@mention` in the message is the target,
+  and the target user's own name is stripped from the forwarded text. The
+  original sender stays anonymous. A confirmation goes back to the sender
+  (`{to}` is the target username). If the target has never messaged the bot,
+  the sender gets a "couldn't find" note instead.
+- **Question** — 1 input, no output (terminal). Sends the prompt and then
+  waits: the user's next message is checked against the accepted answers
+  (case-insensitive, trimmed). Correct/wrong replies are configurable;
+  `{answer}` in them is the first accepted answer. The pending question is
+  tracked per user and clears after one attempt.
 
 ### Condition matchers
 
@@ -48,23 +59,27 @@ A condition node's **if** branch is decided by its node type — one of:
 - **message starts with** a value,
 - **message ends with** a value,
 - **message does not equal** a value,
-- **message does not contain** a value.
+- **message does not contain** a value,
+- **message does not start with** a value,
+- **message does not end with** a value.
 
 The **else** edge catches everything the condition does not match. A
 condition without an else edge stays silent on non-matching messages.
 
 ### Send replies
 
-Each send node sends one message per line. A random node sends one of its
-lines, chosen at random. You can use `{msg}` in a reply to interpolate the
-current message — after any transforms, so an *uppercase* transform followed
-by a send that says `You said: {msg}` echoes the message in caps.
+Each send node sends one message per line. You can use `{msg}` in a reply to
+interpolate the current message — after any transforms, so an *uppercase*
+transform followed by a send that says `You said: {msg}` echoes the message
+in caps.
 
 ### Stateless evaluation
 
 Every user message is evaluated from the Start node — the runtime keeps no
 per-user position (send nodes are terminal, so there is nowhere to "wait").
-A flow therefore answers each message on its own.
+The one exception is the **Question** node, which remembers a pending
+question per user until that user's next message answers it. A flow therefore
+answers each message on its own, except while a question is pending.
 
 ### Single flow
 
@@ -84,6 +99,14 @@ Open the **Flow** tab and click a sample to load it:
   poll with the given question and options. Use the poll node's inspector to
   configure a quiz, anonymity, multiple answers, the correct option and
   explanation, or a close period.
+- **Quiz Bot** — `/quiz` asks a single question ("What is 2 + 2?") with a
+  Question node. The next message is checked against the accepted answers
+  (`4`, `four`, `4.0`) and the bot replies with a green check or the right
+  answer. The state resets after each attempt.
+- **Anonymous Bot** — `/anon @bob your message` forwards "your message" to
+  @bob with a Send To User node, so bob never learns who sent it. The sender
+  gets a "Sent to @bob" confirmation (or a usage hint when no @mention is
+  present). The target must have messaged the bot before.
 
 ### Persistence
 

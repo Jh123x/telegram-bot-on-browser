@@ -93,6 +93,12 @@ export function transformSummary(
       return "extract regex";
     case "randomNumber":
       return data.min && data.max ? `random ${data.min}–${data.max}` : "random number";
+    case "concatFront":
+      return data.text ? `add "${data.text}" before` : "concat front";
+    case "concatBack":
+      return data.text ? `add "${data.text}" after` : "concat back";
+    case "template":
+      return data.template ? `template "${data.template}"` : "template";
     default:
       return "transform";
   }
@@ -188,25 +194,6 @@ export const SendNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
   );
 };
 
-// A RandomNode sends exactly ONE of its reply lines, chosen at random. Also
-// terminal: a single target handle, no source.
-export const RandomNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
-  const { accent, bg } = GRAPH_COLORS.node.send;
-  const replyCount = (data.replies ?? []).length;
-  return (
-    <Box data-testid="flow-node-random" sx={cardSx(accent, bg, selected)}>
-      <CardLabel>{data.label}</CardLabel>
-      <TypeBadge label="random" color={accent} />
-      <CardCaption>
-        {replyCount === 0
-          ? "no replies"
-          : `1 of ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}
-      </CardCaption>
-      <Handle type="target" position={Position.Left} style={{ background: accent }} />
-    </Box>
-  );
-};
-
 // A PollNode sends a Telegram poll. The poll question/options are parsed from
 // the incoming `/poll <title> option1, option2, ...` message, so the node
 // carries no replies of its own. Terminal: a single target handle, no source.
@@ -220,6 +207,40 @@ export const PollNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
       <TypeBadge label="poll" color={accent} />
       <CardCaption>
         sends a {pollType}, {anonymity}
+      </CardCaption>
+      <Handle type="target" position={Position.Left} style={{ background: accent }} />
+    </Box>
+  );
+};
+
+// A SendToNode forwards messages to a DIFFERENT user (the first @mention in
+// the message). Terminal: a single target handle, no source.
+export const SendToNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+  const { accent, bg } = GRAPH_COLORS.node.send;
+  const replyCount = (data.replies ?? []).length;
+  return (
+    <Box data-testid="flow-node-sendto" sx={cardSx(accent, bg, selected)}>
+      <CardLabel>{data.label}</CardLabel>
+      <TypeBadge label="sendTo" color={accent} />
+      <CardCaption>
+        {replyCount > 0 ? `${replyCount} to @user` : "forwards to @user"}
+      </CardCaption>
+      <Handle type="target" position={Position.Left} style={{ background: accent }} />
+    </Box>
+  );
+};
+
+// A QuestionNode asks a question and waits for an answer. The accepted answers
+// are the node's configured list; the runtime checks the next message from the
+// user against them. Terminal: a single target handle, no source.
+export const QuestionNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+  const { accent, bg } = GRAPH_COLORS.node.send;
+  return (
+    <Box data-testid="flow-node-question" sx={cardSx(accent, bg, selected)}>
+      <CardLabel>{data.label}</CardLabel>
+      <TypeBadge label="question" color={accent} />
+      <CardCaption>
+        {data.prompt ? `asks: ${data.prompt}` : "asks a question"}
       </CardCaption>
       <Handle type="target" position={Position.Left} style={{ background: accent }} />
     </Box>

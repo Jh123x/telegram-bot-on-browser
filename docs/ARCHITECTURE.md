@@ -69,7 +69,8 @@ dependencies, which makes it easy to test in isolation.
 Key functions:
 
 - `applyTransform` — applies a transform (lowercase, uppercase, trim,
-  replace, extractRegex, randomNumber) to the message.
+  replace, extractRegex, randomNumber, concatFront, concatBack, template) to
+  the message.
 - `matchTrigger` — evaluates a condition matcher (equals, contains, …)
   against the current message.
 - `executeFlow` — walks the graph from the start node, applying transforms,
@@ -77,9 +78,17 @@ Key functions:
   reached (or `undefined` when no send node is reached). A poll node returns
   a `PollReply` (`{ kind: "poll", question, options, type?, isAnonymous?,
   allowsMultipleAnswers?, correctOptionId?, explanation?, openPeriod? }`)
-  which the transport layer turns into a Telegram `sendPoll` call.
-- `FlowRuntime` — stateless wrapper around `executeFlow`; every message is
-  evaluated from the flow's start node (send nodes are terminal).
+  which the transport layer turns into a Telegram `sendPoll` call. A sendTo
+  node returns a `TargetedReply` (`{ kind: "sendTo", to, texts, confirm }`)
+  whose target username is parsed from the first `@mention` in the message;
+  a question node returns a `QuestionReply` (prompt + accepted answers +
+  correct/wrong templates) that the runtime turns into pending per-user
+  state.
+- `FlowRuntime` — wrapper around `executeFlow` with per-user pending state
+  for **question** nodes: a user with a pending question gets their next
+  message graded against the answers instead of re-running the flow. All
+  other nodes stay stateless (every message starts at the flow's start
+  node). `reset()` clears the pending state.
 - `validateFlow` — structural validation of a flow.
 - `flowFromSample` — deep-copies a built-in sample with fresh ids.
 
@@ -90,6 +99,13 @@ Key functions:
 - **poll worker** — polls `getUpdates` for new messages.
 - **send worker** — sends replies with `sendMessage` (text) or `sendPoll`
   (poll payloads from a poll node).
+
+`BrowserBot` keeps a `users` map (lowercase username → chat id), learned from
+every incoming update. A `TargetedReply` from a sendTo node is resolved
+through that map: each `texts` entry is posted to the target user's chat and
+logged under their conversation, then the `confirm` goes back to the original
+sender. An unknown target gets a `❌ Couldn't find @user` note instead (no
+confirm).
 
 The app registers one rule per flow:
 
@@ -118,9 +134,11 @@ When a message arrives, the engine walks the graph from the start node.
 **Transform** nodes rewrite the message before passing it on; **Condition**
 nodes evaluate it and follow their **if** or **else** edge; **Send** nodes
 return their replies (with `{msg}` interpolated to the current message),
-**Random** nodes return one random reply line, and **Poll** nodes parse the
+**Send To User** nodes return a message bound for the @mentioned user, and
+**Poll** nodes parse the
 message as `/poll <title> option1, option2, ...` into a `PollReply`. The walk
-is stateless — every message starts from the start node.
+is stateless — every message starts from the start node (except a user with
+a pending **Question**, whose next message is graded against the answers).
 
 ## Incoming message flow
 
@@ -256,21 +274,32 @@ flowchart TD
 - **FlowNode** — the `type` IS the operation (no per-node type selectors):
   - `start` — the entry marker; carries `data.label`.
   - Transforms (1 input, 1 output) — `lowercase`, `uppercase`, `trim`,
-    `replace`, `extractRegex`, `randomNumber`. `replace` uses `data.find` +
+    `replace`, `extractRegex`, `randomNumber`, `concatFront`, `concatBack`,
+    `template`. `replace` uses `data.find` +
     `data.replacement`; `extractRegex` uses `data.pattern`; `randomNumber`
     uses `data.min` + `data.max` (inclusive bounds) and replaces the message
-    with a random whole number in that range.
+    with a random whole number in that range; `concatFront`/`concatBack` use
+    `data.text` and prepend/append it to the message; `template` interpolates
+    `{msg}` inside `data.template` (unknown tokens stay literal).
   - Conditions (1 input, 2 outputs) — `equals`, `contains`, `startsWith`,
-    `endsWith`, `notEquals`, `notContains`. The type is the matcher; the node
+    `endsWith`, `notEquals`, `notContains`, `notStartsWith`, `notEndsWith`.
+    The type is the matcher; the node
     carries only `data.value` (the text to match).
   - Send category (1 input, no output, terminal) — `send` returns every line
-    of `data.replies`; `random` returns exactly ONE of them, chosen at random;
+    of `data.replies`;
     `poll` parses the message as `/poll <title> option1, option2, ...` into a
     `PollReply` (the transport layer sends it via `sendPoll`). Poll config
     fields live on the node's data (`pollType`, `isAnonymous`,
     `allowsMultipleAnswers`, `correctOptionId`, `explanation`, `openPeriod`)
     and are merged into the reply by `applyPollConfig`, omitting Telegram's
-    defaults.
+    defaults. `sendTo` parses the first `@mention` in the message, forwards
+    each interpolated reply line (`{msg}` = message minus the mention,
+    `{to}` = username) to that user via a `TargetedReply`, and confirms to
+    the sender (`data.confirm`, default "Sent to @{to}"). `question` returns
+    a `QuestionReply` from `data.prompt` / `data.answers` /
+    `data.correctReply` / `data.wrongReply`; the runtime registers it as
+    per-user pending state and checks the next message case-insensitively
+    (`{answer}` = first accepted answer).
 - **FlowEdge** — a connection from `source` to `target`. Edges carry no
   trigger data; a condition's branch is recorded in `sourceHandle` (`"if"` /
   `"else"`). `nodeCategory(type)` maps any concrete node type back to its
@@ -282,27 +311,32 @@ flowchart TD
 The pure engine lives in `src/logic/flow.ts` (no React or Redux):
 
 - `applyTransform(type, data, message)` — applies a concrete transform
-  (lowercase, uppercase, trim, replace, extractRegex, randomNumber) to the
-  message.
+  (lowercase, uppercase, trim, replace, extractRegex, randomNumber,
+  concatFront, concatBack, template) to the message.
 - `executeFlow(flow, message)` — walks the graph from `startNodeId` with a
   visited-set cycle guard. Transform nodes rewrite the message; condition
   nodes follow the `if` edge when their matcher passes and the `else` edge
   otherwise; a send node's replies are returned (with `{msg}` interpolated to
-  the current message), while a random node returns one interpolated line and
+  the current message), a sendTo node returns its `TargetedReply` (declining
+  when the message has no `@mention`), and
   a poll node returns `parsePoll(message)` — a `PollReply` when the message
   forms a valid `/poll <title> option1, option2, ...` command, otherwise a
-  usage-hint string.
+  usage-hint string. A question node returns a `QuestionReply`.
   Returns `undefined` when the walk cannot reach a send node (dead end,
   cycle, missing branch).
-- `FlowRuntime` — stateless wrapper around `executeFlow`. `handleMessage`
-  evaluates every message from the start node; `userId` is accepted for API
-  stability but ignored. A send node with no replies returns `[]` (the
+- `FlowRuntime` — stateful wrapper around `executeFlow` for question nodes.
+  `handleMessage(userId, message)` first checks the user's pending question
+  (grading their answer and clearing the state); otherwise it runs the flow
+  and, when a `QuestionReply` comes back, registers the pending state and
+  returns just the prompt text. `userId` is therefore meaningful only while a
+  question is pending; all other messages start at the flow's start node. A
+  send node with no replies returns `[]` (the
   message was consumed, so other rules must not pick it up).
 - `validateFlow(flow)` — checks the name, exactly one start node, no
   duplicate ids, no edges to missing nodes, no incoming edges to the start
   node, at most one outgoing edge per start/transform node, at most one `if`
   and one `else` edge per condition, and no outgoing edges from send-category
-  nodes (send and random are both terminal).
+  nodes (send, poll, sendTo and question are all terminal).
 - `flowFromSample(sample)` — deep-copies a sample's flow with fresh ids for
   the flow, every node, and every edge so loading a sample twice yields two
   independent flows.
@@ -342,7 +376,8 @@ The **Flow** tab uses React Flow (`@xyflow/react` v12). The `FlowsPage`
 renders `FlowEditor`, which wraps the canvas in a `<ReactFlowProvider>` with a
 palette, samples, and inspector (React Flow's built-in zoom controls appear on
 the canvas). Custom MUI node components
-(`StartNode`, `TransformNode`, `ConditionNode`, `SendNode`, `RandomNode`,
+(`StartNode`, `TransformNode`, `ConditionNode`, `SendNode`,
+`SendToNode`, `QuestionNode`,
 `PollNode`) preserve the app's design language. Nodes are added by dragging from the palette (HTML5
 drag-and-drop using the `application/reactflow` MIME type) and dropped onto
 the canvas at the pointer position. Connecting nodes creates a plain edge; a

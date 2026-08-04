@@ -3,19 +3,26 @@ import { FlowSample, SAMPLE_FLOWS } from "./flowSamples.ts";
 import { vi } from "vitest";
 
 // SAMPLE_FLOWS is guaranteed to be in this exact order (see the
-// "two samples with unique names and order" test below).
+// "samples with unique names and order" test below).
 const DICE = SAMPLE_FLOWS[0];
 const POLL = SAMPLE_FLOWS[1];
+const QUIZ = SAMPLE_FLOWS[2];
+const ANON = SAMPLE_FLOWS[3];
 
 describe("SAMPLE_FLOWS", () => {
-  it("has two samples with unique names", () => {
-    expect(SAMPLE_FLOWS).toHaveLength(2);
+  it("has four samples with unique names", () => {
+    expect(SAMPLE_FLOWS).toHaveLength(4);
     const names = SAMPLE_FLOWS.map((s) => s.name);
-    expect(new Set(names).size).toBe(2);
+    expect(new Set(names).size).toBe(4);
   });
 
   it("contains the expected samples in order", () => {
-    expect(SAMPLE_FLOWS.map((s) => s.name)).toEqual(["Dice Bot", "Poll Bot"]);
+    expect(SAMPLE_FLOWS.map((s) => s.name)).toEqual([
+      "Dice Bot",
+      "Poll Bot",
+      "Quiz Bot",
+      "Anonymous Bot",
+    ]);
   });
 });
 
@@ -102,6 +109,70 @@ describe("Poll Bot execution", () => {
 
   it("stays silent for messages that do not start with /poll", () => {
     const rt = new FlowRuntime(POLL.flow);
+    expect(rt.handleMessage(1, "hello")).toBeUndefined();
+  });
+});
+
+describe("Quiz Bot execution", () => {
+  it("asks the question when /quiz is sent", () => {
+    const rt = new FlowRuntime(QUIZ.flow);
+    expect(rt.handleMessage(1, "/quiz")).toBe("Q: What is 2 + 2?");
+  });
+
+  it("confirms a correct answer and resets", () => {
+    const rt = new FlowRuntime(QUIZ.flow);
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "4")).toBe("✅ Correct! 2 + 2 is 4.");
+    // A fresh /quiz asks again (state was cleared).
+    expect(rt.handleMessage(1, "/quiz")).toBe("Q: What is 2 + 2?");
+  });
+
+  it("accepts case-insensitive answers", () => {
+    const rt = new FlowRuntime(QUIZ.flow);
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "Four")).toBe("✅ Correct! 2 + 2 is 4.");
+  });
+
+  it("rejects a wrong answer", () => {
+    const rt = new FlowRuntime(QUIZ.flow);
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "banana")).toBe("❌ Not quite. The answer is 4.");
+  });
+
+  it("stays silent for messages that do not start with /quiz", () => {
+    const rt = new FlowRuntime(QUIZ.flow);
+    expect(rt.handleMessage(1, "hello")).toBeUndefined();
+  });
+});
+
+describe("Anonymous Bot execution", () => {
+  it("forwards the message to the @mentioned user and confirms", () => {
+    const rt = new FlowRuntime(ANON.flow);
+    expect(rt.handleMessage(1, "/anon @bob hello there")).toEqual({
+      kind: "sendTo",
+      to: "bob",
+      texts: ["hello there"],
+      confirm: "Sent to @bob",
+    });
+  });
+
+  it("strips the command and the mention from the forwarded text", () => {
+    const rt = new FlowRuntime(ANON.flow);
+    expect(rt.handleMessage(1, "/anon @carol the secret")).toEqual({
+      kind: "sendTo",
+      to: "carol",
+      texts: ["the secret"],
+      confirm: "Sent to @carol",
+    });
+  });
+
+  it("shows the usage hint when the message has no @mention", () => {
+    const rt = new FlowRuntime(ANON.flow);
+    expect(rt.handleMessage(1, "/anon hello")).toBe("Usage: /anon @user your message");
+  });
+
+  it("stays silent for messages that do not start with /anon", () => {
+    const rt = new FlowRuntime(ANON.flow);
     expect(rt.handleMessage(1, "hello")).toBeUndefined();
   });
 });

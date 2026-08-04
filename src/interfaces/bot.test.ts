@@ -256,6 +256,86 @@ test("mixed string and PollReply responses post to sendMessage and sendPoll resp
   expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(2, [SEND_POLL_URL, { question: "Q", options: ["a", "b"] }, 123]);
 });
 
+test("a TargetedReply forwards to the mentioned user's chat and confirms to the sender", async () => {
+  const bot = createBot();
+  bot.addRule(
+    (m) => m.startsWith("/anon"),
+    () => [{ kind: "sendTo", to: "bob", texts: ["secret"], confirm: "Sent to @bob" }]
+  );
+  const replySender = vi.fn();
+  bot.start(() => {}, replySender);
+
+  // bob messages the bot first so his chat id is learned.
+  await bot.poll_worker!.onmessage!({ data: [1720000001, "bob", 456, "/start"] });
+
+  await bot.poll_worker!.onmessage!({ data: [1720000002, "alice", 123, "/anon @bob secret"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(1, [SEND_URL, "secret", 456]);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(2, [SEND_URL, "Sent to @bob", 123]);
+  // The forwarded message is logged under bob's conversation, the confirm
+  // under alice's.
+  expect(replySender).toHaveBeenCalledWith(expect.any(Number), "bob", 456, "secret");
+  expect(replySender).toHaveBeenCalledWith(expect.any(Number), "alice", 123, "Sent to @bob");
+});
+
+test("a TargetedReply with multiple texts forwards each and confirms once", async () => {
+  const bot = createBot();
+  bot.addRule(
+    (m) => m.startsWith("/anon"),
+    () => [{ kind: "sendTo", to: "bob", texts: ["one", "two"], confirm: "Done" }]
+  );
+  bot.start(() => {});
+  await bot.poll_worker!.onmessage!({ data: [1720000001, "bob", 456, "/start"] });
+
+  await bot.poll_worker!.onmessage!({ data: [1720000002, "alice", 123, "/anon @bob hi"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledTimes(3);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(1, [SEND_URL, "one", 456]);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(2, [SEND_URL, "two", 456]);
+  expect(bot.send_worker!.postMessage).toHaveBeenNthCalledWith(3, [SEND_URL, "Done", 123]);
+});
+
+test("a TargetedReply with an unknown target sends only a failure note to the sender", async () => {
+  const bot = createBot();
+  bot.addRule(
+    (m) => m.startsWith("/anon"),
+    () => [{ kind: "sendTo", to: "ghost", texts: ["hi"], confirm: "Sent to @ghost" }]
+  );
+  const replySender = vi.fn();
+  bot.start(() => {}, replySender);
+
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "alice", 123, "/anon @ghost hi"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledTimes(1);
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledWith([
+    SEND_URL,
+    "❌ Couldn't find @ghost",
+    123,
+  ]);
+  expect(replySender).toHaveBeenCalledWith(
+    expect.any(Number),
+    "alice",
+    123,
+    "❌ Couldn't find @ghost"
+  );
+});
+
+test("mentions resolve case-insensitively against learned usernames", async () => {
+  const bot = createBot();
+  bot.addRule(
+    (m) => m.startsWith("/anon"),
+    () => [{ kind: "sendTo", to: "Bob", texts: ["hi"], confirm: "Sent to @Bob" }]
+  );
+  bot.start(() => {});
+
+  // bob's update arrives with a mixed-case username.
+  await bot.poll_worker!.onmessage!({ data: [1720000000, "Bob", 789, "/start"] });
+
+  await bot.poll_worker!.onmessage!({ data: [1720000001, "alice", 123, "/anon @Bob hi"] });
+
+  expect(bot.send_worker!.postMessage).toHaveBeenCalledWith([SEND_URL, "hi", 789]);
+});
+
 test("stop() terminates both workers and clears them", () => {
   const bot = createBot();
   bot.start(() => {});

@@ -72,6 +72,35 @@ function pollNode(label: string, position: { x: number; y: number }): FlowNode {
   return node;
 }
 
+// The question node asks `prompt` and waits for the user's next message; the
+// answers are checked case-insensitively by the runtime's pending state.
+function questionNode(
+  prompt: string,
+  answers: string[],
+  label: string,
+  position: { x: number; y: number }
+): FlowNode {
+  const node = createFlowNode("question", position);
+  node.data.label = label;
+  node.data.prompt = prompt;
+  node.data.answers = [...answers];
+  return node;
+}
+
+// The sendTo node forwards its replies to the FIRST @mention in the flowing
+// message ({msg} = message minus the mention, {to} = the target username)
+// and confirms to the sender.
+function sendToNode(
+  replies: string[],
+  label: string,
+  position: { x: number; y: number }
+): FlowNode {
+  const node = createFlowNode("sendTo", position);
+  node.data.label = label;
+  node.data.replies = [...replies];
+  return node;
+}
+
 function edge(source: string, target: string, sourceHandle?: "if" | "else"): FlowEdge {
   return { id: generateId(), source, target, sourceHandle: sourceHandle ?? undefined };
 }
@@ -156,7 +185,65 @@ function pollBotFlow(): Flow {
   return flow;
 }
 
+// A single-question quiz: "/quiz" asks a question, the user's next message
+// is checked against the accepted answers, and the state resets. Demos the
+// question node — the only node that makes the runtime stateful.
+function quizBotFlow(): Flow {
+  const flow = createFlow("Quiz Bot");
+  const start = startNode({ x: 0, y: 0 });
+  const lower = transformNode("lowercase", "Lowercase", { x: 240, y: 0 });
+  const gate = conditionNode("startsWith", "/quiz", "Quiz command", { x: 480, y: 0 });
+  const quiz = questionNode("Q: What is 2 + 2?", ["4", "four", "4.0"], "Quiz", {
+    x: 720,
+    y: 0,
+  });
+  quiz.data.correctReply = "✅ Correct! 2 + 2 is 4.";
+  quiz.data.wrongReply = "❌ Not quite. The answer is 4.";
+
+  flow.nodes = [start, lower, gate, quiz];
+  flow.edges = [
+    edge(start.id, lower.id),
+    edge(lower.id, gate.id),
+    edge(gate.id, quiz.id, "if"),
+  ];
+  flow.startNodeId = start.id;
+  return flow;
+}
+
+// A one-shot anonymous message bot: "/anon @bob your message" forwards "your
+// message" to @bob with no attribution (the transport resolves the username
+// and sends to bob's chat) and confirms to the sender. Demos the sendTo node
+// (target = first @mention) plus a contains guard for the usage hint.
+function anonymousBotFlow(): Flow {
+  const flow = createFlow("Anonymous Bot");
+  const start = startNode({ x: 0, y: 0 });
+  const lower = transformNode("lowercase", "Lowercase", { x: 240, y: 0 });
+  const gate = conditionNode("startsWith", "/anon", "Anon command", { x: 480, y: 0 });
+  const strip = transformNode("replace", "Strip prefix", { x: 720, y: -120 });
+  strip.data.find = "/anon";
+  strip.data.replacement = "";
+  const trim = transformNode("trim", "Trim", { x: 960, y: -120 });
+  const hasTarget = conditionNode("contains", "@", "Has target", { x: 1200, y: -120 });
+  const anon = sendToNode(["{msg}"], "Forward", { x: 1440, y: -240 });
+  const usage = sendNode("Usage", ["Usage: /anon @user your message"], { x: 1440, y: 0 });
+
+  flow.nodes = [start, lower, gate, strip, trim, hasTarget, anon, usage];
+  flow.edges = [
+    edge(start.id, lower.id),
+    edge(lower.id, gate.id),
+    edge(gate.id, strip.id, "if"),
+    edge(strip.id, trim.id),
+    edge(trim.id, hasTarget.id),
+    edge(hasTarget.id, anon.id, "if"),
+    edge(hasTarget.id, usage.id, "else"),
+  ];
+  flow.startNodeId = start.id;
+  return flow;
+}
+
 export const SAMPLE_FLOWS: FlowSample[] = [
   { name: "Dice Bot", flow: diceBotFlow() },
   { name: "Poll Bot", flow: pollBotFlow() },
+  { name: "Quiz Bot", flow: quizBotFlow() },
+  { name: "Anonymous Bot", flow: anonymousBotFlow() },
 ];

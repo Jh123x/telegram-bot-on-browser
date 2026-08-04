@@ -6,8 +6,9 @@ import {
   TransformNode,
   ConditionNode,
   SendNode,
-  RandomNode,
   PollNode,
+  SendToNode,
+  QuestionNode,
 } from "./flowNodes.tsx";
 
 // Node components receive a single `NodeProps` object; we construct a minimal
@@ -109,6 +110,67 @@ test("TransformNode renders the random number summary with its range", () => {
   expect(getByText("random 1–20")).toBeTruthy();
 });
 
+test("TransformNode renders the concat front summary with its text", () => {
+  const { getByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Prefix", text: "!" }, "concatFront")}
+    />
+  );
+
+  expect(getByText('add "!" before')).toBeTruthy();
+});
+
+test("TransformNode falls back to a bare concat front label when text is empty", () => {
+  const { getAllByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Prefix", text: "" }, "concatFront")}
+    />
+  );
+
+  // Badge + caption both read "concat front" when text is empty.
+  expect(getAllByText("concat front").length).toBeGreaterThan(0);
+});
+
+test("TransformNode renders the concat back summary with its text", () => {
+  const { getByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Suffix", text: "!!" }, "concatBack")}
+    />
+  );
+
+  expect(getByText('add "!!" after')).toBeTruthy();
+});
+
+test("TransformNode falls back to a bare concat back label when text is empty", () => {
+  const { getAllByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Suffix", text: "" }, "concatBack")}
+    />
+  );
+
+  expect(getAllByText("concat back").length).toBeGreaterThan(0);
+});
+
+test("TransformNode renders the template summary with its template text", () => {
+  const { getByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Fmt", template: "Hi {msg}" }, "template")}
+    />
+  );
+
+  expect(getByText('template "Hi {msg}"')).toBeTruthy();
+});
+
+test("TransformNode falls back to a bare template label when template is empty", () => {
+  const { getAllByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Fmt", template: "" }, "template")}
+    />
+  );
+
+  expect(getAllByText("template").length).toBeGreaterThan(0);
+});
+
 test("TransformNode shows a lowercase badge for the lowercase type", () => {
   const { getAllByText } = render(
     <TransformNode {...makeNodeProps({ label: "Noop" }, "lowercase")} />
@@ -166,24 +228,6 @@ test("SendNode pluralizes singular reply count", () => {
   expect(getByText("1 reply")).toBeTruthy();
 });
 
-test("RandomNode renders its label and one-of-N caption", () => {
-  const { getByTestId, getByText } = render(
-    <RandomNode {...makeNodeProps({ label: "Flip", replies: ["a", "b"] })} />
-  );
-
-  expect(getByTestId("flow-node-random")).toBeTruthy();
-  expect(getByText("Flip")).toBeTruthy();
-  expect(getByText("1 of 2 replies")).toBeTruthy();
-});
-
-test("RandomNode shows no replies when the list is empty", () => {
-  const { getByText } = render(
-    <RandomNode {...makeNodeProps({ label: "Flip", replies: [] })} />
-  );
-
-  expect(getByText("no replies")).toBeTruthy();
-});
-
 test("PollNode renders its label, poll badge, and a testid", () => {
   const { getByTestId, getByText } = render(
     <PollNode {...makeNodeProps({ label: "Pick" })} />
@@ -230,15 +274,6 @@ test("SendNode has a single (target) handle and no source handle", () => {
   expect(handles).toHaveLength(1);
 });
 
-test("RandomNode has a single (target) handle and no source handle", () => {
-  const { container } = render(
-    <RandomNode {...makeNodeProps({ label: "Flip", replies: ["hi"] })} />
-  );
-
-  const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
-  expect(handles).toHaveLength(1);
-});
-
 test("StartNode card border uses the start accent color", () => {
   const { getByTestId } = render(<StartNode {...makeNodeProps({ label: "Start" })} />);
   expect(getComputedStyle(getByTestId("flow-node-start")).borderColor).toBe(
@@ -270,6 +305,72 @@ test("SendNode card border uses the send accent color", () => {
 test("PollNode card border uses the send accent color", () => {
   const { getByTestId } = render(<PollNode {...makeNodeProps({ label: "Pick" })} />);
   expect(getComputedStyle(getByTestId("flow-node-poll")).borderColor).toBe(
+    "rgb(52, 211, 153)"
+  );
+});
+
+test("SendToNode renders its label, sendTo badge, and a testid", () => {
+  const { getByTestId, getByText } = render(
+    <SendToNode {...makeNodeProps({ label: "Forward", replies: ["a", "b"] })} />
+  );
+
+  expect(getByTestId("flow-node-sendto")).toBeTruthy();
+  expect(getByText("Forward")).toBeTruthy();
+  expect(getByText("sendTo")).toBeTruthy();
+  expect(getByText("2 to @user")).toBeTruthy();
+});
+
+test("SendToNode shows a forwards caption when it has no replies", () => {
+  const { getByText } = render(<SendToNode {...makeNodeProps({ label: "Forward" })} />);
+
+  expect(getByText("forwards to @user")).toBeTruthy();
+});
+
+test("SendToNode has a single (target) handle and no source handle", () => {
+  const { container } = render(
+    <SendToNode {...makeNodeProps({ label: "Forward", replies: ["hi"] })} />
+  );
+
+  const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
+  expect(handles).toHaveLength(1);
+});
+
+test("SendToNode card border uses the send accent color", () => {
+  const { getByTestId } = render(<SendToNode {...makeNodeProps({ label: "Forward" })} />);
+  expect(getComputedStyle(getByTestId("flow-node-sendto")).borderColor).toBe(
+    "rgb(52, 211, 153)"
+  );
+});
+
+test("QuestionNode renders its label, question badge, and a testid", () => {
+  const { getByTestId, getByText } = render(
+    <QuestionNode {...makeNodeProps({ label: "Ask", prompt: "Q: What is 2 + 2?" })} />
+  );
+
+  expect(getByTestId("flow-node-question")).toBeTruthy();
+  expect(getByText("Ask")).toBeTruthy();
+  expect(getByText("question")).toBeTruthy();
+  expect(getByText("asks: Q: What is 2 + 2?")).toBeTruthy();
+});
+
+test("QuestionNode shows a neutral caption when it has no prompt", () => {
+  const { getByText } = render(<QuestionNode {...makeNodeProps({ label: "Ask" })} />);
+
+  expect(getByText("asks a question")).toBeTruthy();
+});
+
+test("QuestionNode has a single (target) handle and no source handle", () => {
+  const { container } = render(
+    <QuestionNode {...makeNodeProps({ label: "Ask", prompt: "Pick?" })} />
+  );
+
+  const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
+  expect(handles).toHaveLength(1);
+});
+
+test("QuestionNode card border uses the send accent color", () => {
+  const { getByTestId } = render(<QuestionNode {...makeNodeProps({ label: "Ask" })} />);
+  expect(getComputedStyle(getByTestId("flow-node-question")).borderColor).toBe(
     "rgb(52, 211, 153)"
   );
 });

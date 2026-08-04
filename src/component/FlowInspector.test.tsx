@@ -42,7 +42,7 @@ const makeFlow = (overrides: Partial<Flow> = {}): Flow => ({
     },
     {
       id: "random1",
-      type: "random",
+      type: "send",
       position: { x: 400, y: 0 },
       data: { label: "Flip", replies: ["Heads", "Tails"] },
     },
@@ -320,6 +320,144 @@ test("editing Min and Max dispatches onUpdate", () => {
   );
 });
 
+test("concat front transform reveals the Text field", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "c1",
+        type: "concatFront",
+        position: { x: 0, y: 0 },
+        data: { label: "Prefix", text: "!" },
+      },
+    ],
+  });
+  renderInspector(flow, "c1", null);
+  expect(screen.getByLabelText("Text")).toHaveValue("!");
+  expect(screen.queryByLabelText("Template")).toBeNull();
+});
+
+test("editing the concat front Text field dispatches onUpdate with data.text", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "c1",
+        type: "concatFront",
+        position: { x: 0, y: 0 },
+        data: { label: "Prefix", text: "" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "c1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Text"), {
+    target: { value: ">>" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "c1",
+          data: expect.objectContaining({ text: ">>" }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("concat back transform reveals the Text field", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "c2",
+        type: "concatBack",
+        position: { x: 0, y: 0 },
+        data: { label: "Suffix", text: "!!" },
+      },
+    ],
+  });
+  renderInspector(flow, "c2", null);
+  expect(screen.getByLabelText("Text")).toHaveValue("!!");
+});
+
+test("editing the concat back Text field dispatches onUpdate with data.text", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "c2",
+        type: "concatBack",
+        position: { x: 0, y: 0 },
+        data: { label: "Suffix", text: "" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "c2", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Text"), {
+    target: { value: "<<" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "c2",
+          data: expect.objectContaining({ text: "<<" }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("template transform reveals the Template field with a hint", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "t1",
+        type: "template",
+        position: { x: 0, y: 0 },
+        data: { label: "Fmt", template: "Hi {msg}" },
+      },
+    ],
+  });
+  renderInspector(flow, "t1", null);
+  expect(screen.getByLabelText("Template")).toHaveValue("Hi {msg}");
+  expect(screen.getByText("Use {msg} for the current message.")).toBeTruthy();
+  expect(screen.queryByLabelText("Text")).toBeNull();
+});
+
+test("editing the template field dispatches onUpdate with data.template", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "t1",
+        type: "template",
+        position: { x: 0, y: 0 },
+        data: { label: "Fmt", template: "" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "t1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Template"), {
+    target: { value: "Hello, {msg}!" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "t1",
+          data: expect.objectContaining({ template: "Hello, {msg}!" }),
+        }),
+      ]),
+    })
+  );
+});
+
 // ----- Condition node -----
 
 test("condition panel shows label, type caption, and trigger value field", () => {
@@ -419,20 +557,20 @@ test("editing the send node label dispatches onUpdate", () => {
   );
 });
 
-// ----- Random node -----
+// ----- Send node (replies variant) -----
 
-test("random panel shows the label and options multiline with a hint", () => {
+test("send panel shows the label and replies multiline with no random hint", () => {
   renderInspector(makeFlow(), "random1", null);
-  expect(screen.getByText("Random Node")).toBeTruthy();
-  expect(screen.getByLabelText("Options (one per line)")).toBeTruthy();
-  expect(screen.getByText("Sends one of these lines, chosen at random.")).toBeTruthy();
+  expect(screen.getByText("Send Node")).toBeTruthy();
+  expect(screen.getByLabelText("Replies (one per line)")).toBeTruthy();
+  expect(screen.queryByText("Sends one of these lines, chosen at random.")).toBeNull();
 });
 
-test("editing random options splits the textarea on newlines", () => {
+test("editing the replies textarea splits on newlines", () => {
   const onUpdate = vi.fn();
   renderInspector(makeFlow(), "random1", null, onUpdate);
 
-  fireEvent.change(screen.getByLabelText("Options (one per line)"), {
+  fireEvent.change(screen.getByLabelText("Replies (one per line)"), {
     target: { value: "Heads\nTails\nMaybe" },
   });
 
@@ -566,6 +704,186 @@ test("editing the poll node label dispatches onUpdate", () => {
         expect.objectContaining({
           id: "poll1",
           data: expect.objectContaining({ label: "Renamed poll" }),
+        }),
+      ]),
+    })
+  );
+});
+
+// ----- Send-to node -----
+
+test("send-to panel shows label, replies, confirm field, and the target hint", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "st1",
+        type: "sendTo",
+        position: { x: 0, y: 0 },
+        data: { label: "Forward", replies: ["Your message", "Got it"], confirm: "Done" },
+      },
+    ],
+  });
+  renderInspector(flow, "st1", null);
+
+  expect(screen.getByText("Send To Node")).toBeTruthy();
+  expect(screen.getByLabelText("Replies (one per line)")).toBeTruthy();
+  expect((screen.getByLabelText("Confirm") as HTMLInputElement).value).toBe("Done");
+  expect(
+    screen.getByText("Target: the first @mention in the message.")
+  ).toBeTruthy();
+});
+
+test("editing the send-to confirm field dispatches onUpdate", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "st1",
+        type: "sendTo",
+        position: { x: 0, y: 0 },
+        data: { label: "Forward", replies: ["Got it"], confirm: "" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "st1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Confirm"), {
+    target: { value: "Sent!" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "st1",
+          data: expect.objectContaining({ confirm: "Sent!" }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("editing the send-to replies splits on newlines", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "st1",
+        type: "sendTo",
+        position: { x: 0, y: 0 },
+        data: { label: "Forward", replies: ["a"], confirm: "ok" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "st1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Replies (one per line)"), {
+    target: { value: "First\nSecond" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "st1",
+          data: expect.objectContaining({ replies: ["First", "Second"] }),
+        }),
+      ]),
+    })
+  );
+});
+
+// ----- Question node -----
+
+test("question panel shows prompt, answers, and correct/wrong reply fields", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "q1",
+        type: "question",
+        position: { x: 0, y: 0 },
+        data: {
+          label: "Ask",
+          prompt: "What color?",
+          answers: ["red", "blue"],
+          correctReply: "Nice!",
+          wrongReply: "Try again.",
+        },
+      },
+    ],
+  });
+  renderInspector(flow, "q1", null);
+
+  expect(screen.getByText("Question Node")).toBeTruthy();
+  expect((screen.getByLabelText("Prompt") as HTMLInputElement).value).toBe(
+    "What color?"
+  );
+  expect(screen.getByLabelText("Answers (one per line)")).toBeTruthy();
+  expect((screen.getByLabelText("Correct reply") as HTMLInputElement).value).toBe(
+    "Nice!"
+  );
+  expect((screen.getByLabelText("Wrong reply") as HTMLInputElement).value).toBe(
+    "Try again."
+  );
+  expect(
+    screen.getByText(/Answers match case-insensitively\. \{answer\} is the first accepted answer\./)
+  ).toBeTruthy();
+});
+
+test("editing the question prompt dispatches onUpdate", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "q1",
+        type: "question",
+        position: { x: 0, y: 0 },
+        data: { label: "Ask", prompt: "What color?" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "q1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Prompt"), {
+    target: { value: "What is your name?" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "q1",
+          data: expect.objectContaining({ prompt: "What is your name?" }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("editing the question answers splits on newlines", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "q1",
+        type: "question",
+        position: { x: 0, y: 0 },
+        data: { label: "Ask", prompt: "Pick?", answers: ["a"] },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "q1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Answers (one per line)"), {
+    target: { value: "Red\nBlue\nGreen" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "q1",
+          data: expect.objectContaining({ answers: ["Red", "Blue", "Green"] }),
         }),
       ]),
     })

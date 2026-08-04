@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { BrowserBot } from "../interfaces/bot.ts";
 import { BotWithConfig, Response, User } from "../redux/types.ts";
-import { Flow, PollReply } from "../interfaces/flow.ts";
+import { Flow, PollReply, TargetedReply } from "../interfaces/flow.ts";
 import { FlowRuntime, pollDisplay } from "../logic/flow.ts";
 
 type DisplayItem =
@@ -125,7 +125,7 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
     // transition wins — the same per-user path production uses (FlowRuntime
     // keyed by user id, here the Test User).
     let matchedFlow: Flow | undefined;
-    let flowReplies: (string | PollReply)[] = [];
+    let flowReplies: (string | PollReply | TargetedReply)[] = [];
     for (const flow of flows) {
       const runtime = flowRuntimesRef.current.get(flow.id);
       if (!runtime) continue;
@@ -161,6 +161,32 @@ export const ChatPage = ({ bot }: { bot?: BrowserBot }) => {
       } else {
         flowReplies.forEach((reply) => {
           const t = nextTime();
+          // A sendTo reply is a message bound for ANOTHER user; the local
+          // preview can't deliver it, so show it as a note plus the
+          // confirmation the sender would get.
+          if (reply.kind === "sendTo") {
+            reply.texts.forEach((text) => {
+              newItems.push({
+                id: `sim-${now}-${i++}`,
+                kind: "note",
+                time: nextTime(),
+                text: `📨 To @${reply.to}: ${text}`,
+              });
+            });
+            newItems.push({
+              id: `sim-${now}-${i++}`,
+              kind: "message",
+              time: nextTime(),
+              response: {
+                FromUser: "Bot",
+                UserID: TEST_USER.UserID,
+                Message: reply.confirm,
+                TimeStamp: t,
+                fromBot: true,
+              },
+            });
+            return;
+          }
           newItems.push({
             id: `sim-${now}-${i++}`,
             kind: "message",

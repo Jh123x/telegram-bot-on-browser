@@ -21,6 +21,7 @@ import {
   POLL_USAGE_HINT,
   applyPollConfig,
   parsePoll,
+  parseMention,
   pollDisplay,
   NODE_LABELS,
   NODE_DESCRIPTIONS,
@@ -58,7 +59,7 @@ describe("dropNodeDimensionChanges", () => {
 });
 
 describe("TRIGGER_TYPES / TRIGGER_LABELS", () => {
-  test("exposes the six trigger types", () => {
+  test("exposes the eight trigger types", () => {
     expect(TRIGGER_TYPES).toEqual([
       "equals",
       "contains",
@@ -66,6 +67,8 @@ describe("TRIGGER_TYPES / TRIGGER_LABELS", () => {
       "endsWith",
       "notEquals",
       "notContains",
+      "notStartsWith",
+      "notEndsWith",
     ]);
   });
 
@@ -75,11 +78,13 @@ describe("TRIGGER_TYPES / TRIGGER_LABELS", () => {
     );
     expect(TRIGGER_LABELS.contains).toBe("message contains");
     expect(TRIGGER_LABELS.equals).toBe("message equals");
+    expect(TRIGGER_LABELS.notStartsWith).toBe("message does not start with");
+    expect(TRIGGER_LABELS.notEndsWith).toBe("message does not end with");
   });
 });
 
 describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
-  test("exposes the six concrete transform types", () => {
+  test("exposes the nine concrete transform types", () => {
     expect(TRANSFORM_TYPES).toEqual([
       "lowercase",
       "uppercase",
@@ -87,6 +92,9 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
       "replace",
       "extractRegex",
       "randomNumber",
+      "concatFront",
+      "concatBack",
+      "template",
     ]);
   });
 
@@ -96,8 +104,9 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
       ...TRANSFORM_TYPES,
       ...TRIGGER_TYPES,
       "send",
-      "random",
       "poll",
+      "sendTo",
+      "question",
     ]);
     expect(new Set(ALL_NODE_TYPES).size).toBe(ALL_NODE_TYPES.length);
   });
@@ -114,10 +123,11 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
     TRIGGER_TYPES.forEach((t) => expect(nodeCategory(t)).toBe("condition"));
   });
 
-  test("send, random, and poll map to the send category", () => {
+  test("send, poll, sendTo and question map to the send category", () => {
     expect(nodeCategory("send")).toBe("send");
-    expect(nodeCategory("random")).toBe("send");
     expect(nodeCategory("poll")).toBe("send");
+    expect(nodeCategory("sendTo")).toBe("send");
+    expect(nodeCategory("question")).toBe("send");
   });
 });
 
@@ -140,7 +150,14 @@ describe("NODE_LABELS / NODE_DESCRIPTIONS", () => {
     expect(NODE_LABELS.extractRegex).toBe("Extract Regex");
     expect(NODE_LABELS.randomNumber).toBe("Random Number");
     expect(NODE_LABELS.notContains).toBe("Not Contains");
+    expect(NODE_LABELS.notStartsWith).toBe("Not Starts With");
+    expect(NODE_LABELS.notEndsWith).toBe("Not Ends With");
+    expect(NODE_LABELS.concatFront).toBe("Concat Front");
+    expect(NODE_LABELS.concatBack).toBe("Concat Back");
+    expect(NODE_LABELS.template).toBe("Template");
     expect(NODE_LABELS.poll).toBe("Poll");
+    expect(NODE_LABELS.sendTo).toBe("Send To User");
+    expect(NODE_LABELS.question).toBe("Question");
   });
 
   test("exposes exact one-line descriptions for representative types", () => {
@@ -153,6 +170,17 @@ describe("NODE_LABELS / NODE_DESCRIPTIONS", () => {
     );
     expect(NODE_DESCRIPTIONS.notContains).toBe(
       "Message does not contain the value."
+    );
+    expect(NODE_DESCRIPTIONS.notStartsWith).toBe(
+      "Message does not start with the value."
+    );
+    expect(NODE_DESCRIPTIONS.notEndsWith).toBe(
+      "Message does not end with the value."
+    );
+    expect(NODE_DESCRIPTIONS.concatFront).toBe("Add text before the message.");
+    expect(NODE_DESCRIPTIONS.concatBack).toBe("Add text after the message.");
+    expect(NODE_DESCRIPTIONS.template).toBe(
+      "Build text from a template with {msg}."
     );
     expect(NODE_DESCRIPTIONS.poll).toBe("Send a Telegram poll.");
   });
@@ -251,6 +279,16 @@ describe("matchTrigger", () => {
   test("endsWith checks the suffix", () => {
     expect(matchTrigger("endsWith", "bye", "good bye")).toBe(true);
     expect(matchTrigger("endsWith", "bye", "bye good")).toBe(false);
+  });
+
+  test("notStartsWith negates the raw prefix check", () => {
+    expect(matchTrigger("notStartsWith", "/x", "abc")).toBe(true);
+    expect(matchTrigger("notStartsWith", "/x", "/xabc")).toBe(false);
+  });
+
+  test("notEndsWith negates the raw suffix check", () => {
+    expect(matchTrigger("notEndsWith", "!", "hi")).toBe(true);
+    expect(matchTrigger("notEndsWith", "!", "hi!")).toBe(false);
   });
 });
 
@@ -351,6 +389,61 @@ describe("applyTransform", () => {
       applyTransform("randomNumber", { label: "R", min: "6", max: "1" }, "keep me")
     ).toBe("keep me");
   });
+
+  test("concatFront prepends the text to the message", () => {
+    expect(
+      applyTransform("concatFront", { label: "C", text: "> " }, "hi")
+    ).toBe("> hi");
+  });
+
+  test("concatFront with empty text leaves the message unchanged", () => {
+    expect(applyTransform("concatFront", { label: "C", text: "" }, "hi")).toBe(
+      "hi"
+    );
+    expect(applyTransform("concatFront", { label: "C" }, "hi")).toBe("hi");
+  });
+
+  test("concatBack appends the text to the message", () => {
+    expect(
+      applyTransform("concatBack", { label: "C", text: "!" }, "hi")
+    ).toBe("hi!");
+  });
+
+  test("concatBack with empty text leaves the message unchanged", () => {
+    expect(applyTransform("concatBack", { label: "C", text: "" }, "hi")).toBe(
+      "hi"
+    );
+    expect(applyTransform("concatBack", { label: "C" }, "hi")).toBe("hi");
+  });
+
+  test("template interpolates {msg} into the template", () => {
+    expect(
+      applyTransform(
+        "template",
+        { label: "T", template: "Hello {msg}!" },
+        "hi"
+      )
+    ).toBe("Hello hi!");
+  });
+
+  test("template with no tokens keeps the literal template", () => {
+    expect(
+      applyTransform("template", { label: "T", template: "plain" }, "hi")
+    ).toBe("plain");
+  });
+
+  test("template with no template returns an empty string", () => {
+    expect(applyTransform("template", { label: "T", template: "" }, "hi")).toBe(
+      ""
+    );
+    expect(applyTransform("template", { label: "T" }, "hi")).toBe("");
+  });
+
+  test("template leaves unknown tokens literal", () => {
+    expect(
+      applyTransform("template", { label: "T", template: "{unknown} x" }, "hi")
+    ).toBe("{unknown} x");
+  });
 });
 
 describe("createFlowNode", () => {
@@ -388,6 +481,8 @@ describe("createFlowNode", () => {
       endsWith: "Ends With",
       contains: "Contains",
       notContains: "Not Contains",
+      notStartsWith: "Not Starts With",
+      notEndsWith: "Not Ends With",
     };
     TRIGGER_TYPES.forEach((type) => {
       const node = createFlowNode(type);
@@ -402,10 +497,22 @@ describe("createFlowNode", () => {
     expect(node.data).toEqual({ label: "New Send", replies: [] });
   });
 
-  test("random node gets empty replies and its own type", () => {
-    const node = createFlowNode("random");
-    expect(node.type).toBe("random");
-    expect(node.data).toEqual({ label: "Random", replies: [] });
+  test("concatFront node gets empty text", () => {
+    const node = createFlowNode("concatFront");
+    expect(node.type).toBe("concatFront");
+    expect(node.data).toEqual({ label: "Concat Front", text: "" });
+  });
+
+  test("concatBack node gets empty text", () => {
+    const node = createFlowNode("concatBack");
+    expect(node.type).toBe("concatBack");
+    expect(node.data).toEqual({ label: "Concat Back", text: "" });
+  });
+
+  test("template node gets an empty template", () => {
+    const node = createFlowNode("template");
+    expect(node.type).toBe("template");
+    expect(node.data).toEqual({ label: "Template", template: "" });
   });
 
   test("randomNumber node gets default min and max bounds", () => {
@@ -422,6 +529,28 @@ describe("createFlowNode", () => {
       pollType: "regular",
       isAnonymous: "true",
       allowsMultipleAnswers: "false",
+    });
+  });
+
+  test("sendTo node gets empty replies and a default confirm template", () => {
+    const node = createFlowNode("sendTo");
+    expect(node.type).toBe("sendTo");
+    expect(node.data).toEqual({
+      label: "Send To User",
+      replies: [],
+      confirm: "Sent to @{to}",
+    });
+  });
+
+  test("question node gets prompt, answers and default reply templates", () => {
+    const node = createFlowNode("question");
+    expect(node.type).toBe("question");
+    expect(node.data).toEqual({
+      label: "Question",
+      prompt: "",
+      answers: [],
+      correctReply: "✅ Correct!",
+      wrongReply: "❌ Wrong! The answer is {answer}.",
     });
   });
 
@@ -598,43 +727,85 @@ describe("executeFlow (graph walk)", () => {
     const flow = startFlow("", [send], []);
     expect(executeFlow(flow, "hi")).toBeUndefined();
   });
-});
 
-describe("executeFlow (random node)", () => {
-  function randomFlow(replies: string[]): Flow {
-    return {
-      id: "f1",
-      name: "Random",
-      startNodeId: "start",
-      nodes: [
-        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
-        { id: "rand", type: "random", position: { x: 240, y: 0 }, data: { label: "Rand", replies } },
-      ],
-      edges: [{ id: "e1", source: "start", target: "rand" }],
+  test("concatFront/concatBack/template chains feed the send node", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const front = {
+      id: "front",
+      type: "concatFront" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "Front", text: "> " },
     };
-  }
-
-  afterEach(() => {
-    vi.restoreAllMocks();
+    const back = {
+      id: "back",
+      type: "concatBack" as const,
+      position: { x: 480, y: 0 },
+      data: { label: "Back", text: "!" },
+    };
+    const tmpl = {
+      id: "tmpl",
+      type: "template" as const,
+      position: { x: 720, y: 0 },
+      data: { label: "Tmpl", template: "🎺 {msg}" },
+    };
+    const send = sendNode("send", ["{msg}"]);
+    const flow = startFlow(
+      "start",
+      [start, front, back, tmpl, send],
+      [
+        { id: "e1", source: "start", target: "front" },
+        { id: "e2", source: "front", target: "back" },
+        { id: "e3", source: "back", target: "tmpl" },
+        { id: "e4", source: "tmpl", target: "send" },
+      ]
+    );
+    expect(executeFlow(flow, "hi")).toEqual(["🎺 > hi!"]);
   });
 
-  test("returns exactly ONE of the replies (first when random is 0)", () => {
-    vi.spyOn(Math, "random").mockReturnValue(0);
-    expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["A"]);
+  test("notStartsWith condition follows the else branch when the prefix matches", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const cond = {
+      id: "c",
+      type: "notStartsWith" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "C", value: "/" },
+    };
+    const greeting = sendNode("greet", ["Hi {msg}"]);
+    const command = sendNode("cmd", ["That is a command"]);
+    const flow = startFlow(
+      "start",
+      [start, cond, greeting, command],
+      [
+        { id: "e1", source: "start", target: "c" },
+        { id: "e2", source: "c", target: "greet", sourceHandle: "if" },
+        { id: "e3", source: "c", target: "cmd", sourceHandle: "else" },
+      ]
+    );
+    expect(executeFlow(flow, "hello")).toEqual(["Hi hello"]);
+    expect(executeFlow(flow, "/hello")).toEqual(["That is a command"]);
   });
 
-  test("returns the last reply when random is near 1", () => {
-    vi.spyOn(Math, "random").mockReturnValue(0.999);
-    expect(executeFlow(randomFlow(["A", "B", "C"]), "hi")).toEqual(["C"]);
-  });
-
-  test("interpolates {msg} in the picked reply", () => {
-    vi.spyOn(Math, "random").mockReturnValue(0.4);
-    expect(executeFlow(randomFlow(["{msg}", "fixed"]), "hello")).toEqual(["hello"]);
-  });
-
-  test("random with empty replies returns []", () => {
-    expect(executeFlow(randomFlow([]), "hi")).toEqual([]);
+  test("notEndsWith condition follows the if branch when the suffix is absent", () => {
+    const start = { id: "start", type: "start" as const, position: { x: 0, y: 0 }, data: { label: "Start" } };
+    const cond = {
+      id: "c",
+      type: "notEndsWith" as const,
+      position: { x: 240, y: 0 },
+      data: { label: "C", value: "!" },
+    };
+    const plain = sendNode("plain", ["{msg}"]);
+    const excited = sendNode("excited", ["{msg}!!"]);
+    const flow = startFlow(
+      "start",
+      [start, cond, plain, excited],
+      [
+        { id: "e1", source: "start", target: "c" },
+        { id: "e2", source: "c", target: "plain", sourceHandle: "if" },
+        { id: "e3", source: "c", target: "excited", sourceHandle: "else" },
+      ]
+    );
+    expect(executeFlow(flow, "hi")).toEqual(["hi"]);
+    expect(executeFlow(flow, "hi!")).toEqual(["hi!!!"]);
   });
 });
 
@@ -837,6 +1008,194 @@ describe("executeFlow (poll node)", () => {
   });
 });
 
+describe("parseMention", () => {
+  test("extracts the first @mention and the remaining text", () => {
+    expect(parseMention("@bob hello")).toEqual({ to: "bob", text: "hello" });
+    expect(parseMention("hi @bob how are you")).toEqual({
+      to: "bob",
+      text: "hi how are you",
+    });
+  });
+
+  test("handles underscores and returns undefined without a mention", () => {
+    expect(parseMention("tell @john_doe now")).toEqual({
+      to: "john_doe",
+      text: "tell now",
+    });
+    expect(parseMention("no mention here")).toBeUndefined();
+    expect(parseMention("hello @")).toBeUndefined();
+  });
+});
+
+describe("executeFlow (sendTo node)", () => {
+  function sendToFlow(): Flow {
+    return {
+      id: "f",
+      name: "Anon",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        {
+          id: "st",
+          type: "sendTo",
+          position: { x: 240, y: 0 },
+          data: { label: "Forward", replies: ["{msg}"], confirm: "Sent to @{to}" },
+        },
+      ],
+      edges: [{ id: "e1", source: "start", target: "st" }],
+    };
+  }
+
+  test("returns a targeted reply carrying the forwarded text and confirm", () => {
+    expect(executeFlow(sendToFlow(), "@bob hello")).toEqual([
+      {
+        kind: "sendTo",
+        to: "bob",
+        texts: ["hello"],
+        confirm: "Sent to @bob",
+      },
+    ]);
+  });
+
+  test("strips the mention from {msg} and interpolates {to}", () => {
+    const flow = sendToFlow();
+    const node = flow.nodes.find((n) => n.type === "sendTo")!;
+    node.data.replies = ["→ {to}: {msg}"];
+    node.data.confirm = "Delivered to {to}";
+    expect(executeFlow(flow, "@alice hi there")).toEqual([
+      {
+        kind: "sendTo",
+        to: "alice",
+        texts: ["→ alice: hi there"],
+        confirm: "Delivered to alice",
+      },
+    ]);
+  });
+
+  test("collects one text per non-empty reply line", () => {
+    const flow = sendToFlow();
+    const node = flow.nodes.find((n) => n.type === "sendTo")!;
+    node.data.replies = ["{msg}", "", "second"];
+    expect(executeFlow(flow, "@bob payload")).toEqual([
+      {
+        kind: "sendTo",
+        to: "bob",
+        texts: ["payload", "second"],
+        confirm: "Sent to @bob",
+      },
+    ]);
+  });
+
+  test("declines (undefined) when the message has no @mention", () => {
+    expect(executeFlow(sendToFlow(), "hello there")).toBeUndefined();
+  });
+});
+
+describe("executeFlow (question node)", () => {
+  function questionFlow(): Flow {
+    return {
+      id: "f",
+      name: "Quiz",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        {
+          id: "q",
+          type: "question",
+          position: { x: 240, y: 0 },
+          data: {
+            label: "Quiz",
+            prompt: "Q: What is 2 + 2?",
+            answers: ["4", "four", "4.0"],
+            correctReply: "✅ Correct!",
+            wrongReply: "❌ Wrong! The answer is {answer}.",
+          },
+        },
+      ],
+      edges: [{ id: "e1", source: "start", target: "q" }],
+    };
+  }
+
+  test("returns a QuestionReply with the node's data", () => {
+    expect(executeFlow(questionFlow(), "/quiz")).toEqual([
+      {
+        kind: "question",
+        prompt: "Q: What is 2 + 2?",
+        answers: ["4", "four", "4.0"],
+        correctReply: "✅ Correct!",
+        wrongReply: "❌ Wrong! The answer is {answer}.",
+      },
+    ]);
+  });
+});
+
+describe("FlowRuntime (question state)", () => {
+  function questionFlow(): Flow {
+    return {
+      id: "f",
+      name: "Quiz",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        {
+          id: "q",
+          type: "question",
+          position: { x: 240, y: 0 },
+          data: {
+            label: "Quiz",
+            prompt: "Q: What is 2 + 2?",
+            answers: ["4", "four"],
+            correctReply: "✅ Correct!",
+            wrongReply: "❌ Wrong! The answer is {answer}.",
+          },
+        },
+      ],
+      edges: [{ id: "e1", source: "start", target: "q" }],
+    };
+  }
+
+  test("asks the prompt and registers pending state", () => {
+    const rt = new FlowRuntime(questionFlow());
+    expect(rt.handleMessage(1, "/quiz")).toBe("Q: What is 2 + 2?");
+  });
+
+  test("checks the next message against the answers and resets", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "4")).toBe("✅ Correct!");
+    // State cleared: the flow runs from the start again.
+    expect(rt.handleMessage(1, "/quiz")).toBe("Q: What is 2 + 2?");
+  });
+
+  test("matches answers case-insensitively with trimming", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "  FOUR ")).toBe("✅ Correct!");
+  });
+
+  test("wrong answers interpolate {answer} with the first accepted answer", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "banana")).toBe("❌ Wrong! The answer is 4.");
+  });
+
+  test("tracks pending state per user", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    // User 2 has no pending question: the flow runs from the start.
+    expect(rt.handleMessage(2, "/quiz")).toBe("Q: What is 2 + 2?");
+    // User 1 still answers their pending question.
+    expect(rt.handleMessage(1, "4")).toBe("✅ Correct!");
+  });
+
+  test("reset clears every user's pending state", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    rt.reset();
+    expect(rt.handleMessage(1, "4")).toBe("Q: What is 2 + 2?");
+  });
+});
+
 describe("FlowRuntime (stateless)", () => {
   function welcomeFlow(): Flow {
     return {
@@ -904,20 +1263,6 @@ describe("FlowRuntime (stateless)", () => {
     expect(rt.handleMessage(1, "a")).toEqual([]);
   });
 
-  test("a random node with one reply returns that reply as a string", () => {
-    const rt = new FlowRuntime({
-      id: "f1",
-      name: "Rand",
-      startNodeId: "start",
-      nodes: [
-        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
-        { id: "rand", type: "random", position: { x: 240, y: 0 }, data: { label: "R", replies: ["Only"] } },
-      ],
-      edges: [{ id: "e1", source: "start", target: "rand" }],
-    });
-    expect(rt.handleMessage(1, "a")).toBe("Only");
-  });
-
   test("a single poll reply is returned directly as a PollReply object", () => {
     const rt = new FlowRuntime({
       id: "f1",
@@ -949,12 +1294,6 @@ describe("validateFlow", () => {
     type: "send",
     position: { x: 0, y: 0 },
     data: { label: "Send", replies: ["hi"] },
-  };
-  const randomNode: Flow["nodes"][number] = {
-    id: "rand",
-    type: "random",
-    position: { x: 0, y: 0 },
-    data: { label: "Rand", replies: ["a", "b"] },
   };
   const pollNode: Flow["nodes"][number] = {
     id: "poll",
@@ -1103,18 +1442,6 @@ describe("validateFlow", () => {
     );
   });
 
-  test("random node with an outgoing edge is rejected", () => {
-    const flow = validFlow();
-    flow.nodes = [startNode, randomNode, transformNode];
-    flow.edges = [
-      { id: "e1", source: "start", target: "rand" },
-      { id: "e2", source: "rand", target: "tx" },
-    ];
-    expect(validateFlow(flow)).toContain(
-      "Node rand is a send node and cannot have outgoing edges"
-    );
-  });
-
   test("poll node with an outgoing edge is rejected", () => {
     const flow = validFlow();
     flow.nodes = [startNode, pollNode, transformNode];
@@ -1125,6 +1452,64 @@ describe("validateFlow", () => {
     expect(validateFlow(flow)).toContain(
       "Node poll is a send node and cannot have outgoing edges"
     );
+  });
+
+  test("flows using the new concat/template transforms and negated triggers validate cleanly", () => {
+    const flow: Flow = {
+      id: "f1",
+      name: "Greeting",
+      startNodeId: "start",
+      nodes: [
+        startNode,
+        {
+          id: "lower",
+          type: "lowercase",
+          position: { x: 0, y: 0 },
+          data: { label: "Lowercase" },
+        },
+        {
+          id: "notCmd",
+          type: "notStartsWith",
+          position: { x: 0, y: 0 },
+          data: { label: "Not Command", value: "/" },
+        },
+        {
+          id: "front",
+          type: "concatFront",
+          position: { x: 0, y: 0 },
+          data: { label: "Concat Front", text: "👋 " },
+        },
+        {
+          id: "back",
+          type: "concatBack",
+          position: { x: 0, y: 0 },
+          data: { label: "Concat Back", text: "!" },
+        },
+        {
+          id: "tmpl",
+          type: "template",
+          position: { x: 0, y: 0 },
+          data: { label: "Template", template: "{msg}" },
+        },
+        {
+          id: "notEnd",
+          type: "notEndsWith",
+          position: { x: 0, y: 0 },
+          data: { label: "Not Endswith", value: "?" },
+        },
+        sendNode,
+      ],
+      edges: [
+        { id: "e1", source: "start", target: "lower" },
+        { id: "e2", source: "lower", target: "notCmd", sourceHandle: undefined },
+        { id: "e3", source: "notCmd", target: "front", sourceHandle: "if" },
+        { id: "e4", source: "front", target: "back" },
+        { id: "e5", source: "back", target: "tmpl" },
+        { id: "e6", source: "tmpl", target: "notEnd" },
+        { id: "e7", source: "notEnd", target: "send", sourceHandle: "if" },
+      ],
+    };
+    expect(validateFlow(flow)).toEqual([]);
   });
 });
 
