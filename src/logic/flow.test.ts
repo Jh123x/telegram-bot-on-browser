@@ -21,6 +21,7 @@ import {
   POLL_USAGE_HINT,
   applyPollConfig,
   parsePoll,
+  parseMention,
   pollDisplay,
   NODE_LABELS,
   NODE_DESCRIPTIONS,
@@ -104,6 +105,8 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
       ...TRIGGER_TYPES,
       "send",
       "poll",
+      "sendTo",
+      "question",
     ]);
     expect(new Set(ALL_NODE_TYPES).size).toBe(ALL_NODE_TYPES.length);
   });
@@ -120,9 +123,11 @@ describe("TRANSFORM_TYPES / ALL_NODE_TYPES / nodeCategory", () => {
     TRIGGER_TYPES.forEach((t) => expect(nodeCategory(t)).toBe("condition"));
   });
 
-  test("send and poll map to the send category", () => {
+  test("send, poll, sendTo and question map to the send category", () => {
     expect(nodeCategory("send")).toBe("send");
     expect(nodeCategory("poll")).toBe("send");
+    expect(nodeCategory("sendTo")).toBe("send");
+    expect(nodeCategory("question")).toBe("send");
   });
 });
 
@@ -151,6 +156,8 @@ describe("NODE_LABELS / NODE_DESCRIPTIONS", () => {
     expect(NODE_LABELS.concatBack).toBe("Concat Back");
     expect(NODE_LABELS.template).toBe("Template");
     expect(NODE_LABELS.poll).toBe("Poll");
+    expect(NODE_LABELS.sendTo).toBe("Send To User");
+    expect(NODE_LABELS.question).toBe("Question");
   });
 
   test("exposes exact one-line descriptions for representative types", () => {
@@ -522,6 +529,28 @@ describe("createFlowNode", () => {
       pollType: "regular",
       isAnonymous: "true",
       allowsMultipleAnswers: "false",
+    });
+  });
+
+  test("sendTo node gets empty replies and a default confirm template", () => {
+    const node = createFlowNode("sendTo");
+    expect(node.type).toBe("sendTo");
+    expect(node.data).toEqual({
+      label: "Send To User",
+      replies: [],
+      confirm: "Sent to @{to}",
+    });
+  });
+
+  test("question node gets prompt, answers and default reply templates", () => {
+    const node = createFlowNode("question");
+    expect(node.type).toBe("question");
+    expect(node.data).toEqual({
+      label: "Question",
+      prompt: "",
+      answers: [],
+      correctReply: "✅ Correct!",
+      wrongReply: "❌ Wrong! The answer is {answer}.",
     });
   });
 
@@ -976,6 +1005,183 @@ describe("executeFlow (poll node)", () => {
 
   test("returns the usage hint for a malformed /poll command", () => {
     expect(executeFlow(pollFlow(), "/poll Color")).toEqual([POLL_USAGE_HINT]);
+  });
+});
+
+describe("parseMention", () => {
+  test("extracts the first @mention and the remaining text", () => {
+    expect(parseMention("@bob hello")).toEqual({ to: "bob", text: "hello" });
+    expect(parseMention("hi @bob how are you")).toEqual({
+      to: "bob",
+      text: "hi how are you",
+    });
+  });
+
+  test("handles underscores and returns undefined without a mention", () => {
+    expect(parseMention("tell @john_doe now")).toEqual({
+      to: "john_doe",
+      text: "tell now",
+    });
+    expect(parseMention("no mention here")).toBeUndefined();
+    expect(parseMention("hello @")).toBeUndefined();
+  });
+});
+
+describe("executeFlow (sendTo node)", () => {
+  function sendToFlow(): Flow {
+    return {
+      id: "f",
+      name: "Anon",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        {
+          id: "st",
+          type: "sendTo",
+          position: { x: 240, y: 0 },
+          data: { label: "Forward", replies: ["{msg}"], confirm: "Sent to @{to}" },
+        },
+      ],
+      edges: [{ id: "e1", source: "start", target: "st" }],
+    };
+  }
+
+  test("returns a targeted reply plus a confirmation to the sender", () => {
+    expect(executeFlow(sendToFlow(), "@bob hello")).toEqual([
+      { kind: "sendTo", to: "bob", text: "hello" },
+      "Sent to @bob",
+    ]);
+  });
+
+  test("strips the mention from {msg} and interpolates {to}", () => {
+    const flow = sendToFlow();
+    const node = flow.nodes.find((n) => n.type === "sendTo")!;
+    node.data.replies = ["→ {to}: {msg}"];
+    node.data.confirm = "Delivered to {to}";
+    expect(executeFlow(flow, "@alice hi there")).toEqual([
+      { kind: "sendTo", to: "alice", text: "→ alice: hi there" },
+      "Delivered to alice",
+    ]);
+  });
+
+  test("sends one targeted reply per non-empty reply line", () => {
+    const flow = sendToFlow();
+    const node = flow.nodes.find((n) => n.type === "sendTo")!;
+    node.data.replies = ["{msg}", "", "second"];
+    expect(executeFlow(flow, "@bob payload")).toEqual([
+      { kind: "sendTo", to: "bob", text: "payload" },
+      { kind: "sendTo", to: "bob", text: "second" },
+      "Sent to @bob",
+    ]);
+  });
+
+  test("declines (undefined) when the message has no @mention", () => {
+    expect(executeFlow(sendToFlow(), "hello there")).toBeUndefined();
+  });
+});
+
+describe("executeFlow (question node)", () => {
+  function questionFlow(): Flow {
+    return {
+      id: "f",
+      name: "Quiz",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        {
+          id: "q",
+          type: "question",
+          position: { x: 240, y: 0 },
+          data: {
+            label: "Quiz",
+            prompt: "Q: What is 2 + 2?",
+            answers: ["4", "four", "4.0"],
+            correctReply: "✅ Correct!",
+            wrongReply: "❌ Wrong! The answer is {answer}.",
+          },
+        },
+      ],
+      edges: [{ id: "e1", source: "start", target: "q" }],
+    };
+  }
+
+  test("returns a QuestionReply with the node's data", () => {
+    expect(executeFlow(questionFlow(), "/quiz")).toEqual([
+      {
+        kind: "question",
+        prompt: "Q: What is 2 + 2?",
+        answers: ["4", "four", "4.0"],
+        correctReply: "✅ Correct!",
+        wrongReply: "❌ Wrong! The answer is {answer}.",
+      },
+    ]);
+  });
+});
+
+describe("FlowRuntime (question state)", () => {
+  function questionFlow(): Flow {
+    return {
+      id: "f",
+      name: "Quiz",
+      startNodeId: "start",
+      nodes: [
+        { id: "start", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+        {
+          id: "q",
+          type: "question",
+          position: { x: 240, y: 0 },
+          data: {
+            label: "Quiz",
+            prompt: "Q: What is 2 + 2?",
+            answers: ["4", "four"],
+            correctReply: "✅ Correct!",
+            wrongReply: "❌ Wrong! The answer is {answer}.",
+          },
+        },
+      ],
+      edges: [{ id: "e1", source: "start", target: "q" }],
+    };
+  }
+
+  test("asks the prompt and registers pending state", () => {
+    const rt = new FlowRuntime(questionFlow());
+    expect(rt.handleMessage(1, "/quiz")).toBe("Q: What is 2 + 2?");
+  });
+
+  test("checks the next message against the answers and resets", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "4")).toBe("✅ Correct!");
+    // State cleared: the flow runs from the start again.
+    expect(rt.handleMessage(1, "/quiz")).toBe("Q: What is 2 + 2?");
+  });
+
+  test("matches answers case-insensitively with trimming", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "  FOUR ")).toBe("✅ Correct!");
+  });
+
+  test("wrong answers interpolate {answer} with the first accepted answer", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    expect(rt.handleMessage(1, "banana")).toBe("❌ Wrong! The answer is 4.");
+  });
+
+  test("tracks pending state per user", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    // User 2 has no pending question: the flow runs from the start.
+    expect(rt.handleMessage(2, "/quiz")).toBe("Q: What is 2 + 2?");
+    // User 1 still answers their pending question.
+    expect(rt.handleMessage(1, "4")).toBe("✅ Correct!");
+  });
+
+  test("reset clears every user's pending state", () => {
+    const rt = new FlowRuntime(questionFlow());
+    rt.handleMessage(1, "/quiz");
+    rt.reset();
+    expect(rt.handleMessage(1, "4")).toBe("Q: What is 2 + 2?");
   });
 });
 
