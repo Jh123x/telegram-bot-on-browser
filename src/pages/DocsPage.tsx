@@ -218,6 +218,20 @@ export const DocsPage = ({ onNavigate }: DocsPageProps) => (
           and options (it has no output).
         </Typography>
       </li>
+      <li>
+        <Typography component="span">
+          <strong>Send To User</strong> — sends a message to a{" "}
+          <em>different</em> user: the first <code>@mention</code> in the
+          message is the target. The sender stays anonymous to the target.
+        </Typography>
+      </li>
+      <li>
+        <Typography component="span">
+          <strong>Question</strong> — asks a question and waits: the user&apos;s
+          next message is checked against the accepted answers
+          (case-insensitive) before the flow runs again.
+        </Typography>
+      </li>
     </Box>
     <pre data-testid="code-sample-replies" style={codeStyle}>
       {`send "Welcome"
@@ -227,8 +241,9 @@ replies:
     </pre>
 
     <Typography variant="body1" sx={{ mt: 2 }}>
-      The runtime is stateless: every message is evaluated from the Start
-      node, so a flow answers each message on its own.
+      Most flows are stateless: every message is evaluated from the Start
+      node. The only exception is the <strong>Question</strong> node, which
+      remembers the pending question per user until it is answered.
     </Typography>
 
     <Typography variant="h4" id="triggers" sx={{ mt: 3 }}>
@@ -328,26 +343,20 @@ replies:
       </li>
       <li>
         <Typography component="span">
-          <strong>Shout Bot</strong> shouts back:{" "}
-          <code>/shout hello</code> becomes <code>🎺 HELLO!</code> — it
-          uppercases the text and adds an exclamation mark with a{" "}
-          <strong>Concat Back</strong> node. A bare <code>/shout</code> shows
-          the usage hint.
+          <strong>Quiz Bot</strong> asks a single question:{" "}
+          <code>/quiz</code> shows a <strong>Question</strong> node prompt,
+          and the next message is checked against the accepted answers.
+          Correct answers get a green check; wrong answers show the right
+          answer. The state resets after each attempt.
         </Typography>
       </li>
       <li>
         <Typography component="span">
-          <strong>Quote Bot</strong> wraps your words in quotes with a{" "}
-          <strong>Template</strong> node: <code>/quote hello</code> becomes{" "}
-          <code>💬 "hello"</code>.
-        </Typography>
-      </li>
-      <li>
-        <Typography component="span">
-          <strong>Greeting Bot</strong> greets every non-command message
-          with a <strong>Concat Front</strong> prefix. Anything starting
-          with <code>/</code> is ignored, thanks to a{" "}
-          <strong>Not Starts With</strong> condition.
+          <strong>Anonymous Bot</strong> forwards messages without revealing
+          the sender: <code>/anon @bob your message</code> sends "your
+          message" to <code>@bob</code> with a <strong>Send To User</strong>{" "}
+          node and confirms to the sender. The target user must have messaged
+          the bot before.
         </Typography>
       </li>
     </Box>

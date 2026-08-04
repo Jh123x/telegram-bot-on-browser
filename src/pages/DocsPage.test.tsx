@@ -160,9 +160,8 @@ test("documents the built-in flow samples", () => {
 
   expect(screen.getAllByText(/Dice Bot/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/Poll Bot/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Shout Bot/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Quote Bot/i).length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Greeting Bot/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Quiz Bot/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Anonymous Bot/i).length).toBeGreaterThan(0);
   expect(screen.queryByText(/Quiz Flow/i)).toBeNull();
 });
 

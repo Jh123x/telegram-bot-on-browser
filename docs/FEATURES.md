@@ -38,6 +38,17 @@ it in the inspector panel.
   node's inspector lets you pick the poll type (regular or quiz), anonymity,
   multiple answers (regular only), the quiz's correct option and explanation,
   and an optional close period (5-600 seconds).
+- **Send To User** — 1 input, no output (terminal). Sends its reply lines
+  to a *different* user: the first `@mention` in the message is the target,
+  and the target user's own name is stripped from the forwarded text. The
+  original sender stays anonymous. A confirmation goes back to the sender
+  (`{to}` is the target username). If the target has never messaged the bot,
+  the sender gets a "couldn't find" note instead.
+- **Question** — 1 input, no output (terminal). Sends the prompt and then
+  waits: the user's next message is checked against the accepted answers
+  (case-insensitive, trimmed). Correct/wrong replies are configurable;
+  `{answer}` in them is the first accepted answer. The pending question is
+  tracked per user and clears after one attempt.
 
 ### Condition matchers
 
@@ -66,7 +77,9 @@ in caps.
 
 Every user message is evaluated from the Start node — the runtime keeps no
 per-user position (send nodes are terminal, so there is nowhere to "wait").
-A flow therefore answers each message on its own.
+The one exception is the **Question** node, which remembers a pending
+question per user until that user's next message answers it. A flow therefore
+answers each message on its own, except while a question is pending.
 
 ### Single flow
 
@@ -86,14 +99,14 @@ Open the **Flow** tab and click a sample to load it:
   poll with the given question and options. Use the poll node's inspector to
   configure a quiz, anonymity, multiple answers, the correct option and
   explanation, or a close period.
-- **Shout Bot** — `/shout hello` becomes `🎺 HELLO!`: a replace node strips
-  the command, an uppercase transform shouts, and a Concat Back node adds
-  the exclamation mark. A bare `/shout` shows the usage hint.
-- **Quote Bot** — `/quote hello` becomes `💬 "hello"` through a Template
-  node. A bare `/quote` shows the usage hint.
-- **Greeting Bot** — greets every non-command message with a Concat Front
-  prefix (`👋 You said: hello`). A Not Starts With condition ignores
-  commands, which start with `/`.
+- **Quiz Bot** — `/quiz` asks a single question ("What is 2 + 2?") with a
+  Question node. The next message is checked against the accepted answers
+  (`4`, `four`, `4.0`) and the bot replies with a green check or the right
+  answer. The state resets after each attempt.
+- **Anonymous Bot** — `/anon @bob your message` forwards "your message" to
+  @bob with a Send To User node, so bob never learns who sent it. The sender
+  gets a "Sent to @bob" confirmation (or a usage hint when no @mention is
+  present). The target must have messaged the bot before.
 
 ### Persistence
 
