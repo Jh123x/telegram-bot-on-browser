@@ -165,13 +165,13 @@ export const ConditionNode = ({
         id="if"
         type="source"
         position={Position.Right}
-        style={{ background: GRAPH_COLORS.edge.if, top: 6 }}
+        style={{ background: GRAPH_COLORS.edge.if, top: 'calc(50% - 8px)' }}
       />
       <Handle
         id="else"
         type="source"
         position={Position.Right}
-        style={{ background: GRAPH_COLORS.edge.else, bottom: 6 }}
+        style={{ background: GRAPH_COLORS.edge.else, top: 'calc(50% + 8px)' }}
       />
     </Box>
   );
