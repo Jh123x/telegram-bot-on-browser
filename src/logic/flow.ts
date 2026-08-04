@@ -566,12 +566,14 @@ export function executeFlow(
         current.data.confirm ?? "Sent to @{to}",
         vars
       );
-      const targeted: TargetedReply[] = forwarded.map((text) => ({
-        kind: "sendTo",
-        to: mention.to,
-        text,
-      }));
-      return [...targeted, confirm];
+      return [
+        {
+          kind: "sendTo",
+          to: mention.to,
+          texts: forwarded,
+          confirm,
+        },
+      ];
     }
     if (current.type === "question") {
       const question: QuestionReply = {

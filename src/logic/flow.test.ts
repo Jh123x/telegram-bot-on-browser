@@ -1046,10 +1046,14 @@ describe("executeFlow (sendTo node)", () => {
     };
   }
 
-  test("returns a targeted reply plus a confirmation to the sender", () => {
+  test("returns a targeted reply carrying the forwarded text and confirm", () => {
     expect(executeFlow(sendToFlow(), "@bob hello")).toEqual([
-      { kind: "sendTo", to: "bob", text: "hello" },
-      "Sent to @bob",
+      {
+        kind: "sendTo",
+        to: "bob",
+        texts: ["hello"],
+        confirm: "Sent to @bob",
+      },
     ]);
   });
 
@@ -1059,19 +1063,26 @@ describe("executeFlow (sendTo node)", () => {
     node.data.replies = ["→ {to}: {msg}"];
     node.data.confirm = "Delivered to {to}";
     expect(executeFlow(flow, "@alice hi there")).toEqual([
-      { kind: "sendTo", to: "alice", text: "→ alice: hi there" },
-      "Delivered to alice",
+      {
+        kind: "sendTo",
+        to: "alice",
+        texts: ["→ alice: hi there"],
+        confirm: "Delivered to alice",
+      },
     ]);
   });
 
-  test("sends one targeted reply per non-empty reply line", () => {
+  test("collects one text per non-empty reply line", () => {
     const flow = sendToFlow();
     const node = flow.nodes.find((n) => n.type === "sendTo")!;
     node.data.replies = ["{msg}", "", "second"];
     expect(executeFlow(flow, "@bob payload")).toEqual([
-      { kind: "sendTo", to: "bob", text: "payload" },
-      { kind: "sendTo", to: "bob", text: "second" },
-      "Sent to @bob",
+      {
+        kind: "sendTo",
+        to: "bob",
+        texts: ["payload", "second"],
+        confirm: "Sent to @bob",
+      },
     ]);
   });
 

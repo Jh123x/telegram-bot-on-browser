@@ -148,18 +148,22 @@ describe("Quiz Bot execution", () => {
 describe("Anonymous Bot execution", () => {
   it("forwards the message to the @mentioned user and confirms", () => {
     const rt = new FlowRuntime(ANON.flow);
-    expect(rt.handleMessage(1, "/anon @bob hello there")).toEqual([
-      { kind: "sendTo", to: "bob", text: "hello there" },
-      "Sent to @bob",
-    ]);
+    expect(rt.handleMessage(1, "/anon @bob hello there")).toEqual({
+      kind: "sendTo",
+      to: "bob",
+      texts: ["hello there"],
+      confirm: "Sent to @bob",
+    });
   });
 
   it("strips the command and the mention from the forwarded text", () => {
     const rt = new FlowRuntime(ANON.flow);
-    expect(rt.handleMessage(1, "/anon @carol the secret")).toEqual([
-      { kind: "sendTo", to: "carol", text: "the secret" },
-      "Sent to @carol",
-    ]);
+    expect(rt.handleMessage(1, "/anon @carol the secret")).toEqual({
+      kind: "sendTo",
+      to: "carol",
+      texts: ["the secret"],
+      confirm: "Sent to @carol",
+    });
   });
 
   it("shows the usage hint when the message has no @mention", () => {

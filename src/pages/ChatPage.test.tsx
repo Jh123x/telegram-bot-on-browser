@@ -227,6 +227,33 @@ test("selecting the Test User simulates a poll reply as a bubble without sending
   expect(screen.getByText(/Test User ·/)).toBeTruthy();
 });
 
+test("Test User simulating an anonymous message shows the forward note and the confirm", () => {
+  const store = setupStore({
+    bot: {
+      token: "TOKEN",
+      flows: [SAMPLE_FLOWS[3].flow], // Anonymous Bot
+      response: [],
+      users: [],
+    },
+  });
+  const bot = new BrowserBot("123:TOKEN");
+  const spy = vi.spyOn(bot, "sendMessage");
+  renderWithProviders(<ChatPage bot={bot} />, { store });
+
+  fireEvent.click(screen.getByRole("button", { name: /Test User/ }));
+
+  const textbox = screen.getByRole("textbox");
+  fireEvent.change(textbox, { target: { value: "/anon @bob hello there" } });
+  fireEvent.click(screen.getByRole("button", { name: "Simulate" }));
+
+  // Nothing is sent to Telegram; the preview shows the forwarded message as
+  // a note (the real delivery happens in bob's chat) plus the confirm bubble.
+  expect(spy).not.toHaveBeenCalled();
+  expect(screen.getByText(/📨 To @bob: hello there/)).toBeTruthy();
+  expect(screen.getByText("Sent to @bob")).toBeTruthy();
+  expect(screen.getByText(/Matched flow: Anonymous Bot/)).toBeTruthy();
+});
+
 test("Test User with no matching flow shows the silent note", () => {
   const store = convoStore();
   renderWithProviders(<ChatPage bot={new BrowserBot("TOKEN")} />, { store });

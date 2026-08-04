@@ -46,15 +46,18 @@ export interface PollReply {
   openPeriod?: number; // seconds until the poll closes (5-600)
 }
 
-// A reply produced by a "sendTo" node: a message sent to a DIFFERENT user
+// A reply produced by a "sendTo" node: messages sent to a DIFFERENT user
 // than the one who triggered the flow. `to` is the target username (without
 // the @) parsed from the first @mention in the message; the transport layer
-// resolves it to a chat id and sends `text` there, so the original sender is
-// never revealed to the target.
+// resolves it to a chat id and sends every `texts` entry there, so the
+// original sender is never revealed to the target. `confirm` is sent to the
+// ORIGINAL sender only when the forward succeeds (an unknown target replaces
+// it with a failure note).
 export interface TargetedReply {
   kind: "sendTo";
   to: string;
-  text: string;
+  texts: string[];
+  confirm: string;
 }
 
 // A reply produced by a "question" node: the node asks `prompt` and the
