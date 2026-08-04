@@ -1016,6 +1016,89 @@ exports[`renders app correctly 1`] = `
                           </span>
                         </div>
                       </div>
+                      <div
+                        aria-label="Add Send To User node"
+                        class="MuiBox-root css-4oc8ue"
+                        data-testid="palette-item-sendTo"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-15uwx91"
+                          data-testid="palette-icon-sendTo"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="ForwardIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M12 8V4l8 8-8 8v-4H4V8z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                          >
+                            Send To User
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                            data-testid="palette-desc-sendTo"
+                          >
+                            Send a message to the @mentioned user.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Question node"
+                        class="MuiBox-root css-4oc8ue"
+                        data-testid="palette-item-question"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-15uwx91"
+                          data-testid="palette-icon-question"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="QuizIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4z"
+                            />
+                            <path
+                              d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-5.99 13c-.59 0-1.05-.47-1.05-1.05 0-.59.47-1.04 1.05-1.04.59 0 1.04.45 1.04 1.04-.01.58-.45 1.05-1.04 1.05m2.5-6.17c-.63.93-1.23 1.21-1.56 1.81-.13.24-.18.4-.18 1.18h-1.52c0-.41-.06-1.08.26-1.65.41-.73 1.18-1.16 1.63-1.8.48-.68.21-1.94-1.14-1.94-.88 0-1.32.67-1.5 1.23l-1.37-.57C11.51 5.96 12.52 5 13.99 5c1.23 0 2.08.56 2.51 1.26.37.61.58 1.73.01 2.57"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                          >
+                            Question
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                            data-testid="palette-desc-question"
+                          >
+                            Ask a question and wait for the answer.
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1055,27 +1138,19 @@ exports[`renders app correctly 1`] = `
                     </button>
                     <button
                       class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Shout Bot"
+                      data-testid="flow-sample-Quiz Bot"
                       tabindex="0"
                       type="button"
                     >
-                      Shout Bot
+                      Quiz Bot
                     </button>
                     <button
                       class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Quote Bot"
+                      data-testid="flow-sample-Anonymous Bot"
                       tabindex="0"
                       type="button"
                     >
-                      Quote Bot
-                    </button>
-                    <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                      data-testid="flow-sample-Greeting Bot"
-                      tabindex="0"
-                      type="button"
-                    >
-                      Greeting Bot
+                      Anonymous Bot
                     </button>
                   </div>
                 </div>
@@ -2161,6 +2236,89 @@ exports[`renders app correctly 1`] = `
                         </span>
                       </div>
                     </div>
+                    <div
+                      aria-label="Add Send To User node"
+                      class="MuiBox-root css-4oc8ue"
+                      data-testid="palette-item-sendTo"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-15uwx91"
+                        data-testid="palette-icon-sendTo"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="ForwardIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M12 8V4l8 8-8 8v-4H4V8z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                        >
+                          Send To User
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                          data-testid="palette-desc-sendTo"
+                        >
+                          Send a message to the @mentioned user.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Question node"
+                      class="MuiBox-root css-4oc8ue"
+                      data-testid="palette-item-question"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-15uwx91"
+                        data-testid="palette-icon-question"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="QuizIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4z"
+                          />
+                          <path
+                            d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-5.99 13c-.59 0-1.05-.47-1.05-1.05 0-.59.47-1.04 1.05-1.04.59 0 1.04.45 1.04 1.04-.01.58-.45 1.05-1.04 1.05m2.5-6.17c-.63.93-1.23 1.21-1.56 1.81-.13.24-.18.4-.18 1.18h-1.52c0-.41-.06-1.08.26-1.65.41-.73 1.18-1.16 1.63-1.8.48-.68.21-1.94-1.14-1.94-.88 0-1.32.67-1.5 1.23l-1.37-.57C11.51 5.96 12.52 5 13.99 5c1.23 0 2.08.56 2.51 1.26.37.61.58 1.73.01 2.57"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                        >
+                          Question
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                          data-testid="palette-desc-question"
+                        >
+                          Ask a question and wait for the answer.
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2200,27 +2358,19 @@ exports[`renders app correctly 1`] = `
                   </button>
                   <button
                     class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Shout Bot"
+                    data-testid="flow-sample-Quiz Bot"
                     tabindex="0"
                     type="button"
                   >
-                    Shout Bot
+                    Quiz Bot
                   </button>
                   <button
                     class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Quote Bot"
+                    data-testid="flow-sample-Anonymous Bot"
                     tabindex="0"
                     type="button"
                   >
-                    Quote Bot
-                  </button>
-                  <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
-                    data-testid="flow-sample-Greeting Bot"
-                    tabindex="0"
-                    type="button"
-                  >
-                    Greeting Bot
+                    Anonymous Bot
                   </button>
                 </div>
               </div>
