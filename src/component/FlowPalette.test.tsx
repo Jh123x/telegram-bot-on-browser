@@ -259,4 +259,11 @@ test("palette fills the column height and scrolls internally", () => {
   // The item list scrolls internally when content exceeds the palette height.
   const list = screen.getByTestId("palette-list");
   expect(getComputedStyle(list).overflowY).toBe("auto");
+  expect(getComputedStyle(list).flexGrow).toBe("1");
+
+  // Thematically styled scrollbar is applied via the element's emotion class.
+  // jsdom does NOT compute pseudo-element (::-webkit-scrollbar) styles, so we
+  // can't assert the thumb/track colors here; this structural pin only guards
+  // that the palette-list carries its themed sx class rather than plain HTML.
+  expect(list.className.trim()).not.toBe("");
 });

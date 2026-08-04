@@ -389,6 +389,15 @@ test("TransformNode renders its type badge", () => {
   expect(getAllByText("uppercase").length).toBeGreaterThan(0);
 });
 
+test("ConditionNode renders three handles (target + if + else)", () => {
+  const { container } = render(
+    <ConditionNode {...makeNodeProps({ label: "Cond", value: "hi" }, "contains")} />
+  );
+
+  const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
+  expect(handles).toHaveLength(3);
+});
+
 test("ConditionNode renders its type badge", () => {
   const { getByText } = render(
     <ConditionNode {...makeNodeProps({ label: "Cond", value: "hi" }, "contains")} />

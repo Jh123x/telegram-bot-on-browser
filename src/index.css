@@ -18,3 +18,40 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*
+  React Flow dark-theme overrides.
+  @xyflow/react ships its own stylesheet that is imported *after* this file,
+  so bare class selectors here could lose the cascade. Element+class prefixes
+  (div./a.) give these rules higher specificity and win regardless of import
+  order. We theme the zoom controls via the library's official CSS custom
+  properties (--xy-controls-*) declared on the controls container: they are
+  inherited by the underlying <button> elements regardless of DOM tag and
+  override the library defaults for background, hover, icon color and divider.
+  The "React Flow" attribution is themed via --xy-attribution-background-color.
+*/
+div.react-flow__controls {
+  --xy-controls-button-background-color: transparent;
+  --xy-controls-button-background-color-hover: rgba(255, 255, 255, 0.08);
+  --xy-controls-button-color: #f2f2f7;
+  --xy-controls-button-border-color: transparent;
+  background: rgba(28, 28, 30, 0.85);
+  border: 1px solid #3a3a3c;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+}
+
+div.react-flow__controls button:last-child {
+  border-bottom: none;
+}
+
+.react-flow__attribution {
+  --xy-attribution-background-color: transparent;
+  color: #8e8e93;
+}
+
+.react-flow__attribution a {
+  color: #8e8e93;
+}

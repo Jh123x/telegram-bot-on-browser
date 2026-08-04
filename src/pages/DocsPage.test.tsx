@@ -216,3 +216,27 @@ test("in-body tab links call onNavigate", () => {
   fireEvent.click(chatLinks[chatLinks.length - 1]);
   expect(onNavigate).toHaveBeenCalledTimes(4);
 });
+
+test("wraps every major section in a styled card with a stable testid", () => {
+  render(<DocsPage />);
+
+  ["getting-started", "how-flows-work", "triggers", "variables", "samples", "tips", "troubleshooting"].forEach(
+    (id) => {
+      const section = screen.getByTestId(`docs-section-${id}`);
+      expect(section).toBeTruthy();
+    }
+  );
+});
+
+test("keeps each code sample as a native PRE inside its example block", () => {
+  render(<DocsPage />);
+
+  const replies = screen.getByTestId("code-sample-replies");
+  expect(replies).toHaveProperty("tagName", "PRE");
+  expect(screen.getByTestId("code-sample-header-replies")).toBeTruthy();
+
+  const msg = screen.getByTestId("code-sample-msg");
+  expect(msg).toHaveProperty("tagName", "PRE");
+  expect(screen.getByTestId("code-sample-header-msg")).toBeTruthy();
+});
+
