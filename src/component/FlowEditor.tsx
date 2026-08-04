@@ -35,7 +35,6 @@ import {
   TransformNode,
   ConditionNode,
   SendNode,
-  RandomNode,
   PollNode,
 } from "./flowNodes.tsx";
 
@@ -47,7 +46,6 @@ import {
 const nodeTypes: Record<string, React.ComponentType<any>> = {
   start: StartNode,
   send: SendNode,
-  random: RandomNode,
   poll: PollNode,
 };
 ALL_NODE_TYPES.forEach((type) => {

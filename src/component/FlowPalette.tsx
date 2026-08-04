@@ -8,14 +8,18 @@ import {
   FindReplace,
   ManageSearch,
   Numbers,
+  FormatAlignLeft,
+  FormatAlignRight,
+  Code,
   HorizontalRule,
   ShortText,
   CallMade,
   CallReceived,
+  SouthWest,
+  NorthEast,
   Close,
   Block,
   Send,
-  Casino,
   Poll,
 } from "@mui/icons-material";
 import type { FlowNodeCategory, FlowNodeType } from "../interfaces/flow.ts";
@@ -48,14 +52,18 @@ const NODE_ICONS: Record<FlowNodeType, React.ComponentType<any>> = {
   replace: FindReplace,
   extractRegex: ManageSearch,
   randomNumber: Numbers,
+  concatFront: FormatAlignLeft,
+  concatBack: FormatAlignRight,
+  template: Code,
   equals: HorizontalRule,
   contains: ShortText,
   startsWith: CallMade,
   endsWith: CallReceived,
   notEquals: Close,
   notContains: Block,
+  notStartsWith: SouthWest,
+  notEndsWith: NorthEast,
   send: Send,
-  random: Casino,
   poll: Poll,
 };
 
@@ -82,7 +90,7 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
       data-testid="flow-palette"
       sx={{
         p: 2,
-        width: 200,
+        width: 260,
         flex: 1,
         display: "flex",
         flexDirection: "column",

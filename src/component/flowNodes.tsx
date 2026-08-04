@@ -93,6 +93,12 @@ export function transformSummary(
       return "extract regex";
     case "randomNumber":
       return data.min && data.max ? `random ${data.min}–${data.max}` : "random number";
+    case "concatFront":
+      return data.text ? `add "${data.text}" before` : "concat front";
+    case "concatBack":
+      return data.text ? `add "${data.text}" after` : "concat back";
+    case "template":
+      return data.template ? `template "${data.template}"` : "template";
     default:
       return "transform";
   }
@@ -182,25 +188,6 @@ export const SendNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
       <TypeBadge label="send" color={accent} />
       <CardCaption>
         {replyCount} {replyCount === 1 ? "reply" : "replies"}
-      </CardCaption>
-      <Handle type="target" position={Position.Left} style={{ background: accent }} />
-    </Box>
-  );
-};
-
-// A RandomNode sends exactly ONE of its reply lines, chosen at random. Also
-// terminal: a single target handle, no source.
-export const RandomNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
-  const { accent, bg } = GRAPH_COLORS.node.send;
-  const replyCount = (data.replies ?? []).length;
-  return (
-    <Box data-testid="flow-node-random" sx={cardSx(accent, bg, selected)}>
-      <CardLabel>{data.label}</CardLabel>
-      <TypeBadge label="random" color={accent} />
-      <CardCaption>
-        {replyCount === 0
-          ? "no replies"
-          : `1 of ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}
       </CardCaption>
       <Handle type="target" position={Position.Left} style={{ background: accent }} />
     </Box>

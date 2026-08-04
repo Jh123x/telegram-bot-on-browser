@@ -197,6 +197,31 @@ export const FlowInspector = ({
               </Typography>
             </>
           )}
+          {(type === "concatFront" || type === "concatBack") && (
+            <TextField
+              label="Text"
+              size="small"
+              fullWidth
+              sx={{ mt: 1 }}
+              value={selectedNode.data.text ?? ""}
+              onChange={(e) => setNodeData({ text: e.target.value })}
+            />
+          )}
+          {type === "template" && (
+            <>
+              <TextField
+                label="Template"
+                size="small"
+                fullWidth
+                sx={{ mt: 1 }}
+                value={selectedNode.data.template ?? ""}
+                onChange={(e) => setNodeData({ template: e.target.value })}
+              />
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
+                Use {"{msg}"} for the current message.
+              </Typography>
+            </>
+          )}
           {onDelete && <DeleteButton label="Delete node" onDelete={onDelete} />}
         </Paper>
       );
@@ -229,7 +254,7 @@ export const FlowInspector = ({
       );
     }
 
-    // send category (send / random)
+    // send category (send / poll)
     if (selectedNode.type === "poll") {
       const pollType = selectedNode.data.pollType ?? "regular";
       const isAnonymous = selectedNode.data.isAnonymous ?? "true";
@@ -331,19 +356,18 @@ export const FlowInspector = ({
       );
     }
 
-    const isRandom = selectedNode.type === "random";
     const replies = selectedNode.data.replies ?? [];
     return (
       <Paper ref={panelRef} sx={{ p: 1.5 }}>
         <Typography variant="subtitle2" sx={{ mb: 1 }}>
-          {isRandom ? "Random Node" : "Send Node"}
+          Send Node
         </Typography>
         <LabelField
           value={selectedNode.data.label}
           onChange={(label) => setNodeData({ label })}
         />
         <TextField
-          label={isRandom ? "Options (one per line)" : "Replies (one per line)"}
+          label="Replies (one per line)"
           size="small"
           fullWidth
           multiline
@@ -352,11 +376,6 @@ export const FlowInspector = ({
           value={replies.join("\n")}
           onChange={(e) => setNodeData({ replies: e.target.value.split("\n") })}
         />
-        {isRandom && (
-          <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
-            Sends one of these lines, chosen at random.
-          </Typography>
-        )}
         {onDelete && <DeleteButton label="Delete node" onDelete={onDelete} />}
       </Paper>
     );

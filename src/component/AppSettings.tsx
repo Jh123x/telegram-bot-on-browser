@@ -39,14 +39,18 @@ const FLOW_NODE_TYPES = [
   "replace",
   "extractRegex",
   "randomNumber",
+  "concatFront",
+  "concatBack",
+  "template",
   "equals",
   "contains",
   "startsWith",
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
   "send",
-  "random",
   "poll",
 ];
 
@@ -80,6 +84,12 @@ const isValidFlowNode = (n: unknown): boolean => {
     return false;
   }
   if (data.max !== undefined && typeof data.max !== "string") {
+    return false;
+  }
+  if (data.text !== undefined && typeof data.text !== "string") {
+    return false;
+  }
+  if (data.template !== undefined && typeof data.template !== "string") {
     return false;
   }
   if (data.pollType !== undefined && typeof data.pollType !== "string") {

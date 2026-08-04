@@ -643,6 +643,109 @@ test("import accepts a new-model flow with transform/condition/send nodes and tr
   expect(store.getState().bot.flows).toEqual([validFlow]);
 });
 
+test("import accepts a flow with the negated/concat/template node types", async () => {
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const newTypesFlow = {
+    id: "f-new",
+    name: "New Nodes",
+    startNodeId: "n1",
+    nodes: [
+      { id: "n1", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+      { id: "n2", type: "notStartsWith", position: { x: 120, y: 0 }, data: { label: "Not Cmd", value: "/" } },
+      { id: "n3", type: "concatFront", position: { x: 240, y: 0 }, data: { label: "Prefix", text: "> " } },
+      { id: "n4", type: "concatBack", position: { x: 360, y: 0 }, data: { label: "Suffix", text: "!" } },
+      { id: "n5", type: "template", position: { x: 480, y: 0 }, data: { label: "Format", template: "You said: {msg}" } },
+      { id: "n6", type: "notEndsWith", position: { x: 600, y: 0 }, data: { label: "Not Q", value: "?" } },
+      { id: "n7", type: "send", position: { x: 720, y: 0 }, data: { label: "Reply", replies: ["{msg}"] } },
+    ],
+    edges: [
+      { id: "e1", source: "n1", target: "n2" },
+      { id: "e2", source: "n2", target: "n3", sourceHandle: "if" },
+      { id: "e3", source: "n3", target: "n4" },
+      { id: "e4", source: "n4", target: "n5" },
+      { id: "e5", source: "n5", target: "n6" },
+      { id: "e6", source: "n6", target: "n7", sourceHandle: "if" },
+    ],
+  };
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [newTypesFlow],
+        autoStart: true,
+      }),
+    ],
+    "s.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  // Wait for the async FileReader import to finish (status text is the
+  // completion signal) instead of a fixed sleep — fixed sleeps race under
+  // parallel workers.
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Settings imported."
+  );
+  expect(store.getState().bot.flows).toEqual([newTypesFlow]);
+});
+
+test("import rejects a template node whose template field is not a string", async () => {
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const badFlow = {
+    id: "f-bad-template",
+    name: "Bad Template",
+    startNodeId: "n1",
+    nodes: [
+      { id: "n1", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+      { id: "n2", type: "template", position: { x: 120, y: 0 }, data: { label: "T", template: 42 } },
+    ],
+    edges: [],
+  };
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [badFlow],
+        autoStart: false,
+      }),
+    ],
+    "bad.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.token).toBe("abc:TOKEN");
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+  expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
+});
+
 test("import rejects a flow containing a legacy state node and changes nothing", async () => {
   const legacyFlow = {
     id: "f-legacy",

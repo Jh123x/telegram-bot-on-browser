@@ -62,7 +62,7 @@ export interface FlowNodeData {
   correctOptionId?: string; // "poll" node (quiz): 0-based index of the correct option
   explanation?: string; // "poll" node (quiz): text shown when the answer is wrong
   openPeriod?: string; // "poll" node: seconds until the poll closes
-  replies?: string[]; // "send" / "random" nodes: one message per line
+  replies?: string[]; // "send" node: one message per line
 }
 
 export interface FlowNode {

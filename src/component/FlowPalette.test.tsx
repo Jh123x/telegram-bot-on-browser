@@ -14,7 +14,7 @@ const createDataTransfer = () => ({
   effectAllowed: "move",
 } as unknown as DataTransfer);
 
-const ALL_SIXTEEN = [
+const ALL_TWENTY = [
   "start",
   "lowercase",
   "uppercase",
@@ -22,36 +22,59 @@ const ALL_SIXTEEN = [
   "replace",
   "extractRegex",
   "randomNumber",
+  "concatFront",
+  "concatBack",
+  "template",
   "equals",
   "contains",
   "startsWith",
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
   "send",
-  "random",
   "poll",
 ];
 
 const GROUP_COUNTS: Record<string, string[]> = {
   start: ["start"],
-  transform: ["lowercase", "uppercase", "trim", "replace", "extractRegex", "randomNumber"],
-  condition: ["equals", "contains", "startsWith", "endsWith", "notEquals", "notContains"],
-  send: ["send", "random", "poll"],
+  transform: [
+    "lowercase",
+    "uppercase",
+    "trim",
+    "replace",
+    "extractRegex",
+    "randomNumber",
+    "concatFront",
+    "concatBack",
+    "template",
+  ],
+  condition: [
+    "equals",
+    "contains",
+    "startsWith",
+    "endsWith",
+    "notEquals",
+    "notContains",
+    "notStartsWith",
+    "notEndsWith",
+  ],
+  send: ["send", "poll"],
 };
 
 afterEach(() => {
   localStorage.clear();
 });
 
-test("renders the palette with all four groups and all sixteen items at once", () => {
+test("renders the palette with all four groups and all twenty items at once", () => {
   render(<FlowPalette />);
 
   expect(screen.getByTestId("flow-palette")).toBeTruthy();
   (["start", "transform", "condition", "send"] as const).forEach((cat) => {
     expect(screen.getByTestId(`palette-group-${cat}`)).toBeTruthy();
   });
-  ALL_SIXTEEN.forEach((type) => {
+  ALL_TWENTY.forEach((type) => {
     expect(screen.getByTestId(`palette-item-${type}`)).toBeTruthy();
   });
 });
@@ -100,11 +123,11 @@ test("clicking a palette item invokes onPick with its node type", () => {
   fireEvent.click(screen.getByTestId("palette-item-start"));
   expect(onPick).toHaveBeenCalledWith("start");
 
-  fireEvent.click(screen.getByTestId("palette-item-random"));
-  expect(onPick).toHaveBeenCalledWith("random");
+  fireEvent.click(screen.getByTestId("palette-item-concatFront"));
+  expect(onPick).toHaveBeenCalledWith("concatFront");
 
-  fireEvent.click(screen.getByTestId("palette-item-poll"));
-  expect(onPick).toHaveBeenCalledWith("poll");
+  fireEvent.click(screen.getByTestId("palette-item-template"));
+  expect(onPick).toHaveBeenCalledWith("template");
 
   expect(onPick).toHaveBeenCalledTimes(3);
 });
@@ -141,9 +164,15 @@ test("palette items preview their node accent color as an icon chip", () => {
   const upperIcon = screen.getByTestId("palette-icon-uppercase");
   expect(getComputedStyle(upperIcon).color).toBe("rgb(56, 189, 248)");
 
+  // Concat-front transform shares the sky-blue transform accent.
+  const concatFrontIcon = screen.getByTestId("palette-icon-concatFront");
+  expect(getComputedStyle(concatFrontIcon).color).toBe("rgb(56, 189, 248)");
+
+  // Condition icon is amber.
+  const notStartsWithIcon = screen.getByTestId("palette-icon-notStartsWith");
+  expect(getComputedStyle(notStartsWithIcon).color).toBe("rgb(251, 191, 36)");
+
   // Send items share the green accent.
-  const randomIcon = screen.getByTestId("palette-icon-random");
-  expect(getComputedStyle(randomIcon).color).toBe("rgb(52, 211, 153)");
   const pollIcon = screen.getByTestId("palette-icon-poll");
   expect(getComputedStyle(pollIcon).color).toBe("rgb(52, 211, 153)");
   expect(pollIcon.querySelector("svg")).toBeTruthy();
@@ -162,17 +191,18 @@ test("filtering narrows the item list and hides empty group headers", () => {
   expect(screen.queryByTestId("palette-group-send")).toBeNull();
 
   fireEvent.change(input, { target: { value: "RANDOM" } });
-  expect(screen.getByTestId("palette-item-random")).toBeTruthy();
+  // "random" only matches randomNumber now — the removed random node type is gone.
+  expect(screen.queryByTestId("palette-item-random")).toBeNull();
   expect(screen.getByTestId("palette-item-randomNumber")).toBeTruthy();
 
   fireEvent.change(input, { target: { value: "zzz" } });
-  ALL_SIXTEEN.forEach((type) => {
+  ALL_TWENTY.forEach((type) => {
     expect(screen.queryByTestId(`palette-item-${type}`)).toBeNull();
   });
   expect(screen.getByText('No nodes match "zzz".')).toBeTruthy();
 
   fireEvent.change(input, { target: { value: "" } });
-  ALL_SIXTEEN.forEach((type) => {
+  ALL_TWENTY.forEach((type) => {
     expect(screen.getByTestId(`palette-item-${type}`)).toBeTruthy();
   });
 });

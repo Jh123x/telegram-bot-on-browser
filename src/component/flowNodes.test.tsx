@@ -6,7 +6,6 @@ import {
   TransformNode,
   ConditionNode,
   SendNode,
-  RandomNode,
   PollNode,
 } from "./flowNodes.tsx";
 
@@ -109,6 +108,67 @@ test("TransformNode renders the random number summary with its range", () => {
   expect(getByText("random 1–20")).toBeTruthy();
 });
 
+test("TransformNode renders the concat front summary with its text", () => {
+  const { getByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Prefix", text: "!" }, "concatFront")}
+    />
+  );
+
+  expect(getByText('add "!" before')).toBeTruthy();
+});
+
+test("TransformNode falls back to a bare concat front label when text is empty", () => {
+  const { getAllByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Prefix", text: "" }, "concatFront")}
+    />
+  );
+
+  // Badge + caption both read "concat front" when text is empty.
+  expect(getAllByText("concat front").length).toBeGreaterThan(0);
+});
+
+test("TransformNode renders the concat back summary with its text", () => {
+  const { getByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Suffix", text: "!!" }, "concatBack")}
+    />
+  );
+
+  expect(getByText('add "!!" after')).toBeTruthy();
+});
+
+test("TransformNode falls back to a bare concat back label when text is empty", () => {
+  const { getAllByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Suffix", text: "" }, "concatBack")}
+    />
+  );
+
+  expect(getAllByText("concat back").length).toBeGreaterThan(0);
+});
+
+test("TransformNode renders the template summary with its template text", () => {
+  const { getByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Fmt", template: "Hi {msg}" }, "template")}
+    />
+  );
+
+  expect(getByText('template "Hi {msg}"')).toBeTruthy();
+});
+
+test("TransformNode falls back to a bare template label when template is empty", () => {
+  const { getAllByText } = render(
+    <TransformNode
+      {...makeNodeProps({ label: "Fmt", template: "" }, "template")}
+    />
+  );
+
+  expect(getAllByText("template").length).toBeGreaterThan(0);
+});
+
 test("TransformNode shows a lowercase badge for the lowercase type", () => {
   const { getAllByText } = render(
     <TransformNode {...makeNodeProps({ label: "Noop" }, "lowercase")} />
@@ -166,24 +226,6 @@ test("SendNode pluralizes singular reply count", () => {
   expect(getByText("1 reply")).toBeTruthy();
 });
 
-test("RandomNode renders its label and one-of-N caption", () => {
-  const { getByTestId, getByText } = render(
-    <RandomNode {...makeNodeProps({ label: "Flip", replies: ["a", "b"] })} />
-  );
-
-  expect(getByTestId("flow-node-random")).toBeTruthy();
-  expect(getByText("Flip")).toBeTruthy();
-  expect(getByText("1 of 2 replies")).toBeTruthy();
-});
-
-test("RandomNode shows no replies when the list is empty", () => {
-  const { getByText } = render(
-    <RandomNode {...makeNodeProps({ label: "Flip", replies: [] })} />
-  );
-
-  expect(getByText("no replies")).toBeTruthy();
-});
-
 test("PollNode renders its label, poll badge, and a testid", () => {
   const { getByTestId, getByText } = render(
     <PollNode {...makeNodeProps({ label: "Pick" })} />
@@ -224,15 +266,6 @@ test("PollNode has a single (target) handle and no source handle", () => {
 test("SendNode has a single (target) handle and no source handle", () => {
   const { container } = render(
     <SendNode {...makeNodeProps({ label: "Echo", replies: ["hi"] })} />
-  );
-
-  const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');
-  expect(handles).toHaveLength(1);
-});
-
-test("RandomNode has a single (target) handle and no source handle", () => {
-  const { container } = render(
-    <RandomNode {...makeNodeProps({ label: "Flip", replies: ["hi"] })} />
   );
 
   const handles = container.querySelectorAll('[data-testid="reactflow-handle"]');

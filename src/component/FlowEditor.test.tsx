@@ -8,7 +8,7 @@ import { Flow } from "../interfaces/flow.ts";
 
 // Node types the editor now understands, one per category (the palette shows
 // every node type at once in a flat, grouped list).
-const TYPES = ["start", "lowercase", "equals", "send", "random", "poll"] as const;
+const TYPES = ["start", "lowercase", "equals", "send", "poll"] as const;
 
 // The palette shows every node type at once (flat, grouped list), so an item
 // is clicked directly — no category selection step is needed.
