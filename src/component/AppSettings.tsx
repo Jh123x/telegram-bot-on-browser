@@ -52,6 +52,8 @@ const FLOW_NODE_TYPES = [
   "notEndsWith",
   "send",
   "poll",
+  "sendTo",
+  "question",
 ];
 
 const isValidFlowNode = (n: unknown): boolean => {
@@ -114,6 +116,25 @@ const isValidFlowNode = (n: unknown): boolean => {
     return false;
   }
   if (data.openPeriod !== undefined && typeof data.openPeriod !== "string") {
+    return false;
+  }
+  if (data.confirm !== undefined && typeof data.confirm !== "string") {
+    return false;
+  }
+  if (data.prompt !== undefined && typeof data.prompt !== "string") {
+    return false;
+  }
+  if (data.correctReply !== undefined && typeof data.correctReply !== "string") {
+    return false;
+  }
+  if (data.wrongReply !== undefined && typeof data.wrongReply !== "string") {
+    return false;
+  }
+  if (
+    data.answers !== undefined &&
+    (!Array.isArray(data.answers) ||
+      !data.answers.every((r: unknown) => typeof r === "string"))
+  ) {
     return false;
   }
   if (

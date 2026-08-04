@@ -36,6 +36,8 @@ import {
   ConditionNode,
   SendNode,
   PollNode,
+  SendToNode,
+  QuestionNode,
 } from "./flowNodes.tsx";
 
 // Canvas node renderers keyed by the FlowNodeType. Passed to <ReactFlow> so
@@ -47,6 +49,8 @@ const nodeTypes: Record<string, React.ComponentType<any>> = {
   start: StartNode,
   send: SendNode,
   poll: PollNode,
+  sendTo: SendToNode,
+  question: QuestionNode,
 };
 ALL_NODE_TYPES.forEach((type) => {
   const category = nodeCategory(type);

@@ -710,6 +710,186 @@ test("editing the poll node label dispatches onUpdate", () => {
   );
 });
 
+// ----- Send-to node -----
+
+test("send-to panel shows label, replies, confirm field, and the target hint", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "st1",
+        type: "sendTo",
+        position: { x: 0, y: 0 },
+        data: { label: "Forward", replies: ["Your message", "Got it"], confirm: "Done" },
+      },
+    ],
+  });
+  renderInspector(flow, "st1", null);
+
+  expect(screen.getByText("Send To Node")).toBeTruthy();
+  expect(screen.getByLabelText("Replies (one per line)")).toBeTruthy();
+  expect((screen.getByLabelText("Confirm") as HTMLInputElement).value).toBe("Done");
+  expect(
+    screen.getByText("Target: the first @mention in the message.")
+  ).toBeTruthy();
+});
+
+test("editing the send-to confirm field dispatches onUpdate", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "st1",
+        type: "sendTo",
+        position: { x: 0, y: 0 },
+        data: { label: "Forward", replies: ["Got it"], confirm: "" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "st1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Confirm"), {
+    target: { value: "Sent!" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "st1",
+          data: expect.objectContaining({ confirm: "Sent!" }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("editing the send-to replies splits on newlines", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "st1",
+        type: "sendTo",
+        position: { x: 0, y: 0 },
+        data: { label: "Forward", replies: ["a"], confirm: "ok" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "st1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Replies (one per line)"), {
+    target: { value: "First\nSecond" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "st1",
+          data: expect.objectContaining({ replies: ["First", "Second"] }),
+        }),
+      ]),
+    })
+  );
+});
+
+// ----- Question node -----
+
+test("question panel shows prompt, answers, and correct/wrong reply fields", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "q1",
+        type: "question",
+        position: { x: 0, y: 0 },
+        data: {
+          label: "Ask",
+          prompt: "What color?",
+          answers: ["red", "blue"],
+          correctReply: "Nice!",
+          wrongReply: "Try again.",
+        },
+      },
+    ],
+  });
+  renderInspector(flow, "q1", null);
+
+  expect(screen.getByText("Question Node")).toBeTruthy();
+  expect((screen.getByLabelText("Prompt") as HTMLInputElement).value).toBe(
+    "What color?"
+  );
+  expect(screen.getByLabelText("Answers (one per line)")).toBeTruthy();
+  expect((screen.getByLabelText("Correct reply") as HTMLInputElement).value).toBe(
+    "Nice!"
+  );
+  expect((screen.getByLabelText("Wrong reply") as HTMLInputElement).value).toBe(
+    "Try again."
+  );
+  expect(
+    screen.getByText(/Answers match case-insensitively\. \{answer\} is the first accepted answer\./)
+  ).toBeTruthy();
+});
+
+test("editing the question prompt dispatches onUpdate", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "q1",
+        type: "question",
+        position: { x: 0, y: 0 },
+        data: { label: "Ask", prompt: "What color?" },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "q1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Prompt"), {
+    target: { value: "What is your name?" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "q1",
+          data: expect.objectContaining({ prompt: "What is your name?" }),
+        }),
+      ]),
+    })
+  );
+});
+
+test("editing the question answers splits on newlines", () => {
+  const flow = makeFlow({
+    nodes: [
+      {
+        id: "q1",
+        type: "question",
+        position: { x: 0, y: 0 },
+        data: { label: "Ask", prompt: "Pick?", answers: ["a"] },
+      },
+    ],
+  });
+  const onUpdate = vi.fn();
+  renderInspector(flow, "q1", null, onUpdate);
+
+  fireEvent.change(screen.getByLabelText("Answers (one per line)"), {
+    target: { value: "Red\nBlue\nGreen" },
+  });
+
+  expect(onUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nodes: expect.arrayContaining([
+        expect.objectContaining({
+          id: "q1",
+          data: expect.objectContaining({ answers: ["Red", "Blue", "Green"] }),
+        }),
+      ]),
+    })
+  );
+});
+
 // ----- Edge panel (read-only) -----
 
 test("edge panel shows the read-only If branch caption", () => {

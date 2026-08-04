@@ -21,6 +21,8 @@ import {
   Block,
   Send,
   Poll,
+  Forward,
+  Quiz,
 } from "@mui/icons-material";
 import type { FlowNodeCategory, FlowNodeType } from "../interfaces/flow.ts";
 import {
@@ -65,6 +67,8 @@ const NODE_ICONS: Record<FlowNodeType, React.ComponentType<any>> = {
   notEndsWith: NorthEast,
   send: Send,
   poll: Poll,
+  sendTo: Forward,
+  question: Quiz,
 };
 
 interface FlowPaletteProps {

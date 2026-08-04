@@ -661,6 +661,8 @@ test("import accepts a flow with the negated/concat/template node types", async 
       { id: "n5", type: "template", position: { x: 480, y: 0 }, data: { label: "Format", template: "You said: {msg}" } },
       { id: "n6", type: "notEndsWith", position: { x: 600, y: 0 }, data: { label: "Not Q", value: "?" } },
       { id: "n7", type: "send", position: { x: 720, y: 0 }, data: { label: "Reply", replies: ["{msg}"] } },
+      { id: "n8", type: "sendTo", position: { x: 840, y: 0 }, data: { label: "Forward", replies: ["Your message"], confirm: "Forwarded!" } },
+      { id: "n9", type: "question", position: { x: 960, y: 0 }, data: { label: "Ask", prompt: "What is 2 + 2?", answers: ["4", "four"], correctReply: "Correct!", wrongReply: "Try again." } },
     ],
     edges: [
       { id: "e1", source: "n1", target: "n2" },
@@ -714,6 +716,56 @@ test("import rejects a template node whose template field is not a string", asyn
     nodes: [
       { id: "n1", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
       { id: "n2", type: "template", position: { x: 120, y: 0 }, data: { label: "T", template: 42 } },
+    ],
+    edges: [],
+  };
+
+  const file = new File(
+    [
+      JSON.stringify({
+        version: 1,
+        token: "imp-token",
+        flows: [badFlow],
+        autoStart: false,
+      }),
+    ],
+    "bad.json",
+    { type: "application/json" }
+  );
+
+  fireEvent.change(screen.getByTestId("import-settings-input"), {
+    target: { files: [file] },
+  });
+  await waitFor(() =>
+    expect(screen.getByTestId("import-status").textContent).not.toBe("")
+  );
+
+  expect(screen.getByTestId("import-status").textContent).toContain(
+    "Could not import settings"
+  );
+  expect(store.getState().bot.token).toBe("abc:TOKEN");
+  expect(store.getState().bot.flows).toEqual([validFlow]);
+  expect(localStorage.getItem("flows")).toBe(JSON.stringify([validFlow]));
+});
+
+test("import rejects a question node whose answers is not a string array", async () => {
+  const store = setupStore(seedState);
+  localStorage.setItem("token", "abc:TOKEN");
+  localStorage.setItem("flows", JSON.stringify([validFlow]));
+  renderWithProviders(<AppSettings />, { store });
+
+  const badFlow = {
+    id: "f-bad-question",
+    name: "Bad Question",
+    startNodeId: "n1",
+    nodes: [
+      { id: "n1", type: "start", position: { x: 0, y: 0 }, data: { label: "Start" } },
+      {
+        id: "n2",
+        type: "question",
+        position: { x: 120, y: 0 },
+        data: { label: "Ask", prompt: "Pick?", answers: [42] },
+      },
     ],
     edges: [],
   };

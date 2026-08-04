@@ -254,7 +254,97 @@ export const FlowInspector = ({
       );
     }
 
-    // send category (send / poll)
+    // send category (send / poll / sendTo / question)
+    if (selectedNode.type === "sendTo") {
+      const replies = selectedNode.data.replies ?? [];
+      return (
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Send To Node
+          </Typography>
+          <LabelField
+            value={selectedNode.data.label}
+            onChange={(label) => setNodeData({ label })}
+          />
+          <TextField
+            label="Replies (one per line)"
+            size="small"
+            fullWidth
+            multiline
+            minRows={2}
+            sx={{ mt: 1 }}
+            value={replies.join("\n")}
+            onChange={(e) => setNodeData({ replies: e.target.value.split("\n") })}
+          />
+          <TextField
+            label="Confirm"
+            size="small"
+            fullWidth
+            sx={{ mt: 1 }}
+            value={selectedNode.data.confirm ?? ""}
+            onChange={(e) => setNodeData({ confirm: e.target.value })}
+          />
+          <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
+            Target: the first @mention in the message.
+          </Typography>
+          {onDelete && <DeleteButton label="Delete node" onDelete={onDelete} />}
+        </Paper>
+      );
+    }
+
+    if (selectedNode.type === "question") {
+      const answers = selectedNode.data.answers ?? [];
+      return (
+        <Paper ref={panelRef} sx={{ p: 1.5 }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Question Node
+          </Typography>
+          <LabelField
+            value={selectedNode.data.label}
+            onChange={(label) => setNodeData({ label })}
+          />
+          <TextField
+            label="Prompt"
+            size="small"
+            fullWidth
+            sx={{ mt: 1 }}
+            value={selectedNode.data.prompt ?? ""}
+            onChange={(e) => setNodeData({ prompt: e.target.value })}
+          />
+          <TextField
+            label="Answers (one per line)"
+            size="small"
+            fullWidth
+            multiline
+            minRows={2}
+            sx={{ mt: 1 }}
+            value={answers.join("\n")}
+            onChange={(e) => setNodeData({ answers: e.target.value.split("\n") })}
+          />
+          <TextField
+            label="Correct reply"
+            size="small"
+            fullWidth
+            sx={{ mt: 1 }}
+            value={selectedNode.data.correctReply ?? ""}
+            onChange={(e) => setNodeData({ correctReply: e.target.value })}
+          />
+          <TextField
+            label="Wrong reply"
+            size="small"
+            fullWidth
+            sx={{ mt: 1 }}
+            value={selectedNode.data.wrongReply ?? ""}
+            onChange={(e) => setNodeData({ wrongReply: e.target.value })}
+          />
+          <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
+            Answers match case-insensitively. {"{answer}"} is the first accepted answer.
+          </Typography>
+          {onDelete && <DeleteButton label="Delete node" onDelete={onDelete} />}
+        </Paper>
+      );
+    }
+
     if (selectedNode.type === "poll") {
       const pollType = selectedNode.data.pollType ?? "regular";
       const isAnonymous = selectedNode.data.isAnonymous ?? "true";

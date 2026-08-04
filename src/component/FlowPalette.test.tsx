@@ -14,7 +14,7 @@ const createDataTransfer = () => ({
   effectAllowed: "move",
 } as unknown as DataTransfer);
 
-const ALL_TWENTY = [
+const ALL_TWENTY_TWO = [
   "start",
   "lowercase",
   "uppercase",
@@ -35,6 +35,8 @@ const ALL_TWENTY = [
   "notEndsWith",
   "send",
   "poll",
+  "sendTo",
+  "question",
 ];
 
 const GROUP_COUNTS: Record<string, string[]> = {
@@ -60,21 +62,21 @@ const GROUP_COUNTS: Record<string, string[]> = {
     "notStartsWith",
     "notEndsWith",
   ],
-  send: ["send", "poll"],
+  send: ["send", "poll", "sendTo", "question"],
 };
 
 afterEach(() => {
   localStorage.clear();
 });
 
-test("renders the palette with all four groups and all twenty items at once", () => {
+test("renders the palette with all four groups and all twenty-two items at once", () => {
   render(<FlowPalette />);
 
   expect(screen.getByTestId("flow-palette")).toBeTruthy();
   (["start", "transform", "condition", "send"] as const).forEach((cat) => {
     expect(screen.getByTestId(`palette-group-${cat}`)).toBeTruthy();
   });
-  ALL_TWENTY.forEach((type) => {
+  ALL_TWENTY_TWO.forEach((type) => {
     expect(screen.getByTestId(`palette-item-${type}`)).toBeTruthy();
   });
 });
@@ -176,6 +178,14 @@ test("palette items preview their node accent color as an icon chip", () => {
   const pollIcon = screen.getByTestId("palette-icon-poll");
   expect(getComputedStyle(pollIcon).color).toBe("rgb(52, 211, 153)");
   expect(pollIcon.querySelector("svg")).toBeTruthy();
+
+  const sendToIcon = screen.getByTestId("palette-icon-sendTo");
+  expect(getComputedStyle(sendToIcon).color).toBe("rgb(52, 211, 153)");
+  expect(sendToIcon.querySelector("svg")).toBeTruthy();
+
+  const questionIcon = screen.getByTestId("palette-icon-question");
+  expect(getComputedStyle(questionIcon).color).toBe("rgb(52, 211, 153)");
+  expect(questionIcon.querySelector("svg")).toBeTruthy();
 });
 
 test("filtering narrows the item list and hides empty group headers", () => {
@@ -196,13 +206,13 @@ test("filtering narrows the item list and hides empty group headers", () => {
   expect(screen.getByTestId("palette-item-randomNumber")).toBeTruthy();
 
   fireEvent.change(input, { target: { value: "zzz" } });
-  ALL_TWENTY.forEach((type) => {
+  ALL_TWENTY_TWO.forEach((type) => {
     expect(screen.queryByTestId(`palette-item-${type}`)).toBeNull();
   });
   expect(screen.getByText('No nodes match "zzz".')).toBeTruthy();
 
   fireEvent.change(input, { target: { value: "" } });
-  ALL_TWENTY.forEach((type) => {
+  ALL_TWENTY_TWO.forEach((type) => {
     expect(screen.getByTestId(`palette-item-${type}`)).toBeTruthy();
   });
 });

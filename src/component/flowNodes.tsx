@@ -212,3 +212,37 @@ export const PollNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
     </Box>
   );
 };
+
+// A SendToNode forwards messages to a DIFFERENT user (the first @mention in
+// the message). Terminal: a single target handle, no source.
+export const SendToNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+  const { accent, bg } = GRAPH_COLORS.node.send;
+  const replyCount = (data.replies ?? []).length;
+  return (
+    <Box data-testid="flow-node-sendto" sx={cardSx(accent, bg, selected)}>
+      <CardLabel>{data.label}</CardLabel>
+      <TypeBadge label="sendTo" color={accent} />
+      <CardCaption>
+        {replyCount > 0 ? `${replyCount} to @user` : "forwards to @user"}
+      </CardCaption>
+      <Handle type="target" position={Position.Left} style={{ background: accent }} />
+    </Box>
+  );
+};
+
+// A QuestionNode asks a question and waits for an answer. The accepted answers
+// are the node's configured list; the runtime checks the next message from the
+// user against them. Terminal: a single target handle, no source.
+export const QuestionNode = ({ data, selected }: NodeProps<FlowNodeData>) => {
+  const { accent, bg } = GRAPH_COLORS.node.send;
+  return (
+    <Box data-testid="flow-node-question" sx={cardSx(accent, bg, selected)}>
+      <CardLabel>{data.label}</CardLabel>
+      <TypeBadge label="question" color={accent} />
+      <CardCaption>
+        {data.prompt ? `asks: ${data.prompt}` : "asks a question"}
+      </CardCaption>
+      <Handle type="target" position={Position.Left} style={{ background: accent }} />
+    </Box>
+  );
+};
