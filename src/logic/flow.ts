@@ -621,7 +621,7 @@ export function validateFlow(flow: Flow): string[] {
     }
   }
 
-  // A send node (send or random) is terminal and cannot lead anywhere.
+  // A send node (send or poll) is terminal and cannot lead anywhere.
   for (const node of flow.nodes) {
     if (nodeCategory(node.type) === "send") {
       const outgoing = flow.edges.filter((e) => e.source === node.id);
