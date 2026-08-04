@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Paper, TextField, Typography } from "@mui/material";
+import { lighten } from "@mui/material/styles";
 import {
   PlayArrow,
   ArrowDownward,
@@ -116,7 +117,30 @@ export const FlowPalette = ({ onPick }: FlowPaletteProps) => {
         sx={{ mt: 1 }}
       />
 
-      <Box data-testid="palette-list" sx={{ flex: 1, minHeight: 0, overflowY: "auto", mt: 0.5 }}>
+      <Box
+        data-testid="palette-list"
+        sx={(theme) => ({
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          mt: 0.5,
+          // Themed scrollbar so the list matches the dark theme instead of the
+          // browser-default one. Webkit (Chrome/Edge/Safari): thin 8px track,
+          // transparent background, divider-colored rounded thumb. Firefox uses
+          // the equivalent scrollbarWidth/scrollbarColor pair.
+          scrollbarWidth: "thin",
+          scrollbarColor: `${theme.palette.divider} transparent`,
+          "&::-webkit-scrollbar": { width: 8, height: 8 },
+          "&::-webkit-scrollbar-track": { background: "transparent" },
+          "&::-webkit-scrollbar-thumb": {
+            background: theme.palette.divider,
+            borderRadius: 4,
+            "&:hover": {
+              background: lighten(theme.palette.divider, 0.15),
+            },
+          },
+        })}
+      >
         {groups.map(({ cat, items }) => (
           <Box key={cat}>
             <Typography
