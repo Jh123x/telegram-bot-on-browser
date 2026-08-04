@@ -72,6 +72,33 @@ function pollNode(label: string, position: { x: number; y: number }): FlowNode {
   return node;
 }
 
+// concatFront / concatBack share the flat `text` data field; the helper just
+// sets it after createFlowNode fills the default.
+function concatNode(
+  type: "concatFront" | "concatBack",
+  text: string,
+  label: string,
+  position: { x: number; y: number }
+): FlowNode {
+  const node = createFlowNode(type, position);
+  node.data.label = label;
+  node.data.text = text;
+  return node;
+}
+
+// The template transform stores its f-string style template in the flat
+// `template` data field.
+function templateNode(
+  template: string,
+  label: string,
+  position: { x: number; y: number }
+): FlowNode {
+  const node = createFlowNode("template", position);
+  node.data.label = label;
+  node.data.template = template;
+  return node;
+}
+
 function edge(source: string, target: string, sourceHandle?: "if" | "else"): FlowEdge {
   return { id: generateId(), source, target, sourceHandle: sourceHandle ?? undefined };
 }
@@ -156,7 +183,102 @@ function pollBotFlow(): Flow {
   return flow;
 }
 
+// A command bot that shouts back: "/shout hello" becomes "🎺 HELLO!". Demos
+// the concatBack transform (append "!"), uppercase, and a negated condition
+// (notEquals "" — the bare "/shout" command routes to the usage hint through
+// the else branch, while non-/shout messages decline at the gate). The
+// replace transform strips the "/shout " prefix before the message is
+// transformed.
+function shoutBotFlow(): Flow {
+  const flow = createFlow("Shout Bot");
+  const start = startNode({ x: 0, y: 0 });
+  const lower = transformNode("lowercase", "Lowercase", { x: 240, y: 0 });
+  const gate = conditionNode("startsWith", "/shout", "Shout command", { x: 480, y: 0 });
+  const strip = transformNode("replace", "Strip prefix", { x: 720, y: -120 });
+  strip.data.find = "/shout";
+  strip.data.replacement = "";
+  const trim = transformNode("trim", "Trim", { x: 960, y: -120 });
+  const hasText = conditionNode("notEquals", "", "Has text", { x: 1200, y: -120 });
+  const shout = transformNode("uppercase", "Uppercase", { x: 1440, y: -240 });
+  const exclaim = concatNode("concatBack", "!", "Exclaim", { x: 1680, y: -240 });
+  const reply = sendNode("Shout reply", ["🎺 {msg}"], { x: 1920, y: -240 });
+  const usage = sendNode("Usage", ["Usage: /shout <text>"], { x: 1680, y: 0 });
+
+  flow.nodes = [start, lower, gate, strip, trim, hasText, shout, exclaim, reply, usage];
+  flow.edges = [
+    edge(start.id, lower.id),
+    edge(lower.id, gate.id),
+    edge(gate.id, strip.id, "if"),
+    edge(strip.id, trim.id),
+    edge(trim.id, hasText.id),
+    edge(hasText.id, shout.id, "if"),
+    edge(shout.id, exclaim.id),
+    edge(exclaim.id, reply.id),
+    edge(hasText.id, usage.id, "else"),
+  ];
+  flow.startNodeId = start.id;
+  return flow;
+}
+
+// A command bot that wraps the message in a quote using the template
+// transform (Python f-string style): "/quote hello" becomes 💬 "hello".
+// The replace transform strips the "/quote" prefix; a bare "/quote" routes
+// to the usage hint through the notEquals "" else branch.
+function quoteBotFlow(): Flow {
+  const flow = createFlow("Quote Bot");
+  const start = startNode({ x: 0, y: 0 });
+  const lower = transformNode("lowercase", "Lowercase", { x: 240, y: 0 });
+  const gate = conditionNode("startsWith", "/quote", "Quote command", { x: 480, y: 0 });
+  const strip = transformNode("replace", "Strip prefix", { x: 720, y: 0 });
+  strip.data.find = "/quote";
+  strip.data.replacement = "";
+  const trim = transformNode("trim", "Trim", { x: 960, y: 0 });
+  const hasText = conditionNode("notEquals", "", "Has text", { x: 1200, y: 0 });
+  const quote = templateNode('💬 "{msg}"', "Template", { x: 1440, y: -120 });
+  const reply = sendNode("Quote reply", ["{msg}"], { x: 1680, y: -120 });
+  const usage = sendNode("Usage", ["Usage: /quote <text>"], { x: 1440, y: 120 });
+
+  flow.nodes = [start, lower, gate, strip, trim, hasText, quote, reply, usage];
+  flow.edges = [
+    edge(start.id, lower.id),
+    edge(lower.id, gate.id),
+    edge(gate.id, strip.id, "if"),
+    edge(strip.id, trim.id),
+    edge(trim.id, hasText.id),
+    edge(hasText.id, quote.id, "if"),
+    edge(quote.id, reply.id),
+    edge(hasText.id, usage.id, "else"),
+  ];
+  flow.startNodeId = start.id;
+  return flow;
+}
+
+// An echo bot that greets every non-command message: "hello" becomes
+// "👋 You said: hello". Commands (anything starting with "/") decline
+// silently because the negated notStartsWith condition has no else edge.
+function greetingBotFlow(): Flow {
+  const flow = createFlow("Greeting Bot");
+  const start = startNode({ x: 0, y: 0 });
+  const lower = transformNode("lowercase", "Lowercase", { x: 240, y: 0 });
+  const notCommand = conditionNode("notStartsWith", "/", "Not a command", { x: 480, y: 0 });
+  const greet = concatNode("concatFront", "👋 You said: ", "Greet", { x: 720, y: 0 });
+  const reply = sendNode("Greeting reply", ["{msg}"], { x: 960, y: 0 });
+
+  flow.nodes = [start, lower, notCommand, greet, reply];
+  flow.edges = [
+    edge(start.id, lower.id),
+    edge(lower.id, notCommand.id),
+    edge(notCommand.id, greet.id, "if"),
+    edge(greet.id, reply.id),
+  ];
+  flow.startNodeId = start.id;
+  return flow;
+}
+
 export const SAMPLE_FLOWS: FlowSample[] = [
   { name: "Dice Bot", flow: diceBotFlow() },
   { name: "Poll Bot", flow: pollBotFlow() },
+  { name: "Shout Bot", flow: shoutBotFlow() },
+  { name: "Quote Bot", flow: quoteBotFlow() },
+  { name: "Greeting Bot", flow: greetingBotFlow() },
 ];

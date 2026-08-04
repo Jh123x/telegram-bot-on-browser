@@ -17,6 +17,8 @@ export const TRIGGER_TYPES: FlowTriggerType[] = [
   "endsWith",
   "notEquals",
   "notContains",
+  "notStartsWith",
+  "notEndsWith",
 ];
 
 export const TRIGGER_LABELS: Record<FlowTriggerType, string> = {
@@ -26,6 +28,8 @@ export const TRIGGER_LABELS: Record<FlowTriggerType, string> = {
   endsWith: "message ends with",
   notEquals: "message does not equal",
   notContains: "message does not contain",
+  notStartsWith: "message does not start with",
+  notEndsWith: "message does not end with",
 };
 
 export const TRANSFORM_TYPES: TransformNodeType[] = [
@@ -35,9 +39,12 @@ export const TRANSFORM_TYPES: TransformNodeType[] = [
   "replace",
   "extractRegex",
   "randomNumber",
+  "concatFront",
+  "concatBack",
+  "template",
 ];
 
-export const SEND_TYPES: SendNodeType[] = ["send", "random", "poll"];
+export const SEND_TYPES: SendNodeType[] = ["send", "poll"];
 
 export const ALL_NODE_TYPES: FlowNodeType[] = [
   "start",
@@ -57,14 +64,18 @@ export const NODE_LABELS: Record<FlowNodeType, string> = {
   replace: "Replace",
   extractRegex: "Extract Regex",
   randomNumber: "Random Number",
+  concatFront: "Concat Front",
+  concatBack: "Concat Back",
+  template: "Template",
   equals: "Equals",
   contains: "Contains",
   startsWith: "Starts With",
   endsWith: "Ends With",
   notEquals: "Not Equals",
   notContains: "Not Contains",
+  notStartsWith: "Not Starts With",
+  notEndsWith: "Not Ends With",
   send: "Send",
-  random: "Random",
   poll: "Poll",
 };
 
@@ -78,14 +89,18 @@ export const NODE_DESCRIPTIONS: Record<FlowNodeType, string> = {
   replace: "Find and replace text.",
   extractRegex: "Keep text matching a pattern.",
   randomNumber: "Replace with a random number.",
+  concatFront: "Add text before the message.",
+  concatBack: "Add text after the message.",
+  template: "Build text from a template with {msg}.",
   equals: "Message equals the value.",
   contains: "Message contains the value.",
   startsWith: "Message starts with the value.",
   endsWith: "Message ends with the value.",
   notEquals: "Message is not equal to the value.",
   notContains: "Message does not contain the value.",
+  notStartsWith: "Message does not start with the value.",
+  notEndsWith: "Message does not end with the value.",
   send: "Send one or more messages.",
-  random: "Send one random option.",
   poll: "Send a Telegram poll.",
 };
 
@@ -224,6 +239,10 @@ export function matchTrigger(
       return message.trim() !== value.trim();
     case "notContains":
       return !message.includes(value);
+    case "notStartsWith":
+      return !message.startsWith(value);
+    case "notEndsWith":
+      return !message.endsWith(value);
     default:
       return false;
   }
@@ -271,6 +290,12 @@ export function applyTransform(
       const roll = Math.floor(Math.random() * (max - min + 1)) + min;
       return String(roll);
     }
+    case "concatFront":
+      return (data.text ?? "") === "" ? message : data.text + message;
+    case "concatBack":
+      return (data.text ?? "") === "" ? message : message + data.text;
+    case "template":
+      return interpolate(data.template ?? "", { msg: message });
     default:
       return message;
   }
@@ -324,6 +349,8 @@ const CONDITION_DEFAULT_LABELS: Record<FlowTriggerType, string> = {
   endsWith: NODE_LABELS.endsWith,
   contains: NODE_LABELS.contains,
   notContains: NODE_LABELS.notContains,
+  notStartsWith: NODE_LABELS.notStartsWith,
+  notEndsWith: NODE_LABELS.notEndsWith,
 };
 
 export function createFlowNode(
@@ -356,20 +383,35 @@ export function createFlowNode(
         ...base,
         data: { label: NODE_LABELS.randomNumber, min: "1", max: "6" },
       };
+    case "concatFront":
+      return {
+        ...base,
+        data: { label: NODE_LABELS.concatFront, text: "" },
+      };
+    case "concatBack":
+      return {
+        ...base,
+        data: { label: NODE_LABELS.concatBack, text: "" },
+      };
+    case "template":
+      return {
+        ...base,
+        data: { label: NODE_LABELS.template, template: "" },
+      };
     case "equals":
     case "notEquals":
     case "startsWith":
     case "endsWith":
     case "contains":
     case "notContains":
+    case "notStartsWith":
+    case "notEndsWith":
       return {
         ...base,
         data: { label: CONDITION_DEFAULT_LABELS[type], value: "" },
       };
     case "send":
       return { ...base, data: { label: "New Send", replies: [] } };
-    case "random":
-      return { ...base, data: { label: NODE_LABELS.random, replies: [] } };
     case "poll":
       return {
         ...base,
@@ -464,21 +506,16 @@ export function executeFlow(
       continue;
     }
 
-    // send category (send / random / poll)
+    // send category (send / poll)
     if (current.type === "poll") {
       const parsed = parsePoll(currentMessage);
       if (typeof parsed === "string") return [parsed];
       return [applyPollConfig(parsed, current.data)];
     }
-    const replies = interpolateReplies(
+    return interpolateReplies(
       current.data.replies ?? [],
       currentMessage
     );
-    if (current.type === "random") {
-      if (replies.length === 0) return [];
-      return [replies[Math.floor(Math.random() * replies.length)]];
-    }
-    return replies;
   }
 
   return undefined;
@@ -622,6 +659,8 @@ export function flowFromSample(sample: FlowSample): Flow {
     if (node.data.pattern !== undefined) data.pattern = node.data.pattern;
     if (node.data.min !== undefined) data.min = node.data.min;
     if (node.data.max !== undefined) data.max = node.data.max;
+    if (node.data.text !== undefined) data.text = node.data.text;
+    if (node.data.template !== undefined) data.template = node.data.template;
     if (node.data.pollType !== undefined) data.pollType = node.data.pollType;
     if (node.data.isAnonymous !== undefined) data.isAnonymous = node.data.isAnonymous;
     if (node.data.allowsMultipleAnswers !== undefined)

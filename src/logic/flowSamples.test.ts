@@ -3,19 +3,28 @@ import { FlowSample, SAMPLE_FLOWS } from "./flowSamples.ts";
 import { vi } from "vitest";
 
 // SAMPLE_FLOWS is guaranteed to be in this exact order (see the
-// "two samples with unique names and order" test below).
+// "samples with unique names and order" test below).
 const DICE = SAMPLE_FLOWS[0];
 const POLL = SAMPLE_FLOWS[1];
+const SHOUT = SAMPLE_FLOWS[2];
+const QUOTE = SAMPLE_FLOWS[3];
+const GREETING = SAMPLE_FLOWS[4];
 
 describe("SAMPLE_FLOWS", () => {
-  it("has two samples with unique names", () => {
-    expect(SAMPLE_FLOWS).toHaveLength(2);
+  it("has five samples with unique names", () => {
+    expect(SAMPLE_FLOWS).toHaveLength(5);
     const names = SAMPLE_FLOWS.map((s) => s.name);
-    expect(new Set(names).size).toBe(2);
+    expect(new Set(names).size).toBe(5);
   });
 
   it("contains the expected samples in order", () => {
-    expect(SAMPLE_FLOWS.map((s) => s.name)).toEqual(["Dice Bot", "Poll Bot"]);
+    expect(SAMPLE_FLOWS.map((s) => s.name)).toEqual([
+      "Dice Bot",
+      "Poll Bot",
+      "Shout Bot",
+      "Quote Bot",
+      "Greeting Bot",
+    ]);
   });
 });
 
@@ -103,5 +112,60 @@ describe("Poll Bot execution", () => {
   it("stays silent for messages that do not start with /poll", () => {
     const rt = new FlowRuntime(POLL.flow);
     expect(rt.handleMessage(1, "hello")).toBeUndefined();
+  });
+});
+
+describe("Shout Bot execution", () => {
+  it("shouts back uppercase text with an exclamation mark", () => {
+    const rt = new FlowRuntime(SHOUT.flow);
+    expect(rt.handleMessage(1, "/shout hello")).toBe("🎺 HELLO!");
+    expect(rt.handleMessage(1, "/shout hello world")).toBe("🎺 HELLO WORLD!");
+  });
+
+  it("handles uppercase /SHOUT commands via the lowercase transform", () => {
+    const rt = new FlowRuntime(SHOUT.flow);
+    expect(rt.handleMessage(1, "/SHOUT hi")).toBe("🎺 HI!");
+  });
+
+  it("replies with the usage hint for a bare /shout command", () => {
+    const rt = new FlowRuntime(SHOUT.flow);
+    expect(rt.handleMessage(1, "/shout")).toBe("Usage: /shout <text>");
+  });
+
+  it("stays silent for messages that do not start with /shout", () => {
+    const rt = new FlowRuntime(SHOUT.flow);
+    expect(rt.handleMessage(1, "hello")).toBeUndefined();
+  });
+});
+
+describe("Quote Bot execution", () => {
+  it("wraps the message in quotes with the template transform", () => {
+    const rt = new FlowRuntime(QUOTE.flow);
+    expect(rt.handleMessage(1, "/quote hello")).toBe('💬 "hello"');
+    expect(rt.handleMessage(1, "/quote two words")).toBe('💬 "two words"');
+  });
+
+  it("stays silent for messages that do not start with /quote", () => {
+    const rt = new FlowRuntime(QUOTE.flow);
+    expect(rt.handleMessage(1, "hello")).toBeUndefined();
+  });
+
+  it("replies with the usage hint for a bare /quote command", () => {
+    const rt = new FlowRuntime(QUOTE.flow);
+    expect(rt.handleMessage(1, "/quote")).toBe("Usage: /quote <text>");
+  });
+});
+
+describe("Greeting Bot execution", () => {
+  it("greets non-command messages with the concatFront prefix", () => {
+    const rt = new FlowRuntime(GREETING.flow);
+    expect(rt.handleMessage(1, "hello")).toBe("👋 You said: hello");
+    expect(rt.handleMessage(1, "nice to meet you")).toBe("👋 You said: nice to meet you");
+  });
+
+  it("stays silent for commands (notStartsWith / has no else edge)", () => {
+    const rt = new FlowRuntime(GREETING.flow);
+    expect(rt.handleMessage(1, "/start")).toBeUndefined();
+    expect(rt.handleMessage(1, "/dice d20")).toBeUndefined();
   });
 });

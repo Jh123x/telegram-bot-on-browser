@@ -4,7 +4,9 @@ export type FlowTriggerType =
   | "startsWith"
   | "endsWith"
   | "notEquals"
-  | "notContains";
+  | "notContains"
+  | "notStartsWith"
+  | "notEndsWith";
 
 export type TransformNodeType =
   | "lowercase"
@@ -12,9 +14,12 @@ export type TransformNodeType =
   | "trim"
   | "replace"
   | "extractRegex"
-  | "randomNumber";
+  | "randomNumber"
+  | "concatFront"
+  | "concatBack"
+  | "template";
 
-export type SendNodeType = "send" | "random" | "poll";
+export type SendNodeType = "send" | "poll";
 
 // Every concrete node type. The category is derived via nodeCategory() in
 // logic/flow.ts; the type itself IS the operation (no per-node type selectors).
@@ -49,6 +54,8 @@ export interface FlowNodeData {
   pattern?: string; // "extractRegex" transform: regex pattern
   min?: string; // "randomNumber" transform: inclusive lower bound
   max?: string; // "randomNumber" transform: inclusive upper bound
+  text?: string; // "concatFront" / "concatBack" transforms: text to add
+  template?: string; // "template" transform: text with {msg} tokens
   pollType?: string; // "poll" node: "regular" | "quiz"
   isAnonymous?: string; // "poll" node: "true" | "false"
   allowsMultipleAnswers?: string; // "poll" node: "true" | "false"
