@@ -73,19 +73,21 @@ export const TokenSaver = () => {
               value={token}
               onChange={(e) => dispatch(setToken(e.target.value))}
               placeholder="Enter your API token"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => setShowToken((prev) => !prev)}
-                      sx={{ textTransform: "none", fontWeight: 600 }}
-                    >
-                      {showToken ? "Hide" : "Show"}
-                    </Button>
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => setShowToken((prev) => !prev)}
+                        sx={{ textTransform: "none", fontWeight: 600 }}
+                      >
+                        {showToken ? "Hide" : "Show"}
+                      </Button>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </ListItem>

@@ -32,7 +32,7 @@ exports[`renders app correctly 1`] = `
                   style="overflow: hidden; margin-bottom: 0px;"
                 >
                   <div
-                    class="MuiTabs-list MuiTabs-flexContainer css-hzcega-MuiTabs-list"
+                    class="MuiTabs-list css-hzcega-MuiTabs-list"
                     role="tablist"
                   >
                     <button
@@ -85,14 +85,14 @@ exports[`renders app correctly 1`] = `
               Bot stopped
             </p>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
               tabindex="0"
               type="button"
             >
               Start
             </button>
             <button
-              class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
               disabled=""
               tabindex="-1"
               type="button"
@@ -115,7 +115,7 @@ exports[`renders app correctly 1`] = `
               Flow
             </h3>
             <p
-              class="MuiTypography-root MuiTypography-body2 css-84gl1-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body2 css-r2go6j-MuiTypography-root"
             >
               Build a conversational flow by dragging nodes from the palette onto the canvas and connecting them.
             </p>
@@ -149,7 +149,7 @@ exports[`renders app correctly 1`] = `
                     >
                       <input
                         aria-invalid="false"
-                        class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
+                        class="MuiInputBase-input MuiOutlinedInput-input css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
                         id="_r_3_"
                         placeholder="Filter nodes…"
                         type="text"
@@ -180,7 +180,7 @@ exports[`renders app correctly 1`] = `
                       class="MuiBox-root css-0"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-overline css-15eh799-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-overline css-1v8utp5-MuiTypography-root"
                         data-testid="palette-group-start"
                       >
                         Start
@@ -213,12 +213,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Start
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-start"
                           >
                             Flow entry point.
@@ -230,7 +230,7 @@ exports[`renders app correctly 1`] = `
                       class="MuiBox-root css-0"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-overline css-ew2t7n-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-overline css-m0mf3t-MuiTypography-root"
                         data-testid="palette-group-transform"
                       >
                         Transform
@@ -263,12 +263,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Lowercase
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-lowercase"
                           >
                             Make text lowercase.
@@ -303,12 +303,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Uppercase
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-uppercase"
                           >
                             Make text uppercase.
@@ -343,12 +343,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Trim
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-trim"
                           >
                             Remove surrounding spaces.
@@ -383,12 +383,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Replace
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-replace"
                           >
                             Find and replace text.
@@ -423,12 +423,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Extract Regex
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-extractRegex"
                           >
                             Keep text matching a pattern.
@@ -463,12 +463,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Random Number
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-randomNumber"
                           >
                             Replace with a random number.
@@ -480,7 +480,7 @@ exports[`renders app correctly 1`] = `
                       class="MuiBox-root css-0"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-overline css-pz2dns-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-overline css-cf6pq7-MuiTypography-root"
                         data-testid="palette-group-condition"
                       >
                         Condition
@@ -514,12 +514,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Equals
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-equals"
                           >
                             Message equals the value.
@@ -554,12 +554,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Contains
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-contains"
                           >
                             Message contains the value.
@@ -594,12 +594,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Starts With
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-startsWith"
                           >
                             Message starts with the value.
@@ -634,12 +634,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Ends With
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-endsWith"
                           >
                             Message ends with the value.
@@ -674,12 +674,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Not Equals
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-notEquals"
                           >
                             Message is not equal to the value.
@@ -714,12 +714,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Not Contains
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-notContains"
                           >
                             Message does not contain the value.
@@ -731,7 +731,7 @@ exports[`renders app correctly 1`] = `
                       class="MuiBox-root css-0"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-overline css-o0zehk-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-overline css-1m6bad7-MuiTypography-root"
                         data-testid="palette-group-send"
                       >
                         Send
@@ -764,12 +764,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Send
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-send"
                           >
                             Send one or more messages.
@@ -804,12 +804,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Random
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-random"
                           >
                             Send one random option.
@@ -844,12 +844,12 @@ exports[`renders app correctly 1`] = `
                           class="MuiBox-root css-0"
                         >
                           <p
-                            class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                           >
                             Poll
                           </p>
                           <span
-                            class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                             data-testid="palette-desc-poll"
                           >
                             Send a Telegram poll.
@@ -878,7 +878,7 @@ exports[`renders app correctly 1`] = `
                     class="MuiBox-root css-cba58j"
                   >
                     <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
                       data-testid="flow-sample-Dice Bot"
                       tabindex="0"
                       type="button"
@@ -886,7 +886,7 @@ exports[`renders app correctly 1`] = `
                       Dice Bot
                     </button>
                     <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
                       data-testid="flow-sample-Poll Bot"
                       tabindex="0"
                       type="button"
@@ -953,7 +953,7 @@ exports[`renders app correctly 1`] = `
             >
               Copyright ©
               <a
-                class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-drt9hv-MuiTypography-root-MuiLink-root"
+                class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-1ghx3tx-MuiTypography-root-MuiLink-root"
                 href="https://jh123x.com/"
               >
                 Jh123x
@@ -993,7 +993,7 @@ exports[`renders app correctly 1`] = `
                 style="overflow: hidden; margin-bottom: 0px;"
               >
                 <div
-                  class="MuiTabs-list MuiTabs-flexContainer css-hzcega-MuiTabs-list"
+                  class="MuiTabs-list css-hzcega-MuiTabs-list"
                   role="tablist"
                 >
                   <button
@@ -1046,14 +1046,14 @@ exports[`renders app correctly 1`] = `
             Bot stopped
           </p>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSuccess MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             Start
           </button>
           <button
-            class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedError MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
             disabled=""
             tabindex="-1"
             type="button"
@@ -1076,7 +1076,7 @@ exports[`renders app correctly 1`] = `
             Flow
           </h3>
           <p
-            class="MuiTypography-root MuiTypography-body2 css-84gl1-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body2 css-r2go6j-MuiTypography-root"
           >
             Build a conversational flow by dragging nodes from the palette onto the canvas and connecting them.
           </p>
@@ -1110,7 +1110,7 @@ exports[`renders app correctly 1`] = `
                   >
                     <input
                       aria-invalid="false"
-                      class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
+                      class="MuiInputBase-input MuiOutlinedInput-input css-1fe3xww-MuiInputBase-input-MuiOutlinedInput-input"
                       id="_r_3_"
                       placeholder="Filter nodes…"
                       type="text"
@@ -1141,7 +1141,7 @@ exports[`renders app correctly 1`] = `
                     class="MuiBox-root css-0"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-overline css-15eh799-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-overline css-1v8utp5-MuiTypography-root"
                       data-testid="palette-group-start"
                     >
                       Start
@@ -1174,12 +1174,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Start
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-start"
                         >
                           Flow entry point.
@@ -1191,7 +1191,7 @@ exports[`renders app correctly 1`] = `
                     class="MuiBox-root css-0"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-overline css-ew2t7n-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-overline css-m0mf3t-MuiTypography-root"
                       data-testid="palette-group-transform"
                     >
                       Transform
@@ -1224,12 +1224,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Lowercase
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-lowercase"
                         >
                           Make text lowercase.
@@ -1264,12 +1264,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Uppercase
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-uppercase"
                         >
                           Make text uppercase.
@@ -1304,12 +1304,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Trim
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-trim"
                         >
                           Remove surrounding spaces.
@@ -1344,12 +1344,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Replace
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-replace"
                         >
                           Find and replace text.
@@ -1384,12 +1384,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Extract Regex
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-extractRegex"
                         >
                           Keep text matching a pattern.
@@ -1424,12 +1424,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Random Number
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-randomNumber"
                         >
                           Replace with a random number.
@@ -1441,7 +1441,7 @@ exports[`renders app correctly 1`] = `
                     class="MuiBox-root css-0"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-overline css-pz2dns-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-overline css-cf6pq7-MuiTypography-root"
                       data-testid="palette-group-condition"
                     >
                       Condition
@@ -1475,12 +1475,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Equals
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-equals"
                         >
                           Message equals the value.
@@ -1515,12 +1515,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Contains
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-contains"
                         >
                           Message contains the value.
@@ -1555,12 +1555,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Starts With
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-startsWith"
                         >
                           Message starts with the value.
@@ -1595,12 +1595,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Ends With
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-endsWith"
                         >
                           Message ends with the value.
@@ -1635,12 +1635,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Not Equals
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-notEquals"
                         >
                           Message is not equal to the value.
@@ -1675,12 +1675,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Not Contains
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-notContains"
                         >
                           Message does not contain the value.
@@ -1692,7 +1692,7 @@ exports[`renders app correctly 1`] = `
                     class="MuiBox-root css-0"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-overline css-o0zehk-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-overline css-1m6bad7-MuiTypography-root"
                       data-testid="palette-group-send"
                     >
                       Send
@@ -1725,12 +1725,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Send
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-send"
                         >
                           Send one or more messages.
@@ -1765,12 +1765,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Random
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-random"
                         >
                           Send one random option.
@@ -1805,12 +1805,12 @@ exports[`renders app correctly 1`] = `
                         class="MuiBox-root css-0"
                       >
                         <p
-                          class="MuiTypography-root MuiTypography-body2 css-x3la98-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
                         >
                           Poll
                         </p>
                         <span
-                          class="MuiTypography-root MuiTypography-caption css-jnwefi-MuiTypography-root"
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
                           data-testid="palette-desc-poll"
                         >
                           Send a Telegram poll.
@@ -1839,7 +1839,7 @@ exports[`renders app correctly 1`] = `
                   class="MuiBox-root css-cba58j"
                 >
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
                     data-testid="flow-sample-Dice Bot"
                     tabindex="0"
                     type="button"
@@ -1847,7 +1847,7 @@ exports[`renders app correctly 1`] = `
                     Dice Bot
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeSmall MuiButton-outlinedSizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
                     data-testid="flow-sample-Poll Bot"
                     tabindex="0"
                     type="button"
@@ -1914,7 +1914,7 @@ exports[`renders app correctly 1`] = `
           >
             Copyright ©
             <a
-              class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-drt9hv-MuiTypography-root-MuiLink-root"
+              class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-1ghx3tx-MuiTypography-root-MuiLink-root"
               href="https://jh123x.com/"
             >
               Jh123x
