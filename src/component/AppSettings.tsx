@@ -331,10 +331,12 @@ export const AppSettings = () => {
             <TextField
               type="number"
               size="small"
-              inputProps={{
-                min: 1,
-                step: 1,
-                "aria-label": "Poll rate in seconds",
+              slotProps={{
+                input: {
+                  min: 1,
+                  step: 1,
+                  "aria-label": "Poll rate in seconds",
+                },
               }}
               value={pollRate}
               onChange={(e) => handlePollRateChange(e.target.value)}

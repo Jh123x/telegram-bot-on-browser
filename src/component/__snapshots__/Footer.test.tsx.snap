@@ -16,7 +16,7 @@ exports[`renders footer correctly 1`] = `
           >
             Copyright ©
             <a
-              class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-drt9hv-MuiTypography-root-MuiLink-root"
+              class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-1ghx3tx-MuiTypography-root-MuiLink-root"
               href="https://jh123x.com/"
             >
               Jh123x
@@ -39,7 +39,7 @@ exports[`renders footer correctly 1`] = `
         >
           Copyright ©
           <a
-            class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-drt9hv-MuiTypography-root-MuiLink-root"
+            class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways _url_6aa106 css-1ghx3tx-MuiTypography-root-MuiLink-root"
             href="https://jh123x.com/"
           >
             Jh123x
