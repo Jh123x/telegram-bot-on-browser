@@ -126,7 +126,7 @@ exports[`renders app correctly 1`] = `
                 class="MuiBox-root css-xywm95"
               >
                 <div
-                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1pjgae1-MuiPaper-root"
+                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1wy196v-MuiPaper-root"
                   data-testid="flow-palette"
                   style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                 >
@@ -475,6 +475,126 @@ exports[`renders app correctly 1`] = `
                           </span>
                         </div>
                       </div>
+                      <div
+                        aria-label="Add Concat Front node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-concatFront"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-concatFront"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="FormatAlignLeftIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M15 15H3v2h12zm0-8H3v2h12zM3 13h18v-2H3zm0 8h18v-2H3zM3 3v2h18V3z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                          >
+                            Concat Front
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                            data-testid="palette-desc-concatFront"
+                          >
+                            Add text before the message.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Concat Back node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-concatBack"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-concatBack"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="FormatAlignRightIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M3 21h18v-2H3zm6-4h12v-2H9zm-6-4h18v-2H3zm6-4h12V7H9zM3 3v2h18V3z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                          >
+                            Concat Back
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                            data-testid="palette-desc-concatBack"
+                          >
+                            Add text after the message.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Template node"
+                        class="MuiBox-root css-1azvfz5"
+                        data-testid="palette-item-template"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-1ouhbtr"
+                          data-testid="palette-icon-template"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="CodeIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                          >
+                            Template
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                            data-testid="palette-desc-template"
+                          >
+                            Build text from a template with {msg}.
+                          </span>
+                        </div>
+                      </div>
                     </div>
                     <div
                       class="MuiBox-root css-0"
@@ -726,6 +846,86 @@ exports[`renders app correctly 1`] = `
                           </span>
                         </div>
                       </div>
+                      <div
+                        aria-label="Add Not Starts With node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-notStartsWith"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-notStartsWith"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="SouthWestIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M15 19v-2H8.41L20 5.41 18.59 4 7 15.59V9H5v10z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                          >
+                            Not Starts With
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                            data-testid="palette-desc-notStartsWith"
+                          >
+                            Message does not start with the value.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        aria-label="Add Not Ends With node"
+                        class="MuiBox-root css-tfcnob"
+                        data-testid="palette-item-notEndsWith"
+                        draggable="true"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <div
+                          class="MuiBox-root css-ue2amf"
+                          data-testid="palette-icon-notEndsWith"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                            data-testid="NorthEastIcon"
+                            focusable="false"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          class="MuiBox-root css-0"
+                        >
+                          <p
+                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                          >
+                            Not Ends With
+                          </p>
+                          <span
+                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                            data-testid="palette-desc-notEndsWith"
+                          >
+                            Message does not end with the value.
+                          </span>
+                        </div>
+                      </div>
                     </div>
                     <div
                       class="MuiBox-root css-0"
@@ -777,46 +977,6 @@ exports[`renders app correctly 1`] = `
                         </div>
                       </div>
                       <div
-                        aria-label="Add Random node"
-                        class="MuiBox-root css-4oc8ue"
-                        data-testid="palette-item-random"
-                        draggable="true"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <div
-                          class="MuiBox-root css-15uwx91"
-                          data-testid="palette-icon-random"
-                        >
-                          <svg
-                            aria-hidden="true"
-                            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
-                            data-testid="CasinoIcon"
-                            focusable="false"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18m0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9"
-                            />
-                          </svg>
-                        </div>
-                        <div
-                          class="MuiBox-root css-0"
-                        >
-                          <p
-                            class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
-                          >
-                            Random
-                          </p>
-                          <span
-                            class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
-                            data-testid="palette-desc-random"
-                          >
-                            Send one random option.
-                          </span>
-                        </div>
-                      </div>
-                      <div
                         aria-label="Add Poll node"
                         class="MuiBox-root css-4oc8ue"
                         data-testid="palette-item-poll"
@@ -860,7 +1020,7 @@ exports[`renders app correctly 1`] = `
                   </div>
                 </div>
                 <div
-                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-194tfke-MuiPaper-root"
+                  class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-ido3fv-MuiPaper-root"
                   data-testid="flow-samples"
                   style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
                 >
@@ -892,6 +1052,30 @@ exports[`renders app correctly 1`] = `
                       type="button"
                     >
                       Poll Bot
+                    </button>
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Shout Bot"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Shout Bot
+                    </button>
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Quote Bot"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Quote Bot
+                    </button>
+                    <button
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      data-testid="flow-sample-Greeting Bot"
+                      tabindex="0"
+                      type="button"
+                    >
+                      Greeting Bot
                     </button>
                   </div>
                 </div>
@@ -1087,7 +1271,7 @@ exports[`renders app correctly 1`] = `
               class="MuiBox-root css-xywm95"
             >
               <div
-                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1pjgae1-MuiPaper-root"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1wy196v-MuiPaper-root"
                 data-testid="flow-palette"
                 style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >
@@ -1436,6 +1620,126 @@ exports[`renders app correctly 1`] = `
                         </span>
                       </div>
                     </div>
+                    <div
+                      aria-label="Add Concat Front node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-concatFront"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-concatFront"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="FormatAlignLeftIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M15 15H3v2h12zm0-8H3v2h12zM3 13h18v-2H3zm0 8h18v-2H3zM3 3v2h18V3z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                        >
+                          Concat Front
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                          data-testid="palette-desc-concatFront"
+                        >
+                          Add text before the message.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Concat Back node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-concatBack"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-concatBack"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="FormatAlignRightIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M3 21h18v-2H3zm6-4h12v-2H9zm-6-4h18v-2H3zm6-4h12V7H9zM3 3v2h18V3z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                        >
+                          Concat Back
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                          data-testid="palette-desc-concatBack"
+                        >
+                          Add text after the message.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Template node"
+                      class="MuiBox-root css-1azvfz5"
+                      data-testid="palette-item-template"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-1ouhbtr"
+                        data-testid="palette-icon-template"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="CodeIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                        >
+                          Template
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                          data-testid="palette-desc-template"
+                        >
+                          Build text from a template with {msg}.
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div
                     class="MuiBox-root css-0"
@@ -1687,6 +1991,86 @@ exports[`renders app correctly 1`] = `
                         </span>
                       </div>
                     </div>
+                    <div
+                      aria-label="Add Not Starts With node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-notStartsWith"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-notStartsWith"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="SouthWestIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M15 19v-2H8.41L20 5.41 18.59 4 7 15.59V9H5v10z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                        >
+                          Not Starts With
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                          data-testid="palette-desc-notStartsWith"
+                        >
+                          Message does not start with the value.
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      aria-label="Add Not Ends With node"
+                      class="MuiBox-root css-tfcnob"
+                      data-testid="palette-item-notEndsWith"
+                      draggable="true"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiBox-root css-ue2amf"
+                        data-testid="palette-icon-notEndsWith"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
+                          data-testid="NorthEastIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M9 5v2h6.59L4 18.59 5.41 20 17 8.41V15h2V5z"
+                          />
+                        </svg>
+                      </div>
+                      <div
+                        class="MuiBox-root css-0"
+                      >
+                        <p
+                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
+                        >
+                          Not Ends With
+                        </p>
+                        <span
+                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
+                          data-testid="palette-desc-notEndsWith"
+                        >
+                          Message does not end with the value.
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   <div
                     class="MuiBox-root css-0"
@@ -1738,46 +2122,6 @@ exports[`renders app correctly 1`] = `
                       </div>
                     </div>
                     <div
-                      aria-label="Add Random node"
-                      class="MuiBox-root css-4oc8ue"
-                      data-testid="palette-item-random"
-                      draggable="true"
-                      role="button"
-                      tabindex="0"
-                    >
-                      <div
-                        class="MuiBox-root css-15uwx91"
-                        data-testid="palette-icon-random"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-19pfla-MuiSvgIcon-root"
-                          data-testid="CasinoIcon"
-                          focusable="false"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18m0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9"
-                          />
-                        </svg>
-                      </div>
-                      <div
-                        class="MuiBox-root css-0"
-                      >
-                        <p
-                          class="MuiTypography-root MuiTypography-body2 css-846dai-MuiTypography-root"
-                        >
-                          Random
-                        </p>
-                        <span
-                          class="MuiTypography-root MuiTypography-caption css-1j8qxki-MuiTypography-root"
-                          data-testid="palette-desc-random"
-                        >
-                          Send one random option.
-                        </span>
-                      </div>
-                    </div>
-                    <div
                       aria-label="Add Poll node"
                       class="MuiBox-root css-4oc8ue"
                       data-testid="palette-item-poll"
@@ -1821,7 +2165,7 @@ exports[`renders app correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-194tfke-MuiPaper-root"
+                class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-ido3fv-MuiPaper-root"
                 data-testid="flow-samples"
                 style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); --Paper-overlay: linear-gradient(rgba(255, 255, 255, 0.051), rgba(255, 255, 255, 0.051));"
               >
@@ -1853,6 +2197,30 @@ exports[`renders app correctly 1`] = `
                     type="button"
                   >
                     Poll Bot
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    data-testid="flow-sample-Shout Bot"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Shout Bot
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    data-testid="flow-sample-Quote Bot"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Quote Bot
+                  </button>
+                  <button
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    data-testid="flow-sample-Greeting Bot"
+                    tabindex="0"
+                    type="button"
+                  >
+                    Greeting Bot
                   </button>
                 </div>
               </div>
