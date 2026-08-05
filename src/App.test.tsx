@@ -6,7 +6,15 @@ import {
 import App from "./App.tsx";
 import { test, expect, vi } from "vitest";
 import React from "react";
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+
+// Warm up the code-split Flow editor chunk before the tests run. Its module
+// graph (React Flow editor, palette, inspector, samples) takes ~4s to
+// transform on first dynamic import; preloading once here makes every lazy
+// `import()` in the tests resolve from the module cache in a microtask. The
+// Suspense fallback still renders synchronously on first render, so the
+// skeleton-fallback test remains valid.
+await import("./pages/FlowsPage.tsx");
 
 beforeEach(() => {
   localStorage.clear();
@@ -27,9 +35,14 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-test("renders app correctly", () => {
+// Pages are code-split (React.lazy), so the real page DOM only appears once
+// its chunk resolves. Tests that assert page content must await the lazy
+// import; the shell (navbar/footer) is available synchronously.
+
+test("renders app correctly", async () => {
   const store = setupStore(generateDefaultState());
-  const component = renderWithProviders(<App />, { store: store });
+  const component = renderWithProviders(<App />, { store });
+  await screen.findByTestId("flow-editor");
   expect(component).toMatchSnapshot();
 });
 
@@ -63,39 +76,54 @@ test("hydrates token when only token is stored", () => {
   expect(store.getState().bot.token).toBe("only-token");
 });
 
-test("switching tabs shows the right page", () => {
+test("renders the lazy-loaded page and removes the skeleton once the chunk arrives", async () => {
+  const store = setupStore(generateDefaultState());
+  renderWithProviders(<App />, { store });
+
+  // The shell (navbar) paints immediately — it is part of the initial bundle.
+  expect(screen.getByRole("tab", { name: "Flow" })).toBeTruthy();
+
+  // Once the chunk arrives, the real page replaces the skeleton.
+  expect(await screen.findByTestId("flow-editor")).toBeTruthy();
+  expect(screen.queryByTestId("page-skeleton")).toBeNull();
+});
+
+test("switching tabs shows the right page", async () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(<App />, { store });
 
   // The Flow editor replaced the old block-based Programs page and is the
   // default landing page.
-  expect(screen.getByTestId("flow-editor")).toBeTruthy();
+  expect(await screen.findByTestId("flow-editor")).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Chat" }));
-  expect(screen.getByRole("heading", { name: "Chat" })).toBeTruthy();
+  expect(await screen.findByRole("heading", { name: "Chat" })).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
-  expect(screen.getByPlaceholderText("Enter your API token")).toBeTruthy();
+  expect(
+    await screen.findByPlaceholderText("Enter your API token")
+  ).toBeTruthy();
 
   fireEvent.click(screen.getByRole("tab", { name: "Docs" }));
-  expect(screen.getByRole("heading", { name: "Docs" })).toBeTruthy();
+  expect(await screen.findByRole("heading", { name: "Docs" })).toBeTruthy();
   expect(screen.getAllByText("Getting Started").length).toBeGreaterThan(0);
 
   fireEvent.click(screen.getByRole("tab", { name: "Flow" }));
-  expect(screen.getByTestId("flow-editor")).toBeTruthy();
+  expect(await screen.findByTestId("flow-editor")).toBeTruthy();
 });
 
-test("seeds a Dice Bot sample flow on first visit so the graph is never empty", () => {
+test("seeds a Dice Bot sample flow on first visit so the graph is never empty", async () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(<App />, { store });
 
+  // The sample is fetched lazily on a true first visit.
+  await waitFor(() => expect(store.getState().bot.flows).toHaveLength(1));
   const flows = store.getState().bot.flows;
-  expect(flows).toHaveLength(1);
   expect(flows[0].name).toBe("Dice Bot");
   expect(flows[0].nodes.length).toBeGreaterThan(0);
   expect(flows[0].startNodeId).not.toBe("");
   // The single flow is edited directly on the canvas — no rail, no name field.
-  expect(screen.getByTestId("flow-canvas-stage")).toBeTruthy();
+  expect(await screen.findByTestId("flow-canvas-stage")).toBeTruthy();
   expect(screen.queryByLabelText("Flow name")).toBeNull();
 });
 
@@ -126,7 +154,7 @@ test("does not re-seed after all flows were deleted (empty array persisted)", ()
   expect(store.getState().bot.flows).toEqual([]);
 });
 
-test("seeds exactly one sample under StrictMode double-mount", () => {
+test("seeds exactly one sample under StrictMode double-mount", async () => {
   const store = setupStore(generateDefaultState());
   renderWithProviders(
     <React.StrictMode>
@@ -135,7 +163,7 @@ test("seeds exactly one sample under StrictMode double-mount", () => {
     { store }
   );
 
-  expect(store.getState().bot.flows).toHaveLength(1);
+  await waitFor(() => expect(store.getState().bot.flows).toHaveLength(1));
 });
 
 test("uses the full viewport as a flex column with a scrollable content area", () => {

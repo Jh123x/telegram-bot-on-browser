@@ -15,11 +15,183 @@
   <script async="" defer=""
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1199924535485592"
     crossorigin="anonymous"></script>
+
+  <!--
+    Prerendered app shell. This static markup is what the browser paints
+    before any JavaScript downloads: the dark app chrome + a layout skeleton
+    that mirrors the default Flow page. React replaces it the moment the
+    bundle mounts, so first paint no longer waits for the 200+ kB of JS.
+    If JS never loads, the shell stays instead of a blank page.
+  -->
+  <style>
+    .prerender-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      background: #121212;
+      color: #f2f2f7;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
+        Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .prerender-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .prerender-brand {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .prerender-tabs {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .prerender-tab {
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .prerender-tab.is-active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f2f2f7;
+    }
+
+    .prerender-status {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .prerender-body {
+      display: flex;
+      gap: 16px;
+      flex: 1;
+      min-height: 0;
+      padding: 16px 24px;
+    }
+
+    .prerender-rail {
+      width: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .prerender-card {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prerender-canvas {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 14px;
+    }
+
+    .prerender-inspector {
+      width: 280px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prerender-footer {
+      padding: 10px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .prerender-bar {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      height: 14px;
+    }
+
+    .prerender-h-md {
+      height: 20px;
+    }
+
+    .prerender-w-40 {
+      width: 40%;
+    }
+
+    .prerender-w-60 {
+      width: 60%;
+    }
+
+    .prerender-w-80 {
+      width: 80%;
+    }
+  </style>
 </head>
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
+  <div id="root">
+    <div class="prerender-shell" aria-hidden="true">
+      <header class="prerender-header">
+        <span class="prerender-brand">BrowserBot</span>
+        <nav class="prerender-tabs">
+          <span class="prerender-tab is-active">Flow</span>
+          <span class="prerender-tab">Chat</span>
+          <span class="prerender-tab">Settings</span>
+          <span class="prerender-tab">Docs</span>
+        </nav>
+        <span class="prerender-status">Bot stopped</span>
+      </header>
+      <main class="prerender-body">
+        <aside class="prerender-rail">
+          <div class="prerender-card">
+            <span class="prerender-bar prerender-w-40"></span>
+            <span class="prerender-bar"></span>
+            <span class="prerender-bar"></span>
+            <span class="prerender-bar"></span>
+            <span class="prerender-bar"></span>
+            <span class="prerender-bar"></span>
+          </div>
+          <div class="prerender-card">
+            <span class="prerender-bar prerender-w-60"></span>
+            <span class="prerender-bar prerender-w-80"></span>
+            <span class="prerender-bar prerender-w-60"></span>
+          </div>
+        </aside>
+        <section class="prerender-canvas">Loading BrowserBot…</section>
+        <aside class="prerender-inspector">
+          <span class="prerender-bar prerender-h-md prerender-w-60"></span>
+          <span class="prerender-bar"></span>
+          <span class="prerender-bar"></span>
+          <span class="prerender-bar"></span>
+          <span class="prerender-bar prerender-w-80"></span>
+        </aside>
+      </main>
+      <footer class="prerender-footer">BrowserBot</footer>
+    </div>
+  </div>
   <script type="module" src="/src/index.tsx"></script>
 </body>
 
