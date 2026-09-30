@@ -37,7 +37,7 @@ exports[`renders app correctly 1`] = `
                   >
                     <button
                       aria-selected="true"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="0"
                       type="button"
@@ -46,7 +46,7 @@ exports[`renders app correctly 1`] = `
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -55,7 +55,7 @@ exports[`renders app correctly 1`] = `
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -64,7 +64,7 @@ exports[`renders app correctly 1`] = `
                     </button>
                     <button
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                       role="tab"
                       tabindex="-1"
                       type="button"
@@ -85,14 +85,14 @@ exports[`renders app correctly 1`] = `
               Bot stopped
             </p>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorSuccess css-16gu1l8-MuiButtonBase-root-MuiButton-root"
               tabindex="0"
               type="button"
             >
               Start
             </button>
             <button
-              class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorError css-15y4lep-MuiButtonBase-root-MuiButton-root"
               disabled=""
               tabindex="-1"
               type="button"
@@ -1121,7 +1121,7 @@ exports[`renders app correctly 1`] = `
                     class="MuiBox-root css-cba58j"
                   >
                     <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                       data-testid="flow-sample-Dice Bot"
                       tabindex="0"
                       type="button"
@@ -1129,7 +1129,7 @@ exports[`renders app correctly 1`] = `
                       Dice Bot
                     </button>
                     <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                       data-testid="flow-sample-Poll Bot"
                       tabindex="0"
                       type="button"
@@ -1137,7 +1137,7 @@ exports[`renders app correctly 1`] = `
                       Poll Bot
                     </button>
                     <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                       data-testid="flow-sample-Quiz Bot"
                       tabindex="0"
                       type="button"
@@ -1145,7 +1145,7 @@ exports[`renders app correctly 1`] = `
                       Quiz Bot
                     </button>
                     <button
-                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                      class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                       data-testid="flow-sample-Anonymous Bot"
                       tabindex="0"
                       type="button"
@@ -1257,7 +1257,7 @@ exports[`renders app correctly 1`] = `
                 >
                   <button
                     aria-selected="true"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit Mui-selected css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="0"
                     type="button"
@@ -1266,7 +1266,7 @@ exports[`renders app correctly 1`] = `
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -1275,7 +1275,7 @@ exports[`renders app correctly 1`] = `
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -1284,7 +1284,7 @@ exports[`renders app correctly 1`] = `
                   </button>
                   <button
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-3vpty3-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit css-1iwyfat-MuiButtonBase-root-MuiTab-root"
                     role="tab"
                     tabindex="-1"
                     type="button"
@@ -1305,14 +1305,14 @@ exports[`renders app correctly 1`] = `
             Bot stopped
           </p>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorSuccess css-frkth0-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorSuccess css-16gu1l8-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             Start
           </button>
           <button
-            class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorError css-8kauh6-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorError css-15y4lep-MuiButtonBase-root-MuiButton-root"
             disabled=""
             tabindex="-1"
             type="button"
@@ -2341,7 +2341,7 @@ exports[`renders app correctly 1`] = `
                   class="MuiBox-root css-cba58j"
                 >
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                     data-testid="flow-sample-Dice Bot"
                     tabindex="0"
                     type="button"
@@ -2349,7 +2349,7 @@ exports[`renders app correctly 1`] = `
                     Dice Bot
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                     data-testid="flow-sample-Poll Bot"
                     tabindex="0"
                     type="button"
@@ -2357,7 +2357,7 @@ exports[`renders app correctly 1`] = `
                     Poll Bot
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                     data-testid="flow-sample-Quiz Bot"
                     tabindex="0"
                     type="button"
@@ -2365,7 +2365,7 @@ exports[`renders app correctly 1`] = `
                     Quiz Bot
                   </button>
                   <button
-                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-3803pd-MuiButtonBase-root-MuiButton-root"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeSmall MuiButton-colorPrimary MuiButton-fullWidth css-48x6sa-MuiButtonBase-root-MuiButton-root"
                     data-testid="flow-sample-Anonymous Bot"
                     tabindex="0"
                     type="button"

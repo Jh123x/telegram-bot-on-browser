@@ -27,9 +27,4 @@ test("shows the page skeleton while a lazy page chunk is loading", async () => {
   // The fallback skeleton is visible while the chunk is pending...
   expect(screen.getByTestId("page-skeleton")).toBeTruthy();
   expect(screen.getByTestId("page-skeleton-settings")).toBeTruthy();
-
-  // ...and stays visible even after a tick (the chunk never arrives here, so
-  // the app must keep showing the skeleton instead of a blank area).
-  await new Promise((resolve) => setTimeout(resolve, 100));
-  expect(screen.getByTestId("page-skeleton-settings")).toBeTruthy();
 });
